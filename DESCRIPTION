@@ -1,0 +1,12 @@
+Package: NPflow
+Type: Package
+Title: Non Parametric Bayesian clustering of Flow-cytometry data
+Version: 0.0.1
+Date: 2013-12-02
+Author: Francois Caron, Boris P. Hejblum
+Maintainer: Boris P. Hejblum <boris.hejblum@isped.u-bordeaux2.fr>
+Depends: R (>= 2.14), ggplot2, 
+Imports: ggplot2
+Suggests: 
+Description: This package implements 
+License: LGPL-3

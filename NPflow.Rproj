@@ -6,12 +6,15 @@ AlwaysSaveHistory: Default
 
 EnableCodeIndexing: Yes
 UseSpacesForTab: Yes
-NumSpacesForTab: 2
+NumSpacesForTab: 4
 Encoding: UTF-8
 
 RnwWeave: knitr
 LaTeX: pdfLaTeX
 
 BuildType: Package
-PackageInstallArgs: --no-multiarch
-PackageRoxygenize: rd
+PackageInstallArgs: --no-multiarch --html
+PackageBuildArgs: --md5
+PackageBuildBinaryArgs: --html
+PackageCheckArgs: --as-cran
+PackageRoxygenize: rd,namespace
