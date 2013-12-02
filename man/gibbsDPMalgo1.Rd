@@ -20,7 +20,7 @@
 rm(list=ls())
 #Number of data
 n <- 100
-set.seed(1231)
+#set.seed(1231)
 
 # Sample data
 m <- matrix(nrow=2, ncol=4, c(-1, 1, 0, 2, 1, -2, -1, -2))
@@ -48,7 +48,7 @@ for(k in 1:n){
  # Scale parameter of DPM
  alpha <- 3
  # Number of iterations
- N <- 10
+ N <- 30
  # do some plots
  doPlot <- TRUE
 

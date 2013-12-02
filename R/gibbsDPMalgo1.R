@@ -16,7 +16,7 @@
 #' rm(list=ls())
 #' #Number of data
 #' n <- 100
-#' set.seed(1231)
+#' #set.seed(1231)
 #' 
 #' # Sample data
 #' m <- matrix(nrow=2, ncol=4, c(-1, 1, 0, 2, 1, -2, -1, -2))
@@ -44,7 +44,7 @@
 #'  # Scale parameter of DPM
 #'  alpha <- 3
 #'  # Number of iterations
-#'  N <- 10 
+#'  N <- 30 
 #'  # do some plots
 #'  doPlot <- TRUE 
 #'  
@@ -147,7 +147,7 @@ sample_theta <- function(alpha, z, hyperG0, theta_mu_notk, theta_Sigma_notk){
             theta_mu_k = theta_mu_notk  
             theta_Sigma_k = theta_Sigma_notk          
         } else{
-            theta_mu_k = theta_mu_notk[ind]
+            theta_mu_k = theta_mu_notk[,ind]
             theta_Sigma_k = theta_Sigma_notk[, , ind] 
         }  
     }
