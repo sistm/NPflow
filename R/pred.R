@@ -9,10 +9,15 @@ pred <- function(z, S){
   nu0 <- S[["nu"]]
   lambda0 <- S[["lambda"]]
   
+  browser()
+  
   p <- length(mu0)
   S <- lambda0*(kappa0+1)/kappa0/(nu0-p+1)
   nu <- nu0-p+1
   
-  out <- (1+t(z-mu0)%*%solve(S)%*%(z-mu0)/nu)^(-(nu+p)/2)*exp(lgamma((nu+p)/2))/exp(lgamma((nu)/2))*(det(nu*p*S))^(-0.5)
+  out <- ((1+t(z-mu0)%*%solve(S)%*%(z-mu0)/nu)^(-(nu+p)/2)
+          *exp(lgamma((nu+p)/2))/exp(lgamma((nu)/2))
+          *(det(nu*p*S))^(-0.5)
+  )
   return(out)
 }

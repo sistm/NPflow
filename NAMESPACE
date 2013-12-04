@@ -1,1 +1,2 @@
 export(gibbsDPMalgo1)
+export(gibbsDPMalgo2)

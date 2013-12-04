@@ -79,7 +79,7 @@ gibbsDPMalgo1 <- function (z, hyperG0, alpha, N, doPlot=TRUE){
     
     cat(i, "/", N, " samplings\n", sep="")
     if(doPlot){
-        some_plot(z, theta_mu, n, i)
+        plot_DPM1(z, theta_mu, n, i)
     }
     
     
@@ -96,7 +96,7 @@ gibbsDPMalgo1 <- function (z, hyperG0, alpha, N, doPlot=TRUE){
         
         cat(i, "/", N, " samplings\n", sep="")
         if(doPlot){
-            some_plot(z, theta_mu, n, i)
+            plot_DPM1(z, theta_mu, n, i)
         }
     }
     return(list("mu"=theta_mu, "Sigma"=theta_Sigma))
@@ -159,7 +159,7 @@ sample_theta <- function(alpha, z, hyperG0, theta_mu_notk, theta_Sigma_notk){
 #MAP =>estimaton des param pour le max
 
 
-some_plot <- function(z, theta_mu, n, i){
+plot_DPM1 <- function(z, theta_mu, n, i){
     ind <- unique(theta_mu[1,])
     cl <- numeric(n)
     U_mu <- matrix(0, nrow=2, ncol=length(ind))
@@ -173,7 +173,7 @@ some_plot <- function(z, theta_mu, n, i){
     p <- (ggplot(z2plot) 
           + geom_point(aes(x=X, y=Y, col=Cluster), data=z2plot) 
           + geom_point(aes(x=X, y=Y, col=Cluster), data=U2plot, shape="X", size=5)
-          + ggtitle(paste("Iteration number", i))
+          + ggtitle(paste("Gibbs sampling for DPM - algo 1\nIteration", i))
     )
     print(p)
 }
