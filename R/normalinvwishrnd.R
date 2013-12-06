@@ -10,7 +10,10 @@ normalinvwishrnd <- function(hyper){
   S = invwishrnd(n = nu0, lambda = lambda0)
   
   # Sample mu from a normal distribution
-  mu = mu0+chol(S/kappa0)%*%matrix(rnorm(length(mu0)), nrow=length(mu0), ncol=1)
+ 
+  muSupp <- chol(S/kappa0)%*%matrix(rnorm(length(mu0)), 
+                                 nrow=length(mu0), ncol=1)
+  mu = mu0 + as.vector(muSupp)
   
   
   return(list("S"=S, "mu"=mu))

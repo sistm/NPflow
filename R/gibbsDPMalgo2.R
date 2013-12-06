@@ -120,7 +120,8 @@ gibbsDPMalgo2 <- function (z, hyperG0, alpha, N, doPlot=TRUE){
             plot_DPM2(z, U_mu, m, c, i)
         }
     }
-    return(list("clusters"=c, "U_mu"=U_mu, "U_Sigma"=U_Sigma, "partitions"=m))
+    return(list("clusters" = c, "U_mu" = U_mu, "U_Sigma" = U_Sigma, 
+                "partition" = m))
 }
 
 
@@ -163,7 +164,7 @@ sample_c <- function(m, alpha, z, hyperG0, U_mu, U_Sigma){
 
 plot_DPM2 <- function(z, U_mu, m, c, i){
     fullCl <- which(m!=0)
-    U_mu2plot <- U_mu[,fullCl]
+    U_mu2plot <- U_mu[, fullCl]    
     zClusters <- as.factor(c)
     levels(zClusters) <- as.character(1:length(levels(zClusters)))
     z2plot <- cbind.data.frame("X"=z[1,],"Y"=z[2,],"Cluster"=zClusters)

@@ -9,8 +9,6 @@ pred <- function(z, S){
   nu0 <- S[["nu"]]
   lambda0 <- S[["lambda"]]
   
-  browser()
-  
   p <- length(mu0)
   S <- lambda0*(kappa0+1)/kappa0/(nu0-p+1)
   nu <- nu0-p+1

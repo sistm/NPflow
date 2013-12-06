@@ -16,7 +16,7 @@
 #' rm(list=ls())
 #' #Number of data
 #' n <- 100
-#' #set.seed(1231)
+#' set.seed(1231)
 #' 
 #' # Sample data
 #' m <- matrix(nrow=2, ncol=4, c(-1, 1, 0, 2, 1, -2, -1, -2))
@@ -44,7 +44,7 @@
 #'  # Scale parameter of DPM
 #'  alpha <- 3
 #'  # Number of iterations
-#'  N <- 30 
+#'  N <- 10 
 #'  # do some plots
 #'  doPlot <- TRUE 
 #'  
@@ -127,6 +127,7 @@ sample_theta <- function(alpha, z, hyperG0, theta_mu_notk, theta_Sigma_notk){
     n0 <- pred(z, hyperG0)
     const <- alpha*n0+sum(n)
     p0 <- alpha*n0/const
+    #cat("probability of allocating to a new cluster:", p0, "\n")
 
     u <- runif(n=1, min = 0, max = 1)
     if (u<p0){
