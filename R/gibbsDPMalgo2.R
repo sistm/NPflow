@@ -138,7 +138,9 @@ sample_c <- function(m, alpha, z, hyperG0, U_mu, U_Sigma){
     r <- sum(m)
     n <- numeric(length(fullCl))
     for (i in 1:length(fullCl)){
-        n[i] <- mvnpdf(x = matrix(z, nrow= 1, ncol=length(z)) , mean = U_mu[, fullCl[i]], varcovM = U_Sigma[, , fullCl[i]])  
+        n[i] <- mvnpdf(x = matrix(z, nrow= 1, ncol=length(z)) , 
+                       mean = U_mu[, fullCl[i]], 
+                       varcovM = U_Sigma[, , fullCl[i]])*m[fullCl[i]]  
     }
     
     n0 <- pred(z, hyperG0)
