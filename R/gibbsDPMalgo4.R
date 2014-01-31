@@ -66,7 +66,7 @@ gibbsDPMalgo4 <- function (z, hyperG0, alpha, N, doPlot=TRUE){
     # statistics associated to cluster k
     U_SS <- list()
     
-    m <- numeric(n)
+    m <- numeric(n) # number of obs in each clusters
     c <-numeric(n)
     
     # Initialisation: each observation is assigned to a different cluster----
@@ -89,11 +89,13 @@ gibbsDPMalgo4 <- function (z, hyperG0, alpha, N, doPlot=TRUE){
     
     for(i in 2:N){
         
-        slice <- slice_sample(m=m, alpha=alpha, z=z, 
+        slice <- slice_sample(c=c, m=m, alpha=alpha, z=z, 
                               hyperG0=hyperG0, 
                               U_mu=U_mu, U_Sigma=U_Sigma)
-        m <- slice$m
-        c <- slice$x
+        m <- slice[["m"]]
+        c <- slice[["c"]]
+        U_mu <- slice[["U_mu"]]
+        U_Sigma <- slice[["U_Sigma"]]
         
         # Update cluster locations U
         ind <- which(m!=0)
@@ -122,16 +124,10 @@ gibbsDPMalgo4 <- function (z, hyperG0, alpha, N, doPlot=TRUE){
 
 # Subfunctions ----
 
-slice_sample <- function(m, alpha, z, hyperG0, U_mu, U_Sigma){
-    
-    #Ne pas faire de boucle externe à cet algo !
+slice_sample <- function(c, m, alpha, z, hyperG0, U_mu, U_Sigma){
     
     maxCl <- length(m) #maximum number of clusters
-    ind <- unique(m) # non empty clusters
-    ind_old <- numeric(maxCl) # number of obs in each clusters
-    for(t in ind){
-        ind_old[t] <- length(which(m==t))
-    }
+    ind <- unique(c) # non empty clusters
     fullCl <- which(m!=0) # indexes of non empty clusters
     r <- sum(m)
     
@@ -139,7 +135,7 @@ slice_sample <- function(m, alpha, z, hyperG0, U_mu, U_Sigma){
     # temp_1 ~ Gamma(m_1,1), ... , temp_K ~ Gamma(m_K,1), temp_{K+1} ~ Gamma(gamma, 1)
     #renormalisation of temp
     w <- numeric(maxCl)
-    temp <- rgamma(n=(length(ind)+1), shape=c(ind_old[ind], alpha), scale = 1)
+    temp <- rgamma(n=(length(ind)+1), shape=c(m[ind], alpha), scale = 1)
     #temp = gamrnd([m(ind); gamma], 1);
     temp_norm <- temp/sum(temp)
     w[ind] <- temp_norm[-length(temp_norm)]
@@ -147,42 +143,41 @@ slice_sample <- function(m, alpha, z, hyperG0, U_mu, U_Sigma){
     
     
     # Sample the latent u
-    u  <- runif(maxCl)*w[m]
+    u  <- runif(maxCl)*w[c]
     u_star <- min(u)
     
     # Sample the remaining weights that are needed with stick-breaking
     # i.e. the new clusters
-    ind_new <- which(ind_old==0)
-    t <- 0
-    while(R>u_star && (t<length(ind_new))){ 
-        # sum(w)<1-min(u) <=> R>min(u) car R=1-sum(w)
-        t <- t+1
-        beta_temp <- rbeta(n=1, shape1=1, shape2=alpha)
-        # weight of the new cluster
-        w[ind_new[t]] <- R*beta_temp
-        R <- R * (1-beta_temp) # remaining weight
-    }
-    ind_new <- ind_new[1:t]
-    
-    fullCl <- fullCl + t #update the number of non empty clusters
-    
-    
-    # Sample the centers and spread of each new cluster from prior
-    for (i in (length(fullCl) - t):length(fullCl)){
-        NiW <- normalinvwishrnd(hyperG0)
-        U_mu[, fullCl[i]] <- NiW[["mu"]]
-        U_Sigma[, , fullCl[i]] <- NiW[["S"]]
+    ind_new <- which(m==0) # potential new clusters
+    if(length(ind_new)>0){
+        t <- 0 # the number of new non empty clusters
+        while(R>u_star && (t<length(ind_new))){ 
+            # sum(w)<1-min(u) <=> R>min(u) car R=1-sum(w)
+            t <- t+1
+            beta_temp <- rbeta(n=1, shape1=1, shape2=alpha)
+            # weight of the new cluster
+            w[ind_new[t]] <- R*beta_temp
+            R <- R * (1-beta_temp) # remaining weight
+        }
+        ind_new <- ind_new[1:t]
+        
+        
+        
+        # Sample the centers and spread of each new cluster from prior
+        for (i in 1:t){
+            NiW <- normalinvwishrnd(hyperG0)
+            U_mu[, ind_new[i]] <- NiW[["mu"]]
+            U_Sigma[, , ind_new[i]] <- NiW[["S"]]
+        }
     }
     
     # calcul de la vraisemblance pour chaque données pour chaque clusters
     # assignation de chaque données à 1 cluster
-    
-    
     l <- numeric(length(fullCl)) # likelihood of belonging to each cluster 
     m <- numeric(maxCl) # number of observations in each cluster
     for(i in 1:maxCl){
         for (j in 1:length(fullCl)){
-            l[j] <- mvnpdf(x = matrix(z, nrow= 1, ncol=length(z)) , 
+            l[j] <- mvnpdf(x = matrix(z[,i], nrow= 1, ncol=length(z[,i])) , 
                              mean = U_mu[, fullCl[j]], 
                              varcovM = U_Sigma[, , fullCl[j]])*w[fullCl[j]]  
         }
@@ -190,7 +185,7 @@ slice_sample <- function(m, alpha, z, hyperG0, U_mu, U_Sigma){
         m[c[i]] <- m[c[i]] + 1
     }
     
-    return("c"=c, "m"=m, "U_mu"=U_mu, "U_Sigma"=U_Sigma)
+    return(list("c"=c, "m"=m, "U_mu"=U_mu, "U_Sigma"=U_Sigma))
 }
 
 

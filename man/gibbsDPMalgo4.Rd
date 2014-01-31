@@ -1,8 +1,8 @@
-\name{gibbsDPMalgo2}
-\alias{gibbsDPMalgo2}
-\title{Gibbs Sampling with Alghorithm 2}
+\name{gibbsDPMalgo4}
+\alias{gibbsDPMalgo4}
+\title{Gibbs Sapling DPM Alghorithm 4: slice sampling}
 \usage{
-gibbsDPMalgo2(z, hyperG0, alpha, N, doPlot = TRUE)
+gibbsDPMalgo4(z, hyperG0, alpha, N, doPlot = TRUE)
 }
 \arguments{
   \item{z}{}
@@ -14,7 +14,7 @@ gibbsDPMalgo2(z, hyperG0, alpha, N, doPlot = TRUE)
   \item{N}{}
 }
 \description{
-Gibbs Sampling with Alghorithm 2
+Gibbs Sapling DPM Alghorithm 4: slice sampling
 }
 \examples{
 rm(list=ls())
@@ -53,7 +53,7 @@ for(k in 1:n){
  doPlot <- TRUE
 
  # Gibbs sampler for Dirichlet Process Mixtures
- GibSample <- gibbsDPMalgo2(z, hyperG0, alpha, N, doPlot)
+ GibSample <- gibbsDPMalgo4(z, hyperG0, alpha, N, doPlot)
 }
 \author{
 Francois Caron

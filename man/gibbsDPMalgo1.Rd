@@ -2,7 +2,7 @@
 \alias{gibbsDPMalgo1}
 \title{Gibbs Sampling with Alghorithm 1}
 \usage{
-  gibbsDPMalgo1(z, hyperG0, alpha, N, doPlot = TRUE)
+gibbsDPMalgo1(z, hyperG0, alpha, N, doPlot = TRUE)
 }
 \arguments{
   \item{z}{}
@@ -14,7 +14,7 @@
   \item{N}{}
 }
 \description{
-  Gibbs Sampling with Alghorithm 1
+Gibbs Sampling with Alghorithm 1
 }
 \examples{
 rm(list=ls())
@@ -56,6 +56,6 @@ for(k in 1:n){
  GibSample <- gibbsDPMalgo1(z, hyperG0, alpha, N, doPlot)
 }
 \author{
-  Francois Caron
+Francois Caron
 }
 
