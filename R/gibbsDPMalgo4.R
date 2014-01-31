@@ -98,12 +98,17 @@ gibbsDPMalgo4 <- function (z, hyperG0, alpha, N, doPlot=TRUE){
         U_Sigma <- slice[["U_Sigma"]]
         
         # Update cluster locations U
-        ind <- which(m!=0)
+        fullCl <- which(m!=0)
         
-        for(j in 1:length(ind)){
-            NiW <- normalinvwishrnd(U_SS[[ind[j]]])
-            U_mu[, ind[j]] <- NiW[["mu"]]
-            U_Sigma[, , ind[j]] <- NiW[["S"]]
+        for(j in 1:length(fullCl)){
+            obs_j <- which(c==fullCl[j])
+            U_SS[[fullCl[j]]] <- update_SS(z[, obs_j[1]], hyperG0)
+            for(o in obs_j[-1]){
+               U_SS[[fullCl[j]]] <- update_SS(z[, o], U_SS[[fullCl[j]]])   
+            }
+            NiW <- normalinvwishrnd(U_SS[[fullCl[j]]])
+            U_mu[, fullCl[j]] <- NiW[["mu"]]
+            U_Sigma[, , fullCl[j]] <- NiW[["S"]]
         }
         
         cat(i, "/", N, " samplings\n", sep="")
