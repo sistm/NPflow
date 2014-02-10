@@ -42,7 +42,7 @@
 #'  hyperG0[["nu"]] <- 4
 #'  hyperG0[["lambda"]] <- diag(2)
 #'  # Scale parameter of DPM
-#'  alpha <- 3
+#'  alpha <- 4
 #'  # Number of iterations
 #'  N <- 10 
 #'  # do some plots
@@ -68,19 +68,35 @@ gibbsDPMalgo4 <- function (z, hyperG0, alpha, N, doPlot=TRUE){
     
     m <- numeric(n) # number of obs in each clusters
     c <-numeric(n)
+    ninit_clust <- 50
     
-    # Initialisation: each observation is assigned to a different cluster----
+    # Initialisation----
+    # each observation is assigned to a different cluster
+    # or to 1 of the 50 initial clusters if there are more than
+    # 50 observations
     
     i <- 1
-    for (k in 1:n){
-        c[k] <- k
-        U_SS[[c[k]]] <- update_SS(z=z[, k], S=hyperG0)
-        NiW <- normalinvwishrnd(U_SS[[c[k]]])
-        U_mu[, c[k]] <- NiW[["mu"]]
-        U_Sigma[, , c[k]] <- NiW[["S"]]
-        m[c[k]] <- m[c[k]]+1
+    if(ncol(z)<ninit_clust){       
+        for (k in 1:n){
+            c[k] <- k
+            U_SS[[c[k]]] <- update_SS(z=z[, k], S=hyperG0)
+            NiW <- normalinvwishrnd(U_SS[[c[k]]])
+            U_mu[, c[k]] <- NiW[["mu"]]
+            U_Sigma[, , c[k]] <- NiW[["S"]]
+            m[c[k]] <- m[c[k]]+1
+        }
+    } else{
+        c <- sample(x=1:ninit_clust, size=n, replace=TRUE)
+        for (k in unique(c)){
+            obs_k <- which(c==k)
+            U_SS[[k]] <- update_SS(z=z[, obs_k], S=hyperG0)
+            NiW <- normalinvwishrnd(U_SS[[k]])
+            U_mu[, k] <- NiW[["mu"]]
+            U_Sigma[, , k] <- NiW[["S"]]
+            m[k] <- m[k]+1
+        }
     }
-    
+        
     cat(i, "/", N, " samplings\n", sep="")
     if(doPlot){
         plot_DPM4(z, U_mu, m, c, i)
@@ -97,15 +113,11 @@ gibbsDPMalgo4 <- function (z, hyperG0, alpha, N, doPlot=TRUE){
         U_mu <- slice[["U_mu"]]
         U_Sigma <- slice[["U_Sigma"]]
         
-        # Update cluster locations U
+        # Update cluster locations
         fullCl <- which(m!=0)
-        
         for(j in 1:length(fullCl)){
             obs_j <- which(c==fullCl[j])
-            U_SS[[fullCl[j]]] <- update_SS(z[, obs_j[1]], hyperG0)
-            for(o in obs_j[-1]){
-               U_SS[[fullCl[j]]] <- update_SS(z[, o], U_SS[[fullCl[j]]])   
-            }
+            U_SS[[fullCl[j]]] <- update_SS(z[,obs_j], U_SS[[fullCl[j]]])
             NiW <- normalinvwishrnd(U_SS[[fullCl[j]]])
             U_mu[, fullCl[j]] <- NiW[["mu"]]
             U_Sigma[, , fullCl[j]] <- NiW[["S"]]

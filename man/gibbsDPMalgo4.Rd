@@ -46,7 +46,7 @@ for(k in 1:n){
  hyperG0[["nu"]] <- 4
  hyperG0[["lambda"]] <- diag(2)
  # Scale parameter of DPM
- alpha <- 3
+ alpha <- 4
  # Number of iterations
  N <- 10
  # do some plots
