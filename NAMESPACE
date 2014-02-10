@@ -1,4 +1,5 @@
 export(gibbsDPMalgo1)
 export(gibbsDPMalgo2)
 export(gibbsDPMalgo4)
+export(gibbsDPMalgo5)
 export(mvnpdf)

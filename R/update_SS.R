@@ -19,7 +19,7 @@ update_SS <- function(z, S){
       varz <- (z[,1]-zbar)%*%t(z[,1]-zbar)
       for(j in 2:n){
           varz <- varz + (z[,j]-zbar)%*%t(z[,j]-zbar)
-      } 
+      }
       lambda1 <- (lambda0 + kappa0*n/(kappa0 + n)*(zbar - mu0)%*%t(zbar - mu0)
                   + varz)
   } else{

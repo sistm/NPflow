@@ -117,7 +117,12 @@ gibbsDPMalgo4 <- function (z, hyperG0, alpha, N, doPlot=TRUE){
         fullCl <- which(m!=0)
         for(j in 1:length(fullCl)){
             obs_j <- which(c==fullCl[j])
-            U_SS[[fullCl[j]]] <- update_SS(z[,obs_j], U_SS[[fullCl[j]]])
+            if(is.null(U_SS[[fullCl[j]]])){
+                U_SS[[fullCl[j]]] <- update_SS(z=z[, obs_j], S=hyperG0)
+            } else{
+                U_SS[[fullCl[j]]] <- update_SS(z[,obs_j], 
+                                               S=U_SS[[fullCl[j]]])
+            }
             NiW <- normalinvwishrnd(U_SS[[fullCl[j]]])
             U_mu[, fullCl[j]] <- NiW[["mu"]]
             U_Sigma[, , fullCl[j]] <- NiW[["S"]]

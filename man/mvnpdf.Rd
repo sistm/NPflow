@@ -2,7 +2,7 @@
 \alias{mvnpdf}
 \title{meanltivariate  Normal  probability density function}
 \usage{
-mvnpdf(x, mean, varcovM)
+  mvnpdf(x, mean, varcovM)
 }
 \arguments{
   \item{x}{}
@@ -12,6 +12,6 @@ mvnpdf(x, mean, varcovM)
   \item{varcovM}{}
 }
 \description{
-meanltivariate Normal probability density function
+  meanltivariate Normal probability density function
 }
 
