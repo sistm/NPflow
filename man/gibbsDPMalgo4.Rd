@@ -2,7 +2,7 @@
 \alias{gibbsDPMalgo4}
 \title{Gibbs Sapling DPM Alghorithm 4: slice sampling}
 \usage{
-gibbsDPMalgo4(z, hyperG0, alpha, N, doPlot = TRUE)
+gibbsDPMalgo4(z, hyperG0, alpha, N, doPlot = TRUE, nbclust_init = 30)
 }
 \arguments{
   \item{z}{data}
@@ -51,9 +51,10 @@ for(k in 1:n){
  N <- 10
  # do some plots
  doPlot <- TRUE
+ nbclust_init <- 30
 
  # Gibbs sampler for Dirichlet Process Mixtures
- GibSample <- gibbsDPMalgo4(z, hyperG0, alpha, N, doPlot)
+ GibSample <- gibbsDPMalgo4(z, hyperG0, alpha, N, doPlot, nbclust_init)
 }
 \author{
 Boris Hejblum

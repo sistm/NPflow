@@ -100,7 +100,7 @@ gibbsDPMalgo2 <- function (z, hyperG0, alpha, N, doPlot=TRUE){
     
     cat(i, "/", N, " samplings\n", sep="")
     if(doPlot){
-        plot_DPM(z, U_mu, m, c, i)
+        plot_DPM(z, U_mu, U_Sigma, m, c, i)
     }
     
     
@@ -134,7 +134,7 @@ gibbsDPMalgo2 <- function (z, hyperG0, alpha, N, doPlot=TRUE){
         
         cat(i, "/", N, " samplings\n", sep="")
         if(doPlot){
-            plot_DPM(z, U_mu, m, c, i)
+            plot_DPM(z, U_mu, U_Sigma, m, c, i)
         }
     }
     return(list("clusters" = c, "U_mu" = U_mu, "U_Sigma" = U_Sigma, 

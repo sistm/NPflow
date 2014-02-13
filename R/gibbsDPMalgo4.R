@@ -47,12 +47,13 @@
 #'  N <- 10 
 #'  # do some plots
 #'  doPlot <- TRUE 
+#'  nbclust_init <- 30
 #'  
 #'  # Gibbs sampler for Dirichlet Process Mixtures
-#'  GibSample <- gibbsDPMalgo4(z, hyperG0, alpha, N, doPlot)
+#'  GibSample <- gibbsDPMalgo4(z, hyperG0, alpha, N, doPlot, nbclust_init)
 #'
 #'
-gibbsDPMalgo4 <- function (z, hyperG0, alpha, N, doPlot=TRUE){
+gibbsDPMalgo4 <- function (z, hyperG0, alpha, N, doPlot=TRUE, nbclust_init=30){
     
     if(doPlot){library(ggplot2)}
     
@@ -68,7 +69,6 @@ gibbsDPMalgo4 <- function (z, hyperG0, alpha, N, doPlot=TRUE){
     
     m <- numeric(n) # number of obs in each clusters
     c <-numeric(n)
-    ninit_clust <- 50
     
     # Initialisation----
     # each observation is assigned to a different cluster
@@ -76,7 +76,7 @@ gibbsDPMalgo4 <- function (z, hyperG0, alpha, N, doPlot=TRUE){
     # 50 observations
     
     i <- 1
-    if(ncol(z)<ninit_clust){       
+    if(ncol(z)<nbclust_init){       
         for (k in 1:n){
             c[k] <- k
             U_SS[[c[k]]] <- update_SS(z=z[, k], S=hyperG0)
@@ -86,7 +86,7 @@ gibbsDPMalgo4 <- function (z, hyperG0, alpha, N, doPlot=TRUE){
             m[c[k]] <- m[c[k]]+1
         }
     } else{
-        c <- sample(x=1:ninit_clust, size=n, replace=TRUE)
+        c <- sample(x=1:nbclust_init, size=n, replace=TRUE)
         for (k in unique(c)){
             obs_k <- which(c==k)
             U_SS[[k]] <- update_SS(z=z[, obs_k], S=hyperG0)
@@ -99,7 +99,7 @@ gibbsDPMalgo4 <- function (z, hyperG0, alpha, N, doPlot=TRUE){
         
     cat(i, "/", N, " samplings\n", sep="")
     if(doPlot){
-        plot_DPM(z, U_mu, m, c, i)
+        plot_DPM(z, U_mu, U_Sigma, m, c, i)
     }
     
     
@@ -115,22 +115,21 @@ gibbsDPMalgo4 <- function (z, hyperG0, alpha, N, doPlot=TRUE){
         
         # Update cluster locations
         fullCl <- which(m!=0)
-        for(j in 1:length(fullCl)){
-            obs_j <- which(c==fullCl[j])
-            if(is.null(U_SS[[fullCl[j]]])){
-                U_SS[[fullCl[j]]] <- update_SS(z=z[, obs_j], S=hyperG0)
+        for(j in fullCl){
+            obs_j <- which(c==j)
+            if(j > length(U_SS)){
+                U_SS[[j]] <- update_SS(z=z[, obs_j], S=hyperG0)
             } else{
-                U_SS[[fullCl[j]]] <- update_SS(z[,obs_j], 
-                                               S=U_SS[[fullCl[j]]])
+                U_SS[[j]] <- update_SS(z[,obs_j], S=U_SS[[j]])
             }
-            NiW <- normalinvwishrnd(U_SS[[fullCl[j]]])
-            U_mu[, fullCl[j]] <- NiW[["mu"]]
-            U_Sigma[, , fullCl[j]] <- NiW[["S"]]
+            NiW <- normalinvwishrnd(U_SS[[j]])
+            U_mu[, j] <- NiW[["mu"]]
+            U_Sigma[, , j] <- NiW[["S"]]
         }
         
         cat(i, "/", N, " samplings\n", sep="")
         if(doPlot){
-            plot_DPM(z, U_mu, m, c, i)
+            plot_DPM(z, U_mu, U_Sigma, m, c, i)
         }
     }
     return(list("clusters" = c, "U_mu" = U_mu, "U_Sigma" = U_Sigma, 

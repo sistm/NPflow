@@ -55,15 +55,16 @@
 #'  
 #'  # do some plots
 #'  doPlot <- TRUE 
+#'  nbclust_init <- 30
 #'  
 #'  # Gibbs sampler for Dirichlet Process Mixtures
-#'  MCMCsample <- gibbsDPMalgo5(z, hyperG0, a, b, N, doPlot)
+#'  MCMCsample <- gibbsDPMalgo5(z, hyperG0, a, b, N, doPlot, nbclust_init)
 #'  
 #'  alpha_m <- mean(MCMCsample$alpha[floor(length(MCMCsample$alpha)/2):length(MCMCsample$alpha)])
 #'  alpha_m*log(n/alpha_m) # order of the number of clusters
 #'
 #'
-gibbsDPMalgo5 <- function (z, hyperG0, a, b, N, doPlot=TRUE){
+gibbsDPMalgo5 <- function (z, hyperG0, a, b, N, doPlot=TRUE, nbclust_init=30){
     
     if(doPlot){library(ggplot2)}
     
@@ -84,7 +85,7 @@ gibbsDPMalgo5 <- function (z, hyperG0, a, b, N, doPlot=TRUE){
     
     m <- numeric(n) # number of obs in each clusters
     c <-numeric(n)
-    ninit_clust <- 50 # initial number of clusters
+     # initial number of clusters
     
     # Initialisation----
     # each observation is assigned to a different cluster
@@ -92,7 +93,7 @@ gibbsDPMalgo5 <- function (z, hyperG0, a, b, N, doPlot=TRUE){
     # 50 observations
     
     i <- 1
-    if(ncol(z)<ninit_clust){       
+    if(ncol(z)<nbclust_init){       
         for (k in 1:n){
             c[k] <- k
             U_SS[[c[k]]] <- update_SS(z=z[, k], S=hyperG0)
@@ -102,7 +103,7 @@ gibbsDPMalgo5 <- function (z, hyperG0, a, b, N, doPlot=TRUE){
             m[c[k]] <- m[c[k]]+1
         }
     } else{
-        c <- sample(x=1:ninit_clust, size=n, replace=TRUE)
+        c <- sample(x=1:nbclust_init, size=n, replace=TRUE)
         for (k in unique(c)){
             obs_k <- which(c==k)
             U_SS[[k]] <- update_SS(z=z[, obs_k], S=hyperG0)

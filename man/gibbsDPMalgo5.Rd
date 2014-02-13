@@ -3,7 +3,7 @@
 \title{Gibbs Sapling DPM Alghorithm 4: slice sampling
 with a prior on alpha}
 \usage{
-gibbsDPMalgo5(z, hyperG0, a, b, N, doPlot = TRUE)
+gibbsDPMalgo5(z, hyperG0, a, b, N, doPlot = TRUE, nbclust_init = 30)
 }
 \arguments{
   \item{z}{data}
@@ -60,9 +60,10 @@ for(k in 1:n){
 
  # do some plots
  doPlot <- TRUE
+ nbclust_init <- 30
 
  # Gibbs sampler for Dirichlet Process Mixtures
- MCMCsample <- gibbsDPMalgo5(z, hyperG0, a, b, N, doPlot)
+ MCMCsample <- gibbsDPMalgo5(z, hyperG0, a, b, N, doPlot, nbclust_init)
 
  alpha_m <- mean(MCMCsample$alpha[floor(length(MCMCsample$alpha)/2):length(MCMCsample$alpha)])
  alpha_m*log(n/alpha_m) # order of the number of clusters
