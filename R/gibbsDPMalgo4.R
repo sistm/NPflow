@@ -96,10 +96,11 @@ gibbsDPMalgo4 <- function (z, hyperG0, alpha, N, doPlot=TRUE, nbclust_init=30){
             m[k] <- m[k]+1
         }
     }
-        
+    
     cat(i, "/", N, " samplings\n", sep="")
     if(doPlot){
-        plot_DPM(z, U_mu, U_Sigma, m, c, i)
+        plot_DPM(z=z, U_mu=U_mu, U_Sigma=U_Sigma, 
+                 m=m, c=c, i=i, alpha=alpha)
     }
     
     
@@ -117,7 +118,7 @@ gibbsDPMalgo4 <- function (z, hyperG0, alpha, N, doPlot=TRUE, nbclust_init=30){
         fullCl <- which(m!=0)
         for(j in fullCl){
             obs_j <- which(c==j)
-            if(j > length(U_SS)){
+            if(j > length(U_SS) || is.null(U_SS[[j]])){
                 U_SS[[j]] <- update_SS(z=z[, obs_j], S=hyperG0)
             } else{
                 U_SS[[j]] <- update_SS(z[,obs_j], S=U_SS[[j]])
@@ -129,7 +130,8 @@ gibbsDPMalgo4 <- function (z, hyperG0, alpha, N, doPlot=TRUE, nbclust_init=30){
         
         cat(i, "/", N, " samplings\n", sep="")
         if(doPlot){
-            plot_DPM(z, U_mu, U_Sigma, m, c, i)
+            plot_DPM(z=z, U_mu=U_mu, U_Sigma=U_Sigma, 
+                     m=m, c=c, i=i, alpha=alpha)
         }
     }
     return(list("clusters" = c, "U_mu" = U_mu, "U_Sigma" = U_Sigma, 

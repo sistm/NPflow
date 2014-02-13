@@ -7,8 +7,7 @@ update_SS <- function(z, S){
   kappa0 <- S[["kappa"]]
   nu0 <- S[["nu"]]
   lambda0 <- S[["lambda"]]
-  
-  
+    
   if(!is.null(dim(z))){
       n <- ncol(z)
       zbar <- apply(X=z, MARGIN=1, FUN=mean)

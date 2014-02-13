@@ -1,6 +1,6 @@
 #' @keywords internal
 
-plot_DPM <- function(z, U_mu, U_Sigma, m, c, i){
+plot_DPM <- function(z, U_mu, U_Sigma=NULL, m, c, i, alpha="?"){
     fullCl <- which(m!=0)
     U_mu2plot <- U_mu[, fullCl]    
     zClusters <- factor(c, levels=as.character(fullCl), ordered=TRUE)
@@ -27,7 +27,18 @@ plot_DPM <- function(z, U_mu, U_Sigma, m, c, i){
     p <- (ggplot(z2plot) 
           + geom_point(aes(x=X, y=Y, colour=Cluster, order=Cluster), data=z2plot)
           + geom_point(aes(x=X, y=Y, fill=Cluster, order=Cluster), data=U2plot, shape=22, size=5)
-          + ggtitle(paste("Iteration", i))
+          + ggtitle(paste(ncol(z), " obs.",
+                          "\niteration ", i, " : ", 
+                          length(fullCl)," clusters",
+                          "\nexpected number of clusters: ", 
+                          ifelse(is.numeric(alpha), 
+                                 formatC(sum(alpha/(alpha_m + 1:ncol(z)-1)), digits=3), 
+                                 alpha),
+                          " (alpha = ", ifelse(is.numeric(alpha), 
+                                               formatC(alpha, digits=3)
+                                               , alpha)
+                          , ")",
+                          sep=""))
     )
     print(p)
 }

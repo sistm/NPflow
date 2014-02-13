@@ -3,18 +3,16 @@ slice_sample <- function(c, m, alpha, z, hyperG0, U_mu, U_Sigma){
     maxCl <- length(m) #maximum number of clusters
     ind <- unique(c) # non empty clusters
     fullCl <- which(m!=0) # indexes of non empty clusters
-    r <- sum(m)
     
     # Sample the weights, i.e. the frequency of each existing cluster from a Dirichlet:
-    # temp_1 ~ Gamma(m_1,1), ... , temp_K ~ Gamma(m_K,1), temp_{K+1} ~ Gamma(gamma, 1)
+    # temp_1 ~ Gamma(m_1,1), ... , temp_K ~ Gamma(m_K,1), temp_{K+1} ~ Gamma(alpha, 1)
     #renormalisation of temp
     w <- numeric(maxCl)
     temp <- rgamma(n=(length(ind)+1), shape=c(m[ind], alpha), scale = 1)
     #temp = gamrnd([m(ind); gamma], 1);
     temp_norm <- temp/sum(temp)
     w[ind] <- temp_norm[-length(temp_norm)]
-    R <- temp_norm[length(temp_norm)] #the rest of the wights
-    
+    R <- temp_norm[length(temp_norm)] #the rest of the weights
     
     # Sample the latent u
     u  <- runif(maxCl)*w[c]

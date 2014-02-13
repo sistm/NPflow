@@ -52,7 +52,7 @@ for(k in 1:n){
  hyperG0[["nu"]] <- 4
  hyperG0[["lambda"]] <- diag(2)
  # hyperprior on the Scale parameter of DPM
- a <- 0.001
+ a <- 0.1
  b <- 0.001
  plot(density(rgamma(n=5000, a, 1/b)))
  # Number of iterations
@@ -66,7 +66,9 @@ for(k in 1:n){
  MCMCsample <- gibbsDPMalgo5(z, hyperG0, a, b, N, doPlot, nbclust_init)
 
  alpha_m <- mean(MCMCsample$alpha[floor(length(MCMCsample$alpha)/2):length(MCMCsample$alpha)])
- alpha_m*log(n/alpha_m) # order of the number of clusters
+ sum(alpha_m/(alpha_m+1:n-1)) # expected number of clusters
+
+ plot(x=z[1,], y=z[2,], col=kmeans(t(z), centers=4)$cluster)
 }
 \author{
 Boris Hejblum

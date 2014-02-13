@@ -1,4 +1,5 @@
-#Sample from a normal inverse Wishart distribution whose parameter are given by the structure hyper
+#Sample from a normal inverse Wishart distribution 
+#whose parameter are given by the structure hyper
 normalinvwishrnd <- function(hyper){
   
   mu0 = hyper[["mu"]]

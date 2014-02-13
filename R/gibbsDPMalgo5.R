@@ -47,7 +47,7 @@
 #'  hyperG0[["nu"]] <- 4
 #'  hyperG0[["lambda"]] <- diag(2)
 #'  # hyperprior on the Scale parameter of DPM
-#'  a <- 0.001
+#'  a <- 0.1
 #'  b <- 0.001
 #'  plot(density(rgamma(n=5000, a, 1/b)))
 #'  # Number of iterations
@@ -61,7 +61,9 @@
 #'  MCMCsample <- gibbsDPMalgo5(z, hyperG0, a, b, N, doPlot, nbclust_init)
 #'  
 #'  alpha_m <- mean(MCMCsample$alpha[floor(length(MCMCsample$alpha)/2):length(MCMCsample$alpha)])
-#'  alpha_m*log(n/alpha_m) # order of the number of clusters
+#'  sum(alpha_m/(alpha_m+1:n-1)) # expected number of clusters
+#'  
+#'  plot(x=z[1,], y=z[2,], col=kmeans(t(z), centers=4)$cluster)
 #'
 #'
 gibbsDPMalgo5 <- function (z, hyperG0, a, b, N, doPlot=TRUE, nbclust_init=30){
@@ -114,24 +116,21 @@ gibbsDPMalgo5 <- function (z, hyperG0, a, b, N, doPlot=TRUE, nbclust_init=30){
         }
     }
     
-    cat(i, "/", N, " samplings\n", sep="")
-    if(doPlot){
-        plot_DPM(z, U_mu, U_Sigma, m, c, i)
-    }
-    
     
     
     nbClust <- length(unique(c))
-    alpha_init <- 3
-    alpha <- rgamma(n=1, shape=a + nbClust, 
-                    scale=1/(b-log(rbeta(n=1, 
-                                         shape1=alpha_init+1, 
-                                         shape2=n)))
-    )
-    alpha=0.1
+    alpha <- log(n)
+    
     
     U_SS_list[[i]] <- U_SS
     c_list[[i]] <- c
+    
+    cat(i, "/", N, " samplings\n", sep="")
+    if(doPlot){
+        plot_DPM(z=z, U_mu=U_mu, U_Sigma=U_Sigma, 
+                 m=m, c=c, i=i, alpha=alpha[length(alpha)])
+    }
+    
     
     for(i in 2:N){
         
@@ -152,7 +151,7 @@ gibbsDPMalgo5 <- function (z, hyperG0, a, b, N, doPlot=TRUE, nbclust_init=30){
         fullCl <- which(m!=0)
         for(j in fullCl){
             obs_j <- which(c==j)
-            if(j > length(U_SS)){
+            if(j > length(U_SS) || is.null(U_SS[[j]])){
                 U_SS[[j]] <- update_SS(z=z[, obs_j], S=hyperG0)
             } else{
                 U_SS[[j]] <- update_SS(z[,obs_j], S=U_SS[[j]])
@@ -168,7 +167,7 @@ gibbsDPMalgo5 <- function (z, hyperG0, a, b, N, doPlot=TRUE, nbclust_init=30){
         
         cat(i, "/", N, " samplings\n", sep="")
         if(doPlot){
-            plot_DPM(z, U_mu, U_Sigma, m, c, i)
+            plot_DPM(z, U_mu, U_Sigma, m, c, i, alpha=alpha[length(alpha)])
         }
     
     }
