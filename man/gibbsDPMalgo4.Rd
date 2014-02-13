@@ -2,19 +2,19 @@
 \alias{gibbsDPMalgo4}
 \title{Gibbs Sapling DPM Alghorithm 4: slice sampling}
 \usage{
-  gibbsDPMalgo4(z, hyperG0, alpha, N, doPlot = TRUE)
+gibbsDPMalgo4(z, hyperG0, alpha, N, doPlot = TRUE)
 }
 \arguments{
-  \item{z}{}
+  \item{z}{data}
 
-  \item{hyperG0}{}
+  \item{hyperG0}{prior mixing distribution}
 
-  \item{alpha}{}
+  \item{alpha}{parameter of the Dirichlet Process}
 
-  \item{N}{}
+  \item{N}{number of MCMC iterations}
 }
 \description{
-  Gibbs Sapling DPM Alghorithm 4: slice sampling
+Gibbs Sapling DPM Alghorithm 4: slice sampling
 }
 \examples{
 rm(list=ls())
@@ -56,6 +56,6 @@ for(k in 1:n){
  GibSample <- gibbsDPMalgo4(z, hyperG0, alpha, N, doPlot)
 }
 \author{
-  Francois Caron
+Boris Hejblum
 }
 

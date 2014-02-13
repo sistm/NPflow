@@ -69,21 +69,38 @@ gibbsDPMalgo2 <- function (z, hyperG0, alpha, N, doPlot=TRUE){
     m <- numeric(n)
     c <-numeric(n)
     
-    # Initialisation: each observation is assigned to a different cluster----
-
+    ninit_clust <- 50 # initial number of clusters
+    
+    # Initialisation----
+    # each observation is assigned to a different cluster
+    # or to 1 of the 50 initial clusters if there are more than
+    # 50 observations
+    
     i <- 1
-    for (k in 1:n){
-        c[k] <- k
-        U_SS[[c[k]]] <- update_SS(z=z[, k], S=hyperG0)
-        NiW <- normalinvwishrnd(U_SS[[c[k]]])
-        U_mu[, c[k]] <- NiW[["mu"]]
-        U_Sigma[, , c[k]] <- NiW[["S"]]
-        m[c[k]] <- m[c[k]]+1
+    if(ncol(z)<ninit_clust){       
+        for (k in 1:n){
+            c[k] <- k
+            U_SS[[c[k]]] <- update_SS(z=z[, k], S=hyperG0)
+            NiW <- normalinvwishrnd(U_SS[[c[k]]])
+            U_mu[, c[k]] <- NiW[["mu"]]
+            U_Sigma[, , c[k]] <- NiW[["S"]]
+            m[c[k]] <- m[c[k]]+1
+        }
+    } else{
+        c <- sample(x=1:ninit_clust, size=n, replace=TRUE)
+        for (k in unique(c)){
+            obs_k <- which(c==k)
+            U_SS[[k]] <- update_SS(z=z[, obs_k], S=hyperG0)
+            NiW <- normalinvwishrnd(U_SS[[k]])
+            U_mu[, k] <- NiW[["mu"]]
+            U_Sigma[, , k] <- NiW[["S"]]
+            m[k] <- m[k]+1
+        }
     }
     
     cat(i, "/", N, " samplings\n", sep="")
     if(doPlot){
-        plot_DPM2(z, U_mu, m, c, i)
+        plot_DPM(z, U_mu, m, c, i)
     }
     
     
@@ -117,7 +134,7 @@ gibbsDPMalgo2 <- function (z, hyperG0, alpha, N, doPlot=TRUE){
         
         cat(i, "/", N, " samplings\n", sep="")
         if(doPlot){
-            plot_DPM2(z, U_mu, m, c, i)
+            plot_DPM(z, U_mu, m, c, i)
         }
     }
     return(list("clusters" = c, "U_mu" = U_mu, "U_Sigma" = U_Sigma, 
@@ -161,20 +178,4 @@ sample_c <- function(m, alpha, z, hyperG0, U_mu, U_Sigma){
         K <- fullCl[ind]
     }
     return(K)
-}
-
-
-plot_DPM2 <- function(z, U_mu, m, c, i){
-    fullCl <- which(m!=0)
-    U_mu2plot <- U_mu[, fullCl]    
-    zClusters <- as.factor(c)
-    levels(zClusters) <- as.character(1:length(levels(zClusters)))
-    z2plot <- cbind.data.frame("X"=z[1,],"Y"=z[2,],"Cluster"=zClusters)
-    U2plot <- cbind.data.frame("X"=U_mu2plot[1,],"Y"=U_mu2plot[2,],"Cluster"=factor(1:dim(U_mu2plot)[2]))
-    p <- (ggplot(z2plot) 
-          + geom_point(aes(x=X, y=Y, col=Cluster), data=z2plot) 
-          + geom_point(aes(x=X, y=Y, col=Cluster), data=U2plot, shape="X", size=5)
-          + ggtitle(paste("Gibbs sampling for DPM - algo 2\nIteration", i))
-    )
-    print(p)
 }

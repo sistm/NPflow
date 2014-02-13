@@ -1,9 +1,9 @@
-\name{gibbsDPMalgo5}
-\alias{gibbsDPMalgo5}
+\name{gibbsDPMalgo6}
+\alias{gibbsDPMalgo6}
 \title{Gibbs Sapling DPM Alghorithm 4: slice sampling
-with a prior on alpha}
+kmeans at initialisation}
 \usage{
-gibbsDPMalgo5(z, hyperG0, a, b, N, doPlot = TRUE)
+gibbsDPMalgo6(z, hyperG0, a, b, N, doPlot = TRUE)
 }
 \arguments{
   \item{z}{data}
@@ -17,15 +17,14 @@ gibbsDPMalgo5(z, hyperG0, a, b, N, doPlot = TRUE)
   \item{N}{number of MCMC iterations}
 }
 \description{
-Gibbs Sapling DPM Alghorithm 4: slice sampling with a prior
-on alpha
+Gibbs Sapling DPM Alghorithm 4: slice sampling kmeans at
+initialisation
 }
 \examples{
 rm(list=ls())
 #Number of data
-n <- 2000
-set.seed(1234)
-#set.seed(4321)
+n <- 5000
+#set.seed(1231)
 
 # Sample data
 m <- matrix(nrow=2, ncol=4, c(-1, 1, 1.5, 2, 2, -2, -1.5, -2))
@@ -56,7 +55,7 @@ for(k in 1:n){
  b <- 0.001
  plot(density(rgamma(n=5000, a, 1/b)))
  # Number of iterations
- N <- 15
+ N <- 20
 
  # do some plots
  doPlot <- TRUE
@@ -65,7 +64,7 @@ for(k in 1:n){
  MCMCsample <- gibbsDPMalgo5(z, hyperG0, a, b, N, doPlot)
 
  alpha_m <- mean(MCMCsample$alpha[floor(length(MCMCsample$alpha)/2):length(MCMCsample$alpha)])
- alpha_m*log(n/alpha_m) # order of the number of clusters
+ alpha_m*log(ncol(z)/alpha_m) # order of magnitude of the number of clusters
 }
 \author{
 Boris Hejblum
