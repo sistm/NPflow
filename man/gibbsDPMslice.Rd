@@ -1,26 +1,34 @@
-\name{gibbsDPMalgo1}
-\alias{gibbsDPMalgo1}
-\title{Gibbs Sampling with Alghorithm 1}
+\name{gibbsDPMslice}
+\alias{gibbsDPMslice}
+\title{Slice Sampling of the Dirichlet Process Mixture Model}
 \usage{
-gibbsDPMalgo1(z, hyperG0, alpha, N, doPlot = TRUE)
+gibbsDPMslice(z, hyperG0, alpha, N, doPlot = TRUE, nbclust_init = 30)
 }
 \arguments{
-  \item{z}{}
+  \item{z}{data matrix \code{d x n} with \code{d}
+  dimensions in rows and \code{n} observations in columns.}
 
-  \item{hyperG0}{}
+  \item{hyperG0}{prior mixing distribution.}
 
-  \item{alpha}{}
+  \item{alpha}{parameter of the Dirichlet Process.}
 
-  \item{N}{}
+  \item{N}{number of MCMC iterations.}
+
+  \item{doPlot}{logical flag indicating wether to plot MCMC
+  iteration or not. Default to \code{TRUE}.}
+
+  \item{nbclust_init}{number of clusters at initialisation.
+  Default to 30 (or less if there are less than 30
+  observations).}
 }
 \description{
-Gibbs Sampling with Alghorithm 1
+Slice Sampling of the Dirichlet Process Mixture Model
 }
 \examples{
 rm(list=ls())
 #Number of data
 n <- 100
-set.seed(1231)
+set.seed(4321)
 
 # Sample data
 m <- matrix(nrow=2, ncol=4, c(-1, 1, 0, 2, 1, -2, -1, -2))
@@ -46,16 +54,17 @@ for(k in 1:n){
  hyperG0[["nu"]] <- 4
  hyperG0[["lambda"]] <- diag(2)
  # Scale parameter of DPM
- alpha <- 3
+ alpha <- 4
  # Number of iterations
- N <- 10
+ N <- 20
  # do some plots
  doPlot <- TRUE
+ nbclust_init <- 30
 
  # Gibbs sampler for Dirichlet Process Mixtures
- GibSample <- gibbsDPMalgo1(z, hyperG0, alpha, N, doPlot)
+ MCMCsample <- gibbsDPMslice(z, hyperG0, alpha, N, doPlot, nbclust_init)
 }
 \author{
-Francois Caron
+Boris Hejblum
 }
 

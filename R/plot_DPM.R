@@ -32,7 +32,7 @@ plot_DPM <- function(z, U_mu, U_Sigma=NULL, m, c, i, alpha="?"){
                           length(fullCl)," clusters",
                           "\nexpected number of clusters: ", 
                           ifelse(is.numeric(alpha), 
-                                 formatC(sum(alpha/(alpha_m + 1:ncol(z)-1)), digits=3), 
+                                 round(alpha*log(n/alpha)), 
                                  alpha),
                           " (alpha = ", ifelse(is.numeric(alpha), 
                                                formatC(alpha, digits=3)

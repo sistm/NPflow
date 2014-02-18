@@ -1,29 +1,32 @@
-#'Gibbs Sapling DPM Alghorithm 4: slice sampling
-#'with a prior on alpha
+#'Slice Sampling of the Dirichlet Process Mixture Model
 #'
-#'@param z data
+#'@param z data matrix \code{d x n} with \code{d} dimensions in rows 
+#'and \code{n} observations in columns.
 #'
-#'@param hyperG0 prior mixing distribution
+#'@param hyperG0 prior mixing distribution.
 #'
-#'@param a shape parameter f the Gamma hyperprior
+#'@param alpha parameter of the Dirichlet Process.
 #'
-#'@param b scale parameter f the Gamma hyperprior
+#'@param N number of MCMC iterations.
 #'
-#'@param N number of MCMC iterations
+#'@param doPlot logical flag indicating wether to plot MCMC iteration or not.
+#'Default to \code{TRUE}.
+#'
+#'@param nbclust_init number of clusters at initialisation. 
+#'Default to 30 (or less if there are less than 30 observations).
 #'
 #'@author Boris Hejblum
 #'
-#'@export gibbsDPMalgo5
+#'@export gibbsDPMslice
 #'
 #'@examples
 #' rm(list=ls())
 #' #Number of data
-#' n <- 2000
-#' set.seed(1234)
-#' #set.seed(4321)
+#' n <- 100
+#' set.seed(4321)
 #' 
 #' # Sample data
-#' m <- matrix(nrow=2, ncol=4, c(-1, 1, 1.5, 2, 2, -2, -1.5, -2))
+#' m <- matrix(nrow=2, ncol=4, c(-1, 1, 0, 2, 1, -2, -1, -2))
 #' p <- c(0.2, 0.1, 0.4, 0.3) # frequence des clusters
 #' 
 #' library(expm)
@@ -37,7 +40,6 @@
 #' for(k in 1:n){
 #'  c[k] = which(rmultinom(n=1, size=1, prob=p)!=0)
 #'  z[,k] <- m[, c[k]] + sqrtm(s[, , c[k]])%*%matrix(rnorm(2, mean = 0, sd = 1), nrow=2, ncol=1)
-#'  cat(k, "/", n, " observations simulated\n", sep="")
 #' }
 #'  
 #'  # Set parameters of G0
@@ -46,27 +48,18 @@
 #'  hyperG0[["kappa"]] <- 1
 #'  hyperG0[["nu"]] <- 4
 #'  hyperG0[["lambda"]] <- diag(2)
-#'  # hyperprior on the Scale parameter of DPM
-#'  a <- 0.1
-#'  b <- 0.001
-#'  plot(density(rgamma(n=5000, a, 1/b)))
+#'  # Scale parameter of DPM
+#'  alpha <- 4
 #'  # Number of iterations
-#'  N <- 15
-#'  
+#'  N <- 20 
 #'  # do some plots
 #'  doPlot <- TRUE 
 #'  nbclust_init <- 30
 #'  
 #'  # Gibbs sampler for Dirichlet Process Mixtures
-#'  MCMCsample <- gibbsDPMalgo5(z, hyperG0, a, b, N, doPlot, nbclust_init)
-#'  
-#'  alpha_m <- mean(MCMCsample$alpha[floor(length(MCMCsample$alpha)/2):length(MCMCsample$alpha)])
-#'  sum(alpha_m/(alpha_m+1:n-1)) # expected number of clusters
-#'  
-#'  plot(x=z[1,], y=z[2,], col=kmeans(t(z), centers=4)$cluster)
+#'  MCMCsample <- gibbsDPMslice(z, hyperG0, alpha, N, doPlot, nbclust_init)
 #'
-#'
-gibbsDPMalgo5 <- function (z, hyperG0, a, b, N, doPlot=TRUE, nbclust_init=30){
+gibbsDPMslice <- function (z, hyperG0, alpha, N, doPlot=TRUE, nbclust_init=30){
     
     if(doPlot){library(ggplot2)}
     
@@ -76,18 +69,12 @@ gibbsDPMalgo5 <- function (z, hyperG0, a, b, N, doPlot=TRUE, nbclust_init=30){
     U_mu <- matrix(0, nrow=p, ncol=n)
     U_Sigma = array(0, dim=c(p, p, n))
     
-    # U_SS is a list where each U_SS[[k]] contains the sufficient
+    # U_SS is a list where each U_SS[k] contains the sufficient
     # statistics associated to cluster k
     U_SS <- list()
     
-    #store U_SS :
-    U_SS_list <- list()
-    #store clustering :
-    c_list <- list()
-    
     m <- numeric(n) # number of obs in each clusters
     c <-numeric(n)
-     # initial number of clusters
     
     # Initialisation----
     # each observation is assigned to a different cluster
@@ -116,36 +103,22 @@ gibbsDPMalgo5 <- function (z, hyperG0, a, b, N, doPlot=TRUE, nbclust_init=30){
         }
     }
     
-    
-    
-    nbClust <- length(unique(c))
-    alpha <- log(n)
-    
-    
-    U_SS_list[[i]] <- U_SS
-    c_list[[i]] <- c
-    
     cat(i, "/", N, " samplings\n", sep="")
     if(doPlot){
         plot_DPM(z=z, U_mu=U_mu, U_Sigma=U_Sigma, 
-                 m=m, c=c, i=i, alpha=alpha[length(alpha)])
+                 m=m, c=c, i=i, alpha=alpha)
     }
     
     
     for(i in 2:N){
         
-        alpha <- c(alpha,
-                   sample_alpha(alpha_old=alpha[length(alpha)], n=n, 
-                                K=nbClust, a=a, b=b)
-        )
-        slice <- slice_sample(c=c, m=m, alpha=alpha[length(alpha)], 
-                              z=z, hyperG0=hyperG0, 
+        slice <- slice_sample(c=c, m=m, alpha=alpha, z=z, 
+                              hyperG0=hyperG0, 
                               U_mu=U_mu, U_Sigma=U_Sigma)
         m <- slice[["m"]]
         c <- slice[["c"]]
         U_mu <- slice[["U_mu"]]
         U_Sigma <- slice[["U_Sigma"]]
-        
         
         # Update cluster locations
         fullCl <- which(m!=0)
@@ -161,23 +134,15 @@ gibbsDPMalgo5 <- function (z, hyperG0, a, b, N, doPlot=TRUE, nbclust_init=30){
             U_Sigma[, , j] <- NiW[["S"]]
         }
         
-        
-        U_SS_list[[i]] <- U_SS[which(m!=0)]
-        c_list[[i]] <- c
-        
         cat(i, "/", N, " samplings\n", sep="")
         if(doPlot){
-            plot_DPM(z, U_mu, U_Sigma, m, c, i, alpha=alpha[length(alpha)])
+            plot_DPM(z=z, U_mu=U_mu, U_Sigma=U_Sigma, 
+                     m=m, c=c, i=i, alpha=alpha)
         }
-    
     }
-    
     return(list("clusters" = c, "U_mu" = U_mu, "U_Sigma" = U_Sigma, 
-                "partition" = m, "alpha"=alpha, "U_SS_list"=U_SS_list,
-                "c_list" = c_list))
+                "partition" = m))
 }
-
-
 
 
 

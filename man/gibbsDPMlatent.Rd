@@ -1,20 +1,26 @@
-\name{gibbsDPMalgo4}
-\alias{gibbsDPMalgo4}
-\title{Gibbs Sapling DPM Alghorithm 4: slice sampling}
+\name{gibbsDPMlatent}
+\alias{gibbsDPMlatent}
+\title{Gibbs Sampling of the Dirichlet Process Mixture Model
+with latent allocation variables}
 \usage{
-gibbsDPMalgo4(z, hyperG0, alpha, N, doPlot = TRUE, nbclust_init = 30)
+gibbsDPMlatent(z, hyperG0, alpha, N, doPlot = TRUE)
 }
 \arguments{
-  \item{z}{data}
+  \item{z}{data matrix \code{d x n} with \code{d}
+  dimensions in rows and \code{n} observations in columns.}
 
-  \item{hyperG0}{prior mixing distribution}
+  \item{hyperG0}{prior mixing distribution.}
 
-  \item{alpha}{parameter of the Dirichlet Process}
+  \item{alpha}{parameter of the Dirichlet Process.}
 
-  \item{N}{number of MCMC iterations}
+  \item{N}{number of MCMC iterations.}
+
+  \item{doPlot}{logical flag indicating wether to plot MCMC
+  iteration or not. Default to \code{TRUE}.}
 }
 \description{
-Gibbs Sapling DPM Alghorithm 4: slice sampling
+Gibbs Sampling of the Dirichlet Process Mixture Model with
+latent allocation variables
 }
 \examples{
 rm(list=ls())
@@ -46,17 +52,16 @@ for(k in 1:n){
  hyperG0[["nu"]] <- 4
  hyperG0[["lambda"]] <- diag(2)
  # Scale parameter of DPM
- alpha <- 4
+ alpha <- 3
  # Number of iterations
  N <- 10
  # do some plots
  doPlot <- TRUE
- nbclust_init <- 30
 
  # Gibbs sampler for Dirichlet Process Mixtures
- GibSample <- gibbsDPMalgo4(z, hyperG0, alpha, N, doPlot, nbclust_init)
+ GibSample <- gibbsDPMlatent(z, hyperG0, alpha, N, doPlot)
 }
 \author{
-Boris Hejblum
+Francois Caron
 }
 

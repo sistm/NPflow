@@ -1,30 +1,42 @@
-\name{gibbsDPMalgo5}
-\alias{gibbsDPMalgo5}
-\title{Gibbs Sapling DPM Alghorithm 4: slice sampling
+\name{gibbsDPMsliceprior}
+\alias{gibbsDPMsliceprior}
+\title{Slice Sampling of the Dirichlet Process Mixture Model
 with a prior on alpha}
 \usage{
-gibbsDPMalgo5(z, hyperG0, a, b, N, doPlot = TRUE, nbclust_init = 30)
+gibbsDPMsliceprior(z, hyperG0, a, b, N, doPlot = TRUE, nbclust_init = 30)
 }
 \arguments{
-  \item{z}{data}
+  \item{z}{data matrix \code{d x n} with \code{d}
+  dimensions in rows and \code{n} observations in columns.}
 
-  \item{hyperG0}{prior mixing distribution}
+  \item{hyperG0}{prior mixing distribution.}
 
-  \item{a}{shape parameter f the Gamma hyperprior}
+  \item{a}{shape hyperparameter of the Gamma prior on the
+  parameter of the Dirichlet Process.}
 
-  \item{b}{scale parameter f the Gamma hyperprior}
+  \item{b}{scale hyperparameter of the Gamma prior on the
+  parameter of the Dirichlet Process.}
 
-  \item{N}{number of MCMC iterations}
+  \item{N}{number of MCMC iterations.}
+
+  \item{doPlot}{logical flag indicating wether to plot MCMC
+  iteration or not. Default to \code{TRUE}.}
+
+  \item{nbclust_init}{number of clusters at initialisation.
+  Default to 30 (or less if there are less than 30
+  observations).}
 }
 \description{
-Gibbs Sapling DPM Alghorithm 4: slice sampling with a prior
-on alpha
+Slice Sampling of the Dirichlet Process Mixture Model with
+a prior on alpha
 }
 \examples{
 rm(list=ls())
 #Number of data
 n <- 2000
+#n <- 50000
 set.seed(1234)
+#set.seed(123)
 #set.seed(4321)
 
 # Sample data
@@ -56,19 +68,17 @@ for(k in 1:n){
  b <- 0.001
  plot(density(rgamma(n=5000, a, 1/b)))
  # Number of iterations
- N <- 15
+ N <- 25
 
  # do some plots
  doPlot <- TRUE
  nbclust_init <- 30
 
  # Gibbs sampler for Dirichlet Process Mixtures
- MCMCsample <- gibbsDPMalgo5(z, hyperG0, a, b, N, doPlot, nbclust_init)
+ MCMCsample <- gibbsDPMsliceprior(z, hyperG0, a, b, N, doPlot, nbclust_init)
 
- alpha_m <- mean(MCMCsample$alpha[floor(length(MCMCsample$alpha)/2):length(MCMCsample$alpha)])
- sum(alpha_m/(alpha_m+1:n-1)) # expected number of clusters
-
- plot(x=z[1,], y=z[2,], col=kmeans(t(z), centers=4)$cluster)
+ plot(x=z[1,], y=z[2,], col=kmeans(t(z), centers=4)$cluster,
+      xlab = "d = 1", ylab= "d = 2", main="k-means with K=4 clusters")
 }
 \author{
 Boris Hejblum

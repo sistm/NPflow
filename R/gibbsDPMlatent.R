@@ -1,16 +1,21 @@
-#'Gibbs Sampling with Alghorithm 2
+#'Gibbs Sampling of the Dirichlet Process Mixture Model
+#'with latent allocation variables
 #'
-#'@param z
+#'@param z data matrix \code{d x n} with \code{d} dimensions in rows 
+#'and \code{n} observations in columns.
 #'
-#'@param hyperG0
+#'@param hyperG0 prior mixing distribution.
 #'
-#'@param alpha
+#'@param alpha parameter of the Dirichlet Process.
 #'
-#'@param N
+#'@param N number of MCMC iterations.
+#'
+#'@param doPlot logical flag indicating wether to plot MCMC iteration or not.
+#'Default to \code{TRUE}.
 #'
 #'@author Francois Caron
 #'
-#'@export gibbsDPMalgo2
+#'@export gibbsDPMlatent
 #'
 #'@examples
 #' rm(list=ls())
@@ -49,10 +54,10 @@
 #'  doPlot <- TRUE 
 #'  
 #'  # Gibbs sampler for Dirichlet Process Mixtures
-#'  GibSample <- gibbsDPMalgo2(z, hyperG0, alpha, N, doPlot)
+#'  GibSample <- gibbsDPMlatent(z, hyperG0, alpha, N, doPlot)
 #'
 #'
-gibbsDPMalgo2 <- function (z, hyperG0, alpha, N, doPlot=TRUE){
+gibbsDPMlatent <- function (z, hyperG0, alpha, N, doPlot=TRUE){
     
     if(doPlot){library(ggplot2)}
     

@@ -1,26 +1,30 @@
-\name{gibbsDPMalgo2}
-\alias{gibbsDPMalgo2}
-\title{Gibbs Sampling with Alghorithm 2}
+\name{gibbsDPM}
+\alias{gibbsDPM}
+\title{Gibbs Sampling of the Dirichlet Process Mixture Model}
 \usage{
-gibbsDPMalgo2(z, hyperG0, alpha, N, doPlot = TRUE)
+gibbsDPM(z, hyperG0, alpha, N, doPlot = TRUE)
 }
 \arguments{
-  \item{z}{}
+  \item{z}{data matrix \code{d x n} with \code{d}
+  dimensions in rows and \code{n} observations in columns.}
 
-  \item{hyperG0}{}
+  \item{hyperG0}{prior mixing distribution.}
 
-  \item{alpha}{}
+  \item{alpha}{parameter of the Dirichlet Process.}
 
-  \item{N}{}
+  \item{N}{number of MCMC iterations.}
+
+  \item{doPlot}{logical flag indicating wether to plot MCMC
+  iteration or not. Default to \code{TRUE}.}
 }
 \description{
-Gibbs Sampling with Alghorithm 2
+Gibbs Sampling of the Dirichlet Process Mixture Model
 }
 \examples{
 rm(list=ls())
 #Number of data
 n <- 100
-#set.seed(1231)
+set.seed(1231)
 
 # Sample data
 m <- matrix(nrow=2, ncol=4, c(-1, 1, 0, 2, 1, -2, -1, -2))
@@ -53,7 +57,7 @@ for(k in 1:n){
  doPlot <- TRUE
 
  # Gibbs sampler for Dirichlet Process Mixtures
- GibSample <- gibbsDPMalgo2(z, hyperG0, alpha, N, doPlot)
+ GibSample <- gibbsDPM(z, hyperG0, alpha, N, doPlot)
 }
 \author{
 Francois Caron

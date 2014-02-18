@@ -5,14 +5,16 @@ slice_sample <- function(c, m, alpha, z, hyperG0, U_mu, U_Sigma){
     fullCl <- which(m!=0) # indexes of non empty clusters
     
     # Sample the weights, i.e. the frequency of each existing cluster from a Dirichlet:
-    # temp_1 ~ Gamma(m_1,1), ... , temp_K ~ Gamma(m_K,1), temp_{K+1} ~ Gamma(alpha, 1)
-    #renormalisation of temp
+    # temp_1 ~ Gamma(m_1,1), ... , temp_K ~ Gamma(m_K,1)    # and sample the rest of the weigth for potential new clusters:
+    # temp_{K+1} ~ Gamma(alpha, 1)
+    # then renormalise temp
     w <- numeric(maxCl)
     temp <- rgamma(n=(length(ind)+1), shape=c(m[ind], alpha), scale = 1)
-    #temp = gamrnd([m(ind); gamma], 1);
     temp_norm <- temp/sum(temp)
     w[ind] <- temp_norm[-length(temp_norm)]
-    R <- temp_norm[length(temp_norm)] #the rest of the weights
+    R <- temp_norm[length(temp_norm)] 
+    #R is the rest, i.e. the weight for potential new clusters
+    
     
     # Sample the latent u
     u  <- runif(maxCl)*w[c]
@@ -57,5 +59,5 @@ slice_sample <- function(c, m, alpha, z, hyperG0, U_mu, U_Sigma){
         m_new[c[i]] <- m_new[c[i]] + 1
     }
     
-    return(list("c"=c, "m"=m_new, "U_mu"=U_mu, "U_Sigma"=U_Sigma))
+    return(list("c"=c, "m"=m_new, "U_mu"=U_mu, "U_Sigma"=U_Sigma, "weights"=w))
 }
