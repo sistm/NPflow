@@ -79,6 +79,65 @@ for(k in 1:n){
 
  plot(x=z[1,], y=z[2,], col=kmeans(t(z), centers=4)$cluster,
       xlab = "d = 1", ylab= "d = 2", main="k-means with K=4 clusters")
+
+
+
+
+
+# Scaling up: ----
+#'rm(list=ls())
+#Number of data
+n <- 100000
+#n <- 50000
+set.seed(1234)
+#set.seed(123)
+#set.seed(4321)
+
+# Sample data
+d <- 15
+nclust <- 80
+m <- matrix(nrow=d, ncol=nclust, runif(d*nclust)*8)
+# p: cluster probabilities
+p <- runif(nclust)
+p <- p/sum(p)
+
+
+
+sd <- array(dim=c(d, d, nclust))
+for (j in 1:nclust){
+    sd1 <- runif(1)*0.5
+    sd2 <- runif(1)*0.05
+    sd[, ,j] <- matrix(nrow=d, ncol=d, c(sd1, sd2, sd2, sd1))
+}
+c <- rep(0,n)
+z <- matrix(0, nrow=d, ncol=n)
+for(k in 1:n){
+    c[k] = which(rmultinom(n=1, size=1, prob=p)!=0)
+    z[,k] <- m[, c[k]] + sd[, , c[k]]\%*\%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
+    cat(k, "/", n, " observations simulated\\n", sep="")
+}
+
+plot(z[1,], z[2,])
+
+# Set parameters of G0
+hyperG0 <- list()
+hyperG0[["mu"]] <- rep(0, d)
+hyperG0[["kappa"]] <- 1
+hyperG0[["nu"]] <- nclust
+hyperG0[["lambda"]] <- diag(d)
+
+# hyperprior on the Scale parameter of DPM
+a <- 0.1
+b <- 0.001
+plot(density(rgamma(n=5000, a, 1/b)))
+# Number of iterations
+N <- 25
+
+# do some plots
+doPlot <- TRUE
+nbclust_init <- 200
+
+MCMCsample <- gibbsDPMsliceprior(z, hyperG0, a, b, N, doPlot, nbclust_init=100)
 }
 \author{
 Boris Hejblum

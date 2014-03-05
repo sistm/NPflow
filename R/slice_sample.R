@@ -49,6 +49,7 @@ slice_sample <- function(c, m, alpha, z, hyperG0, U_mu, U_Sigma){
     l <- numeric(length(fullCl)) # likelihood of belonging to each cluster 
     m_new <- numeric(maxCl) # number of observations in each cluster
     
+    # TODO browser()
     for(i in 1:maxCl){
         for (j in fullCl_ind){
             l[j] <- mvnpdf(x = matrix(z[,i], nrow= 1, ncol=length(z[,i])) , 
@@ -57,7 +58,9 @@ slice_sample <- function(c, m, alpha, z, hyperG0, U_mu, U_Sigma){
         }
         c[i] <- which.max(l)
         m_new[c[i]] <- m_new[c[i]] + 1
+        # TODO cat(i,"\n")
     }
+    # TODO browser()
     
     return(list("c"=c, "m"=m_new, "U_mu"=U_mu, "U_Sigma"=U_Sigma, "weights"=w))
 }
