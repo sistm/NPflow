@@ -61,7 +61,7 @@ mvsnpdf <- function(x, xi, sigma, psi){
         if(dim(omega)[1]!=p){
             stop("omega is of the wrong size")
         }
-                
+        browser()        
         part1 <- 2*mvnpdf(x, mean=xi, varcovM=omega)
         part2 <- pnorm(t(alph)%*%diag(1/sqrt(diag(omega)))%*%(x0))
     }

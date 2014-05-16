@@ -65,13 +65,19 @@ mvnpdf <- function(x, mean, varcovM){
             x0 <- matrix(x0, ncol=1)
         }
         
-        R <- chol(varcovM)
-        Rinv = solve(R)
+        Rinv = backsolve(chol(varcovM),diag(p))
         xRinv <- apply(X=x0, MARGIN=2, FUN=crossprod, y=Rinv)
-        logSqrtDetvarcovM <- sum(log(diag(R)))
+        logSqrtDetvarcovM <- sum(log(diag(Rinv)))
         
         quadform <- apply(X=xRinv, MARGIN=2, FUN=crossprod)
-        y <- exp(-0.5*quadform - logSqrtDetvarcovM -p*log(2*pi)/2)
+        y <- exp(-0.5*quadform + logSqrtDetvarcovM -p*log(2*pi)/2)
+        
+#         dMvn <- function(X,mu,Sigma) {
+#             k <- ncol(X)
+#             rooti <- backsolve(chol(Sigma),diag(k))
+#             quads <- colSums((crossprod(rooti,(t(X)-mu)))^2)
+#             return(exp(-(k/2)*log(2*pi) + sum(log(diag(rooti))) - .5*quads))
+#         }
         
     }else{
         if(!is.list(varcovM)){
