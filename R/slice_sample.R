@@ -1,8 +1,7 @@
 slice_sample <- function(c, m, alpha, z, hyperG0, U_mu, U_Sigma){
     
     maxCl <- length(m) #maximum number of clusters
-    ind <- unique(c) # non empty clusters
-    fullCl <- which(m!=0) # indexes of non empty clusters
+    ind <- which(m!=0) # indexes of non empty clusters
     
     # Sample the weights, i.e. the frequency of each existing cluster from a Dirichlet:
     # temp_1 ~ Gamma(m_1,1), ... , temp_K ~ Gamma(m_K,1)    # and sample the rest of the weigth for potential new clusters:
@@ -42,17 +41,17 @@ slice_sample <- function(c, m, alpha, z, hyperG0, U_mu, U_Sigma){
             U_Sigma[, , ind_new[i]] <- NiW[["S"]]
         }
     }
-    fullCl <- fullCl + t
+    
     fullCl_ind <- which(w != 0)
     # calcul de la vraisemblance pour chaque données pour chaque clusters
     # assignation de chaque données à 1 cluster
-    l <- numeric(length(fullCl)) # likelihood of belonging to each cluster 
+    l <- numeric(length(fullCl_ind)) # likelihood of belonging to each cluster 
     m_new <- numeric(maxCl) # number of observations in each cluster
     
     # TODO browser()
     for(i in 1:maxCl){
         for (j in fullCl_ind){
-            l[j] <- mvnpdf(x = matrix(z[,i], nrow= 1, ncol=length(z[,i])) , 
+            l[j] <- mvnpdf(x = matrix(z[,i], ncol= 1, nrow=length(z[,i])) , 
                            mean = U_mu[, j], 
                            varcovM = U_Sigma[, , j])*w[j]  
         }
@@ -62,5 +61,5 @@ slice_sample <- function(c, m, alpha, z, hyperG0, U_mu, U_Sigma){
     }
     # TODO browser()
     
-    return(list("c"=c, "m"=m_new, "U_mu"=U_mu, "U_Sigma"=U_Sigma, "weights"=w))
+    return(list("c"=c, "m"=m_new, "weights"=w))
 }

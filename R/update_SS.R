@@ -1,5 +1,12 @@
-#Return updated sufficient statistics S of Normal Wishart distribution
-#with new data matrix z
+#' Return updated sufficient statistics S of Normal Wishart distribution
+#' with new data matrix z
+#' 
+#' For internal use only.
+#' 
+#'@keywords internal
+#'
+#'@export update_SS
+
 
 update_SS <- function(z, S){
   S_up <- S
@@ -21,6 +28,9 @@ update_SS <- function(z, S){
       }
       lambda1 <- (lambda0 + kappa0*n/(kappa0 + n)*(zbar - mu0)%*%t(zbar - mu0)
                   + varz)
+      #cat("lambda0 =", lambda0/(nu1-3), "\n")
+      #cat("lambda1 =", lambda1/(nu1-3), "\n")
+      #cat("varz =", varz/(nu1-3), "\n")
   } else{
       kappa1 <- kappa0 + 1
       nu1 <- nu0 + 1

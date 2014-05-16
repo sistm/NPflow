@@ -1,0 +1,100 @@
+\name{gibbsDPMsliceprior_parallel}
+\alias{gibbsDPMsliceprior_parallel}
+\title{Slice Sampling of the Dirichlet Process Mixture Model
+with a prior on alpha}
+\usage{
+gibbsDPMsliceprior_parallel(Ncpus, type_connec, z, hyperG0, a, b, N,
+  doPlot = TRUE, nbclust_init = 30, plotevery = 1, verbose = FALSE, ...)
+}
+\arguments{
+  \item{z}{data matrix \code{d x n} with \code{d}
+  dimensions in rows and \code{n} observations in columns.}
+
+  \item{hyperG0}{prior mixing distribution.}
+
+  \item{a}{shape hyperparameter of the Gamma prior on the
+  parameter of the Dirichlet Process.}
+
+  \item{b}{scale hyperparameter of the Gamma prior on the
+  parameter of the Dirichlet Process.}
+
+  \item{N}{number of MCMC iterations.}
+
+  \item{doPlot}{logical flag indicating wether to plot MCMC
+  iteration or not. Default to \code{TRUE}.}
+
+  \item{nbclust_init}{number of clusters at initialisation.
+  Default to 30 (or less if there are less than 30
+  observations).}
+
+  \item{verbose}{logical flag indicating whether the MCMC
+  iterations are printed in the log.  Default is
+  \code{FALSE}.}
+}
+\description{
+Slice Sampling of the Dirichlet Process Mixture Model with
+a prior on alpha
+}
+\examples{
+# Scaling up: ----
+rm(list=ls())
+#Number of data
+n <- 2000
+set.seed(1234)
+
+# Sample data
+d <- 10
+nclust <- 20
+m <- matrix(nrow=d, ncol=nclust, runif(d*nclust)*8)
+# p: cluster probabilities
+p <- runif(nclust)
+p <- p/sum(p)
+
+# Covariance matrix of the clusters
+sdev <- array(dim=c(d, d, nclust))
+for (j in 1:nclust){
+    sdev[, ,j] <- matrix(NA, nrow=d, ncol=d)
+    diag(sdev[, ,j]) <- abs(rnorm(n=d, mean=0.3, sd=0.1))
+    sdev[, ,j][lower.tri(sdev[, ,j], diag = FALSE)] <- rnorm(n=d*(d-1)/2,
+    mean=0, sd=0.05)
+    sdev[, ,j][upper.tri(sdev[, ,j], diag = FALSE)] <- sdev[, ,j][lower.tri(sdev[, ,j], diag = FALSE)]
+}
+c <- rep(0,n)
+z <- matrix(0, nrow=d, ncol=n)
+for(k in 1:n){
+    c[k] = which(rmultinom(n=1, size=1, prob=p)!=0)
+    z[,k] <- m[, c[k]] + sdev[, , c[k]]\%*\%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
+    cat(k, "/", n, " observations simulated\\n", sep="")
+}
+
+# hyperprior on the Scale parameter of DPM
+a <- 0.001
+b <- 0.001
+
+# Number of iterations
+N <- 25
+
+# do some plots
+doPlot <- TRUE
+
+# Set parameters of G0
+hyperG0 <- list()
+hyperG0[["mu"]] <- rep(0, d)
+hyperG0[["kappa"]] <- 0.01
+hyperG0[["nu"]] <- d + 2
+hyperG0[["lambda"]] <- diag(d)/10
+
+
+nbclust_init <- 30
+MCMCsample <- gibbsDPMsliceprior(z, hyperG0, a, b, N, doPlot=F, nbclust_init=30)
+
+plot_DPM(z=z, U_mu=MCMCsample$U_mu, U_Sigma=MCMCsample$U_Sigma,
+         m=MCMCsample$partition, c=MCMCsample$clusters,
+         i=N, alpha=MCMCsample$alpha[[1000]], U_SS=MCMCsample$U_SS_list[[1000]],
+         ellipses=T,
+         dims2plot=c(1,2))
+}
+\author{
+Boris Hejblum
+}
+

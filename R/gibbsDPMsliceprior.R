@@ -26,6 +26,7 @@
 #'
 #'@examples
 #' rm(list=ls())
+#' library(ggplot2)
 #' #Number of data
 #' n <- 500
 #' #n <- 2000
@@ -37,30 +38,51 @@
 #' m <- matrix(nrow=2, ncol=4, c(-1, 1, 1.5, 2, 2, -2, -1.5, -2))
 #' p <- c(0.2, 0.1, 0.4, 0.3) # frequence des clusters
 #' 
-#' library(expm)
-#' s <- array(dim=c(2,2,4))
-#' s[, ,1] <- matrix(nrow=2, ncol=2, c(0.1, 0, 0, 0.1))
-#' s[, ,2] <- matrix(nrow=2, ncol=2, c(0.01, 0, 0, 0.1))
-#' s[, ,3] <- matrix(nrow=2, ncol=2, c(0.1, 0.08, 0.08, 0.1))
-#' s[, ,4] <- .1*diag(2)
+#' sdev <- array(dim=c(2,2,4))
+#' sdev[, ,1] <- matrix(nrow=2, ncol=2, c(0.3, 0, 0, 0.3))
+#' sdev[, ,2] <- matrix(nrow=2, ncol=2, c(0.1, 0, 0, 0.3))
+#' sdev[, ,3] <- matrix(nrow=2, ncol=2, c(0.3, 0.15, 0.15, 0.3))
+#' sdev[, ,4] <- .3*diag(2)
 #' c <- rep(0,n)
 #' z <- matrix(0, nrow=2, ncol=n)
 #' for(k in 1:n){
 #'  c[k] = which(rmultinom(n=1, size=1, prob=p)!=0)
-#'  z[,k] <- m[, c[k]] + sqrtm(s[, , c[k]])%*%matrix(rnorm(2, mean = 0, sd = 1), nrow=2, ncol=1)
-#'  cat(k, "/", n, " observations simulated\n", sep="")
+#'  z[,k] <- m[, c[k]] + sdev[, , c[k]]%*%matrix(rnorm(2, mean = 0, sd = 1), nrow=2, ncol=1)
+#'  #cat(k, "/", n, " observations simulated\n", sep="")
 #' }
 #'  
+#'  d<-2
 #'  # Set parameters of G0
 #'  hyperG0 <- list()
-#'  hyperG0[["mu"]] <- c(0,0)
-#'  hyperG0[["kappa"]] <- 1
-#'  hyperG0[["nu"]] <- 4
-#'  hyperG0[["lambda"]] <- diag(2)
+#'  hyperG0[["mu"]] <- rep(0,d)
+#'  hyperG0[["kappa"]] <- 0.001
+#'  hyperG0[["nu"]] <- d+2
+#'  hyperG0[["lambda"]] <- diag(d)/10
+#'  
 #'  # hyperprior on the Scale parameter of DPM
-#'  a <- 1
-#'  b <- 5
-#'  prioralpha <- data.frame("alpha"=rgamma(n=5000, a, 1/b), 
+#'  a <- 0.0001
+#'  b <- 0.0001
+#'  
+#'  # Number of iterations
+#'  N <- 30
+#'  
+#'  # do some plots
+#'  doPlot <- TRUE 
+#'  nbclust_init <- 30
+#'  
+#'  
+#'  
+#'  ## Data
+#'  ########
+#'  p <- (ggplot(data.frame("X"=z[1,], "Y"=z[2,]), aes(x=X, y=Y)) 
+#'        + geom_point()
+#'        + ggtitle("Toy example Data"))
+#'  p
+#'  
+#'  
+#'  ## alpha priors plots
+#'  #####################
+#'  prioralpha <- data.frame("alpha"=rgamma(n=5000, shape=a, scale=1/b), 
 #'                          "distribution" =factor(rep("prior",5000), 
 #'                          levels=c("prior", "posterior")))
 #'  p <- (ggplot(prioralpha, aes(x=alpha))
@@ -71,32 +93,34 @@
 #'                  ",", b, ")\n", sep=""))
 #'       )
 #'  p
-#'  # Number of iterations
-#'  N <- 30
 #'  
-#'  # do some plots
-#'  doPlot <- TRUE 
-#'  nbclust_init <- 30
 #'  
-#'  p <- (ggplot(data, aes(x=X, y=Y)) 
-#'        + geom_point()
-#'        + ggtitle("Toy example Data"))
-#'  p
 #'  
 #'  # Gibbs sampler for Dirichlet Process Mixtures
-#'  MCMCsample <- gibbsDPMsliceprior(z, hyperG0, a, b, N, doPlot, nbclust_init)
+#'  ##############################################
+#'  Rprof("Rprof.out")
+#'  MCMCsample <- gibbsDPMsliceprior(z, hyperG0, a, b, N=100, doPlot, nbclust_init, plotevery=5)
+#'                  
+#'  plot_ConvDPM(MCMCsample, from=2)
+#'  
+#'  
+#'  
+#'  
+#'  
+#'  
+#'  # k-means
 #'  
 #'  plot(x=z[1,], y=z[2,], col=kmeans(t(z), centers=4)$cluster,
 #'       xlab = "d = 1", ylab= "d = 2", main="k-means with K=4 clusters")
 #'       
 #'  KM <- kmeans(t(z), centers=4)
-#'  data <- data.frame("X"=z[1,], "Y"=z[2,], 
+#'  dataKM <- data.frame("X"=z[1,], "Y"=z[2,], 
 #'                     "Cluster"=as.character(KM$cluster))
 #'  dataCenters <- data.frame("X"=KM$centers[,1], 
 #'                            "Y"=KM$centers[,2], 
 #'                            "Cluster"=rownames(KM$centers))
 #'  
-#'  p <- (ggplot(data) 
+#'  p <- (ggplot(dataKM) 
 #'        + geom_point(aes(x=X, y=Y, col=Cluster))
 #'        + geom_point(aes(x=X, y=Y, fill=Cluster, order=Cluster), 
 #'                     data=dataCenters, shape=22, size=5)
@@ -133,68 +157,14 @@
 #'
 #'
 #'
-#' # Scaling up: ----
-#' #'rm(list=ls())
-#' #Number of data
-#' n <- 100000
-#' #n <- 50000
-#' set.seed(1234)
-#' #set.seed(123)
-#' #set.seed(4321)
-#'
-#' # Sample data
-#' d <- 15
-#' nclust <- 80
-#' m <- matrix(nrow=d, ncol=nclust, runif(d*nclust)*8)
-#' # p: cluster probabilities
-#' p <- runif(nclust)
-#' p <- p/sum(p)
-#'
-#'
-#'
-#' sd <- array(dim=c(d, d, nclust))
-#' for (j in 1:nclust){
-#'     sd1 <- runif(1)*0.5
-#'     sd2 <- runif(1)*0.05
-#'     sd[, ,j] <- matrix(nrow=d, ncol=d, c(sd1, sd2, sd2, sd1))
-#' }
-#' c <- rep(0,n)
-#' z <- matrix(0, nrow=d, ncol=n)
-#' for(k in 1:n){
-#'     c[k] = which(rmultinom(n=1, size=1, prob=p)!=0)
-#'     z[,k] <- m[, c[k]] + sd[, , c[k]]%*%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
-#'     cat(k, "/", n, " observations simulated\n", sep="")
-#' }
-#' 
-#' plot(z[1,], z[2,])
-#' 
-#' # Set parameters of G0
-#' hyperG0 <- list()
-#' hyperG0[["mu"]] <- rep(0, d)
-#' hyperG0[["kappa"]] <- 1
-#' hyperG0[["nu"]] <- nclust
-#' hyperG0[["lambda"]] <- diag(d)
-#' 
-#' # hyperprior on the Scale parameter of DPM
-#' a <- 0.1
-#' b <- 0.001
-#' plot(density(rgamma(n=5000, a, 1/b)))
-#' # Number of iterations
-#' N <- 25
-#' 
-#' # do some plots
-#' doPlot <- TRUE
-#' nbclust_init <- 200
-#' 
-#' MCMCsample <- gibbsDPMsliceprior(z, hyperG0, a, b, N, doPlot, nbclust_init=100)
-#' 
-#'
-gibbsDPMsliceprior <- function (z, hyperG0, a, b, N, doPlot=TRUE, nbclust_init=30){
+
+gibbsDPMsliceprior <- function (z, hyperG0, a, b, N, doPlot=TRUE, 
+                                nbclust_init=30, plotevery=1, ...){
     
     if(doPlot){library(ggplot2)}
     
-    p <- dim(z)[1]
-    n <- dim(z)[2]
+    p <- nrow(z)
+    n <- ncol(z)
     U_mu <- matrix(0, nrow=p, ncol=n)
     U_Sigma = array(0, dim=c(p, p, n))
     
@@ -209,6 +179,12 @@ gibbsDPMsliceprior <- function (z, hyperG0, a, b, N, doPlot=TRUE, nbclust_init=3
     #store sliced weights
     weights_list <- list()
     
+    #store concentration parameter
+    alpha <- list()
+    
+    #store log posterior probability
+    logposterior_list <- list()
+    
     m <- numeric(n) # number of obs in each clusters
     c <-numeric(n)
     # initial number of clusters
@@ -219,9 +195,10 @@ gibbsDPMsliceprior <- function (z, hyperG0, a, b, N, doPlot=TRUE, nbclust_init=3
     # 50 observations
     
     i <- 1
-    if(ncol(z)<nbclust_init){       
+    if(n<nbclust_init){       
         for (k in 1:n){
             c[k] <- k
+            #cat("cluster ", k, ":\n")
             U_SS[[c[k]]] <- update_SS(z=z[, k], S=hyperG0)
             NiW <- normalinvwishrnd(U_SS[[c[k]]])
             U_mu[, c[k]] <- NiW[["mu"]]
@@ -232,74 +209,85 @@ gibbsDPMsliceprior <- function (z, hyperG0, a, b, N, doPlot=TRUE, nbclust_init=3
         c <- sample(x=1:nbclust_init, size=n, replace=TRUE)
         for (k in unique(c)){
             obs_k <- which(c==k)
+            #cat("cluster ", k, ":\n")
             U_SS[[k]] <- update_SS(z=z[, obs_k], S=hyperG0)
             NiW <- normalinvwishrnd(U_SS[[k]])
             U_mu[, k] <- NiW[["mu"]]
             U_Sigma[, , k] <- NiW[["S"]]
-            m[k] <- m[k]+1
+            m[k] <- length(obs_k)
         }
     }
     
     
     
-    alpha <- log(n)
-    
-    
+    alpha[[i]] <- c(log(n))
     U_SS_list[[i]] <- U_SS
     c_list[[i]] <- c
-    weights_list[[1]] <- numeric(length(m))
-    weights_list[[1]][1:length(unique(c))] <- table(c)/length(c)
+    weights_list[[i]] <- numeric(length(m))
+    weights_list[[i]][unique(c)] <- table(c)/length(c)
     
+    logposterior_list[[i]] <- logposterior_DPMG(z, mu=U_mu, Sigma=U_Sigma, 
+                                                hyper=hyperG0, c=c, m=m, alpha=alpha[[i]], n=n, a=a, b=b)
     
-    cat(i, "/", N, " samplings\n", sep="")
+    cat(i, "/", N, " samplings:\n", sep="")
+    cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="")
+    
     if(doPlot){
         plot_DPM(z=z, U_mu=U_mu, U_Sigma=U_Sigma, 
-                 m=m, c=c, i=i, alpha=alpha[length(alpha)])
+                 m=m, c=c, i=i, alpha=alpha[[i]], U_SS=U_SS, ...)
+    }else{
+        cl2print <- unique(c)
+        cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
     }
     
     
     for(i in 2:N){
-        
         nbClust <- length(unique(c))
-        alpha <- c(alpha,
-                   sample_alpha(alpha_old=alpha[length(alpha)], n=n, 
+        alpha[[i]] <- sample_alpha(alpha_old=alpha[[i-1]], n=n, 
                                 K=nbClust, a=a, b=b)
-        )
-        slice <- slice_sample(c=c, m=m, alpha=alpha[length(alpha)], 
+        slice <- slice_sample(c=c, m=m, alpha=alpha[[i]], 
                               z=z, hyperG0=hyperG0, 
                               U_mu=U_mu, U_Sigma=U_Sigma)
         m <- slice[["m"]]
-        c <- slice[["c"]]
-        U_mu <- slice[["U_mu"]]
-        U_Sigma <- slice[["U_Sigma"]]
-        
+        c <- slice[["c"]]        
         weights_list[[i]] <- slice[["weights"]]
         
-        
+
         # Update cluster locations
         fullCl <- which(m!=0)
         for(j in fullCl){
             obs_j <- which(c==j)
+            #cat("cluster ", j, ":\n")
             U_SS[[j]] <- update_SS(z=z[, obs_j], S=hyperG0)
             NiW <- normalinvwishrnd(U_SS[[j]])
             U_mu[, j] <- NiW[["mu"]]
             U_Sigma[, , j] <- NiW[["S"]]
+            #cat("sampled S =", NiW[["S"]], "\n\n\n")
         }
         
         
         U_SS_list[[i]] <- U_SS[which(m!=0)]
         c_list[[i]] <- c
+        logposterior_list[[i]] <- logposterior_DPMG(z, mu=U_mu, Sigma=U_Sigma, 
+                                                    hyper=hyperG0, c=c, m=m, alpha=alpha[[i]], n=n, a=a, b=b)
         
-        cat(i, "/", N, " samplings\n", sep="")
-        if(doPlot){
-            plot_DPM(z, U_mu, U_Sigma, m, c, i, alpha=alpha[length(alpha)])
+        cat(i, "/", N, " samplings:\n", sep="")
+        cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="")
+        
+        if(doPlot && i/plotevery==floor(i/plotevery)){
+            plot_DPM(z=z, U_mu=U_mu, U_Sigma=U_Sigma, m=m, c=c, i=i,
+                     alpha=alpha[[i]], U_SS=U_SS, ...)
+        }else{
+            cl2print <- unique(c)
+            cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
         }
         
     }
     
     return(list("clusters" = c, "U_mu" = U_mu, "U_Sigma" = U_Sigma, 
                 "partition" = m, "alpha"=alpha, "U_SS_list"=U_SS_list,
-                "c_list" = c_list, "weights_list"=weights_list))
+                "c_list" = c_list, "weights_list"=weights_list, 
+                "logposterior_list"=logposterior_list))
 }
 
 

@@ -1,5 +1,14 @@
-#Sample from a normal inverse Wishart distribution 
-#whose parameter are given by the structure hyper
+#' Sample from a normal inverse Wishart distribution 
+#' whose parameter are given by the structure hyper
+#'
+#' 
+#' For internal use only.
+#' 
+#'@keywords internal
+#'
+#'@export normalinvwishrnd
+#'
+
 normalinvwishrnd <- function(hyper){
   
   mu0 = hyper[["mu"]]
@@ -12,8 +21,8 @@ normalinvwishrnd <- function(hyper){
   
   # Sample mu from a normal distribution
  
-  muSupp <- chol(S/kappa0)%*%matrix(rnorm(length(mu0)), 
-                                 nrow=length(mu0), ncol=1)
+  muSupp <- matrix(rnorm(length(mu0)), nrow=1, 
+                   ncol=length(mu0))%*%chol(S/kappa0)
   mu = mu0 + as.vector(muSupp)
   
   

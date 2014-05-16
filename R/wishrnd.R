@@ -1,6 +1,13 @@
-# Sample from a Wishart distribution
-# n : degrees of freedom
-# Sigma : scale parameter
+#' Sample from a Wishart distribution
+#' 
+#' For internal use only.
+#' 
+#'@param n degrees of freedom
+#'@param Sigma scale parameter
+#' 
+#'@keywords internal
+#'
+#'@export update_SS
 
 wishrnd <- function(n, Sigma){
   
@@ -11,8 +18,8 @@ wishrnd <- function(n, Sigma){
     stop('Error : Matrix not square\n')
   }
   
-  x=chol(Sigma)%*%matrix(rnorm(p*n), nrow=p, ncol=n)
-  W=x%*%t(x)
+  x=matrix(rnorm(n=n*p), nrow=n, ncol=p)%*%chol(Sigma)
+  W=t(x)%*%x
   
   return(W)
 }

@@ -1,0 +1,12 @@
+\name{update_SSsn}
+\alias{update_SSsn}
+\title{Return updated sufficient statistics S of Normal Wishart distribution
+with new data matrix z}
+\usage{
+update_SSsn(z, S, ltn)
+}
+\description{
+For internal use only.
+}
+\keyword{internal}
+

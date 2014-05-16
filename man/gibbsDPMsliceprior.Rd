@@ -3,7 +3,8 @@
 \title{Slice Sampling of the Dirichlet Process Mixture Model
 with a prior on alpha}
 \usage{
-gibbsDPMsliceprior(z, hyperG0, a, b, N, doPlot = TRUE, nbclust_init = 30)
+gibbsDPMsliceprior(z, hyperG0, a, b, N, doPlot = TRUE, nbclust_init = 30,
+  plotevery = 1, ...)
 }
 \arguments{
   \item{z}{data matrix \code{d x n} with \code{d}
@@ -32,9 +33,10 @@ a prior on alpha
 }
 \examples{
 rm(list=ls())
+library(ggplot2)
 #Number of data
-n <- 2000
-#n <- 50000
+n <- 500
+#n <- 2000
 set.seed(1234)
 #set.seed(123)
 #set.seed(4321)
@@ -43,101 +45,120 @@ set.seed(1234)
 m <- matrix(nrow=2, ncol=4, c(-1, 1, 1.5, 2, 2, -2, -1.5, -2))
 p <- c(0.2, 0.1, 0.4, 0.3) # frequence des clusters
 
-library(expm)
-s <- array(dim=c(2,2,4))
-s[, ,1] <- matrix(nrow=2, ncol=2, c(0.1, 0, 0, 0.1))
-s[, ,2] <- matrix(nrow=2, ncol=2, c(0.01, 0, 0, 0.1))
-s[, ,3] <- matrix(nrow=2, ncol=2, c(0.1, 0.08, 0.08, 0.1))
-s[, ,4] <- .1*diag(2)
+sdev <- array(dim=c(2,2,4))
+sdev[, ,1] <- matrix(nrow=2, ncol=2, c(0.3, 0, 0, 0.3))
+sdev[, ,2] <- matrix(nrow=2, ncol=2, c(0.1, 0, 0, 0.3))
+sdev[, ,3] <- matrix(nrow=2, ncol=2, c(0.3, 0.15, 0.15, 0.3))
+sdev[, ,4] <- .3*diag(2)
 c <- rep(0,n)
 z <- matrix(0, nrow=2, ncol=n)
 for(k in 1:n){
  c[k] = which(rmultinom(n=1, size=1, prob=p)!=0)
- z[,k] <- m[, c[k]] + sqrtm(s[, , c[k]])\%*\%matrix(rnorm(2, mean = 0, sd = 1), nrow=2, ncol=1)
- cat(k, "/", n, " observations simulated\\n", sep="")
+ z[,k] <- m[, c[k]] + sdev[, , c[k]]\%*\%matrix(rnorm(2, mean = 0, sd = 1), nrow=2, ncol=1)
+ #cat(k, "/", n, " observations simulated\\n", sep="")
 }
 
+ d<-2
  # Set parameters of G0
  hyperG0 <- list()
- hyperG0[["mu"]] <- c(0,0)
- hyperG0[["kappa"]] <- 1
- hyperG0[["nu"]] <- 4
- hyperG0[["lambda"]] <- diag(2)
+ hyperG0[["mu"]] <- rep(0,d)
+ hyperG0[["kappa"]] <- 0.001
+ hyperG0[["nu"]] <- d+2
+ hyperG0[["lambda"]] <- diag(d)/10
+
  # hyperprior on the Scale parameter of DPM
- a <- 0.1
- b <- 0.001
- plot(density(rgamma(n=5000, a, 1/b)))
+ a <- 0.0001
+ b <- 0.0001
+
  # Number of iterations
- N <- 25
+ N <- 30
 
  # do some plots
  doPlot <- TRUE
  nbclust_init <- 30
 
+
+
+ ## Data
+ ########
+ p <- (ggplot(data.frame("X"=z[1,], "Y"=z[2,]), aes(x=X, y=Y))
+       + geom_point()
+       + ggtitle("Toy example Data"))
+ p
+
+
+ ## alpha priors plots
+ #####################
+ prioralpha <- data.frame("alpha"=rgamma(n=5000, shape=a, scale=1/b),
+                         "distribution" =factor(rep("prior",5000),
+                         levels=c("prior", "posterior")))
+ p <- (ggplot(prioralpha, aes(x=alpha))
+       + geom_histogram(aes(y=..density..),
+                        colour="black", fill="white")
+       + geom_density(alpha=.2, fill="red")
+       + ggtitle(paste("Prior distribution on alpha: Gamma(", a,
+                 ",", b, ")\\n", sep=""))
+      )
+ p
+
+
+
  # Gibbs sampler for Dirichlet Process Mixtures
- MCMCsample <- gibbsDPMsliceprior(z, hyperG0, a, b, N, doPlot, nbclust_init)
+ ##############################################
+ Rprof("Rprof.out")
+ MCMCsample <- gibbsDPMsliceprior(z, hyperG0, a, b, N=100, doPlot, nbclust_init, plotevery=5)
+
+ plot_ConvDPM(MCMCsample, from=2)
+
+
+
+
+
+
+ # k-means
 
  plot(x=z[1,], y=z[2,], col=kmeans(t(z), centers=4)$cluster,
       xlab = "d = 1", ylab= "d = 2", main="k-means with K=4 clusters")
 
+ KM <- kmeans(t(z), centers=4)
+ dataKM <- data.frame("X"=z[1,], "Y"=z[2,],
+                    "Cluster"=as.character(KM$cluster))
+ dataCenters <- data.frame("X"=KM$centers[,1],
+                           "Y"=KM$centers[,2],
+                           "Cluster"=rownames(KM$centers))
 
+ p <- (ggplot(dataKM)
+       + geom_point(aes(x=X, y=Y, col=Cluster))
+       + geom_point(aes(x=X, y=Y, fill=Cluster, order=Cluster),
+                    data=dataCenters, shape=22, size=5)
+       + scale_colour_discrete(name="Cluster")
+       + ggtitle("K-means with K=4 clusters\\n"))
+ p
 
+ postalpha <- data.frame("alpha"=MCMCsample$alpha[50:500],
+                         "distribution" = factor(rep("posterior",500-49),
+                         levels=c("prior", "posterior")))
+ p <- (ggplot(postalpha, aes(x=alpha))
+       + geom_histogram(aes(y=..density..), binwidth=.1,
+                        colour="black", fill="white")
+       + geom_density(alpha=.2, fill="blue")
+       + ggtitle("Posterior distribution of alpha\\n")
+       + geom_vline(aes(xintercept=mean(alpha, na.rm=T)),   # Ignore NA values for mean
+                    color="red", linetype="dashed", size=1)  # Overlay with transparent density plot
+     )
+ p
 
-
-# Scaling up: ----
-#'rm(list=ls())
-#Number of data
-n <- 100000
-#n <- 50000
-set.seed(1234)
-#set.seed(123)
-#set.seed(4321)
-
-# Sample data
-d <- 15
-nclust <- 80
-m <- matrix(nrow=d, ncol=nclust, runif(d*nclust)*8)
-# p: cluster probabilities
-p <- runif(nclust)
-p <- p/sum(p)
-
-
-
-sd <- array(dim=c(d, d, nclust))
-for (j in 1:nclust){
-    sd1 <- runif(1)*0.5
-    sd2 <- runif(1)*0.05
-    sd[, ,j] <- matrix(nrow=d, ncol=d, c(sd1, sd2, sd2, sd1))
-}
-c <- rep(0,n)
-z <- matrix(0, nrow=d, ncol=n)
-for(k in 1:n){
-    c[k] = which(rmultinom(n=1, size=1, prob=p)!=0)
-    z[,k] <- m[, c[k]] + sd[, , c[k]]\%*\%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
-    cat(k, "/", n, " observations simulated\\n", sep="")
-}
-
-plot(z[1,], z[2,])
-
-# Set parameters of G0
-hyperG0 <- list()
-hyperG0[["mu"]] <- rep(0, d)
-hyperG0[["kappa"]] <- 1
-hyperG0[["nu"]] <- nclust
-hyperG0[["lambda"]] <- diag(d)
-
-# hyperprior on the Scale parameter of DPM
-a <- 0.1
-b <- 0.001
-plot(density(rgamma(n=5000, a, 1/b)))
-# Number of iterations
-N <- 25
-
-# do some plots
-doPlot <- TRUE
-nbclust_init <- 200
-
-MCMCsample <- gibbsDPMsliceprior(z, hyperG0, a, b, N, doPlot, nbclust_init=100)
+ p <- (ggplot(drop=FALSE, alpha=.6)
+       + geom_density(aes(x=alpha, fill=distribution),
+                      color=NA, alpha=.6,
+                      data=prioralpha)
+       + geom_density(aes(x=alpha, fill=distribution),
+                      color=NA, alpha=.6,
+                      data=postalpha)
+       + ggtitle("Prior and posterior distributions of alpha\\n")
+       + scale_fill_discrete(drop=FALSE)
+     )
+ p
 }
 \author{
 Boris Hejblum

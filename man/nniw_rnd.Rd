@@ -1,0 +1,12 @@
+\name{nniw_rnd}
+\alias{nniw_rnd}
+\title{Sample from a normal inverse Wishart distribution
+whose parameter are given by the structure SufStat}
+\usage{
+nniw_rnd(SufStat)
+}
+\description{
+For internal use only.
+}
+\keyword{internal}
+

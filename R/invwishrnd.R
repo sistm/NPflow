@@ -3,7 +3,7 @@
 # lambda : scale parameter
 
 invwishrnd <- function(n,lambda){
-  iS=wishrnd(n = n, Sigma = solve(lambda))
-  S=solve(iS)
-  return(S)
+    iS=wishrnd(n = n, Sigma = solve(lambda))
+    S=solve(iS)
+    return(S)
 }
