@@ -65,7 +65,7 @@ mvnpdf <- function(x, mean, varcovM){
             x0 <- matrix(x0, ncol=1)
         }
         
-        Rinv = backsolve(chol(varcovM),diag(p))
+        Rinv = backsolve(chol(varcovM),x=diag(p))
         xRinv <- apply(X=x0, MARGIN=2, FUN=crossprod, y=Rinv)
         logSqrtDetvarcovM <- sum(log(diag(Rinv)))
         
@@ -89,11 +89,11 @@ mvnpdf <- function(x, mean, varcovM){
             x0 <- lapply(x0, FUN='[[', 1)
         }
         R <- lapply(varcovM, FUN=chol)
-        Rinv <- lapply(X=R, FUN=solve)
+        Rinv <- lapply(X=R, FUN=backsolve, x=diag(p))
         xRinv <- mapply(FUN='%*%', x=x0, y=Rinv, SIMPLIFY=FALSE)
-        logSqrtDetvarcovM <- lapply(X=R, FUN=function(X){sum(log(diag(X)))})
+        logSqrtDetvarcovM <- lapply(X=Rinv, FUN=function(X){sum(log(diag(X)))})
         quadform <- lapply(X=xRinv, FUN=tcrossprod)
-        y <- mapply(FUN=function(x,y){exp(-0.5*x - y -p*log(2*pi)/2)},
+        y <- mapply(FUN=function(x,y){exp(-0.5*x + y -p*log(2*pi)/2)},
                     x=quadform, y=logSqrtDetvarcovM)  
     }
     

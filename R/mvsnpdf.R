@@ -53,7 +53,7 @@ mvsnpdf <- function(x, xi, sigma, psi){
         omegaInv <- solve(omega)
         smallomega <- diag(sqrt(diag(omega)))
         alph <- (smallomega%*%omegaInv%*%psi
-                  /as.vector(sqrt(1-t(psi)%*%omegaInv%*%psi)))
+                  /as.vector(sqrt(1-crossprod(psi,omegaInv)%*%psi)))
         
         if(dim(omega)[1]!=dim(omega)[2]){
             stop("omega is not a square matrix")
