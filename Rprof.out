@@ -1,8 +1,0 @@
-sample.interval=20000
-"file.exists" "index.search" "help" "print" "<Anonymous>" 
-"readRDS" "<Anonymous>" "doTryCatch" "tryCatchOne" "tryCatchList" "tryCatch" "try" 
-"writeLinesUTF8" "of1" "writeBlock" "writeContent" "writeWrapped" "writeBlock" "writeContent" "writeContent" "writeSection" "Rd2HTML" "<Anonymous>" "doTryCatch" "tryCatchOne" "tryCatchList" "tryCatch" "try" 
-"writeContent" "writeSection" "Rd2HTML" "<Anonymous>" "doTryCatch" "tryCatchOne" "tryCatchList" "tryCatch" "try" 
-"readRDS" "index.search" "help" "print" "<Anonymous>" 
-"FUN" "lapply" "sapply" "RdTags" ".Rd_get_section" ".Rd_get_title" "gsub" ".Rd_format_title" "strwrap" "Rd2HTML" "<Anonymous>" "doTryCatch" "tryCatchOne" "tryCatchList" "tryCatch" "try" 
-"close.connection" "close" "Rd2HTML" "<Anonymous>" "doTryCatch" "tryCatchOne" "tryCatchList" "tryCatch" "try" 
