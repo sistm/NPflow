@@ -1,4 +1,4 @@
-#' Sample from a normal inverse Wishart distribution 
+#' Sample from a normal inverse-Wishart distribution 
 #' whose parameter are given by the structure hyper
 #'
 #' 

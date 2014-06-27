@@ -2,10 +2,10 @@
 #'
 #' @export plot_DPMsn
 
-plot_DPMsn <- function(z, U_xi, U_psi, U_Sigma, m, c, i, alpha="?", U_SS=NULL,
+plot_DPMsn <- function(z, c, i="", alpha="?", U_SS,
                        dims2plot=1:nrow(z),
                        ellipses=ifelse(length(dims2plot)<3,TRUE,FALSE),
-                       gg.add=list(theme())){ 
+                       gg.add=list(theme()), nbsim_dens=1000){ 
     library(ellipse)
     library(reshape2)
     mean_sn01 <- (dnorm(0)-dnorm(Inf))/(pnorm(Inf)-pnorm(0))
@@ -15,32 +15,23 @@ plot_DPMsn <- function(z, U_xi, U_psi, U_Sigma, m, c, i, alpha="?", U_SS=NULL,
     
     n <- ncol(z)
     p <- nrow(z)
+    m <- numeric(n) # number of observations in each cluster
+    m[unique(c)] <- table(c)[as.character(unique(c))]
     
     fullCl <- which(m!=0)
     
-    if(is.list(U_xi)){
-        U_mu2plot <- matrix(0, nrow=p, ncol=length(fullCl))
-        U_Sigma2plot <- array(0, dim=c(p, p, length(fullCl)))
-        for(i in 1:length(fullCl)){
-            k <- as.character(fullCl[i])
-            U_mu2plot[,i] <- U_xi[[k]][dims2plot]+U_psi[[k]][dims2plot]*mean_sn01
-            colnames(U_mu2plot) <- fullCl
-            rownames(U_mu2plot) <- rownames(z)
-            U_Sigma2plot[, , i] <- U_Sigma[[k]][dims2plot, dims2plot]
-        }
-    }else{
-        U_mu2plot <- U_xi[, fullCl, drop=FALSE] + U_psi[, fullCl, drop=FALSE]*mean_sn01
-        rownames(U_mu2plot) <- rownames(z)
-        U_Sigma2plot <- U_Sigma[, , fullCl]
-        U_xi2plot <- U_xi[, fullCl, drop=FALSE]
-        rownames(U_xi2plot) <- rownames(z)
-    }
-    U_SS2plot <- U_SS#[fullCl]
+    
+    U_xi2plot=sapply(U_SS, "[[", "xi")
+    U_psi2plot=sapply(U_SS, "[[", "psi")
+    U_Sigma2plot=lapply(U_SS, "[[", "S")
+    U_SS2plot <- U_SS
+    U_mu2plot <- U_xi2plot + U_psi2plot*mean_sn01
+    rownames(U_mu2plot) <- rownames(z)
     zClusters <- factor(c, levels=as.character(fullCl), ordered=TRUE)
-    #levels(zClusters) <- as.character(1:length(levels(zClusters)))
     
     expK <- ifelse(is.numeric(alpha), round(alpha*(digamma(alpha+n)-digamma(alpha))), NA)
     alpha2print <- ifelse(is.numeric(alpha), formatC(alpha, digits=2), alpha)
+    
     
     library(ellipse)
     
@@ -173,12 +164,12 @@ plot_DPMsn <- function(z, U_xi, U_psi, U_Sigma, m, c, i, alpha="?", U_SS=NULL,
             simuDens <- NULL
             for(g in 1:length(fullCl)){
                 glabel <- levels(zClusters)[g]
-                gind <- as.numeric(glabel)
-                ltnz <- rtruncnorm(5000, a=0)
-                eps <- matrix(rnorm(2*5000), ncol=2)%*%chol(U_Sigma[,,gind])
-                simuDenstemp <- data.frame("D1"=U_xi[1,gind]+U_psi[1,gind]*ltnz+eps[,1], 
-                                           "D2"=U_xi[2,gind]+U_psi[2,gind]*ltnz+eps[,2], 
-                                           "Cluster"=rep(glabel, 5000))
+                #gind <- as.numeric(glabel)
+                ltnz <- rtruncnorm(nbsim_dens, a=0)
+                eps <- matrix(rnorm(2*nbsim_dens), ncol=2)%*%chol(U_Sigma2plot[[g]])
+                simuDenstemp <- data.frame("D1"=U_xi2plot[1,g]+U_psi2plot[1,g]*ltnz+eps[,1], 
+                                           "D2"=U_xi2plot[2,g]+U_psi2plot[2,g]*ltnz+eps[,2], 
+                                           "Cluster"=rep(glabel, nbsim_dens))
                 simuDens <- rbind.data.frame(simuDens, simuDenstemp)
             }
             

@@ -8,10 +8,10 @@ logposterior_DPMSN <- function(z, xi, psi, Sigma, B, hyper, c, m, alpha, n, a, b
     if(!is.list(xi)){
         if(is.null(dim(xi))){
             log_vrais <- sum(log(mvsnpdf(x = z, xi = xi, sigma = Sigma, psi = psi)))
-            log_prior_NNiW <-  sum(log(dNNiW(xi, psi, B, Sigma, hyperprior=hyper)))
+            log_prior_NNiW <-  sum(log(dNNiW(xi, psi, B, Sigma, hyperprior=hyper, log=TRUE)))
         } else{
             log_vrais <- sum(log(mvsnpdf(x = z, xi = xi[, c], sigma = Sigma[, , c], psi = psi[, c])))
-            log_prior_NNiW <-  sum(log(dNNiW(xi[,indfull], psi[,indfull], B[,,indfull], Sigma[,,indfull], hyperprior=hyper)))
+            log_prior_NNiW <-  sum(dNNiW(xi[,indfull], psi[,indfull], B[,,indfull], Sigma[,,indfull], hyperprior=hyper, log=TRUE))
         }
     }else{
         log_vrais <- sum(log(mvsnpdf(x = z, xi = xi[as.character(c)], 
@@ -20,7 +20,7 @@ logposterior_DPMSN <- function(z, xi, psi, Sigma, B, hyper, c, m, alpha, n, a, b
                                          psi[as.character(indfull)],
                                          B[as.character(indfull)], 
                                          Sigma[as.character(indfull)], 
-                                         hyperprior=hyper)))
+                                         hyperprior=hyper, log=TRUE)))
     }
     
     log_prior_alpha <- dgamma(alpha, shape=a, scale=1/b, log=TRUE)
@@ -28,7 +28,7 @@ logposterior_DPMSN <- function(z, xi, psi, Sigma, B, hyper, c, m, alpha, n, a, b
     log_clustering <- sum(c(lgamma(alpha), K*log(alpha), lgamma(mfull),-lgamma(alpha+n)))
     
     res <- c(log_vrais, log_clustering, log_prior_NNiW, log_prior_alpha)
-
+    
     return(res)
     
 }

@@ -45,21 +45,26 @@ slice_sample <- function(c, m, alpha, z, hyperG0, U_mu, U_Sigma){
     fullCl_ind <- which(w != 0)
     # calcul de la vraisemblance pour chaque données pour chaque clusters
     # assignation de chaque données à 1 cluster
-    l <- numeric(length(fullCl_ind)) # likelihood of belonging to each cluster 
-    m_new <- numeric(maxCl) # number of observations in each cluster
     
-    # TODO browser()
-    for(i in 1:maxCl){
-        for (j in fullCl_ind){
-            l[j] <- mvnpdf(x = matrix(z[,i], ncol= 1, nrow=length(z[,i])) , 
-                           mean = U_mu[, j], 
-                           varcovM = U_Sigma[, , j])*w[j]  
-        }
-        c[i] <- which.max(l)
-        m_new[c[i]] <- m_new[c[i]] + 1
-        # TODO cat(i,"\n")
-    }
-    # TODO browser()
+    U_mu_list <- lapply(fullCl_ind, function(j) U_mu[, j])
+    U_Sigma_list <- lapply(fullCl_ind, function(j) U_Sigma[, ,j])
+    l <- apply(X=mvnpdf(z, mean=U_mu_list, varcovM=U_Sigma_list), MARGIN=1, FUN="*",y=w[fullCl_ind])          
+    c <- apply(X=l, MARGIN=2, FUN=which.max)
+    m_new <- numeric(maxCl) # number of observations in each cluster
+    m_new[unique(c)] <- table(c)[as.character(unique(c))]
+    
+    # non vectorized code for cluster allocation:
+    #     l <- numeric(length(fullCl_ind)) # likelihood of belonging to each cluster
+    #     m_new <- numeric(maxCl) # number of observations in each cluster
+    #     for(i in 1:maxCl){
+    #         for (j in fullCl_ind){
+    #             l[j] <- mvnpdf(x = matrix(z[,i], ncol= 1, nrow=length(z[,i])) , 
+    #                            mean = U_mu[, j], 
+    #                            varcovM = U_Sigma[, , j])*w[j]  
+    #         }
+    #         c[i] <- which.max(l)
+    #         m_new[c[i]] <- m_new[c[i]] + 1
+    #     }
     
     return(list("c"=c, "m"=m_new, "weights"=w))
 }

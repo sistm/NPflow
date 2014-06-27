@@ -7,7 +7,7 @@
 #' 
 #'@keywords internal
 #'
-#'@export update_SS
+#'@export wishrnd
 
 wishrnd <- function(n, Sigma){
   

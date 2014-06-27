@@ -46,22 +46,30 @@ sliceSampler_SkewN <- function(c, m, alpha, z, hyperG0, U_xi, U_psi, U_Sigma){
     fullCl_ind <- which(w != 0)
     # calcul de la vraisemblance pour chaque données pour chaque clusters
     # assignation de chaque données à 1 cluster
-    l <- numeric(length(fullCl_ind)) # likelihood of belonging to each cluster 
-    m_new <- numeric(maxCl) # number of observations in each cluster
     
-    for(i in 1:maxCl){
-        for (j in fullCl_ind){
-            l[j] <- mvsnpdf(x = matrix(z[,i], ncol= 1, nrow=length(z[,i])) , 
-                            xi = U_xi[, j], 
-                            sigma = U_Sigma[, , j],
-                            psi = U_psi[,j]
-            
-            )*w[j]            
-        }
-        c[i] <- which.max(l)
-        m_new[c[i]] <- m_new[c[i]] + 1
-        # TODO cat(i,"\n")
-    }
+    U_xi_list <- lapply(fullCl_ind, function(j) U_xi[, j])
+    U_psi_list <- lapply(fullCl_ind, function(j) U_psi[, j])
+    U_Sigma_list <- lapply(fullCl_ind, function(j) U_Sigma[, ,j])
+    l <- apply(X=mvsnpdf(z, xi=U_xi_list, sigma=U_Sigma_list, psi=U_psi_list), MARGIN=1, FUN="*",y=w[fullCl_ind])          
+    c <- apply(X=l, MARGIN=2, FUN=which.max)
+    
+    # non vectorized code for cluster allocation:
+    #     nb_fullCl_ind <- length(fullCl_ind)
+    #     l <- numeric(nb_fullCl_ind) # likelihood of belonging to each cluster 
+    #     for(i in 1:maxCl){
+    #         for (j in fullCl_ind){
+    #             l[j] <- mvsnpdf(x = matrix(z[,i], ncol= 1, nrow=length(z[,i])) , 
+    #                             xi = U_xi[, j], 
+    #                             sigma = U_Sigma[, , j],
+    #                             psi = U_psi[,j]
+    #             
+    #             )*w[j]            
+    #         }
+    #         c[i] <- which.max(l)
+    #     }
+    
+    m_new <- numeric(maxCl) # number of observations in each cluster
+    m_new[unique(c)] <- table(c)[as.character(unique(c))]
     
     ltn <- numeric(maxCl) # latent truncated normal variables
     for (k in which(m_new!=0)){

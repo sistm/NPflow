@@ -1,6 +1,5 @@
 #'Slice Sampling of Dirichlet Process Mixture of skew Normals
 #'
-#'Hyperprior on the concentration parameter of the DP
 #'
 #'@param z data matrix \code{d x n} with \code{d} dimensions in rows 
 #'and \code{n} observations in columns.
@@ -21,6 +20,20 @@
 #'@param nbclust_init number of clusters at initialisation. 
 #'Default to 30 (or less if there are less than 30 observations).
 #'
+#'@return a object of class \code{DPMclust} with the following attributes: 
+#'  \itemize{
+#'      \item{\code{mcmc_partitions}:}{a list of length \code{N}. Each
+#'       element \code{mcmc_partitions[n]} is a vector of length 
+#'       \code{n} giving the partition of the \code{n} observations.}
+#'      \item{\code{alpha}:}{ a vector of length \code{N}. \code{cost[j]} is the cost 
+#' associated to partition \code{c[[j]]}}
+#'      \item{\code{weights_list}:}{}
+#'      \item{\code{logposterior_list}:}{}
+#'      \item{\code{data}:}{the data matrix \code{d x n} with \code{d} dimensions in rows 
+#'and \code{n} observations in columns.}
+#'      \item{\code{nb_mcmcit}:}{the number of MCMC itertations}
+#'  }
+#'
 #'@author Boris Hejblum
 #'
 #'@export DPM_GibbsSampler_SkewN
@@ -28,43 +41,48 @@
 #'@examples
 #' rm(list=ls())
 #' library(ggplot2)
+#' 
 #' #Number of data
-#' n <- 2000
-#' #n <- 2000
+#' n <- 500
+#' set.seed(123)
 #' set.seed(1234)
-#' #set.seed(123) # works well at N=300
 #' #set.seed(4321)
 #' 
-#' # Sample data
-#' xi <- matrix(nrow=2, ncol=4, c(-1.5, 1, 1.5, 1, 1.5, -2, -2, -2))
-#' psi <- matrix(nrow=2, ncol=4, c(0.4, -0.6, 0.8, 0, 0.3, -0.7, -0.3, -1.2))
-#' p <- c(0.2, 0.1, 0.4, 0.3) # frequence des clusters
 #' 
-#' sdev <- array(dim=c(2,2,4))
-#' sdev[, ,1] <- matrix(nrow=2, ncol=2, c(0.3, 0, 0, 0.3))
-#' sdev[, ,2] <- matrix(nrow=2, ncol=2, c(0.1, 0, 0, 0.3))
-#' sdev[, ,3] <- matrix(nrow=2, ncol=2, c(0.3, 0.15, 0.15, 0.3))
+#' d <- 2
+#' ncl <- 4
+#' 
+#' # Sample data
+#' 
+#' sdev <- array(dim=c(d,d,ncl))
+#' 
+#' xi <- matrix(nrow=d, ncol=ncl, c(-1.5, 1, 1.5, 1, 1.5, -2, -2, -2))
+#' psi <- matrix(nrow=d, ncol=4, c(0.4, -0.6, 0.8, 0, 0.3, -0.7, -0.3, -1.2))
+#' p <- c(0.2, 0.1, 0.4, 0.3) # frequence des clusters
+#' sdev[, ,1] <- matrix(nrow=d, ncol=d, c(0.3, 0, 0, 0.3))
+#' sdev[, ,2] <- matrix(nrow=d, ncol=d, c(0.1, 0, 0, 0.3))
+#' sdev[, ,3] <- matrix(nrow=d, ncol=d, c(0.3, 0.15, 0.15, 0.3))
 #' sdev[, ,4] <- .3*diag(2)
 #' 
 #' 
+#'  
 #' c <- rep(0,n)
-#' z <- matrix(0, nrow=2, ncol=n)
+#' z <- matrix(0, nrow=d, ncol=n)
 #' for(k in 1:n){
 #'  c[k] = which(rmultinom(n=1, size=1, prob=p)!=0)
-#'  z[,k] <- xi[, c[k]] + psi[, c[k]]*abs(rnorm(1)) + sdev[, , c[k]]%*%matrix(rnorm(2, mean = 0, sd = 1), nrow=2, ncol=1)
-#'  #cat(k, "/", n, " observations simulated\n", sep="")
+#'  z[,k] <- xi[, c[k]] + psi[, c[k]]*abs(rnorm(1)) + sdev[, , c[k]]%*%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
+#'  cat(k, "/", n, " observations simulated\n", sep="")
 #' }
 #'  
-#'  d<-2
-#'  # Set parameters of G0
-#'  hyperG0 <- list()
-#'  hyperG0[["b_xi"]] <- rep(0,d)
-#'  hyperG0[["b_psi"]] <- rep(0,d)
-#'  hyperG0[["kappa"]] <- 0.001
-#'  hyperG0[["D_xi"]] <- 100
-#'  hyperG0[["D_psi"]] <- 100
-#'  hyperG0[["nu"]] <- d+0.1
-#'  hyperG0[["lambda"]] <- diag(d)/10
+#' # Set parameters of G0
+#' hyperG0 <- list()
+#' hyperG0[["b_xi"]] <- rep(0,d)
+#' hyperG0[["b_psi"]] <- rep(0,d)
+#' hyperG0[["kappa"]] <- 0.001
+#' hyperG0[["D_xi"]] <- 100
+#' hyperG0[["D_psi"]] <- 100
+#' hyperG0[["nu"]] <- d+0.1
+#' hyperG0[["lambda"]] <- diag(d)/10
 #'  
 #'  # hyperprior on the Scale parameter of DPM
 #'  a <- 0.0001
@@ -105,15 +123,19 @@
 #'  
 #'  # Gibbs sampler for Dirichlet Process Mixtures
 #'  ##############################################
-#'  MCMCsample_sn <- DPM_GibbsSampler_SkewN(z, hyperG0, a, b, N=1500, doPlot, nbclust_init, plotevery=50, gg.add=list(theme_bw()))
+#'  MCMCsample_sn <- DPM_GibbsSampler_SkewN(z, hyperG0, a, b, N=1000, doPlot, nbclust_init, plotevery=50, gg.add=list(theme_bw()))
+#'  s <- summary(MCMCsample_sn, burnin = 500)
+#'  print(s)
+#'  plot(s)
 #'  plot_ConvDPM(MCMCsample_sn, from=2)
+#'  cluster_est_binder(MCMCsample_sn$c_list[50:500])
 #'  
 #'  library(shiny)
 #'  library(lineprof)
 #'  l <- lineprof(MCMCsample_sn <- DPM_GibbsSampler_SkewN(z, hyperG0, a, b, N=5, doPlot=FALSE, nbclust_init))
 #'  
 #'  hyperG0[["mu"]] <- rep(0,d)
-#'  MCMCsample_n <- gibbsDPMsliceprior(z, hyperG0, a, b, N=100, doPlot, nbclust_init, plotevery=5)
+#'  MCMCsample_n <- gibbsDPMsliceprior(z, hyperG0, a, b, N=500, doPlot, nbclust_init, plotevery=50)
 #'  plot_ConvDPM(MCMCsample_n, from=2)
 #'  
 #'  
@@ -169,7 +191,6 @@
 #'
 #'
 #'
-
 DPM_GibbsSampler_SkewN <- function (z, hyperG0, a, b, N, doPlot=TRUE, 
                                 nbclust_init=30, plotevery=1, ...){
     
@@ -180,7 +201,7 @@ DPM_GibbsSampler_SkewN <- function (z, hyperG0, a, b, N, doPlot=TRUE,
     U_xi <- matrix(0, nrow=p, ncol=n)
     U_psi <- matrix(0, nrow=p, ncol=n)
     U_Sigma = array(0, dim=c(p, p, n))
-    U_B = array(0, dim=c(p, p, n))
+    U_B = array(0, dim=c(2, 2, n))
     
     # U_SS is a list where each U_SS[[k]] contains the sufficient
     # statistics associated to cluster k
@@ -256,8 +277,7 @@ DPM_GibbsSampler_SkewN <- function (z, hyperG0, a, b, N, doPlot=TRUE,
     cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="")
     
     if(doPlot){
-        plot_DPMsn(z=z, U_xi=U_xi, U_psi=U_psi, U_Sigma=U_Sigma, 
-                 m=m, c=c, i=i, alpha=alpha[i], U_SS=U_SS, ellipses=TRUE, ...)
+        plot_DPMsn(z=z, c=c, i=i, alpha=alpha[i], U_SS=U_SS_list[[i]], ellipses=TRUE, ...)
     }else{
         cl2print <- unique(c)
         cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
@@ -307,8 +327,7 @@ DPM_GibbsSampler_SkewN <- function (z, hyperG0, a, b, N, doPlot=TRUE,
         cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="")
         
         if(doPlot && i/plotevery==floor(i/plotevery)){
-            plot_DPMsn(z=z, U_xi=U_xi, U_psi=U_psi, U_Sigma=U_Sigma, m=m, c=c, i=i,
-                     alpha=alpha[i], U_SS=U_SS, ellipses=TRUE, ...)
+            plot_DPMsn(z=z, c=c, i=i, alpha=alpha[i], U_SS=U_SS_list[[i]], ellipses=TRUE, ...)
         }else{
             cl2print <- unique(c)
             cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
@@ -316,10 +335,16 @@ DPM_GibbsSampler_SkewN <- function (z, hyperG0, a, b, N, doPlot=TRUE,
         
     }
     
-    return(list("clusters" = c, "U_xi" = U_xi, "U_psi" = U_psi, "U_Sigma" = U_Sigma, 
-                "partition" = m, "alpha"=alpha, "U_SS_list"=U_SS_list,
-                "c_list" = c_list, "weights_list"=weights_list, 
-                "logposterior_list"=logposterior_list))
+    dpmclus <- list("mcmc_partitions" = c_list, 
+                    "alpha"=alpha, 
+                    "U_SS_list"=U_SS_list,
+                    "weights_list"=weights_list, 
+                    "logposterior_list"=logposterior_list, 
+                    "data"=z,
+                    "nb_mcmcit"=N,
+                    "clust_distrib"="skewNormal")
+    class(dpmclus) <- "DPMMclust"
+    return(dpmclus)
 }
 
 

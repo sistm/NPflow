@@ -1,7 +1,10 @@
-dNNiW <- function(xi, psi, Sigma, B, hyperprior){
+#'@export dNNiW
+#'
+
+
+dNNiW <- function(xi, psi, Sigma, B, hyperprior, log=FALSE){
     
     res=NA
-    
     
     xi0 <- hyperprior[["b_xi"]]
     psi0 <- hyperprior[["b_psi"]]
@@ -38,12 +41,19 @@ dNNiW <- function(xi, psi, Sigma, B, hyperprior){
     S0 <- B0%x%lambda0
     S <- mapply('%x%',X=B, Y=Sigma, SIMPLIFY=F)
     
-    res <- mapply(function(mu, S){
-        det(S)^(-(nu0+p+2)/2)*
-            exp(-sum(diag(S0%*%solve(S)))/2
-                -((mu-mu0)/D0)%*%crossprod(solve(S), (mu-mu0))/2)
+    if(!log){
+        res <- mapply(function(mu, S){
+            det(S)^(-(nu0+p+2)/2)*
+                exp(-sum(diag(S0%*%solve(S)))/2
+                    -((mu-mu0)/D0)%*%crossprod(solve(S), (mu-mu0))/2)
+            }, mu=mu, S=S)
+    }else{
+        res <- mapply(function(mu, S){
+            -(nu0+p+2)/2*log(det(S))
+                -sum(diag(S0%*%solve(S)))/2
+                    -((mu-mu0)/D0)%*%crossprod(solve(S), (mu-mu0))/2
         }, mu=mu, S=S)
-
+    }
     
     return(res)
 }

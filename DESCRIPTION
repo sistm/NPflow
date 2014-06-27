@@ -5,8 +5,14 @@ Version: 0.0.2
 Date: 2013-02-25
 Author: Francois Caron, Boris P. Hejblum
 Maintainer: Boris P. Hejblum <boris.hejblum@isped.u-bordeaux2.fr>
-Depends: R (>= 2.14), ggplot2, reshape2, ellipse, truncnorm
-Imports: ggplot2
-Suggests: 
-Description: This package implements 
-License: LGPL-3
+Depends:
+    R (>= 2.14),
+    ggplot2,
+    reshape2,
+    ellipse,
+    truncnorm
+Imports:
+    ggplot2
+Suggests:
+Description: NA
+License: NA

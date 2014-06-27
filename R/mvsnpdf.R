@@ -22,6 +22,7 @@
 
 mvsnpdf <- function(x, xi, sigma, psi){
     
+    
     if(is.null(x) | is.null(xi) | is.null(sigma) | is.null(psi)){
         stop("some arguments are empty")
     }
@@ -43,7 +44,7 @@ mvsnpdf <- function(x, xi, sigma, psi){
             stop("wrong input for xi")
         }
     }else{
-        x0 <- mapply('-', x=x0, y=xi)
+        x0 <- lapply(xi, function(v){x - v})
     }
     
     
@@ -60,8 +61,7 @@ mvsnpdf <- function(x, xi, sigma, psi){
         }
         if(dim(omega)[1]!=p){
             stop("omega is of the wrong size")
-        }
-        browser()        
+        }        
         part1 <- 2*mvnpdf(x, mean=xi, varcovM=omega)
         part2 <- pnorm(t(alph)%*%diag(1/sqrt(diag(omega)))%*%(x0))
     }
@@ -82,6 +82,7 @@ mvsnpdf <- function(x, xi, sigma, psi){
             diag(sqrt(diag(o)))%*%oI%*%ps/sqrt(1-crossprod(ps,oI)%*%ps)[1,1]},
             o=omega, oI=omegaInv, ps=psi, SIMPLIFY=FALSE
         )
+        
         part1 <- 2*mvnpdf(x, mean=xi, varcovM=omega)
         part2 <- mapply(FUN=function(a, o, x){
             pnorm(crossprod(a,diag(1/sqrt(diag(o))))%*%(x))}, 
