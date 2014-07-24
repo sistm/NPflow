@@ -1,7 +1,8 @@
-sliceSampler_SkewN_parallel <- function(Ncpus, c, m, alpha, z, hyperG0, U_xi, U_psi, U_Sigma, diagVar, parallel_index){
+sliceSampler_SkewN_EB <- function(c, m, alpha, z, hyperG0, U_xi, U_psi, U_Sigma){
     
     maxCl <- length(m) #maximum number of clusters
     ind <- which(m!=0) # indexes of non empty clusters
+    nbmix_prior <- length(hyperG0[["weights"]])
     
     # Sample the weights, i.e. the frequency of each existing cluster from a Dirichlet:
     # temp_1 ~ Gamma(m_1,1), ... , temp_K ~ Gamma(m_K,1)    # and sample the rest of the weigth for potential new clusters:
@@ -35,7 +36,8 @@ sliceSampler_SkewN_parallel <- function(Ncpus, c, m, alpha, z, hyperG0, U_xi, U_
         
         # Sample the centers and spread of each new cluster from prior
         for (i in 1:t){
-            NNiW <- rNNiW(hyperG0, diagVar)
+            hyper_num <- sample(x=1:nbmix_prior, size=1, prob=hyperG0[[1]])
+            NNiW <- rNNiW(hyperG0[["parameters"]][[hyper_num]])
             #TODO
             U_xi[, ind_new[i]] <- NNiW[["xi"]]
             U_psi[, ind_new[i]] <- NNiW[["psi"]]
@@ -44,26 +46,29 @@ sliceSampler_SkewN_parallel <- function(Ncpus, c, m, alpha, z, hyperG0, U_xi, U_
     }
     
     fullCl_ind <- which(w != 0)
-    nb_fullCl_ind <- length(fullCl_ind)
     # calcul de la vraisemblance pour chaque données pour chaque clusters
     # assignation de chaque données à 1 cluster
-    # likelihood of belonging to each cluster 
     
-    #TODO
-    #split the data and do the update !
-
-#               
-#     
-    
-
     U_xi_list <- lapply(fullCl_ind, function(j) U_xi[, j])
     U_psi_list <- lapply(fullCl_ind, function(j) U_psi[, j])
     U_Sigma_list <- lapply(fullCl_ind, function(j) U_Sigma[, ,j])
-
-    c <- foreach(i=1:Ncpus, .combine='c')%dopar%{
-        l <- apply(X=mvsnpdf(z[, parallel_index[[i]]], xi=U_xi_list, sigma=U_Sigma_list, psi=U_psi_list), MARGIN=1, FUN="*",y=w[fullCl_ind])
-        c <- apply(X=l, MARGIN=2, FUN=which.max)
-    }
+    l <- apply(X=mvsnpdf(z, xi=U_xi_list, sigma=U_Sigma_list, psi=U_psi_list), MARGIN=1, FUN="*",y=w[fullCl_ind])          
+    c <- apply(X=l, MARGIN=2, FUN=which.max)
+    
+    # non vectorized code for cluster allocation:
+    #     nb_fullCl_ind <- length(fullCl_ind)
+    #     l <- numeric(nb_fullCl_ind) # likelihood of belonging to each cluster 
+    #     for(i in 1:maxCl){
+    #         for (j in fullCl_ind){
+    #             l[j] <- mvsnpdf(x = matrix(z[,i], ncol= 1, nrow=length(z[,i])) , 
+    #                             xi = U_xi[, j], 
+    #                             sigma = U_Sigma[, , j],
+    #                             psi = U_psi[,j]
+    #             
+    #             )*w[j]            
+    #         }
+    #         c[i] <- which.max(l)
+    #     }
     
     m_new <- numeric(maxCl) # number of observations in each cluster
     m_new[unique(c)] <- table(c)[as.character(unique(c))]

@@ -1,7 +1,7 @@
+#'Convergence diagnostic plots
 #'
-#'plot_ConvDPM
 #'
-#'@export plot_ConvDPM
+#'@export
 
 plot_ConvDPM <- function(MCMCsample, from=1, to=length(MCMCsample$logposterior_list), shift=0){
     

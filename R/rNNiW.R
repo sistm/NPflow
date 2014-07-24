@@ -6,10 +6,8 @@
 #' 
 #'@keywords internal
 #'
-#'@export nniw_rnd
 #'
-
-nniw_rnd <- function(SufStat){
+rNNiW<- function(SufStat, diagVar){
   b0_xi = SufStat[["b_xi"]]
   b0_psi = SufStat[["b_psi"]]
   B = SufStat[["B"]] # B
@@ -22,7 +20,14 @@ nniw_rnd <- function(SufStat){
   }
   
   # Sample S from an inverse Wishart distribution
-  S = invwishrnd(n = nu0, lambda = lambda0)
+
+  if(diagVar){
+      betas <- diag(lambda0)
+      S <- diag(1/rgamma(n=length(b0_xi), shape=nu0, 
+                         rate=betas))
+  }else{
+      S = invwishrnd(n = nu0, lambda = lambda0)
+  }
   
   # Sample mu from a normal distribution
   d <- length(b0_xi)

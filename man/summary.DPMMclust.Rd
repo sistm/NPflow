@@ -18,11 +18,10 @@ partition of the \code{n} observations to compare to the point estimate.}
 \value{
 a \code{list}:
  \itemize{
-     \item{\code{c_est}:}{ a vector of length \code{n}. Point estimate of the partition}
-     \item{\code{cost}:}{ a vector of length \code{N}. \code{cost[j]} is the cost
-associated to partition \code{c[[j]]}}
-     \item{\code{similarity}:}{  matrix of size \code{n x n}. Similarity matrix
-(see \link{similarityMat})}
+     \item{\code{burnin}:}{ }
+     \item{\code{point_estim}:}{}
+     \item{\code{loss}:}{}
+     \item{\code{index_estim}:}{}
  }
 }
 \description{

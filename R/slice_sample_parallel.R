@@ -42,7 +42,7 @@ slice_sample_parallel <- function(c, m, alpha, z, hyperG0, U_mu, U_Sigma){
             ind_new <- ind_new[1:t]
             # Sample the centers and spread of each new cluster from prior
             for (i in 1:t){
-                NiW <- normalinvwishrnd(hyperG0)
+                NiW <- rNiW(hyperG0)
                 U_mu[[as.character(ind_new[i])]] <- NiW[["mu"]]
                 U_Sigma[[as.character(ind_new[i])]] <- NiW[["S"]]
             }

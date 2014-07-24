@@ -30,7 +30,7 @@ Boris Hejblum
 \references{
 J.W. Lau & P.J. Green. Bayesian Model-Based Clustering
 Procedures, Journal of Computational and Graphical Statistics,
-16(3): 526–558, 2007.
+16(3): 526-558, 2007.
 
 D. B. Dahl. Model-Based Clustering for Expression Data via a
 Dirichlet Process Mixture Model, in Bayesian Inference for

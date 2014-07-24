@@ -1,4 +1,6 @@
-sliceSampler_SkewN <- function(c, m, alpha, z, hyperG0, U_xi, U_psi, U_Sigma){
+sliceSampler_SkewN <- function(c, m, alpha, z, hyperG0, U_xi, U_psi, 
+                               U_Sigma, diagVar){
+    
     
     maxCl <- length(m) #maximum number of clusters
     ind <- which(m!=0) # indexes of non empty clusters
@@ -35,8 +37,7 @@ sliceSampler_SkewN <- function(c, m, alpha, z, hyperG0, U_xi, U_psi, U_Sigma){
         
         # Sample the centers and spread of each new cluster from prior
         for (i in 1:t){
-            NNiW <- nniw_rnd(hyperG0)
-            #TODO
+            NNiW <- rNNiW(hyperG0, diagVar)
             U_xi[, ind_new[i]] <- NNiW[["xi"]]
             U_psi[, ind_new[i]] <- NNiW[["psi"]]
             U_Sigma[, , ind_new[i]] <- NNiW[["S"]]

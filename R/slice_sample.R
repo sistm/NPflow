@@ -36,7 +36,7 @@ slice_sample <- function(c, m, alpha, z, hyperG0, U_mu, U_Sigma){
         
         # Sample the centers and spread of each new cluster from prior
         for (i in 1:t){
-            NiW <- normalinvwishrnd(hyperG0)
+            NiW <- rNiW(hyperG0)
             U_mu[, ind_new[i]] <- NiW[["mu"]]
             U_Sigma[, , ind_new[i]] <- NiW[["S"]]
         }

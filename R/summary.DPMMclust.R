@@ -11,20 +11,17 @@
 #'
 #'@return a \code{list}: 
 #'  \itemize{
-#'      \item{\code{c_est}:}{ a vector of length \code{n}. Point estimate of the partition}
-#'      \item{\code{cost}:}{ a vector of length \code{N}. \code{cost[j]} is the cost 
-#' associated to partition \code{c[[j]]}}
-#'      \item{\code{similarity}:}{  matrix of size \code{n x n}. Similarity matrix 
-#' (see \link{similarityMat})}
+#'      \item{\code{burnin}:}{ }
+#'      \item{\code{point_estim}:}{}
+#'      \item{\code{loss}:}{}
+#'      \item{\code{index_estim}:}{}
 #'  }
 #'
 #'@author Boris Hejblum
 #'
-#'@export summary.DPMMclust
+#'@export 
 #'
-#'@export print.summaryDPMMclust
-#'
-#'@export plot.summaryDPMMclust
+#'@importFrom gplots heatmap.2
 #'
 #'@seealso \link{similarityMat}
 #'
@@ -74,10 +71,10 @@ plot.summaryDPMMclust <- function(s, ...){
     if(s$clust_distrib=="Normal"){
         
     }else if(s$clust_distrib=="skewNormal"){
-        cat("This plotting may take a few sec... ")
+        cat("Plotting point estimate (may take a few sec)... ")
         plot_DPMsn(z=s$data,
                    c=s$point_estim$c_est, 
-                   i=ind, 
+                   i=ind+s$burnin, 
                    alpha=s$alpha[ind], 
                    U_SS=s$U_SS_list[[ind]], 
                    ellipses=TRUE,
@@ -85,7 +82,11 @@ plot.summaryDPMMclust <- function(s, ...){
                    nbsim_dens=200000,
                    ...
         )
-        cat("DONE!")
+        cat("DONE!\n")
     }
+    
+    cat("Plotting heatmap of similarity (may take a few min)...\n")
+    cat("TODO\n")
+    cat("DONE! Wait for plot rendering...\n")
     
 }

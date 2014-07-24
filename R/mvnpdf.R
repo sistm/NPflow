@@ -1,5 +1,6 @@
 #'multivariate-Normal  probability density function
 #'
+#'
 #'@param x data either a matrix
 #'
 #'@param mean mean vector or list of mean vectors (either a vector, 
@@ -7,7 +8,7 @@
 #'
 #'@param varcovM
 #'
-#'@export mvnpdf
+#'@export
 #'
 #'@examples
 #'
@@ -18,9 +19,6 @@
 #'       mean=c(0, 0), varcovM=diag(2)
 #')
 #'
-#'
-#'
-
 mvnpdf <- function(x, mean, varcovM){
     if(!is.matrix(x)){
         stop("x should be a matrix")

@@ -1,7 +1,3 @@
-#'@export dNNiW
-#'
-
-
 dNNiW <- function(xi, psi, Sigma, B, hyperprior, log=FALSE){
     
     res=NA

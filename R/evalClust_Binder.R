@@ -18,11 +18,11 @@
 #'
 #'@author Boris Hejblum
 #'
-#'@export evalClust_Binder
+#'@export
 #'
 #'@references J.W. Lau & P.J. Green. Bayesian Model-Based Clustering 
 #'Procedures, Journal of Computational and Graphical Statistics, 
-#'16(3): 526–558, 2007.
+#'16(3): 526-558, 2007.
 #'
 #' D. B. Dahl. Model-Based Clustering for Expression Data via a 
 #' Dirichlet Process Mixture Model, in Bayesian Inference for 
@@ -43,8 +43,8 @@ evalClust_Binder <- function(c, gs, a=1, b=1){
     gs_coclust <- sapply(gs, FUN=function(x){x==gs})
     
     dif <- c_coclust-gs_coclust
-    dif[which(dif=1)] <- b
-    dif[which(dif=-1)] <- a
+    dif[which(dif==1)] <- b
+    dif[which(dif==-1)] <- a
     
     loss <- sum(dif)
   

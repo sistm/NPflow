@@ -1,4 +1,5 @@
-#'computes the coclustering (or similarity) matrix
+#'Computes the coclustering (or similarity) matrix
+#'
 #'
 #'@param c a list of vector of length \code{n}. \code{c[[j]][i]} is 
 #'the cluster allocation of observation \code{i=1...n} at iteration 
@@ -13,7 +14,7 @@
 #'
 #'@author Boris Hejblum
 #'
-#'@export similarityMat
+#'@export
 #'
 
 similarityMat <- function(c, step=1){

@@ -1,6 +1,7 @@
 #'Slice Sampling of the Dirichlet Process Mixture Model
 #'with a prior on alpha
 #'
+#'
 #'@param z data matrix \code{d x n} with \code{d} dimensions in rows 
 #'and \code{n} observations in columns.
 #'
@@ -22,7 +23,7 @@
 #'
 #'@author Boris Hejblum
 #'
-#'@export gibbsDPMsliceprior
+#'@export 
 #'
 #'@examples
 #' rm(list=ls())
@@ -99,7 +100,7 @@
 #'  # Gibbs sampler for Dirichlet Process Mixtures
 #'  ##############################################
 #'  Rprof("Rprof.out")
-#'  MCMCsample <- gibbsDPMsliceprior(z, hyperG0, a, b, N=100, doPlot, nbclust_init, plotevery=5)
+#'  MCMCsample <- DPMGibbsN(z, hyperG0, a, b, N=100, doPlot, nbclust_init, plotevery=5)
 #'                  
 #'  plot_ConvDPM(MCMCsample, from=2)
 #'  
@@ -158,7 +159,7 @@
 #'
 #'
 
-gibbsDPMsliceprior <- function (z, hyperG0, a, b, N, doPlot=TRUE, 
+DPMGibbsN <- function (z, hyperG0, a, b, N, doPlot=TRUE, 
                                 nbclust_init=30, plotevery=1, ...){
     
     if(doPlot){library(ggplot2)}
@@ -200,7 +201,7 @@ gibbsDPMsliceprior <- function (z, hyperG0, a, b, N, doPlot=TRUE,
             c[k] <- k
             #cat("cluster ", k, ":\n")
             U_SS[[c[k]]] <- update_SS(z=z[, k], S=hyperG0)
-            NiW <- normalinvwishrnd(U_SS[[c[k]]])
+            NiW <- rNiW(U_SS[[c[k]]])
             U_mu[, c[k]] <- NiW[["mu"]]
             U_Sigma[, , c[k]] <- NiW[["S"]]
             m[c[k]] <- m[c[k]]+1
@@ -211,7 +212,7 @@ gibbsDPMsliceprior <- function (z, hyperG0, a, b, N, doPlot=TRUE,
             obs_k <- which(c==k)
             #cat("cluster ", k, ":\n")
             U_SS[[k]] <- update_SS(z=z[, obs_k], S=hyperG0)
-            NiW <- normalinvwishrnd(U_SS[[k]])
+            NiW <- rNiW(U_SS[[k]])
             U_mu[, k] <- NiW[["mu"]]
             U_Sigma[, , k] <- NiW[["S"]]
             m[k] <- length(obs_k)
@@ -259,7 +260,7 @@ gibbsDPMsliceprior <- function (z, hyperG0, a, b, N, doPlot=TRUE,
             obs_j <- which(c==j)
             #cat("cluster ", j, ":\n")
             U_SS[[j]] <- update_SS(z=z[, obs_j], S=hyperG0)
-            NiW <- normalinvwishrnd(U_SS[[j]])
+            NiW <- rNiW(U_SS[[j]])
             U_mu[, j] <- NiW[["mu"]]
             U_Sigma[, , j] <- NiW[["S"]]
             #cat("sampled S =", NiW[["S"]], "\n\n\n")

@@ -1,10 +1,10 @@
 #'Sampler for the concentration parameter of a Dirichlet process
-#'
+#'  
 #'A Gamma prior is used
 #'
 #'@references West, M. (1992). Hyperparameter estimation in Dirichlet process mixture models. Technical Report, Duke University.
 #'
-#'@export sample_alpha
+#'@export
 #'
 #'@examples
 #' #Test with a fixed K
@@ -27,7 +27,7 @@
 #' alphaMMSE <- mean(postalphas)
 #' alphaMAP <- density(postalphas)$x[which.max(density(postalphas)$y)]
 #' 
-#' expK <- sum(alphaMMSE/(alphaMMSE+1:(n-1)))
+#' expK <- sum(alphaMMSE/(alphaMMSE+0:(n-1)))
 #' round(expK)
 #' 
 #' 

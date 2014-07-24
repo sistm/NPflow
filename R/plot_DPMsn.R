@@ -1,6 +1,6 @@
 #' @author Boris Hejblum
 #'
-#' @export plot_DPMsn
+#' @export
 
 plot_DPMsn <- function(z, c, i="", alpha="?", U_SS,
                        dims2plot=1:nrow(z),

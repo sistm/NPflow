@@ -1,12 +1,13 @@
 #'multivariate Skew-Normal  probability density function
 #'
+#'
 #'@param x
 #'
 #'@param mean
 #'
 #'@param omega
 #'
-#'@export mvsnpdf
+#'@export
 #'
 #'@examples
 #'
@@ -17,9 +18,6 @@
 #'       mean=c(0, 0), omega=diag(2)
 #')
 #'
-#'
-#'
-
 mvsnpdf <- function(x, xi, sigma, psi){
     
     

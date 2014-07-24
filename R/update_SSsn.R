@@ -21,9 +21,6 @@ update_SSsn <- function(z, S, ltn){
         z <- matrix(z, ncol=1)
     }
     n <- ncol(z)
-    
-    
-    
 
     X <- matrix(c(rep(1, n), ltn), ncol=2, byrow=FALSE)
     B <- solve(crossprod(X)+diag(c(1/D0_xi, 1/D0_psi)))
@@ -45,7 +42,6 @@ update_SSsn <- function(z, S, ltn){
     }
     
     lambda1 <- lambda0 + (eps2 + tcrossprod(b_xi-b0_xi)/D0_xi + tcrossprod(b_psi-b0_psi)/D0_psi)
-    
     
     
     S_up <- list()

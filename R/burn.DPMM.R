@@ -1,5 +1,7 @@
 #'Burning mcmc iterations from a Dirichlet Process Mixture Model
 #'
+#'@name burn.DPMMclust
+#'
 #'@param x a \code{DPMMclust} object.
 #'
 #'@param burnin the number of MCMC iterations to burn (defaults is half).

@@ -25,7 +25,7 @@
 #'
 #'@author Boris Hejblum
 #'
-#'@export gibbsDPMsliceprior_parallel
+#'@export
 #'
 #'@examples
 #'
@@ -91,7 +91,7 @@
 #'          dims2plot=c(1,2))
 #' 
 #'
-gibbsDPMsliceprior_parallel <- function (Ncpus, type_connec,
+DPMGibbsN_parallel <- function (Ncpus, type_connec,
                                          z, hyperG0, a, b, N, doPlot=TRUE, 
                                          nbclust_init=30, plotevery=1, 
                                          verbose=FALSE, ...){
@@ -142,7 +142,7 @@ gibbsDPMsliceprior_parallel <- function (Ncpus, type_connec,
     res <- foreach(k=unique(c), .packages="NPflow")%dopar%{
         obs_k <- which(c==k)
         U_SS_par <- update_SS(z=z[, obs_k], S=hyperG0)
-        NiW <- normalinvwishrnd(U_SS_par)
+        NiW <- rNiW(U_SS_par)
         U_mu_par <- NiW[["mu"]]
         U_Sigma_par <- NiW[["S"]]
         m_par <- length(obs_k)
@@ -208,7 +208,7 @@ gibbsDPMsliceprior_parallel <- function (Ncpus, type_connec,
         res <- foreach(k=fullCl, .packages="NPflow")%dopar%{
             obs_k <- which(c==k)
             U_SS_par <- update_SS(z=z[, obs_k], S=hyperG0)
-            NiW <- normalinvwishrnd(U_SS_par)
+            NiW <- rNiW(U_SS_par)
             U_mu_par <- NiW[["mu"]]
             U_Sigma_par <- NiW[["S"]]
             list("U_SS_par"=U_SS_par, "U_mu_par"=U_mu_par, 

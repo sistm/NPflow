@@ -1,6 +1,5 @@
 #'Slice Sampling of Dirichlet Process Mixture of skew Normals
 #'
-#'
 #'@param z data matrix \code{d x n} with \code{d} dimensions in rows 
 #'and \code{n} observations in columns.
 #'
@@ -20,6 +19,9 @@
 #'@param nbclust_init number of clusters at initialisation. 
 #'Default to 30 (or less if there are less than 30 observations).
 #'
+#'@param verbose logical flag indicating wether partition info is 
+#'written in the console at each MCMC iteration.
+#'
 #'@return a object of class \code{DPMclust} with the following attributes: 
 #'  \itemize{
 #'      \item{\code{mcmc_partitions}:}{a list of length \code{N}. Each
@@ -36,16 +38,15 @@
 #'
 #'@author Boris Hejblum
 #'
-#'@export DPM_GibbsSampler_SkewN
+#'@export
 #'
 #'@examples
 #' rm(list=ls())
 #' library(ggplot2)
 #' 
 #' #Number of data
-#' n <- 500
+#' n <- 2000
 #' set.seed(123)
-#' set.seed(1234)
 #' #set.seed(4321)
 #' 
 #' 
@@ -56,14 +57,14 @@
 #' 
 #' sdev <- array(dim=c(d,d,ncl))
 #' 
-#' xi <- matrix(nrow=d, ncol=ncl, c(-1.5, 1, 1.5, 1, 1.5, -2, -2, -2))
+#' #xi <- matrix(nrow=d, ncol=ncl, c(-1.5, 1, 1.5, 1, 1.5, -2, -2, -2))
+#' xi <- matrix(nrow=d, ncol=ncl, c(-0.5, 0, 0.5, 0, 0.5, -1, -1, 1))
 #' psi <- matrix(nrow=d, ncol=4, c(0.4, -0.6, 0.8, 0, 0.3, -0.7, -0.3, -1.2))
 #' p <- c(0.2, 0.1, 0.4, 0.3) # frequence des clusters
 #' sdev[, ,1] <- matrix(nrow=d, ncol=d, c(0.3, 0, 0, 0.3))
 #' sdev[, ,2] <- matrix(nrow=d, ncol=d, c(0.1, 0, 0, 0.3))
 #' sdev[, ,3] <- matrix(nrow=d, ncol=d, c(0.3, 0.15, 0.15, 0.3))
 #' sdev[, ,4] <- .3*diag(2)
-#' 
 #' 
 #'  
 #' c <- rep(0,n)
@@ -104,6 +105,17 @@
 #'        +theme_bw())
 #'  p
 #'  
+#'  c2plot <- factor(c)
+#'  levels(c2plot) <- c("3", "2", "4", "1")
+#'  pp <- (ggplot(data.frame("X"=z[1,], "Y"=z[2,], "Cluster"=as.character(c2plot))) 
+#'        + geom_point(aes(x=X, y=Y, colour=Cluster, fill=Cluster))
+#'        + ggtitle("Slightly overlapping skew-normal simulation\n")
+#'        + xlab("D1")
+#'        + ylab("D2")
+#'        + theme_bw()
+#'        + scale_colour_discrete(guide=guide_legend(override.aes = list(size = 6, shape=22))))
+#'  pp
+#'  
 #'  
 #'  ## alpha priors plots
 #'  #####################
@@ -123,7 +135,9 @@
 #'  
 #'  # Gibbs sampler for Dirichlet Process Mixtures
 #'  ##############################################
-#'  MCMCsample_sn <- DPM_GibbsSampler_SkewN(z, hyperG0, a, b, N=1000, doPlot, nbclust_init, plotevery=50, gg.add=list(theme_bw()))
+#'  MCMCsample_sn <- DPMGibbsSkewN(z, hyperG0, a, b, N=1000, 
+#'  doPlot, nbclust_init, plotevery=50, gg.add=list(theme_bw()), 
+#'  diagVar=FALSE)
 #'  s <- summary(MCMCsample_sn, burnin = 500)
 #'  print(s)
 #'  plot(s)
@@ -132,7 +146,7 @@
 #'  
 #'  library(shiny)
 #'  library(lineprof)
-#'  l <- lineprof(MCMCsample_sn <- DPM_GibbsSampler_SkewN(z, hyperG0, a, b, N=5, doPlot=FALSE, nbclust_init))
+#'  l <- lineprof(MCMCsample_sn <- DPMGibbsSkewN(z, hyperG0, a, b, N=5, doPlot=FALSE, nbclust_init))
 #'  
 #'  hyperG0[["mu"]] <- rep(0,d)
 #'  MCMCsample_n <- gibbsDPMsliceprior(z, hyperG0, a, b, N=500, doPlot, nbclust_init, plotevery=50)
@@ -148,23 +162,31 @@
 #'       xlab = "d = 1", ylab= "d = 2", main="k-means with K=4 clusters")
 #'       
 #'  KM <- kmeans(t(z), centers=4)
+#'  KMclust <- factor(KM$cluster)
+#'  levels(KMclust) <- c("2", "4", "1", "3")
 #'  dataKM <- data.frame("X"=z[1,], "Y"=z[2,], 
-#'                     "Cluster"=as.character(KM$cluster))
+#'                     "Cluster"=as.character(KMclust))
 #'  dataCenters <- data.frame("X"=KM$centers[,1], 
 #'                            "Y"=KM$centers[,2], 
-#'                            "Cluster"=rownames(KM$centers))
+#'                            "Cluster"=c("2", "4", "1", "3"))
 #'  
 #'  p <- (ggplot(dataKM) 
 #'        + geom_point(aes(x=X, y=Y, col=Cluster))
 #'        + geom_point(aes(x=X, y=Y, fill=Cluster, order=Cluster), 
 #'                     data=dataCenters, shape=22, size=5)
-#'        + scale_colour_discrete(name="Cluster")
-#'        + ggtitle("K-means with K=4 clusters\n"))
+#'        + scale_colour_discrete(name="Cluster", guide=guide_legend(override.aes=list(size=6, shape=22)))
+#'        + ggtitle("K-means with K=4 clusters\n")
+#'        + theme_bw()
+#'  )
 #'  p
 #'  
-#'  postalpha <- data.frame("alpha"=MCMCsample$alpha[50:500], 
-#'                          "distribution" = factor(rep("posterior",500-49), 
+#'  postalpha <- data.frame("alpha"=MCMCsample_sn$alpha[501:1000], 
+#'                          "distribution" = factor(rep("posterior",1000-500), 
 #'                          levels=c("prior", "posterior")))
+#'                          
+#'  postK <- data.frame("K"=sapply(lapply(postalpha$alpha, "["), 
+#'                                 function(x){sum(x/(x+0:(1000-1)))}))
+#'  
 #'  p <- (ggplot(postalpha, aes(x=alpha))
 #'        + geom_histogram(aes(y=..density..), binwidth=.1,
 #'                         colour="black", fill="white")
@@ -175,24 +197,112 @@
 #'      )
 #'  p
 #'  
+#'  p <- (ggplot(postK, aes(x=K))
+#'        + geom_histogram(aes(y=..density..),
+#'                         colour="black", fill="white")
+#'        + geom_density(alpha=.2, fill="blue")
+#'        + ggtitle("Posterior distribution of K\n")
+#'        + geom_vline(aes(xintercept=mean(K, na.rm=T)),   # Ignore NA values for mean
+#'                     color="red", linetype="dashed", size=1)  # Overlay with transparent density plot
+#'        #+ scale_x_continuous(breaks=c(0:6)*2, minor_breaks=c(0:6)*2+1)
+#'        + scale_x_continuous(breaks=c(1:12))          
+#'      )
+#'  p
+#'  
 #'  p <- (ggplot(drop=FALSE, alpha=.6)
 #'        + geom_density(aes(x=alpha, fill=distribution), 
 #'                       color=NA, alpha=.6,
-#'                       data=prioralpha)
+#'                       data=postalpha)
 #'        + geom_density(aes(x=alpha, fill=distribution), 
 #'                       color=NA, alpha=.6,
-#'                       data=postalpha)
+#'                       data=prioralpha)
 #'        + ggtitle("Prior and posterior distributions of alpha\n")
 #'        + scale_fill_discrete(drop=FALSE)
+#'        + theme_bw()
+#'        + xlim(0,100)
 #'      )
 #'  p
 #'
+#'#Skew Normal
+#'n=100000
+#' xi <- 0
+#' d <- 0.995
+#' alpha <- d/sqrt(1-d^2)
+#' z <- rtruncnorm(n,a=0, b=Inf)
+#' e <- rnorm(n, mean = 0, sd = 1)
+#' x <- d*z + sqrt(1-d^2)*e
+#'o <- 1
+#' y <- xi+o*x
+#'nu=1.3
+#'w <- rgamma(n,scale=nu/2, shape=nu/2)
+#'yy <- xi+o*x/w
+#'snd <- data.frame("Y"=y,"YY"=yy)
+#'p <- (ggplot(snd)+geom_density(aes(x=Y), fill="blue", alpha=.2) 
+#'      + theme_bw() 
+#'      + ylab("Density") 
+#'      + ggtitle("Y~SN(0,1,10)\n")
+#'      + xlim(-1,6)
+#'      + ylim(0,0.8)
+#'      )
+#'p
+#'
+#'p <- (ggplot(snd)+geom_density(aes(x=YY), fill="blue", alpha=.2) 
+#'      + theme_bw() 
+#'      + ylab("Density") 
+#'      + ggtitle("Y~ST(0,1,10,1.3)\n")
+#'      + xlim(-2,40)
+#'      + ylim(0,0.8)
+#'      )
+#'p
+#'
+#'p <- (ggplot(snd)
+#'      + geom_density(aes(x=Y, fill="blue"), alpha=.2)
+#'      + geom_density(aes(x=YY, fill="red"), alpha=.2)  
+#'      + theme_bw()
+#'      +theme(legend.text = element_text(size = 13), legend.position="bottom")
+#'      + ylab("Density") 
+#'      + xlim(-2,40)
+#'      + ylim(0,0.8)
+#'      + scale_fill_manual(name="", labels=c("Y~SN(0,1,10)       ", "Y~ST(0,1,10,1.3)"),
+#'      guide="legend", values=c("blue", "red"))
+#'      )
+#'p
+#'
+#'#Variations
+#'n=100000
+#' xi <- -1
+#' d <- 0.995
+#' alpha <- d/sqrt(1-d^2)
+#' z <- rtruncnorm(n,a=0, b=Inf)
+#' e <- rnorm(n, mean = 0, sd = 1)
+#' x <- d*z + sqrt(1-d^2)*e
+#'snd <- data.frame("X"=x)
+#'p <- (ggplot(snd)+geom_density(aes(x=X), fill="blue", alpha=.2) 
+#'      + theme_bw()
+#'      + ylab("Density") 
+#'      + ggtitle("X~SN(10)\n")
+#'      + xlim(-1.5,4)
+#'      + ylim(0,1.6)
+#'      )
+#'p
+#'
+#'o <- 0.5
+#' y <- xi+o*x
+#'snd <- data.frame("Y"=y)
+#'p <- (ggplot(snd)+geom_density(aes(x=Y), fill="blue", alpha=.2) 
+#'      + theme_bw() 
+#'      + ylab("Density") 
+#'      + ggtitle("Y~SN(-1,1,10)\n")
+#'      + xlim(-1.5,4)
+#'      + ylim(0,1.6)
+#'      )
+#'p
 #'
 #'
-#'
-#'
-DPM_GibbsSampler_SkewN <- function (z, hyperG0, a, b, N, doPlot=TRUE, 
-                                nbclust_init=30, plotevery=1, ...){
+DPMGibbsSkewN <- function (z, hyperG0, a, b, N, doPlot=TRUE, 
+                           nbclust_init=30, plotevery=1, 
+                           diagVar=TRUE, verbose=TRUE,
+                           ...){
     
     if(doPlot){library(ggplot2)}
     
@@ -232,7 +342,7 @@ DPM_GibbsSampler_SkewN <- function (z, hyperG0, a, b, N, doPlot=TRUE,
             c[k] <- k
             #cat("cluster ", k, ":\n")
             U_SS[[k]] <- update_SSsn(z=z[, k], S=hyperG0, ltn=ltn[k])
-            NNiW <- nniw_rnd(U_SS[[k]])
+            NNiW <- rNNiW(U_SS[[k]], diagVar)
             U_xi[, k] <- NNiW[["xi"]]
             U_SS[[k]][["xi"]] <- NNiW[["xi"]]
             U_psi[, k] <- NNiW[["psi"]]
@@ -248,7 +358,7 @@ DPM_GibbsSampler_SkewN <- function (z, hyperG0, a, b, N, doPlot=TRUE,
             obs_k <- which(c==k)
             #cat("cluster ", k, ":\n")
             U_SS[[k]] <- update_SSsn(z=z[, obs_k], S=hyperG0, ltn=ltn[obs_k])
-            NNiW <- nniw_rnd(U_SS[[k]])
+            NNiW <- rNNiW(U_SS[[k]], diagVar)
             U_xi[, k] <- NNiW[["xi"]]
             U_SS[[k]][["xi"]] <- NNiW[["xi"]]
             U_psi[, k] <- NNiW[["psi"]]
@@ -271,68 +381,72 @@ DPM_GibbsSampler_SkewN <- function (z, hyperG0, a, b, N, doPlot=TRUE,
     weights_list[[1]][unique(c)] <- table(c)/length(c)
     
     logposterior_list[[i]] <- logposterior_DPMSN(z, xi=U_xi, psi=U_psi, Sigma=U_Sigma, B=U_B,
-                                                hyper=hyperG0, c=c, m=m, alpha=alpha[i], n=n, a=a, b=b)
-    
-    cat(i, "/", N, " samplings:\n", sep="")
-    cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="")
+                                                 hyper=hyperG0, c=c, m=m, alpha=alpha[i], n=n, a=a, b=b, diagVar)
     
     if(doPlot){
         plot_DPMsn(z=z, c=c, i=i, alpha=alpha[i], U_SS=U_SS_list[[i]], ellipses=TRUE, ...)
-    }else{
+    }
+    if(verbose){
+        cat(i, "/", N, " samplings:\n", sep="")
+        cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="")
         cl2print <- unique(c)
         cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
     }
     
-  
     
-    for(i in 2:N){
-        nbClust <- length(unique(c))
-        
-        alpha <- c(alpha,
-                   sample_alpha(alpha_old=alpha[i-1], n=n, 
-                                K=nbClust, a=a, b=b)
-        )
-        slice <- sliceSampler_SkewN(c=c, m=m, alpha=alpha[i], 
-                              z=z, hyperG0=hyperG0, 
-                              U_xi=U_xi, U_psi=U_psi, U_Sigma=U_Sigma)
-        m <- slice[["m"]]
-        c <- slice[["c"]]        
-        weights_list[[i]] <- slice[["weights"]]
-        ltn <- slice[["latentTrunc"]]
-
-        # Update cluster locations
-        fullCl <- which(m!=0)
-        for(j in fullCl){
-            obs_j <- which(c==j)
-            #cat("cluster ", j, ":\n")
-            U_SS[[j]] <- update_SSsn(z=z[, obs_j], S=hyperG0,  ltn=ltn[obs_j])
-            NNiW <- nniw_rnd(U_SS[[j]])
-            U_xi[, j] <- NNiW[["xi"]]
-            U_SS[[j]][["xi"]] <- NNiW[["xi"]]
-            U_psi[, j] <- NNiW[["psi"]]
-            U_SS[[j]][["psi"]] <- NNiW[["psi"]]
-            U_Sigma[, , j] <- NNiW[["S"]]
-            U_SS[[j]][["S"]] <- NNiW[["S"]]
-            U_B[, ,j] <- U_SS[[j]][["B"]]
+    if(N>1){
+        for(i in 2:N){
+            nbClust <- length(unique(c))
+            
+            alpha <- c(alpha,
+                       sample_alpha(alpha_old=alpha[i-1], n=n, 
+                                    K=nbClust, a=a, b=b)
+            )
+            
+            slice <- sliceSampler_SkewN(c=c, m=m, alpha=alpha[i], 
+                                        z=z, hyperG0=hyperG0, 
+                                        U_xi=U_xi, U_psi=U_psi, 
+                                        U_Sigma=U_Sigma, diagVar)
+            m <- slice[["m"]]
+            c <- slice[["c"]]        
+            weights_list[[i]] <- slice[["weights"]]
+            ltn <- slice[["latentTrunc"]]
+            
+            
+            
+            # Update cluster locations
+            fullCl <- which(m!=0)
+            for(j in fullCl){
+                obs_j <- which(c==j)
+                #cat("cluster ", j, ":\n")
+                U_SS[[j]] <- update_SSsn(z=z[, obs_j], S=hyperG0,  ltn=ltn[obs_j])
+                NNiW <- rNNiW(U_SS[[j]], diagVar)
+                U_xi[, j] <- NNiW[["xi"]]
+                U_SS[[j]][["xi"]] <- NNiW[["xi"]]
+                U_psi[, j] <- NNiW[["psi"]]
+                U_SS[[j]][["psi"]] <- NNiW[["psi"]]
+                U_Sigma[, , j] <- NNiW[["S"]]
+                U_SS[[j]][["S"]] <- NNiW[["S"]]
+                U_B[, ,j] <- U_SS[[j]][["B"]]
+            }
+            
+            
+            U_SS_list[[i]] <- U_SS[which(m!=0)]
+            c_list[[i]] <- c
+            
+            logposterior_list[[i]] <- logposterior_DPMSN(z, xi=U_xi, psi=U_psi, Sigma=U_Sigma, B=U_B,
+                                                         hyper=hyperG0, c=c, m=m, alpha=alpha[i], n=n, a=a, b=b, diagVar)
+            
+            if(doPlot && i/plotevery==floor(i/plotevery)){
+                plot_DPMsn(z=z, c=c, i=i, alpha=alpha[i], U_SS=U_SS_list[[i]], ellipses=TRUE, ...)
+            }
+            if(verbose){
+                cat(i, "/", N, " samplings:\n", sep="")
+                cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="")
+                cl2print <- unique(c)
+                cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
+            }
         }
-        
-        
-        U_SS_list[[i]] <- U_SS[which(m!=0)]
-        c_list[[i]] <- c
-        
-        logposterior_list[[i]] <- logposterior_DPMSN(z, xi=U_xi, psi=U_psi, Sigma=U_Sigma, B=U_B,
-                                                    hyper=hyperG0, c=c, m=m, alpha=alpha[i], n=n, a=a, b=b)
-        
-        cat(i, "/", N, " samplings:\n", sep="")
-        cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="")
-        
-        if(doPlot && i/plotevery==floor(i/plotevery)){
-            plot_DPMsn(z=z, c=c, i=i, alpha=alpha[i], U_SS=U_SS_list[[i]], ellipses=TRUE, ...)
-        }else{
-            cl2print <- unique(c)
-            cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
-        }
-        
     }
     
     dpmclus <- list("mcmc_partitions" = c_list, 

@@ -29,7 +29,7 @@ postalphas <- alphas[floor(N/2):N]
 alphaMMSE <- mean(postalphas)
 alphaMAP <- density(postalphas)$x[which.max(density(postalphas)$y)]
 
-expK <- sum(alphaMMSE/(alphaMMSE+1:(n-1)))
+expK <- sum(alphaMMSE/(alphaMMSE+0:(n-1)))
 round(expK)
 
 
