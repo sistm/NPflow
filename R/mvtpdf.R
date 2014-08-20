@@ -1,4 +1,4 @@
-#'multivariate-Normal  probability density function
+#'multivariate Student's t-distribution probability density function
 #'
 #'
 #'@param x data matrix
@@ -8,6 +8,8 @@
 #'
 #'@param varcovM
 #'
+#'@param df
+#'
 #'@export
 #'
 #'@examples
@@ -15,11 +17,11 @@
 #'mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1))
 #'dnorm(1.96)
 #'
-#'mvnpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1), 
+#'mvnpdf(x=matrix(rep(1.96,2), nrow=1, ncol=2), 
 #'       mean=c(0, 0), varcovM=diag(2)
 #')
 #'
-mvnpdf <- function(x, mean, varcovM){
+mvtpdf <- function(x, mean, varcovM, df){
     if(!is.matrix(x)){
         stop("x should be a matrix")
     }
@@ -49,10 +51,10 @@ mvnpdf <- function(x, mean, varcovM){
 
 
     if(is.matrix(varcovM)){
-        if(dim(varcovM)[1]!=dim(varcovM)[2]){
+        if(ncol(varcovM)!=nrow(varcovM)){
             stop("varcovM is not a square matrix")
         }
-        if(dim(varcovM)[1]!=p){
+        if(nrow(varcovM)!=p){
             stop("varcovM is of the wrong size")
         }
         
@@ -60,12 +62,15 @@ mvnpdf <- function(x, mean, varcovM){
             x0 <- matrix(x0, ncol=1)
         }
         
+       
+        
+        
         Rinv = backsolve(chol(varcovM),x=diag(p))
         xRinv <- matrix(apply(X=x0, MARGIN=2, FUN=crossprod, y=Rinv))
         logSqrtDetvarcovM <- sum(log(diag(Rinv)))
-        
+        a <- lgamma((df + p)/2)-lgamma(df/2)-p/2*log(df*pi)
         quadform <- apply(X=xRinv, MARGIN=2, FUN=crossprod)
-        y <- exp(-0.5*quadform + logSqrtDetvarcovM -p*log(2*pi)/2)
+        y <- (1+quadform/df)^(-(df+p)/2)*exp(a+logSqrtDetvarcovM)
         
 #         dMvn <- function(X,mu,Sigma) {
 #             k <- ncol(X)
@@ -81,18 +86,21 @@ mvnpdf <- function(x, mean, varcovM){
         if(!is.list(x0)){
             x0 <- apply(X=x0, MARGIN=2, FUN=list)
             x0 <- lapply(x0, FUN='[[', 1)
+        }    
+        if(!is.list(df)){
+            df <- lapply(df, FUN='[')
         }
         
-        likelihood <- function(x0, varcovM){
-            p <- length(x0)
+        likelihood <- function(x0, varcovM, df){
+            p <- length(x0)            
             Rinv = backsolve(chol(varcovM),x=diag(p))
             xRinv <- x0 %*% Rinv
             logSqrtDetvarcovM <- sum(log(diag(Rinv)))
-        
+            a <- lgamma((df + p)/2)-lgamma(df/2)-p/2*log(df*pi)
             quadform <- tcrossprod(xRinv)
-            y <- exp(-0.5*quadform + logSqrtDetvarcovM -p*log(2*pi)/2)
+            y <- (1+quadform/df)^(-(df+p)/2)*exp(a+logSqrtDetvarcovM)
         }
-        y <-mapply(FUN=likelihood, x0, varcovM)
+        y <-mapply(FUN=likelihood, x0, varcovM, df)
         
         
      }else{
@@ -100,9 +108,10 @@ mvnpdf <- function(x, mean, varcovM){
         Rinv <- lapply(X=R, FUN=backsolve, x=diag(p))
         xRinv <- mapply(FUN=function(x,y){apply(X=x,MARGIN=2, FUN=crossprod, y=y)}, x=x0, y=Rinv, SIMPLIFY=FALSE)
         logSqrtDetvarcovM <- lapply(X=Rinv, FUN=function(X){sum(log(diag(X)))})
+        a <- lapply(df, FUN=function(x){lgamma((x + p)/2)-lgamma(x/2)-p/2*log(x*pi)})
         quadform <- lapply(X=xRinv, FUN=function(x){apply(X=x, MARGIN=2, FUN=crossprod)})
-        y <- mapply(FUN=function(x,y){exp(-0.5*x + y -p*log(2*pi)/2)},
-                    x=quadform, y=logSqrtDetvarcovM)  
+        y <- mapply(FUN=function(u,v,w,z){(1+v/u)^(-(u+p)/2)*exp(w+z)},
+                    u=df, v=quadform, w=a, z=logSqrtDetvarcovM)  
     }
     
     

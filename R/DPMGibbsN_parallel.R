@@ -139,6 +139,8 @@ DPMGibbsN_parallel <- function (Ncpus, type_connec,
         c <- sample(x=1:nbclust_init, size=n, replace=TRUE)
     }
     
+    browser()
+    
     res <- foreach(k=unique(c), .packages="NPflow")%dopar%{
         obs_k <- which(c==k)
         U_SS_par <- update_SS(z=z[, obs_k], S=hyperG0)

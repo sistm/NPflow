@@ -1,5 +1,8 @@
-#'Slice Sampling of Dirichlet Process Mixture of skew Normals
+#'Parallel Implementation of Slice Sampling of Dirichlet Process Mixture of skew Normals
 #'
+#'If the \code{monitorfile} argument is a character string naming a file to
+#'write into, in the case of a new file that does not exist yet, such a new
+#'file will be created. A line is written at each MCMC iteration.
 #'
 #'@param z data matrix \code{d x n} with \code{d} dimensions in rows 
 #'and \code{n} observations in columns.
@@ -22,6 +25,11 @@
 #'
 #'@param verbose logical flag indicating wether partition info is 
 #'written in the console at each MCMC iteration.
+#'
+#'@param monitorfile
+#'a writable \link{connections} or a character string naming a file to write into, 
+#'to monitor the progress of the analysis.  
+#'Default is \code{""} which is no monitoring.  See Details.
 #'
 #'@return a object of class \code{DPMclust} with the following attributes: 
 #'  \itemize{
@@ -195,6 +203,7 @@ DPMGibbsSkewN_parallel <- function (Ncpus, type_connec,
                                     z, hyperG0, a, b, N, doPlot=FALSE, 
                                     nbclust_init=30, plotevery=1, 
                                     diagVar=TRUE, verbose=FALSE,
+                                    monitorfile="",
                                     ...){
     
     
@@ -223,7 +232,8 @@ DPMGibbsSkewN_parallel <- function (Ncpus, type_connec,
         par_ind[[Ncpus]] <- (temp_ind+1):n
     }
     else{
-        cat("Only 1 core specified\n=> non-parallel version of the algorithm would be more efficient")
+        cat("Only 1 core specified\n=> non-parallel version of the algorithm would be more efficient",
+            file=monitorfile, append = TRUE)
         nb_simult <- n
         par_ind[[Ncpus]] <- (temp_ind+1):n
     }
@@ -253,7 +263,6 @@ DPMGibbsSkewN_parallel <- function (Ncpus, type_connec,
     if(ncol(z)<nbclust_init){       
         for (k in 1:n){
             c[k] <- k
-            #cat("cluster ", k, ":\n")
             U_SS[[k]] <- update_SSsn(z=z[, k], S=hyperG0, ltn=ltn[k])
             NNiW <- rNNiW(U_SS[[k]], diagVar)
             U_xi[, k] <- NNiW[["xi"]]
@@ -269,7 +278,6 @@ DPMGibbsSkewN_parallel <- function (Ncpus, type_connec,
         c <- sample(x=1:nbclust_init, size=n, replace=TRUE)
         for (k in unique(c)){
             obs_k <- which(c==k)
-            #cat("cluster ", k, ":\n")
             U_SS[[k]] <- update_SSsn(z=z[, obs_k], S=hyperG0, ltn=ltn[obs_k])
             NNiW <- rNNiW(U_SS[[k]], diagVar)
             U_xi[, k] <- NNiW[["xi"]]
@@ -300,10 +308,13 @@ DPMGibbsSkewN_parallel <- function (Ncpus, type_connec,
         plot_DPMsn(z=z, c=c, i=i, alpha=alpha[i], U_SS=U_SS_list[[i]], ellipses=TRUE, ...)
     }
     if(verbose){
-        cat(i, "/", N, " samplings:\n", sep="")
-        cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="")
+        cat(i, "/", N, " samplings:\n", sep="",
+            file=monitorfile, append = TRUE)
+        cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="",
+            file=monitorfile, append = TRUE)
         cl2print <- unique(c)
-        cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
+        cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n",
+            file=monitorfile, append = TRUE)
     }
     
     
@@ -336,7 +347,6 @@ DPMGibbsSkewN_parallel <- function (Ncpus, type_connec,
             fullCl <- which(m!=0)
             for(j in fullCl){
                 obs_j <- which(c==j)
-                #cat("cluster ", j, ":\n")
                 U_SS[[j]] <- update_SSsn(z=z[, obs_j], S=hyperG0,  ltn=ltn[obs_j])
                 NNiW <- rNNiW(U_SS[[j]], diagVar)
                 U_xi[, j] <- NNiW[["xi"]]
@@ -359,10 +369,13 @@ DPMGibbsSkewN_parallel <- function (Ncpus, type_connec,
                 plot_DPMsn(z=z, c=c, i=i, alpha=alpha[i], U_SS=U_SS_list[[i]], ellipses=TRUE, ...)
             }
             if(verbose){
-                cat(i, "/", N, " samplings:\n", sep="")
-                cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="")
+                cat(i, "/", N, " samplings:\n", sep="",
+                    file=monitorfile, append = TRUE)
+                cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="",
+                    file=monitorfile, append = TRUE)
                 cl2print <- unique(c)
-                cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
+                cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n",
+                    file=monitorfile, append = TRUE)
             }
         }
     }

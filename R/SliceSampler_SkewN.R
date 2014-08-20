@@ -48,26 +48,45 @@ sliceSampler_SkewN <- function(c, m, alpha, z, hyperG0, U_xi, U_psi,
     # calcul de la vraisemblance pour chaque données pour chaque clusters
     # assignation de chaque données à 1 cluster
     
-    U_xi_list <- lapply(fullCl_ind, function(j) U_xi[, j])
-    U_psi_list <- lapply(fullCl_ind, function(j) U_psi[, j])
-    U_Sigma_list <- lapply(fullCl_ind, function(j) U_Sigma[, ,j])
-    l <- apply(X=mvsnpdf(z, xi=U_xi_list, sigma=U_Sigma_list, psi=U_psi_list), MARGIN=1, FUN="*",y=w[fullCl_ind])          
-    c <- apply(X=l, MARGIN=2, FUN=which.max)
+    #C++ armadillo code
+    U_xi_full <- sapply(fullCl_ind, function(j) U_xi[, j])
+    U_psi_full <- sapply(fullCl_ind, function(j) U_psi[, j])
+    U_Sigma_full <- lapply(fullCl_ind, function(j) U_Sigma[, ,j])
+    if(length(fullCl_ind)>1){
+        l <- mmvsnpdfC(x=z, xi=U_xi_full, psi=U_psi_full, sigma=U_Sigma_full)
+        u_mat <- t(apply(X=sapply(w[fullCl_ind], function(x){u < x}), MARGIN=2, FUN= as.numeric))
+        prob_mat <- u_mat * l
+        c <- apply(X= prob_mat, MARGIN=2, FUN=function(v){match(1,rmultinom(n=1, size=1, prob=v))})
+        #alternative implementation:
+        #prob_colsum <- colSums(prob_mat)
+        #prob_norm <- apply(X=prob_mat, MARGIN=1, FUN=function(r){r/prob_colsum})
+        #c <- apply(X=prob_norm, MARGIN=1, FUN=function(r){match(TRUE,runif(1) <cumsum(r))})
+    }else{
+        c <- rep(fullCl_ind, maxCl)
+    }
     
-    # non vectorized code for cluster allocation:
-    #     nb_fullCl_ind <- length(fullCl_ind)
-    #     l <- numeric(nb_fullCl_ind) # likelihood of belonging to each cluster 
-    #     for(i in 1:maxCl){
-    #         for (j in fullCl_ind){
-    #             l[j] <- mvsnpdf(x = matrix(z[,i], ncol= 1, nrow=length(z[,i])) , 
-    #                             xi = U_xi[, j], 
-    #                             sigma = U_Sigma[, , j],
-    #                             psi = U_psi[,j]
-    #             
-    #             )*w[j]            
-    #         }
-    #         c[i] <- which.max(l)
-    #     }
+    #vectorized R code
+#     U_xi_list <- lapply(fullCl_ind, function(j) U_xi[, j])
+#     U_psi_list <- lapply(fullCl_ind, function(j) U_psi[, j])
+#     U_Sigma_list <- lapply(fullCl_ind, function(j) U_Sigma[, ,j])
+#     l <- apply(X=mvsnpdf(z, xi=U_xi_list, sigma=U_Sigma_list, psi=U_psi_list), MARGIN=1, FUN="*",y=w[fullCl_ind])
+#     c1 <- fullCl_ind[apply(X=l, MARGIN=2, FUN=which.max)]
+    
+   # non vectorized code for cluster allocation:
+#          nb_fullCl_ind <- length(fullCl_ind)
+#          l <- numeric(nb_fullCl_ind) # likelihood of belonging to each cluster 
+#          for(i in 1:maxCl){
+#              for (j in 1:nb_fullCl_ind){
+#                  l[j] <- mvsnpdf(x = matrix(z[,i], ncol= 1, nrow=length(z[,i])) , 
+#                                  xi = U_xi[, fullCl_ind[j]], 
+#                                  sigma = U_Sigma[, , fullCl_ind[j]],
+#                                  psi = U_psi[,fullCl_ind[j]]
+#                  
+#                  )*w[fullCl_ind[j]]            
+#              }
+#              c[i] <- fullCl_ind[which.max(l)]
+#          }
+
     
     m_new <- numeric(maxCl) # number of observations in each cluster
     m_new[unique(c)] <- table(c)[as.character(unique(c))]

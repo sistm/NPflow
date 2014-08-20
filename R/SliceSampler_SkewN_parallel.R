@@ -61,8 +61,18 @@ sliceSampler_SkewN_parallel <- function(Ncpus, c, m, alpha, z, hyperG0, U_xi, U_
     U_Sigma_list <- lapply(fullCl_ind, function(j) U_Sigma[, ,j])
 
     c <- foreach(i=1:Ncpus, .combine='c')%dopar%{
-        l <- apply(X=mvsnpdf(z[, parallel_index[[i]]], xi=U_xi_list, sigma=U_Sigma_list, psi=U_psi_list), MARGIN=1, FUN="*",y=w[fullCl_ind])
-        c <- apply(X=l, MARGIN=2, FUN=which.max)
+        l <- mmvsnpdfC(z[, parallel_index[[i]]], xi=U_xi_list, sigma=U_Sigma_list, psi=U_psi_list)
+        if(length(fullCl_ind)>1){
+            u_mat <- t(apply(X=sapply(w[fullCl_ind], function(x){u < x}), MARGIN=2, FUN= as.numeric))
+            prob_mat <- u_mat * l
+            c <- apply(X= prob_mat, MARGIN=2, FUN=function(v){match(1,rmultinom(n=1, size=1, prob=v))})
+            #alternative implementation:
+            #prob_colsum <- colSums(prob_mat)
+            #prob_norm <- apply(X=prob_mat, MARGIN=1, FUN=function(r){r/prob_colsum})
+            #c <- apply(X=prob_norm, MARGIN=1, FUN=function(r){match(TRUE,runif(1) <cumsum(r))})
+        }else{
+            c <- rep(fullCl_ind, maxCl)
+        }
     }
     
     m_new <- numeric(maxCl) # number of observations in each cluster

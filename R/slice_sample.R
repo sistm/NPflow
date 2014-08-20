@@ -45,11 +45,16 @@ slice_sample <- function(c, m, alpha, z, hyperG0, U_mu, U_Sigma){
     fullCl_ind <- which(w != 0)
     # calcul de la vraisemblance pour chaque données pour chaque clusters
     # assignation de chaque données à 1 cluster
-    
-    U_mu_list <- lapply(fullCl_ind, function(j) U_mu[, j])
-    U_Sigma_list <- lapply(fullCl_ind, function(j) U_Sigma[, ,j])
-    l <- apply(X=mvnpdf(z, mean=U_mu_list, varcovM=U_Sigma_list), MARGIN=1, FUN="*",y=w[fullCl_ind])          
-    c <- apply(X=l, MARGIN=2, FUN=which.max)
+    if(length(fullCl_ind)>1){
+        U_mu_list <- lapply(fullCl_ind, function(j) U_mu[, j])
+        U_Sigma_list <- lapply(fullCl_ind, function(j) U_Sigma[, ,j])
+        l <- mvnpdf(z, mean=U_mu_list, varcovM=U_Sigma_list)
+        u_mat <- apply(X=t(sapply(u, function(x){x < w[fullCl_ind]})), MARGIN=2, FUN= as.numeric)
+        prob_mat <- u_mat * l
+        c <- apply(X= prob_mat, MARGIN=1, FUN=function(v){which(rmultinom(n=1, size=1, prob=v)==1)})
+    }else{
+        c <- rep(fullCl_ind, maxCl)
+    }
     m_new <- numeric(maxCl) # number of observations in each cluster
     m_new[unique(c)] <- table(c)[as.character(unique(c))]
     

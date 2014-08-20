@@ -19,8 +19,8 @@ multivariate Skew-Normal  probability density function
 mvsnpdf(x=matrix(1.96), mean=0, omega=diag(1))
 dnorm(1.96)
 
-mvsnpdf(x=matrix(rep(1.96,2), nrow=1, ncol=2),
-      mean=c(0, 0), omega=diag(2)
+mvsnpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1),
+      xi=c(0, 0), psi=c(1, 1), sigma=diag(2)
 )
 }
 

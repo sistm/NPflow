@@ -6,7 +6,7 @@
 mvnpdf(x, mean, varcovM)
 }
 \arguments{
-\item{x}{data either a matrix}
+\item{x}{data matrix}
 
 \item{mean}{mean vector or list of mean vectors (either a vector,
 a matrix or a list)}
@@ -20,7 +20,7 @@ multivariate-Normal  probability density function
 mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1))
 dnorm(1.96)
 
-mvnpdf(x=matrix(rep(1.96,2), nrow=1, ncol=2),
+mvnpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1),
       mean=c(0, 0), varcovM=diag(2)
 )
 }

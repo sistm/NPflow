@@ -52,8 +52,18 @@ sliceSampler_SkewN_EB <- function(c, m, alpha, z, hyperG0, U_xi, U_psi, U_Sigma)
     U_xi_list <- lapply(fullCl_ind, function(j) U_xi[, j])
     U_psi_list <- lapply(fullCl_ind, function(j) U_psi[, j])
     U_Sigma_list <- lapply(fullCl_ind, function(j) U_Sigma[, ,j])
-    l <- apply(X=mvsnpdf(z, xi=U_xi_list, sigma=U_Sigma_list, psi=U_psi_list), MARGIN=1, FUN="*",y=w[fullCl_ind])          
-    c <- apply(X=l, MARGIN=2, FUN=which.max)
+    if(length(fullCl_ind)>1){
+        l <- mmvsnpdfC(x=z, xi=U_xi_full, psi=U_psi_full, sigma=U_Sigma_full)
+        u_mat <- t(apply(X=sapply(w[fullCl_ind], function(x){u < x}), MARGIN=2, FUN= as.numeric))
+        prob_mat <- u_mat * l
+        c <- apply(X= prob_mat, MARGIN=2, FUN=function(v){match(1,rmultinom(n=1, size=1, prob=v))})
+        #alternative implementation:
+        #prob_colsum <- colSums(prob_mat)
+        #prob_norm <- apply(X=prob_mat, MARGIN=1, FUN=function(r){r/prob_colsum})
+        #c <- apply(X=prob_norm, MARGIN=1, FUN=function(r){match(TRUE,runif(1) <cumsum(r))})
+    }else{
+        c <- rep(fullCl_ind, maxCl)
+    }
     
     # non vectorized code for cluster allocation:
     #     nb_fullCl_ind <- length(fullCl_ind)

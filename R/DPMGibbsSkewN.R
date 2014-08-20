@@ -47,8 +47,7 @@
 #' #Number of data
 #' n <- 2000
 #' set.seed(123)
-#' #set.seed(4321)
-#' 
+#' #set.seed(1234)
 #' 
 #' d <- 2
 #' ncl <- 4
@@ -59,6 +58,7 @@
 #' 
 #' #xi <- matrix(nrow=d, ncol=ncl, c(-1.5, 1, 1.5, 1, 1.5, -2, -2, -2))
 #' xi <- matrix(nrow=d, ncol=ncl, c(-0.5, 0, 0.5, 0, 0.5, -1, -1, 1))
+#' ##xi <- matrix(nrow=d, ncol=ncl, c(-0.3, 0, 0.5, 0.5, 0.5, -1.2, -1, 1))
 #' psi <- matrix(nrow=d, ncol=4, c(0.4, -0.6, 0.8, 0, 0.3, -0.7, -0.3, -1.2))
 #' p <- c(0.2, 0.1, 0.4, 0.3) # frequence des clusters
 #' sdev[, ,1] <- matrix(nrow=d, ncol=d, c(0.3, 0, 0, 0.3))
@@ -79,11 +79,11 @@
 #' hyperG0 <- list()
 #' hyperG0[["b_xi"]] <- rep(0,d)
 #' hyperG0[["b_psi"]] <- rep(0,d)
-#' hyperG0[["kappa"]] <- 0.001
+#' hyperG0[["kappa"]] <- 0.0001
 #' hyperG0[["D_xi"]] <- 100
 #' hyperG0[["D_psi"]] <- 100
-#' hyperG0[["nu"]] <- d+0.1
-#' hyperG0[["lambda"]] <- diag(d)/10
+#' hyperG0[["nu"]] <- d + 1
+#' hyperG0[["lambda"]] <- diag(d)
 #'  
 #'  # hyperprior on the Scale parameter of DPM
 #'  a <- 0.0001
@@ -135,10 +135,13 @@
 #'  
 #'  # Gibbs sampler for Dirichlet Process Mixtures
 #'  ##############################################
-#'  MCMCsample_sn <- DPMGibbsSkewN(z, hyperG0, a, b, N=1000, 
-#'  doPlot, nbclust_init, plotevery=50, gg.add=list(theme_bw()), 
+#'  
+#'  MCMCsample_sn <- DPMGibbsSkewN(z, hyperG0, a, b, N=2000, 
+#'  doPlot, nbclust_init, plotevery=100, gg.add=list(theme_bw()), 
 #'  diagVar=FALSE)
-#'  s <- summary(MCMCsample_sn, burnin = 500)
+#'  
+#'  s <- summary(MCMCsample_sn, burnin = 4500)
+#'  #save(MCMCsample_sn, s, file="MCMCsimuSkewN_correc.RData")
 #'  print(s)
 #'  plot(s)
 #'  plot_ConvDPM(MCMCsample_sn, from=2)
@@ -299,6 +302,47 @@
 #'p
 #'
 #'
+#'
+#'
+#'#Simple toy example
+#'###################
+#'
+#' n <- 2000
+#' set.seed(1234)
+#' 
+#' 
+#' d <- 2
+#' ncl <- 4
+#' 
+#' # Sample data
+#' 
+#' sdev <- array(dim=c(d,d,ncl))
+#' 
+#' xi <- matrix(nrow=d, ncol=ncl, c(-1.5, 1, 1.5, 1, 1.5, -2, -2, -2))
+#' psi <- matrix(nrow=d, ncol=4, c(0.4, -0.6, 0.8, 0, 0.3, -0.7, -0.3, -1.2))
+#' p <- c(0.2, 0.1, 0.4, 0.3) # frequence des clusters
+#' sdev[, ,1] <- matrix(nrow=d, ncol=d, c(0.3, 0, 0, 0.3))
+#' sdev[, ,2] <- matrix(nrow=d, ncol=d, c(0.1, 0, 0, 0.3))
+#' sdev[, ,3] <- matrix(nrow=d, ncol=d, c(0.3, 0.15, 0.15, 0.3))
+#' sdev[, ,4] <- .3*diag(2)
+#' 
+#' 
+#'  
+#' c <- rep(0,n)
+#' z <- matrix(0, nrow=d, ncol=n)
+#' for(k in 1:n){
+#'  c[k] = which(rmultinom(n=1, size=1, prob=p)!=0)
+#'  z[,k] <- xi[, c[k]] + psi[, c[k]]*abs(rnorm(1)) + sdev[, , c[k]]%*%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
+#'  cat(k, "/", n, " observations simulated\n", sep="")
+#' }
+#'
+#'  MCMCsample_sn_sep <- DPMGibbsSkewN(z, hyperG0, a, b, N=5000, 
+#'  doPlot, nbclust_init, plotevery=250, gg.add=list(theme_bw()), 
+#'  diagVar=TRUE)
+#'  s <- summary(MCMCsample_sn, burnin = 4500)
+#'  save(MCMCsample_sn_sep, s, file="MCMCsimuSkewNsep_correc.RData")
+#'
+#'
 DPMGibbsSkewN <- function (z, hyperG0, a, b, N, doPlot=TRUE, 
                            nbclust_init=30, plotevery=1, 
                            diagVar=TRUE, verbose=TRUE,
@@ -396,6 +440,7 @@ DPMGibbsSkewN <- function (z, hyperG0, a, b, N, doPlot=TRUE,
     
     if(N>1){
         for(i in 2:N){
+            
             nbClust <- length(unique(c))
             
             alpha <- c(alpha,

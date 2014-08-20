@@ -1,27 +1,22 @@
-#'multivariate Skew-Normal  probability density function
+#'multivariate Skew-t  probability density function
 #'
 #'
 #'@param x
 #'
-#'@param mean
+#'@param xi
 #'
-#'@param omega
+#'@param sigma
+#'
+#'@param psi
+#'
+#'@param df
 #'
 #'@export
 #'
-#'@examples
 #'
-#'mvsnpdf(x=matrix(1.96), mean=0, omega=diag(1))
-#'dnorm(1.96)
-#'
-#'mvsnpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1), 
-#'       xi=c(0, 0), psi=c(1, 1), sigma=diag(2)
-#')
-#'
-mvsnpdf <- function(x, xi, sigma, psi){
+mvstpdf <- function(x, xi, sigma, psi, df){
     
-    
-    if(is.null(x) | is.null(xi) | is.null(sigma) | is.null(psi)){
+    if(is.null(x) | is.null(xi) | is.null(sigma) | is.null(psi)| is.null(df)){
         stop("some arguments are empty")
     }
     
@@ -52,16 +47,19 @@ mvsnpdf <- function(x, xi, sigma, psi){
         omegaInv <- solve(omega)
         smallomega <- diag(sqrt(diag(omega)))
         alph <- (smallomega%*%omegaInv%*%psi
-                  /as.vector(sqrt(1-crossprod(psi,omegaInv)%*%psi)))
+                 /as.vector(sqrt(1-crossprod(psi,omegaInv)%*%psi)))
+        Qy <- apply(X=x0, MARGIN=2, FUN=function(v){crossprod(v,omegaInv)%*%v})
         
         if(dim(omega)[1]!=dim(omega)[2]){
             stop("omega is not a square matrix")
         }
         if(dim(omega)[1]!=p){
             stop("omega is of the wrong size")
-        }
-        part1 <- 2*mvnpdf(x, mean=xi, varcovM=omega)
-        part2 <- pnorm(t(alph)%*%diag(1/sqrt(diag(omega)))%*%(x0))
+        }        
+        part1 <- 2*mvtpdf(x, mean=xi, varcovM=omega)
+        part2 <- pt(q=(t(alph)%*%diag(1/sqrt(diag(omega)))%*%(x0)*
+                        sqrt((df+p)/(df+Qy))),
+                    df=df+p)
     }
     else{
         if(!is.list(sigma)){
@@ -80,13 +78,18 @@ mvsnpdf <- function(x, xi, sigma, psi){
             diag(sqrt(diag(o)))%*%oI%*%ps/sqrt(1-crossprod(ps,oI)%*%ps)[1,1]},
             o=omega, oI=omegaInv, ps=psi, SIMPLIFY=FALSE
         )
-        
-        part1 <- 2*mvnpdf(x, mean=xi, varcovM=omega)
-        part2 <- mapply(FUN=function(a, o, x){
-            pnorm(crossprod(a,diag(1/sqrt(diag(o))))%*%(x))}, 
-            x=x0, o=omega, a=alph)
+        Qy <- mapply(FUN=function(x, oI){
+            apply(X=x, MARGIN=2,FUN=function(v){crossprod(v,oI)%*%v})},
+            x=x0, oI=omegaInv, SIMPLIFY=FALSE)
+        part1 <- 2*mvtpdf(x, mean=xi, varcovM=omega, df=df)
+        part2 <- mapply(FUN=function(a, o, Q, d, x){
+            pt(q=(crossprod(a,diag(1/sqrt(diag(o))))%*%(x)*
+                sqrt((d+p)/(d+Q))),
+        df=d+p)}, 
+            x=x0, o=omega, Q=Qy, a=alph, d=df)
         
     }
+    
     return(part1*part2)
     
 }

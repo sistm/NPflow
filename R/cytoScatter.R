@@ -16,9 +16,10 @@
 
 cytoScatter <- function(cytomatrix, dims2plot=c(1,2), 
                       scale_log=FALSE, xlim=NULL, ylim=NULL, gg.add=list(theme())){
+    
+    n <- ncol(cytomatrix)
+    
     if(length(dims2plot)!=2){
-        
-        n <- ncol(cytomatrix)
         cytomatrix <- cytomatrix[dims2plot,]
         
         zDplot <- melt(cbind.data.frame("ID"=as.character(1:n), 
@@ -76,7 +77,7 @@ cytoScatter <- function(cytomatrix, dims2plot=c(1,2),
             p <- ggplot(data2plot, aes_string(x=X, y=Y))
         }
         
-        p <- (p + geom_point(size=0.4, colour="blue")  
+        p <- (p + geom_point(size=2/(0.3*log(n)), colour="blue")  
               + stat_density2d(aes(fill = ..level..), alpha=0.8, geom="polygon")  
               + scale_fill_gradientn(colours=c("blue","green", "yellow", "red"), 
                                      name="Density")
