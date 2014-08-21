@@ -19,6 +19,10 @@ const double log2pi2 = log(2.0 * M_PI)/2;
 //'@export
 //'
 //'@examples
+//'mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1)
+//'mvnpdfC(x=matrix(1.96), mean=0, varcovM=diag(1))
+//'
+//'library(microbenchmark)
 //'microbenchmark(mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1)),
 //'               mvnpdfC(x=matrix(1.96), mean=0, varcovM=diag(1)),
 //'               times=10000L)     

@@ -48,6 +48,8 @@ mmvnpdfC <- function(x, mean, varcovM) {
 #'mmvsnpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1), 
 #'          xi=matrix(c(0, 0)), psi=matrix(c(1, 1),ncol=1), sigma=list(diag(2))
 #'          )
+#'          
+#'library(microbenchmark)
 #'microbenchmark(mvsnpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1), xi=c(0, 0), psi=c(1, 1), sigma=diag(2)),
 #'               mmvsnpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1), xi=matrix(c(0, 0)), psi=matrix(c(1, 1),ncol=1), sigma=list(diag(2))),
 #'               times=10000L
@@ -66,6 +68,48 @@ mmvsnpdfC <- function(x, xi, psi, sigma) {
     .Call('NPflow_mmvsnpdfC', PACKAGE = 'NPflow', x, xi, psi, sigma)
 }
 
+#' C++ implementation of multivariate Normal probability density function for multiple inputs
+#'
+#'@param x data matrix of dimension p x n, p being the dimension of the 
+#'data and n the number of data points 
+#'@param mean mean vectors matrix of dimension p x K, K being the number of 
+#'distributions for which the density probability has to be ealuated
+#'@param varcovM list of length K of variance-covariance matrices, 
+#'each of dimensions p x p
+#'@return matrix of densities of dimension K x n
+#'@export
+#'@examples
+#'mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1))
+#'mvtpdf(x=matrix(1.96), mean=0, varcovM=diag(1), df=10000000)
+#'mmvtpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1)), df=10000000)
+#'
+#'mvtpdf(x=matrix(1.96), mean=0, varcovM=diag(1), df=10)
+#'mmvtpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1)), df=10)
+#'
+#'
+#'library(microbenchmark)
+#'microbenchmark(mvtpdf(x=matrix(1.96), mean=0, varcovM=diag(1)),
+#'               #mvpdfC(x=matrix(1.96), mean=0, varcovM=diag(1)),
+#'               mmvtpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1))),
+#'               times=10000L)
+#'microbenchmark(mvnpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1), mean=c(0, 0), varcovM=diag(2)),
+#'               mvnpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1), mean=c(0, 0), varcovM=diag(2)),
+#'               mmvnpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1), 
+#'                        mean=matrix(c(0, 0), nrow=2, ncol=1), 
+#'                        varcovM=list(diag(2))),
+#'               times=10000L)
+#'microbenchmark(mvnpdf(x=matrix(c(rep(1.96,2),rep(0,2)), nrow=2, ncol=2), 
+#'                      mean=list(c(0,0),c(-1,-1), c(1.5,1.5)),
+#'                      varcovM=list(diag(2),10*diag(2), 20*diag(2))),
+#'               mmvnpdfC(matrix(c(rep(1.96,2),rep(0,2)), nrow=2, ncol=2), 
+#'                      mean=matrix(c(0,0,-1,-1, 1.5,1.5), nrow=2, ncol=3),
+#'                      varcovM=list(diag(2),10*diag(2), 20*diag(2))),
+#'               times=10000L)
+#'
+mmvtpdfC <- function(x, mean, varcovM, df) {
+    .Call('NPflow_mmvtpdfC', PACKAGE = 'NPflow', x, mean, varcovM, df)
+}
+
 #' C++ implementation of multivariate Normal probability density function
 #' 
 #'Based on the implementation from Nino Hardt and Dicko Ahmadou
@@ -80,6 +124,10 @@ mmvsnpdfC <- function(x, xi, psi, sigma) {
 #'@export
 #'
 #'@examples
+#'mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1)
+#'mvnpdfC(x=matrix(1.96), mean=0, varcovM=diag(1))
+#'
+#'library(microbenchmark)
 #'microbenchmark(mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1)),
 #'               mvnpdfC(x=matrix(1.96), mean=0, varcovM=diag(1)),
 #'               times=10000L)     

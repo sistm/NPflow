@@ -19,6 +19,8 @@ const double log2pi2 = log(2.0 * M_PI)/2;
 //'mmvsnpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1), 
 //'          xi=matrix(c(0, 0)), psi=matrix(c(1, 1),ncol=1), sigma=list(diag(2))
 //'          )
+//'          
+//'library(microbenchmark)
 //'microbenchmark(mvsnpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1), xi=c(0, 0), psi=c(1, 1), sigma=diag(2)),
 //'               mmvsnpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1), xi=matrix(c(0, 0)), psi=matrix(c(1, 1),ncol=1), sigma=list(diag(2))),
 //'               times=10000L
@@ -67,7 +69,7 @@ NumericMatrix mmvsnpdfC(NumericMatrix x, NumericMatrix xi,
             double quadform = sum(xRinv%xRinv);
             double part1 = 2*exp(-0.5*quadform + logSqrtDetvarcovM + constant);
             mat quant = trans(alph)*diagmat(1/sqrt(diagvec(omega)))*x_i;
-            double part2 = R::pnorm(quant(0,0), 0.0, 1.0, 1, 0);
+            double part2 = Rcpp::stats::pnorm_0(quant(0,0), 1, 0);
             y(k,i) = part1*part2;
         }
     }

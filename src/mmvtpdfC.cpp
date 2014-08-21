@@ -3,7 +3,6 @@ using namespace Rcpp;
 using namespace arma;
 
 // [[Rcpp::depends(RcppArmadillo)]]
-const double log2pi2 = log(2.0 * M_PI)/2;
 
 //' C++ implementation of multivariate Normal probability density function for multiple inputs
 //'
@@ -16,9 +15,18 @@ const double log2pi2 = log(2.0 * M_PI)/2;
 //'@return matrix of densities of dimension K x n
 //'@export
 //'@examples
-//'microbenchmark(mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1)),
-//'               mvnpdfC(x=matrix(1.96), mean=0, varcovM=diag(1)),
-//'               mmvnpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1))),
+//'mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1))
+//'mvtpdf(x=matrix(1.96), mean=0, varcovM=diag(1), df=10000000)
+//'mmvtpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1)), df=10000000)
+//'
+//'mvtpdf(x=matrix(1.96), mean=0, varcovM=diag(1), df=10)
+//'mmvtpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1)), df=10)
+//'
+//'
+//'library(microbenchmark)
+//'microbenchmark(mvtpdf(x=matrix(1.96), mean=0, varcovM=diag(1)),
+//'               #mvpdfC(x=matrix(1.96), mean=0, varcovM=diag(1)),
+//'               mmvtpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1))),
 //'               times=10000L)
 //'microbenchmark(mvnpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1), mean=c(0, 0), varcovM=diag(2)),
 //'               mvnpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1), mean=c(0, 0), varcovM=diag(2)),
@@ -35,7 +43,7 @@ const double log2pi2 = log(2.0 * M_PI)/2;
 //'               times=10000L)
 //'
 // [[Rcpp::export]]
-NumericMatrix mmvnpdfC(NumericMatrix x, NumericMatrix mean, List varcovM){    
+NumericMatrix mmvtpdfC(NumericMatrix x, NumericMatrix mean, List varcovM, NumericVector df){
     
     mat xx = as<mat>(x);
     mat m = as<mat>(mean); 
@@ -43,23 +51,29 @@ NumericMatrix mmvnpdfC(NumericMatrix x, NumericMatrix mean, List varcovM){
     int n = xx.n_cols;
     int K = m.n_cols;
     NumericMatrix y = NumericMatrix(K,n);
-    double constant = - p*log2pi2;
+    double bb=0;
     
     for(int k=0; k < K; k++){
         mat S = varcovM[k];
         mat Rinv = inv(trimatu(chol(S)));
         double logSqrtDetvarcovM = sum(log(Rinv.diag()));
         colvec mtemp = m.col(k);
+        double dftemp = df(k);
         
         for (int i=0; i < n; i++) {
             colvec x_i = xx.col(i) - mtemp;
             rowvec xRinv = trans(x_i)*Rinv;
             double quadform = sum(xRinv%xRinv);
-            y(k,i) = exp(-0.5*quadform + logSqrtDetvarcovM + constant);
+            double a = lgamma((dftemp + p)/2) - lgamma(dftemp/2) - log(dftemp*M_PI)*p/2;
+            y(k,i) = pow((1 + quadform/dftemp),(-(dftemp + p)/2))*exp(a+logSqrtDetvarcovM);
         }
     }
     
     return y;
     
 }
+
+
+
+
 
