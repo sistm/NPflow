@@ -6,14 +6,17 @@
 mvtpdf(x, mean, varcovM, df)
 }
 \arguments{
-\item{x}{data matrix}
+\item{x}{p x n data matrix with n the number of observations and
+p the number of dimensions}
 
 \item{mean}{mean vector or list of mean vectors (either a vector,
 a matrix or a list)}
 
-\item{varcovM}{}
+\item{varcovM}{variance-covariance matrix or list of variance-covariance
+matrices (either a matrix or a list)}
 
-\item{df}{}
+\item{df}{a numeric vector or a list of the degrees of freedom
+(either a vector or a list)}
 }
 \description{
 multivariate Student's t-distribution probability density function

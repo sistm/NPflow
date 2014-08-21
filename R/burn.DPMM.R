@@ -22,6 +22,10 @@
 
 burn.DPMMclust <- function(x, burnin=0){
     
+    if(burnin>=length(x[["mcmc_partitions"]])){
+        stop("burnin argument is superior to the number of MCMC iterations sampled")
+    }
+    
     xburnt <- list()
     
     N <- x[["nb_mcmcit"]]

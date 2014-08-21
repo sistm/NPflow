@@ -37,14 +37,14 @@
 #'
 
 cluster_est_binder <- function(c, thin=1){
-    n <- length(c[[1]])
+#    n <- length(c[[1]])
     
     if(thin>1){
         select <- c(TRUE, rep(FALSE, thin-1))
         c <- c[select]
     }
     
-    N <- length(c)
+#    N <- length(c)
     
     
 #     #Non vectorized piece of code for reference
@@ -72,30 +72,36 @@ cluster_est_binder <- function(c, thin=1){
 #     list_cost <- lapply(list_mcoclust, function(m){abs(m-similarity)})
 #     cost <- unlist(lapply(list_cost, sum))
 
-        cost <- numeric(N)
-        vclust2mcoclust <- function(v){
-            m <- sapply(v, FUN=function(x){v==x})
-            return(m)
-        }
+#     #Best R implementation 
+#         cost <- numeric(N)
+#         vclust2mcoclust <- function(v){
+#             m <- sapply(v, FUN=function(x){v==x})
+#             return(m)
+#         }
+#         cat("Estimating posterior similarity matrix...\n(this may take some time, complexity in O(n^2))\n")
+#         similarity <- matrix(0, ncol=n, nrow=n)
+#         for (i in 1:N){
+#             similarity <- similarity + vclust2mcoclust(c[[i]])
+#         }
+#         similarity <- similarity/N
+#         cat("DONE!\n")
+#         cat("Estimating cost of MCMC partitions...\n(this may take some time, complexity in O(n^2))\n")
+#         for (i in 1:N){
+#             cost[i] <- sum(abs(vclust2mcoclust(c[[i]])-similarity))
+#         }
+#         
         cat("Estimating posterior similarity matrix...\n(this may take some time, complexity in O(n^2))\n")
-        similarity <- matrix(0, ncol=n, nrow=n)
-        for (i in 1:N){
-            similarity <- similarity + vclust2mcoclust(c[[i]])
-        }
-        similarity <- similarity/N
-        cat("DONE!\n")
-        cat("Estimating cost of MCMC partitions...\n(this may take some time, complexity in O(n^2))\n")
-        for (i in 1:N){
-            cost[i] <- sum(abs(vclust2mcoclust(c[[i]])-similarity))
-        }
+            cmat <- sapply(c, "[")
+            tempC <- similarityMatC(cmat)
         cat("DONE!\n")
 
-
+        similarity <- tempC$similarity
+        cost <- tempC$cost
 
     
-    opt_ind <- which(cost==min(cost))
-    opt_ind <- opt_ind[length(opt_ind)]
-    c_est <- c[[opt_ind]]
+        opt_ind <- which.min(cost)
+        opt_ind <- opt_ind[length(opt_ind)]
+        c_est <- c[[opt_ind]]
     
     return(list("c_est"=c_est, "cost"=cost, "similarity"=similarity, "opt_ind"=opt_ind))
 }

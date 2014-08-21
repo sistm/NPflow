@@ -9,7 +9,10 @@ mmvsnpdfC(x, xi, psi, sigma)
 \item{x}{data matrix of dimension p x n, p being the dimension of the
 data and n the number of data points}
 
-\item{mean}{mean vectors matrix of dimension p x K, K being the number of
+\item{xi}{mean vectors matrix of dimension p x K, K being the number of
+distributions for which the density probability has to be ealuated}
+
+\item{psi}{skew parameter vectors matrix of dimension p x K, K being the number of
 distributions for which the density probability has to be ealuated}
 
 \item{varcovM}{list of length K of variance-covariance matrices,

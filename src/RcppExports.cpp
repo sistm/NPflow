@@ -40,6 +40,25 @@ BEGIN_RCPP
     return __sexp_result;
 END_RCPP
 }
+// mmvstpdfC
+NumericMatrix mmvstpdfC(NumericMatrix x, NumericMatrix xi, NumericMatrix psi, List sigma, NumericVector df);
+RcppExport SEXP NPflow_mmvstpdfC(SEXP xSEXP, SEXP xiSEXP, SEXP psiSEXP, SEXP sigmaSEXP, SEXP dfSEXP) {
+BEGIN_RCPP
+    SEXP __sexp_result;
+    {
+        Rcpp::RNGScope __rngScope;
+        Rcpp::traits::input_parameter< NumericMatrix >::type x(xSEXP );
+        Rcpp::traits::input_parameter< NumericMatrix >::type xi(xiSEXP );
+        Rcpp::traits::input_parameter< NumericMatrix >::type psi(psiSEXP );
+        Rcpp::traits::input_parameter< List >::type sigma(sigmaSEXP );
+        Rcpp::traits::input_parameter< NumericVector >::type df(dfSEXP );
+        NumericMatrix __result = mmvstpdfC(x, xi, psi, sigma, df);
+        PROTECT(__sexp_result = Rcpp::wrap(__result));
+    }
+    UNPROTECT(1);
+    return __sexp_result;
+END_RCPP
+}
 // mmvtpdfC
 NumericMatrix mmvtpdfC(NumericMatrix x, NumericMatrix mean, List varcovM, NumericVector df);
 RcppExport SEXP NPflow_mmvtpdfC(SEXP xSEXP, SEXP meanSEXP, SEXP varcovMSEXP, SEXP dfSEXP) {
@@ -69,6 +88,21 @@ BEGIN_RCPP
         Rcpp::traits::input_parameter< NumericVector >::type mean(meanSEXP );
         Rcpp::traits::input_parameter< NumericMatrix >::type varcovM(varcovMSEXP );
         NumericVector __result = mvnpdfC(x, mean, varcovM);
+        PROTECT(__sexp_result = Rcpp::wrap(__result));
+    }
+    UNPROTECT(1);
+    return __sexp_result;
+END_RCPP
+}
+// similarityMatC
+List similarityMatC(NumericMatrix c);
+RcppExport SEXP NPflow_similarityMatC(SEXP cSEXP) {
+BEGIN_RCPP
+    SEXP __sexp_result;
+    {
+        Rcpp::RNGScope __rngScope;
+        Rcpp::traits::input_parameter< NumericMatrix >::type c(cSEXP );
+        List __result = similarityMatC(c);
         PROTECT(__sexp_result = Rcpp::wrap(__result));
     }
     UNPROTECT(1);

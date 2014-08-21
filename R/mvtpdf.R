@@ -1,14 +1,17 @@
 #'multivariate Student's t-distribution probability density function
 #'
 #'
-#'@param x data matrix
+#'@param x p x n data matrix with n the number of observations and 
+#'p the number of dimensions
 #'
 #'@param mean mean vector or list of mean vectors (either a vector, 
 #'a matrix or a list)
 #'
-#'@param varcovM
+#'@param varcovM variance-covariance matrix or list of variance-covariance 
+#'matrices (either a matrix or a list)
 #'
-#'@param df
+#'@param df a numeric vector or a list of the degrees of freedom
+#'(either a vector or a list)
 #'
 #'@export
 #'

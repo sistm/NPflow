@@ -142,10 +142,10 @@ hyperG0[["lambda"]] <- diag(d)
 
  # Gibbs sampler for Dirichlet Process Mixtures
  ##############################################
- MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=50,
- doPlot, nbclust_init, plotevery=1, gg.add=list(theme_bw()),
+ MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=500,
+ doPlot, nbclust_init, plotevery=50, gg.add=list(theme_bw()),
  diagVar=FALSE)
- s <- summary(MCMCsample_sn, burnin = 500)
+ s <- summary(MCMCsample_st, burnin = 450)
  print(s)
  plot(s)
  plot_ConvDPM(MCMCsample_sn, from=2)
@@ -229,81 +229,6 @@ hyperG0[["lambda"]] <- diag(d)
        + xlim(0,100)
      )
  p
-
-#Skew Normal
-n=100000
-xi <- 0
-d <- 0.995
-alpha <- d/sqrt(1-d^2)
-z <- rtruncnorm(n,a=0, b=Inf)
-e <- rnorm(n, mean = 0, sd = 1)
-x <- d*z + sqrt(1-d^2)*e
-o <- 1
-y <- xi+o*x
-nu=1.3
-w <- rgamma(n,scale=nu/2, shape=nu/2)
-yy <- xi+o*x/w
-snd <- data.frame("Y"=y,"YY"=yy)
-p <- (ggplot(snd)+geom_density(aes(x=Y), fill="blue", alpha=.2)
-     + theme_bw()
-     + ylab("Density")
-     + ggtitle("Y~SN(0,1,10)\\n")
-     + xlim(-1,6)
-     + ylim(0,0.8)
-     )
-p
-
-p <- (ggplot(snd)+geom_density(aes(x=YY), fill="blue", alpha=.2)
-     + theme_bw()
-     + ylab("Density")
-     + ggtitle("Y~ST(0,1,10,1.3)\\n")
-     + xlim(-2,40)
-     + ylim(0,0.8)
-     )
-p
-
-p <- (ggplot(snd)
-     + geom_density(aes(x=Y, fill="blue"), alpha=.2)
-     + geom_density(aes(x=YY, fill="red"), alpha=.2)
-     + theme_bw()
-     +theme(legend.text = element_text(size = 13), legend.position="bottom")
-     + ylab("Density")
-     + xlim(-2,40)
-     + ylim(0,0.8)
-     + scale_fill_manual(name="", labels=c("Y~SN(0,1,10)       ", "Y~ST(0,1,10,1.3)"),
-     guide="legend", values=c("blue", "red"))
-     )
-p
-
-#Variations
-n=100000
-xi <- -1
-d <- 0.995
-alpha <- d/sqrt(1-d^2)
-z <- rtruncnorm(n,a=0, b=Inf)
-e <- rnorm(n, mean = 0, sd = 1)
-x <- d*z + sqrt(1-d^2)*e
-snd <- data.frame("X"=x)
-p <- (ggplot(snd)+geom_density(aes(x=X), fill="blue", alpha=.2)
-     + theme_bw()
-     + ylab("Density")
-     + ggtitle("X~SN(10)\\n")
-     + xlim(-1.5,4)
-     + ylim(0,1.6)
-     )
-p
-
-o <- 0.5
-y <- xi+o*x
-snd <- data.frame("Y"=y)
-p <- (ggplot(snd)+geom_density(aes(x=Y), fill="blue", alpha=.2)
-     + theme_bw()
-     + ylab("Density")
-     + ggtitle("Y~SN(-1,1,10)\\n")
-     + xlim(-1.5,4)
-     + ylim(0,1.6)
-     )
-p
 }
 \author{
 Boris Hejblum

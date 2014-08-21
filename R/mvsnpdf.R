@@ -1,11 +1,17 @@
-#'multivariate Skew-Normal  probability density function
+#'multivariate Skew-Normal probability density function
 #'
 #'
-#'@param x
+#'@param x p x n data matrix with n the number of observations and 
+#'p the number of dimensions
 #'
-#'@param mean
+#'@param xi mean vector or list of mean vectors (either a vector, 
+#'a matrix or a list)
 #'
-#'@param omega
+#'@param sigma variance-covariance matrix or list of variance-covariance 
+#'matrices (either a matrix or a list)
+#'
+#'@param psi skew parameter vector or list of skew parameter vectors 
+#'(either a vector, a matrix or a list)
 #'
 #'@export
 #'

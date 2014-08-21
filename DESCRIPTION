@@ -12,7 +12,8 @@ Depends:
     reshape2,
     ellipse,
     truncnorm,
-    gplots
+    gplots,
+    pheatmap
 Imports:
     ggplot2,
     Rcpp (>= 0.11.2),

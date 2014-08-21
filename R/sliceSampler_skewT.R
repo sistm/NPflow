@@ -49,15 +49,15 @@ sliceSampler_skewT <- function(c, m, alpha, z, hyperG0, U_xi, U_psi,
     # calcul de la vraisemblance pour chaque données pour chaque clusters
     # assignation de chaque données à 1 cluster
     
-    U_xi_list <- lapply(fullCl_ind, function(j) U_xi[, j])
-    U_psi_list <- lapply(fullCl_ind, function(j) U_psi[, j])
-    U_Sigma_list <- lapply(fullCl_ind, function(j) U_Sigma[, ,j])
-    U_df_list <- lapply(fullCl_ind, function(j) U_df[j])
+    U_xi_full <- sapply(fullCl_ind, function(j) U_xi[, j])
+    U_psi_full <- sapply(fullCl_ind, function(j) U_psi[, j])
+    U_Sigma_full <- lapply(fullCl_ind, function(j) U_Sigma[, ,j])
+    U_df_full <- sapply(fullCl_ind, function(j) U_df[j])
     if(length(fullCl_ind)>1){
-        l <- mvstpdf(x=z, xi=U_xi_list, sigma=U_Sigma_list, psi=U_psi_list, df=U_df_list)
-        u_mat <- apply(X=sapply(w[fullCl_ind], function(x){u < x}), MARGIN=2, FUN= as.numeric)
+        l <- mmvstpdfC(x=z, xi=U_xi_full, psi=U_psi_full, sigma=U_Sigma_full, df=U_df_full)
+        u_mat <- t(apply(X=sapply(w[fullCl_ind], function(x){u < x}), MARGIN=2, FUN= as.numeric))
         prob_mat <- u_mat * l
-        c <- apply(X= prob_mat, MARGIN=1, FUN=function(v){match(1,rmultinom(n=1, size=1, prob=v))})
+        c <- apply(X= prob_mat, MARGIN=2, FUN=function(v){match(1,rmultinom(n=1, size=1, prob=v))})
         #alternative implementation:
         #prob_colsum <- colSums(prob_mat)
         #prob_norm <- apply(X=prob_mat, MARGIN=1, FUN=function(r){r/prob_colsum})
@@ -65,6 +65,14 @@ sliceSampler_skewT <- function(c, m, alpha, z, hyperG0, U_xi, U_psi,
     }else{
         c <- rep(fullCl_ind, maxCl)
     }
+    
+    #vectorized R code
+    #     U_xi_list <- lapply(fullCl_ind, function(j) U_xi[, j])
+    #     U_psi_list <- lapply(fullCl_ind, function(j) U_psi[, j])
+    #     U_Sigma_list <- lapply(fullCl_ind, function(j) U_Sigma[, ,j])
+    #     U_df_list <- lapply(fullCl_ind, function(j) U_df[j])
+    #     l <- mvstpdf(x=z, xi=U_xi_list, sigma=U_Sigma_list, psi=U_psi_list, df=U_df_list)
+    
     # non vectorized code for cluster allocation:
     #     nb_fullCl_ind <- length(fullCl_ind)
     #     l <- numeric(nb_fullCl_ind) # likelihood of belonging to each cluster 
@@ -75,9 +83,8 @@ sliceSampler_skewT <- function(c, m, alpha, z, hyperG0, U_xi, U_psi,
     #                             sigma = U_Sigma[, , j],
     #                             psi = U_psi[,j]
     #             
-    #             )*w[j]            
+    #             )          
     #         }
-    #         c[i] <- which.max(l)
     #     }
     
     m_new <- numeric(maxCl) # number of observations in each cluster

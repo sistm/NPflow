@@ -69,8 +69,7 @@ sliceSampler_SkewN <- function(c, m, alpha, z, hyperG0, U_xi, U_psi,
 #     U_xi_list <- lapply(fullCl_ind, function(j) U_xi[, j])
 #     U_psi_list <- lapply(fullCl_ind, function(j) U_psi[, j])
 #     U_Sigma_list <- lapply(fullCl_ind, function(j) U_Sigma[, ,j])
-#     l <- apply(X=mvsnpdf(z, xi=U_xi_list, sigma=U_Sigma_list, psi=U_psi_list), MARGIN=1, FUN="*",y=w[fullCl_ind])
-#     c1 <- fullCl_ind[apply(X=l, MARGIN=2, FUN=which.max)]
+#     l <- mvsnpdf(z, xi=U_xi_list, sigma=U_Sigma_list, psi=U_psi_list)
     
    # non vectorized code for cluster allocation:
 #          nb_fullCl_ind <- length(fullCl_ind)
@@ -82,9 +81,8 @@ sliceSampler_SkewN <- function(c, m, alpha, z, hyperG0, U_xi, U_psi,
 #                                  sigma = U_Sigma[, , fullCl_ind[j]],
 #                                  psi = U_psi[,fullCl_ind[j]]
 #                  
-#                  )*w[fullCl_ind[j]]            
+#                  )           
 #              }
-#              c[i] <- fullCl_ind[which.max(l)]
 #          }
 
     

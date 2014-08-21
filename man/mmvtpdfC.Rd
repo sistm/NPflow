@@ -14,6 +14,8 @@ distributions for which the density probability has to be ealuated}
 
 \item{varcovM}{list of length K of variance-covariance matrices,
 each of dimensions p x p}
+
+\item{df}{vector of length K of degree of freedom parameters}
 }
 \value{
 matrix of densities of dimension K x n
@@ -34,19 +36,6 @@ library(microbenchmark)
 microbenchmark(mvtpdf(x=matrix(1.96), mean=0, varcovM=diag(1)),
               #mvpdfC(x=matrix(1.96), mean=0, varcovM=diag(1)),
               mmvtpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1))),
-              times=10000L)
-microbenchmark(mvnpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1), mean=c(0, 0), varcovM=diag(2)),
-              mvnpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1), mean=c(0, 0), varcovM=diag(2)),
-              mmvnpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1),
-                       mean=matrix(c(0, 0), nrow=2, ncol=1),
-                       varcovM=list(diag(2))),
-              times=10000L)
-microbenchmark(mvnpdf(x=matrix(c(rep(1.96,2),rep(0,2)), nrow=2, ncol=2),
-                     mean=list(c(0,0),c(-1,-1), c(1.5,1.5)),
-                     varcovM=list(diag(2),10*diag(2), 20*diag(2))),
-              mmvnpdfC(matrix(c(rep(1.96,2),rep(0,2)), nrow=2, ncol=2),
-                     mean=matrix(c(0,0,-1,-1, 1.5,1.5), nrow=2, ncol=3),
-                     varcovM=list(diag(2),10*diag(2), 20*diag(2))),
               times=10000L)
 }
 

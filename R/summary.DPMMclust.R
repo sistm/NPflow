@@ -37,9 +37,9 @@ summary.DPMMclust <- function(x, burnin=0, gs=NULL,...){
     }
     
     s <- c(x_invar, list("burnin"=burnin, 
-                   "point_estim"=point_estim,
-                   "loss"=loss,
-                   "index_estim"=index_estim))
+                         "point_estim"=point_estim,
+                         "loss"=loss,
+                         "index_estim"=index_estim))
     class(s) <- "summaryDPMMclust"
     
     invisible(s)
@@ -62,16 +62,24 @@ print.summaryDPMMclust <- function(s,...){
     
 }
 
-plot.summaryDPMMclust <- function(s, ...){
-    
+plot.summaryDPMMclust <- function(s, hm=FALSE, ...){
     plot_ConvDPM(s, shift=s$burnin)
-        
+    
     ind <- s$index_estim
     
+    
+    cat("Plotting point estimate (may take a few sec)... ")
     if(s$clust_distrib=="Normal"){
-        
+        plot_DPM(z=s$data,
+                 c=s$point_estim$c_est, 
+                 i=ind+s$burnin, 
+                 alpha=s$alpha[ind], 
+                 U_SS=s$U_SS_list[[ind]], 
+                 ellipses=TRUE,
+                 gg.add=list(theme_bw()),
+                 ...
+        )
     }else if(s$clust_distrib=="skewNormal"){
-        cat("Plotting point estimate (may take a few sec)... ")
         plot_DPMsn(z=s$data,
                    c=s$point_estim$c_est, 
                    i=ind+s$burnin, 
@@ -82,11 +90,30 @@ plot.summaryDPMMclust <- function(s, ...){
                    nbsim_dens=200000,
                    ...
         )
-        cat("DONE!\n")
+    }else if(s$clust_distrib=="skewT"){
+        plot_DPMst(z=s$data,
+                   c=s$point_estim$c_est, 
+                   i=ind+s$burnin, 
+                   alpha=s$alpha[ind], 
+                   U_SS=s$U_SS_list[[ind]], 
+                   ellipses=TRUE,
+                   gg.add=list(theme_bw()),
+                   nbsim_dens=200000,
+                   ...
+        )
     }
+    cat("DONE!\n")
     
-    cat("Plotting heatmap of similarity (may take a few min)...\n")
-    cat("TODO\n")
-    cat("DONE! Wait for plot rendering...\n")
+    if(hm){
+        cat("Plotting heatmap of similarity (may take a few min)...\n")
+        pheatmap(s$point_estim$similarity, scale="none", border_color=NA,
+                 color=colorRampPalette(c("#F7FBFF", "#DEEBF7", "#C6DBEF", 
+                                          #"#9ECAE1", "#FEB24C", 
+                                          "#FD8D3C", "#BD0026", "#800026"))(200), 
+                 show_rownames=FALSE, show_colnames=FALSE, 
+                 cluster_rows=TRUE, cluster_cols =TRUE, 
+                 main="Posterior similarity matrix")
+        cat("DONE! Wait for plot rendering...\n")
+    }
     
 }

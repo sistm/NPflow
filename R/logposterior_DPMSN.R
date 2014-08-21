@@ -13,6 +13,7 @@ logposterior_DPMSN <- function(z, xi, psi, Sigma, B, hyper, c, m, alpha, n, a, b
                 log_prior_NNiW <-  0
             }
         } else{
+            
             log_vrais <- sum(log(mvsnpdf(x = z, xi = xi[, c], sigma = Sigma[, , c], psi = psi[, c])))
             log_prior_NNiW <-  sum(dNNiW(xi[,indfull], psi[,indfull], B[,,indfull], Sigma[,,indfull], hyperprior=hyper, log=TRUE))
         }

@@ -6,19 +6,20 @@ logposterior_DPMST <- function(z, xi, psi, Sigma, df, B, hyper, c, m, alpha, n, 
     K <- length(indfull)
     if(!is.list(xi)){
         if(is.null(dim(xi))){
-            log_vrais <- sum(log(mvsnpdf(x = z, xi = xi, sigma = Sigma, psi = psi)))
+            log_vrais <- sum(log(mvstpdf(x = z, xi = xi, sigma = Sigma, psi = psi, df=df)))
             if(!diagVar){
                 log_prior_NNiW <-  sum(log(dNNiW(xi, psi, B, Sigma, hyperprior=hyper, log=TRUE)))
             }else{
                 log_prior_NNiW <-  0
             }
         } else{
-            log_vrais <- sum(log(mvsnpdf(x = z, xi = xi[, c], sigma = Sigma[, , c], psi = psi[, c])))
+            log_vrais <- sum(log(mvstpdf(x = z, xi = xi[, c], sigma = Sigma[, , c], psi = psi[, c], df=df[c])))
             log_prior_NNiW <-  sum(dNNiW(xi[,indfull], psi[,indfull], B[,,indfull], Sigma[,,indfull], hyperprior=hyper, log=TRUE))
         }
     }else{
-        log_vrais <- sum(log(mvsnpdf(x = z, xi = xi[as.character(c)], 
-                                     sigma = Sigma[as.character(c)], psi = psi[as.character(c)])))
+        log_vrais <- sum(log(mvstpdf(x = z, xi = xi[as.character(c)], 
+                                     sigma = Sigma[as.character(c)], psi = psi[as.character(c)], 
+                                     df=df[as.character(c)])))
         if(!diagVar){
             log_prior_NNiW <-  sum(log(dNNiW(xi[as.character(indfull)], 
                                              psi[as.character(indfull)],
