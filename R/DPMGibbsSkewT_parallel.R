@@ -138,10 +138,10 @@
 #'  MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=500, 
 #'  doPlot, nbclust_init, plotevery=50, gg.add=list(theme_bw()), 
 #'  diagVar=FALSE)
-#'  s <- summary(MCMCsample_st, burnin = 450)
+#'  s <- summary(MCMCsample_st, burnin = 350)
 #'  print(s)
 #'  plot(s)
-#'  plot_ConvDPM(MCMCsample_sn, from=2)
+#'  plot_ConvDPM(MCMCsample_st, from=2)
 #'  cluster_est_binder(MCMCsample_sn$c_list[50:500])
 #'  
 #'  library(shiny)
@@ -223,12 +223,18 @@
 #'      )
 #'  p
 #'
-
 #'
-DPMGibbsSkewT_parallel <- function (z, hyperG0, a, b, N, doPlot=TRUE, 
-                           nbclust_init=30, plotevery=1, 
-                           diagVar=TRUE, verbose=TRUE,
-                           ...){
+DPMGibbsSkewT_parallel <- function (Ncpus, type_connec,
+                                    z, hyperG0, a, b, N, doPlot=TRUE, 
+                                    nbclust_init=30, plotevery=1, 
+                                    diagVar=TRUE, verbose=FALSE,
+                                    monitorfile="",
+                                    ...){
+    
+    # declare the cores
+    library(doSNOW)
+    cl <- makeCluster(Ncpus, type = type_connec)
+    registerDoSNOW(cl)
     
     if(doPlot){library(ggplot2)}
     
@@ -239,6 +245,23 @@ DPMGibbsSkewT_parallel <- function (z, hyperG0, a, b, N, doPlot=TRUE,
     U_Sigma = array(0, dim=c(p, p, n))
     U_df = rep(10,n)
     U_B = array(0, dim=c(2, 2, n))
+    
+    par_ind <- list()
+    temp_ind <- 0
+    if(Ncpus>1){
+        nb_simult <- floor(n%/%(Ncpus))
+        for(i in 1:(Ncpus-1)){
+            par_ind[[i]] <- temp_ind + 1:nb_simult
+            temp_ind <- temp_ind + nb_simult
+        }
+        par_ind[[Ncpus]] <- (temp_ind+1):n
+    }
+    else{
+        cat("Only 1 core specified\n=> non-parallel version of the algorithm would be more efficient",
+            file=monitorfile, append = TRUE)
+        nb_simult <- n
+        par_ind[[Ncpus]] <- (temp_ind+1):n
+    }
     
     # U_SS is a list where each U_SS[[k]] contains the sufficient
     # statistics associated to cluster k
@@ -314,10 +337,13 @@ DPMGibbsSkewT_parallel <- function (z, hyperG0, a, b, N, doPlot=TRUE,
         plot_DPMst(z=z, c=c, i=i, alpha=alpha[i], U_SS=U_SS_list[[i]], ellipses=TRUE, ...)
     }
     if(verbose){
-        cat(i, "/", N, " samplings:\n", sep="")
-        cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="")
+        cat(i, "/", N, " samplings:\n", sep="",
+            file=monitorfile, append = TRUE)
+        cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="",
+            file=monitorfile, append = TRUE)
         cl2print <- unique(c)
-        cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
+        cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n",
+            file=monitorfile, append = TRUE)
     }
     
     
@@ -330,11 +356,16 @@ DPMGibbsSkewT_parallel <- function (z, hyperG0, a, b, N, doPlot=TRUE,
                                     K=nbClust, a=a, b=b)
             )
             
-            slice <- sliceSampler_skewT(c=c, m=m, alpha=alpha[i], 
-                                        z=z, hyperG0=hyperG0, 
-                                        U_xi=U_xi, U_psi=U_psi, 
-                                        U_Sigma=U_Sigma, U_df=U_df,
-                                        scale=sc, diagVar)
+            slice <- sliceSampler_skewT_parallel(Ncpus=Ncpus,
+                                                 c=c, m=m, 
+                                                 alpha=alpha[i], 
+                                                 z=z, hyperG0=hyperG0, 
+                                                 U_xi=U_xi, 
+                                                 U_psi=U_psi, 
+                                                 U_Sigma=U_Sigma, 
+                                                 U_df=U_df,
+                                                 scale=sc, diagVar, 
+                                                 parallel_index=par_ind)
             m <- slice[["m"]]
             c <- slice[["c"]]        
             weights_list[[i]] <- slice[["weights"]]
@@ -369,12 +400,12 @@ DPMGibbsSkewT_parallel <- function (z, hyperG0, a, b, N, doPlot=TRUE,
                                          U_df=U_df, ltn=ltn, 
                                          weights=weights_list[[i]],
                                          scale=sc)
-            U_df_list <- update_scale[["df"]]
+            U_df_full <- update_scale[["df"]]
             sc <- update_scale[["scale"]]
             
             for(k in 1:fullCl_nb){
                 j <- fullCl[k]
-                U_df[j] <- U_df_list[[k]]
+                U_df[j] <- U_df_full[k]
                 U_SS[[j]][["df"]] <- U_df[j]
             }
             
@@ -388,13 +419,20 @@ DPMGibbsSkewT_parallel <- function (z, hyperG0, a, b, N, doPlot=TRUE,
                 plot_DPMst(z=z, c=c, i=i, alpha=alpha[i], U_SS=U_SS_list[[i]], ellipses=TRUE, ...)
             }
             if(verbose){
-                cat(i, "/", N, " samplings:\n", sep="")
-                cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="")
+                cat(i, "/", N, " samplings:\n", sep="",
+                    file=monitorfile, append = TRUE)
+                cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="",
+                    file=monitorfile, append = TRUE)
                 cl2print <- unique(c)
-                cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
+                cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n",
+                    file=monitorfile, append = TRUE)
             }
         }
     }
+    
+    
+    
+    stopCluster(cl)
     
     dpmclus <- list("mcmc_partitions" = c_list, 
                     "alpha"=alpha, 

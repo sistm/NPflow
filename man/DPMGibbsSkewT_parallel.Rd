@@ -3,8 +3,9 @@
 \alias{DPMGibbsSkewT_parallel}
 \title{Slice Sampling of Dirichlet Process Mixture of skew  Students's t-distibutions}
 \usage{
-DPMGibbsSkewT_parallel(z, hyperG0, a, b, N, doPlot = TRUE,
-  nbclust_init = 30, plotevery = 1, diagVar = TRUE, verbose = TRUE, ...)
+DPMGibbsSkewT_parallel(Ncpus, type_connec, z, hyperG0, a, b, N, doPlot = TRUE,
+  nbclust_init = 30, plotevery = 1, diagVar = TRUE, verbose = FALSE,
+  monitorfile = "", ...)
 }
 \arguments{
 \item{z}{data matrix \code{d x n} with \code{d} dimensions in rows
@@ -145,10 +146,10 @@ hyperG0[["lambda"]] <- diag(d)
  MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=500,
  doPlot, nbclust_init, plotevery=50, gg.add=list(theme_bw()),
  diagVar=FALSE)
- s <- summary(MCMCsample_st, burnin = 450)
+ s <- summary(MCMCsample_st, burnin = 350)
  print(s)
  plot(s)
- plot_ConvDPM(MCMCsample_sn, from=2)
+ plot_ConvDPM(MCMCsample_st, from=2)
  cluster_est_binder(MCMCsample_sn$c_list[50:500])
 
  library(shiny)

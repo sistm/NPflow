@@ -102,5 +102,5 @@ sliceSampler_skewT <- function(c, m, alpha, z, hyperG0, U_xi, U_psi,
     }
     
     return(list("c"=c, "m"=m_new, "weights"=w, "latentTrunc"=ltn, 
-                "xi"=U_psi, "psi"=U_psi, "Sigma"=U_Sigma, "df"=U_df))
+                "xi"=U_xi, "psi"=U_psi, "Sigma"=U_Sigma, "df"=U_df))
 }

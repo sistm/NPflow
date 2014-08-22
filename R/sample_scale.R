@@ -66,7 +66,6 @@ sample_scale <- function(c, m, z, U_xi, U_psi,
     if(fullCl>1){
         for(j in 1:fullCl){
             
-            obs_j <- which(c==fullCl_ind[j])
             
             prob_new <- exp(sum(loglikold$clust[-j],logliknew$clust[j]) + prior_df(df_new[j], log=TRUE) + log(df_new[j]-1)
                             -(loglikold$total + prior_df(U_df_full[j], log=TRUE) + log(U_df_full[j]-1)))
@@ -79,9 +78,9 @@ sample_scale <- function(c, m, z, U_xi, U_psi,
             }
             if (u[j]<prob_new){
                 U_df_full[j] <- df_new[j]
-                U_df[obs_j] <- U_df_full[j]
             }
             
+            obs_j <- which(c==fullCl_ind[j])
             eps <- z[,obs_j] - U_xi_full[,j] - sapply(X=ltn[obs_j], FUN=function(x){x*U_psi_full[,j]})
             tra <- apply(X=eps, MARGIN=2, FUN=function(v){sum(diag(tcrossprod(v)%*%solve(U_Sigma_full[[j]])))})
             
@@ -103,7 +102,6 @@ sample_scale <- function(c, m, z, U_xi, U_psi,
         }
         if (u[j]<prob_new){
             U_df_full[j] <- df_new[j]
-            U_df <- rep(U_df_full[j], n)
         }
         
         eps <- z - U_xi_full[,j] - sapply(X=ltn, FUN=function(x){x*U_psi_full[,j]})
@@ -114,5 +112,5 @@ sample_scale <- function(c, m, z, U_xi, U_psi,
     }
     
     
-    return(list("df"=U_df, "scale"=scale))
+    return(list("df"=U_df_full, "scale"=scale))
 }

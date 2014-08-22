@@ -135,7 +135,7 @@
 #'  # Gibbs sampler for Dirichlet Process Mixtures
 #'  ##############################################
 #'  #MCMCsample_sn_par <- DPM_GibbsSampler_SkewN_parallel(Ncpus=8, type_connec="SOCK", z, hyperG0, a, b, N=10000, doPlot, nbclust_init, plotevery=50, gg.add=list(theme_bw()))
-#'  MCMCsample_sn_par <- DPM_GibbsSampler_SkewN_parallel(Ncpus=2, type_connec="SOCK", z, hyperG0, a, b, N=2000, doPlot, nbclust_init, plotevery=50, gg.add=list(theme_bw()))
+#'  MCMCsample_sn_par <- DPMGibbsSkewN_parallel(Ncpus=2, type_connec="SOCK", z, hyperG0, a, b, N=2000, doPlot, nbclust_init, plotevery=50, gg.add=list(theme_bw()))
 #'  plot_ConvDPM(MCMCsample_sn, from=2)
 #'  
 #'  library(shiny)
@@ -260,6 +260,7 @@ DPMGibbsSkewN_parallel <- function (Ncpus, type_connec,
     # 50 observations
     
     i <- 1
+    
     if(ncol(z)<nbclust_init){       
         for (k in 1:n){
             c[k] <- k

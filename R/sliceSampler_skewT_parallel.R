@@ -1,7 +1,8 @@
-sliceSampler_SkewN_parallel <- function(Ncpus, c, m, alpha, z, hyperG0,
+sliceSampler_skewT_parallel <- function(Ncpus, c, m, alpha, z, hyperG0, 
                                         U_xi, U_psi, U_Sigma, 
-                                        diagVar, 
+                                        U_df, scale, diagVar, 
                                         parallel_index){
+    
     
     maxCl <- length(m) #maximum number of clusters
     ind <- which(m!=0) # indexes of non empty clusters
@@ -39,10 +40,10 @@ sliceSampler_SkewN_parallel <- function(Ncpus, c, m, alpha, z, hyperG0,
         # Sample the centers and spread of each new cluster from prior
         for (i in 1:t){
             NNiW <- rNNiW(hyperG0, diagVar)
-            #TODO
             U_xi[, ind_new[i]] <- NNiW[["xi"]]
             U_psi[, ind_new[i]] <- NNiW[["psi"]]
             U_Sigma[, , ind_new[i]] <- NNiW[["S"]]
+            U_df[ind_new[i]] <- 10
         }
     }
     
@@ -50,19 +51,15 @@ sliceSampler_SkewN_parallel <- function(Ncpus, c, m, alpha, z, hyperG0,
     nb_fullCl_ind <- length(fullCl_ind)
     # calcul de la vraisemblance pour chaque données pour chaque clusters
     # assignation de chaque données à 1 cluster
-    # likelihood of belonging to each cluster 
     
-    #TODO
-    #split the data and do the update !
-    
-
     U_xi_full <- sapply(fullCl_ind, function(j) U_xi[, j])
     U_psi_full <- sapply(fullCl_ind, function(j) U_psi[, j])
     U_Sigma_full <- lapply(fullCl_ind, function(j) U_Sigma[, ,j])
-
+    U_df_full <- sapply(fullCl_ind, function(j) U_df[j])
+    
     c <- foreach(i=1:Ncpus, .combine='c')%dopar%{
         if(length(fullCl_ind)>1){
-            l <- mmvsnpdfC(z[, parallel_index[[i]]], xi=U_xi_full, sigma=U_Sigma_full, psi=U_psi_full)
+            l <- mmvstpdfC(x=z[, parallel_index[[i]]], xi=U_xi_full, psi=U_psi_full, sigma=U_Sigma_full, df=U_df_full)
             u_mat <- t(apply(X=sapply(w[fullCl_ind], function(x){u[parallel_index[[i]]] < x}), MARGIN=2, FUN= as.numeric))
             prob_mat <- u_mat * l
             c <- fullCl_ind[apply(X= prob_mat, MARGIN=2, FUN=function(v){match(1,rmultinom(n=1, size=1, prob=v))})]
@@ -85,8 +82,10 @@ sliceSampler_SkewN_parallel <- function(Ncpus, c, m, alpha, z, hyperG0,
         psi <- U_psi[,k]
         A_k <-  1/(1 + (crossprod(psi, siginv)%*%psi))
         a_ik <- (tcrossprod(A_k, psi)%*%siginv%*%(z[,obs_k]-U_xi[,k]))
+        A_k <- A_k/scale[obs_k]
         ltn[obs_k] <- rtruncnorm(length(obs_k), a=0, b=Inf, mean = a_ik, sd = sqrt(A_k))
     }
     
-    return(list("c"=c, "m"=m_new, "weights"=w, "latentTrunc"=ltn))
+    return(list("c"=c, "m"=m_new, "weights"=w, "latentTrunc"=ltn, 
+                "xi"=U_xi, "psi"=U_psi, "Sigma"=U_Sigma, "df"=U_df))
 }
