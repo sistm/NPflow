@@ -1,34 +1,52 @@
 logposterior_DPMST <- function(z, xi, psi, Sigma, df, B, hyper, c, m, alpha, n, a, b, diagVar){
+    
     res <- NA
     
     indfull <- which(m!=0)
     mfull <- m[indfull]
     K <- length(indfull)
-    if(!is.list(xi)){
-        if(is.null(dim(xi))){
-            log_vrais <- sum(log(mvstpdf(x = z, xi = xi, sigma = Sigma, psi = psi, df=df)))
-            if(!diagVar){
-                log_prior_NNiW <-  sum(log(dNNiW(xi, psi, B, Sigma, hyperprior=hyper, log=TRUE)))
-            }else{
-                log_prior_NNiW <-  0
-            }
-        } else{
-            log_vrais <- sum(log(mvstpdf(x = z, xi = xi[, c], sigma = Sigma[, , c], psi = psi[, c], df=df[c])))
-            log_prior_NNiW <-  sum(dNNiW(xi[,indfull], psi[,indfull], B[,,indfull], Sigma[,,indfull], hyperprior=hyper, log=TRUE))
-        }
-    }else{
-        log_vrais <- sum(log(mvstpdf(x = z, xi = xi[as.character(c)], 
-                                     sigma = Sigma[as.character(c)], psi = psi[as.character(c)], 
-                                     df=df[as.character(c)])))
+    
+    if(!is.list(xi) && is.null(dim(xi))){
+        log_vrais <- sum(log(mvstpdf(x = z, xi = xi, sigma = Sigma, psi = psi, df=df)))
         if(!diagVar){
-            log_prior_NNiW <-  sum(log(dNNiW(xi[as.character(indfull)], 
-                                             psi[as.character(indfull)],
-                                             B[as.character(indfull)], 
-                                             Sigma[as.character(indfull)], 
-                                             hyperprior=hyper, log=TRUE)))
+            log_prior_NNiW <-  sum(log(dNNiW(xi, psi, B, Sigma, hyperprior=hyper, log=TRUE)))
         }else{
-            log_prior_NNiW <-  0
+            betas <- diag(Sigma)
+            beta0 <- diag(hyperG0$lambda)
+            log_prior_NNiW <- sum(dgamma(x=betas, 
+                                         shape=hyperG0$nu, 
+                                         rate=1/beta0, log=TRUE))
         }
+    }
+    if(!is.list(xi)){
+        U_xi_full <- sapply(indfull, function(j) xi[, j])
+        U_psi_full <- sapply(indfull, function(j) psi[, j])
+        U_Sigma_full <- lapply(indfull, function(j) Sigma[, ,j])
+        U_df_full <- sapply(indfull, function(j) df[j])
+    }else{
+        U_xi_full <- sapply(xi, "[")
+        U_psi_full <- sapply(psi, "[")
+        U_Sigma_full <- Sigma
+        U_df_full <- sapply(df, "[")
+    }
+    
+    log_lik <- mvstlikC(x=z, c=c, clustval=indfull, 
+                        xi=U_xi_full, psi=U_psi_full, sigma=U_Sigma_full, df=U_df_full,
+                        loglik=TRUE)
+    log_vrais <- log_lik$total
+    
+    if(!diagVar){
+        log_prior_NNiW <-  sum(log(dNNiW(xi[as.character(indfull)], 
+                                         psi[as.character(indfull)],
+                                         B[as.character(indfull)], 
+                                         Sigma[as.character(indfull)], 
+                                         hyperprior=hyper, log=TRUE)))
+    }else{
+        betas <- lapply(U_Sigma_full, diag)
+        beta0 <- diag(hyperG0$lambda)
+        S <- lapply(betas, function(b){sum(dgamma(x=b,shape=hyperG0$nu, 
+                        rate=1/beta0, log=TRUE))})
+        log_prior_NNiW <- sum(unlist(S))
     }
     
     log_prior_alpha <- dgamma(alpha, shape=a, scale=1/b, log=TRUE)

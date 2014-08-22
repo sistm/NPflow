@@ -13,9 +13,17 @@ logposterior_DPMSN <- function(z, xi, psi, Sigma, B, hyper, c, m, alpha, n, a, b
                 log_prior_NNiW <-  0
             }
         } else{
-            
             log_vrais <- sum(log(mvsnpdf(x = z, xi = xi[, c], sigma = Sigma[, , c], psi = psi[, c])))
-            log_prior_NNiW <-  sum(dNNiW(xi[,indfull], psi[,indfull], B[,,indfull], Sigma[,,indfull], hyperprior=hyper, log=TRUE))
+            
+            if(!diagVar){
+                log_prior_NNiW <-  sum(dNNiW(xi[,indfull], psi[,indfull], B[,,indfull], Sigma[,,indfull], hyperprior=hyper, log=TRUE))
+            }else{
+                betas <- apply(X=Sigma[,,indfull], MARGIN=3, diag)
+                beta0 <- diag(hyperG0$lambda)
+                S <- apply(betas, MARGIN=2, function(b){sum(dgamma(x=b,shape=hyperG0$nu, 
+                                                                   rate=1/beta0, log=TRUE))})
+                log_prior_NNiW <- sum(unlist(S))
+            }
         }
     }else{
         log_vrais <- sum(log(mvsnpdf(x = z, xi = xi[as.character(c)], 
@@ -27,7 +35,11 @@ logposterior_DPMSN <- function(z, xi, psi, Sigma, B, hyper, c, m, alpha, n, a, b
                                              Sigma[as.character(indfull)], 
                                              hyperprior=hyper, log=TRUE)))
         }else{
-            log_prior_NNiW <-  0
+            betas <- lapply(Sigma[as.character(indfull)], diag)
+            beta0 <- diag(hyperG0$lambda)
+            S <- lapply(betas, function(b){sum(dgamma(x=b,shape=hyperG0$nu, 
+                                                      rate=1/beta0, log=TRUE))})
+            log_prior_NNiW <- sum(unlist(S))
         }
     }
     
