@@ -94,6 +94,28 @@ BEGIN_RCPP
     return __sexp_result;
 END_RCPP
 }
+// mvstlikC
+List mvstlikC(NumericMatrix x, IntegerVector c, IntegerVector clustval, NumericMatrix xi, NumericMatrix psi, List sigma, NumericVector df, bool loglik);
+RcppExport SEXP NPflow_mvstlikC(SEXP xSEXP, SEXP cSEXP, SEXP clustvalSEXP, SEXP xiSEXP, SEXP psiSEXP, SEXP sigmaSEXP, SEXP dfSEXP, SEXP loglikSEXP) {
+BEGIN_RCPP
+    SEXP __sexp_result;
+    {
+        Rcpp::RNGScope __rngScope;
+        Rcpp::traits::input_parameter< NumericMatrix >::type x(xSEXP );
+        Rcpp::traits::input_parameter< IntegerVector >::type c(cSEXP );
+        Rcpp::traits::input_parameter< IntegerVector >::type clustval(clustvalSEXP );
+        Rcpp::traits::input_parameter< NumericMatrix >::type xi(xiSEXP );
+        Rcpp::traits::input_parameter< NumericMatrix >::type psi(psiSEXP );
+        Rcpp::traits::input_parameter< List >::type sigma(sigmaSEXP );
+        Rcpp::traits::input_parameter< NumericVector >::type df(dfSEXP );
+        Rcpp::traits::input_parameter< bool >::type loglik(loglikSEXP );
+        List __result = mvstlikC(x, c, clustval, xi, psi, sigma, df, loglik);
+        PROTECT(__sexp_result = Rcpp::wrap(__result));
+    }
+    UNPROTECT(1);
+    return __sexp_result;
+END_RCPP
+}
 // similarityMatC
 List similarityMatC(NumericMatrix c);
 RcppExport SEXP NPflow_similarityMatC(SEXP cSEXP) {

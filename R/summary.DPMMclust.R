@@ -2,16 +2,16 @@
 #'
 #'@param x a \code{DPMMclust} object.
 #'
-#'@param burnin the number of MCMC iterations to burn (defaults is half).
+#'@param burnin the number of MCMC iterations to burn (defaults is half)
 #'
 #'@param gs optionnal vector of length \code{n} containing the gold standard 
-#'partition of the \code{n} observations to compare to the point estimate.
+#'partition of the \code{n} observations to compare to the point estimate
 #'
-#'@param ... further arguments passed to or from other methods.
+#'@param ... further arguments passed to or from other methods
 #'
 #'@return a \code{list}: 
 #'  \itemize{
-#'      \item{\code{burnin}:}{ }
+#'      \item{\code{burnin}:}{an integer passing along the \code{burnin} argument}
 #'      \item{\code{point_estim}:}{}
 #'      \item{\code{loss}:}{}
 #'      \item{\code{index_estim}:}{}
@@ -45,6 +45,18 @@ summary.DPMMclust <- function(x, burnin=0, gs=NULL,...){
     invisible(s)
 }
 
+
+#' Methods for a summary of a 'DPMMclust' object
+#'@rdname methods.summaryDPMMclust
+#'@aliases print.summaryDPMMclust, plot.summaryDPMMclust
+#'@param s a \code{summaryDPMMclust} object
+#'@param hm logical flag to plot the heatmap of the similarity matrix. 
+#'Default is \code{FALSE}.
+#'@param nbsim_densities the number of simulated observations to be used
+#'to plot the density lines of the clusters in the point estimate partition plot
+#'@param ... further arguments passed to or from other methods
+#'@author Boris Hejblum
+#'@export
 print.summaryDPMMclust <- function(s,...){
     
     cat(class(s), "object with", s$nb_mcmcit, "MCMC iterations:\n")
@@ -62,7 +74,9 @@ print.summaryDPMMclust <- function(s,...){
     
 }
 
-plot.summaryDPMMclust <- function(s, hm=FALSE, ...){
+#'@export
+#'@rdname methods.summaryDPMMclust
+plot.summaryDPMMclust <- function(s, hm=FALSE, nbsim_densities=50000, ...){
     plot_ConvDPM(s, shift=s$burnin)
     
     ind <- s$index_estim
@@ -87,7 +101,7 @@ plot.summaryDPMMclust <- function(s, hm=FALSE, ...){
                    U_SS=s$U_SS_list[[ind]], 
                    ellipses=TRUE,
                    gg.add=list(theme_bw()),
-                   nbsim_dens=200000,
+                   nbsim_dens=nbsim_densities,
                    ...
         )
     }else if(s$clust_distrib=="skewT"){
@@ -98,7 +112,7 @@ plot.summaryDPMMclust <- function(s, hm=FALSE, ...){
                    U_SS=s$U_SS_list[[ind]], 
                    ellipses=TRUE,
                    gg.add=list(theme_bw()),
-                   nbsim_dens=200000,
+                   nbsim_dens=nbsim_densities,
                    ...
         )
     }

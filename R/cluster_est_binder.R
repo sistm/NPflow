@@ -99,7 +99,7 @@ cluster_est_binder <- function(c, thin=1){
         cost <- tempC$cost
 
     
-        opt_ind <- which.min(cost)
+        opt_ind <- which(cost==min(cost)) #not use which.min because we want the last MCMC iteration in case of ties
         opt_ind <- opt_ind[length(opt_ind)]
         c_est <- c[[opt_ind]]
     

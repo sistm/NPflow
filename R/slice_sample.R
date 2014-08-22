@@ -51,7 +51,7 @@ slice_sample <- function(c, m, alpha, z, hyperG0, U_mu, U_Sigma){
         l <- mvnpdf(z, mean=U_mu_list, varcovM=U_Sigma_list)
         u_mat <- apply(X=t(sapply(u, function(x){x < w[fullCl_ind]})), MARGIN=2, FUN= as.numeric)
         prob_mat <- u_mat * l
-        c <- apply(X= prob_mat, MARGIN=1, FUN=function(v){which(rmultinom(n=1, size=1, prob=v)==1)})
+        c <- fullCl_ind[apply(X= prob_mat, MARGIN=1, FUN=function(v){which(rmultinom(n=1, size=1, prob=v)==1)})]
     }else{
         c <- rep(fullCl_ind, maxCl)
     }

@@ -65,11 +65,11 @@ sliceSampler_SkewN_parallel <- function(Ncpus, c, m, alpha, z, hyperG0, U_xi, U_
         if(length(fullCl_ind)>1){
             u_mat <- t(apply(X=sapply(w[fullCl_ind], function(x){u < x}), MARGIN=2, FUN= as.numeric))
             prob_mat <- u_mat * l
-            c <- apply(X= prob_mat, MARGIN=2, FUN=function(v){match(1,rmultinom(n=1, size=1, prob=v))})
+            c <- fullCl_ind[apply(X= prob_mat, MARGIN=2, FUN=function(v){match(1,rmultinom(n=1, size=1, prob=v))})]
             #alternative implementation:
             #prob_colsum <- colSums(prob_mat)
             #prob_norm <- apply(X=prob_mat, MARGIN=1, FUN=function(r){r/prob_colsum})
-            #c <- apply(X=prob_norm, MARGIN=1, FUN=function(r){match(TRUE,runif(1) <cumsum(r))})
+            #c <- fullCl_ind[apply(X=prob_norm, MARGIN=1, FUN=function(r){match(TRUE,runif(1) <cumsum(r))})]
         }else{
             c <- rep(fullCl_ind, maxCl)
         }

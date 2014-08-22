@@ -8,17 +8,17 @@
 \arguments{
 \item{x}{a \code{DPMMclust} object.}
 
-\item{burnin}{the number of MCMC iterations to burn (defaults is half).}
+\item{burnin}{the number of MCMC iterations to burn (defaults is half)}
 
 \item{gs}{optionnal vector of length \code{n} containing the gold standard
-partition of the \code{n} observations to compare to the point estimate.}
+partition of the \code{n} observations to compare to the point estimate}
 
-\item{...}{further arguments passed to or from other methods.}
+\item{...}{further arguments passed to or from other methods}
 }
 \value{
 a \code{list}:
  \itemize{
-     \item{\code{burnin}:}{ }
+     \item{\code{burnin}:}{an integer passing along the \code{burnin} argument}
      \item{\code{point_estim}:}{}
      \item{\code{loss}:}{}
      \item{\code{index_estim}:}{}

@@ -53,6 +53,8 @@ slice_sample_parallel <- function(c, m, alpha, z, hyperG0, U_mu, U_Sigma){
     # calcul de la vraisemblance pour chaque données pour chaque clusters
     # assignation de chaque données à 1 cluster
     # likelihood of belonging to each cluster 
+    
+    #TODO
     c <- foreach(i=1:maxCl, .combine='c')%dopar%{
         l <- numeric(nb_fullCl)
         for (j in fullCl_ind){
