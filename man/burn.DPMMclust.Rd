@@ -3,12 +3,15 @@
 \alias{burn.DPMMclust}
 \title{Burning mcmc iterations from a Dirichlet Process Mixture Model}
 \usage{
-burn.DPMMclust(x, burnin = 0)
+burn.DPMMclust(x, burnin = 0, thin = 1)
 }
 \arguments{
 \item{x}{a \code{DPMMclust} object.}
 
-\item{burnin}{the number of MCMC iterations to burn (defaults is half).}
+\item{burnin}{the number of MCMC iterations to burn (default is \code{0}).}
+
+\item{thin}{the spacing at which MCMC iterations are kept.
+Default is \code{1}, i.e. no thining.}
 
 \item{gs}{optionnal vector of length \code{n} containing the gold standard
 partition of the \code{n} observations to compare to the point estimate.}

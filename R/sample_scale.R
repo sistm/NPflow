@@ -4,14 +4,14 @@ sample_scale <- function(c, m, z, U_xi, U_psi,
     n <- length(c)
     
     
-    #         prior_df <- function(x, log=FALSE){
-    #             if(log){
-    #                 y <- log(x/100)-x/10
-    #             }else{
-    #                 y <- x/100*exp(-x/10)
-    #             }
-    #             return(y)
-    #         }
+#             prior_df <- function(x, log=FALSE){
+#                 if(log){
+#                     y <- log(x/100)-x/10
+#                 }else{
+#                     y <- x/100*exp(-x/10)
+#                 }
+#                 return(y)
+#             }
     
     #     #Hierarchical prior
     #     prior_df <- function(x, d, log=FALSE){
@@ -39,9 +39,10 @@ sample_scale <- function(c, m, z, U_xi, U_psi,
     }
     
     
-    c_df <- 4
+    c_df <- 2
     fullCl_ind <- which(m!=0)
     fullCl <- length(fullCl_ind)
+    acc_rate <- 0
     
     U_xi_full <- sapply(fullCl_ind, function(j) U_xi[, j])
     U_psi_full <- sapply(fullCl_ind, function(j) U_psi[, j])
@@ -77,6 +78,7 @@ sample_scale <- function(c, m, z, U_xi, U_psi,
                 prob_new <- min(1, prob_new)
             }
             if (u[j]<prob_new){
+                acc_rate <- acc_rate + 1
                 U_df_full[j] <- df_new[j]
             }
             
@@ -101,6 +103,7 @@ sample_scale <- function(c, m, z, U_xi, U_psi,
             prob_new <- min(1, prob_new)
         }
         if (u[j]<prob_new){
+            acc_rate <- acc_rate + 1
             U_df_full[j] <- df_new[j]
         }
         
@@ -112,5 +115,5 @@ sample_scale <- function(c, m, z, U_xi, U_psi,
     }
     
     
-    return(list("df"=U_df_full, "scale"=scale))
+    return(list("df"=U_df_full, "scale"=scale, "acc_rate"=acc_rate/fullCl))
 }

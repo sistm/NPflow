@@ -64,10 +64,11 @@ ncl <- 4
 
 sdev <- array(dim=c(d,d,ncl))
 
-xi <- matrix(nrow=d, ncol=ncl, c(-1.5, 1, 1.5, 1, 1.5, -2, -2, -2))
+xi <- matrix(nrow=d, ncol=ncl, c(-1.5, 1.5, 1.5, 1.5, 2, -2.5, -2.5, -3))
 #xi <- matrix(nrow=d, ncol=ncl, c(-0.5, 0, 0.5, 0, 0.5, -1, -1, 1))
 psi <- matrix(nrow=d, ncol=4, c(0.4, -0.6, 0.8, 0, 0.3, -0.7, -0.3, -0.8))
-p <- c(0.2, 0.1, 0.4, 0.3) # frequence des clusters
+nu <- c(100,15,8,5)
+p <- c(0.15, 0.05, 0.5, 0.3) # frequence des clusters
 sdev[, ,1] <- matrix(nrow=d, ncol=d, c(0.3, 0, 0, 0.3))
 sdev[, ,2] <- matrix(nrow=d, ncol=d, c(0.1, 0, 0, 0.3))
 sdev[, ,3] <- matrix(nrow=d, ncol=d, c(0.3, 0.15, 0.15, 0.3))
@@ -75,22 +76,24 @@ sdev[, ,4] <- .3*diag(2)
 
 
 c <- rep(0,n)
+w <- rep(1,n)
 z <- matrix(0, nrow=d, ncol=n)
 for(k in 1:n){
  c[k] = which(rmultinom(n=1, size=1, prob=p)!=0)
- z[,k] <- xi[, c[k]] + psi[, c[k]]*abs(rnorm(1)) + sdev[, , c[k]]\%*\%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
+ w[k] <- rgamma(1, shape=nu[c[k]]/2, rate=nu[c[k]]/2)
+ z[,k] <- xi[, c[k]] + psi[, c[k]]*rtruncnorm(n=1, a=0, b=Inf, mean=0, sd=1/w[k]) + (sdev[, , c[k]]/sqrt(w[k]))\%*\%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
  cat(k, "/", n, " observations simulated\\n", sep="")
 }
 
 # Set parameters of G0
 hyperG0 <- list()
-hyperG0[["b_xi"]] <- rep(0,d)
+hyperG0[["b_xi"]] <- rowMeans(z)
 hyperG0[["b_psi"]] <- rep(0,d)
 hyperG0[["kappa"]] <- 0.001
 hyperG0[["D_xi"]] <- 100
 hyperG0[["D_psi"]] <- 100
-hyperG0[["nu"]] <- d+0.1
-hyperG0[["lambda"]] <- diag(d)
+hyperG0[["nu"]] <- d+1
+hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))
 
  # hyperprior on the Scale parameter of DPM
  a <- 0.0001
@@ -142,8 +145,8 @@ hyperG0[["lambda"]] <- diag(d)
 
  # Gibbs sampler for Dirichlet Process Mixtures
  ##############################################
- MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=500,
- doPlot, nbclust_init, plotevery=50, gg.add=list(theme_bw()),
+ MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=5000,
+ doPlot, nbclust_init, plotevery=100, gg.add=list(theme_bw()),
  diagVar=FALSE)
  s <- summary(MCMCsample_st, burnin = 350)
  print(s)

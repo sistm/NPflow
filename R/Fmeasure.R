@@ -65,7 +65,6 @@ Fmeasure <- function(pred, ref, select_ref=NULL){
            }
        }
     } 
-
     
     Ffinal <- apply(X=Fmat, MARGIN=1, max)
     names(Ffinal) <- C

@@ -6,6 +6,7 @@ logposterior_DPMST <- function(z, xi, psi, Sigma, df, B, hyper, c, m, alpha, n, 
     mfull <- m[indfull]
     K <- length(indfull)
     
+    
     if(!is.list(xi) && is.null(dim(xi))){
         log_vrais <- sum(log(mvstpdf(x = z, xi = xi, sigma = Sigma, psi = psi, df=df)))
         if(!diagVar){
@@ -18,6 +19,7 @@ logposterior_DPMST <- function(z, xi, psi, Sigma, df, B, hyper, c, m, alpha, n, 
                                          rate=1/beta0, log=TRUE))
         }
     }
+    
     if(!is.list(xi)){
         U_xi_full <- sapply(indfull, function(j) xi[, j])
         U_psi_full <- sapply(indfull, function(j) psi[, j])
@@ -36,11 +38,11 @@ logposterior_DPMST <- function(z, xi, psi, Sigma, df, B, hyper, c, m, alpha, n, 
     log_vrais <- log_lik$total
     
     if(!diagVar){
-        log_prior_NNiW <-  sum(log(dNNiW(xi[as.character(indfull)], 
-                                         psi[as.character(indfull)],
-                                         B[as.character(indfull)], 
-                                         Sigma[as.character(indfull)], 
-                                         hyperprior=hyper, log=TRUE)))
+        log_prior_NNiW <-  sum(dNNiW(lapply(indfull, function(j) xi[, j]), 
+                                     lapply(indfull, function(j) psi[, j]),
+                                     lapply(indfull, function(j) B[, , j]), 
+                                     U_Sigma_full, 
+                                     hyperprior=hyper, log=TRUE))
     }else{
         betas <- lapply(U_Sigma_full, diag)
         beta0 <- diag(hyperG0$lambda)

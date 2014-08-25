@@ -29,11 +29,11 @@ logposterior_DPMSN <- function(z, xi, psi, Sigma, B, hyper, c, m, alpha, n, a, b
         log_vrais <- sum(log(mvsnpdf(x = z, xi = xi[as.character(c)], 
                                      sigma = Sigma[as.character(c)], psi = psi[as.character(c)])))
         if(!diagVar){
-            log_prior_NNiW <-  sum(log(dNNiW(xi[as.character(indfull)], 
-                                             psi[as.character(indfull)],
-                                             B[as.character(indfull)], 
-                                             Sigma[as.character(indfull)], 
-                                             hyperprior=hyper, log=TRUE)))
+            log_prior_NNiW <-  sum(dNNiW(lapply(indfull, function(j) xi[, j]), 
+                                         lapply(indfull, function(j) psi[, j]),
+                                         lapply(indfull, function(j) B[, , j]), 
+                                         U_Sigma_full, 
+                                         hyperprior=hyper, log=TRUE))
         }else{
             betas <- lapply(Sigma[as.character(indfull)], diag)
             beta0 <- diag(hyperG0$lambda)
