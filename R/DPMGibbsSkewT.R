@@ -74,7 +74,7 @@
 #' for(k in 1:n){
 #'  c[k] = which(rmultinom(n=1, size=1, prob=p)!=0)
 #'  w[k] <- rgamma(1, shape=nu[c[k]]/2, rate=nu[c[k]]/2)
-#'  z[,k] <- xi[, c[k]] + psi[, c[k]]*rtruncnorm(n=1, a=0, b=Inf, mean=0, sd=1/w[k]) + (sdev[, , c[k]]/sqrt(w[k]))%*%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
+#'  z[,k] <- xi[, c[k]] + psi[, c[k]]*rtruncnorm(n=1, a=0, b=Inf, mean=0, sd=1/sqrt(w[k])) + (sdev[, , c[k]]/sqrt(w[k]))%*%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
 #'  cat(k, "/", n, " observations simulated\n", sep="")
 #' }
 #'  
@@ -86,7 +86,7 @@
 #' hyperG0[["D_xi"]] <- 100
 #' hyperG0[["D_psi"]] <- 100
 #' hyperG0[["nu"]] <- d+1
-#' hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))
+#' hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
 #'  
 #'  # hyperprior on the Scale parameter of DPM
 #'  a <- 0.0001
@@ -138,10 +138,10 @@
 #'  
 #'  # Gibbs sampler for Dirichlet Process Mixtures
 #'  ##############################################
-#'  MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=5000, 
+#'  MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=3500, 
 #'  doPlot, nbclust_init, plotevery=100, gg.add=list(theme_bw()), 
 #'  diagVar=FALSE)
-#'  s <- summary(MCMCsample_st, burnin = 350)
+#'  s <- summary(MCMCsample_st, burnin = 3000)
 #'  print(s)
 #'  plot(s)
 #'  plot_ConvDPM(MCMCsample_st, from=2)
