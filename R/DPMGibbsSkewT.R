@@ -138,7 +138,7 @@
 #'  
 #'  # Gibbs sampler for Dirichlet Process Mixtures
 #'  ##############################################
-#'  MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=3500, 
+#'  MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=1000, 
 #'  doPlot, nbclust_init, plotevery=100, gg.add=list(theme_bw()), 
 #'  diagVar=FALSE)
 #'  s <- summary(MCMCsample_st, burnin = 3000)

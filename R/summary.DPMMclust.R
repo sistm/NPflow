@@ -1,8 +1,15 @@
 #'Summarizing Dirichlet Process Mixture Models
 #'
+#'
 #'@param x a \code{DPMMclust} object.
 #'
-#'@param burnin the number of MCMC iterations to burn (defaults is half)
+#'@param burnin integer giving the number of MCMC iterations to burn (defaults is half)
+#'
+#'@param thin integer giving the spacing at which MCMC iterations are kept. 
+#'Default is \code{1}, i.e. no thining.
+#'
+#'@param lossFn character string specifying the loss function to be used.
+#'Either "F-measure" or "Binder" (see Details). Default is "F-measure".
 #'
 #'@param gs optionnal vector of length \code{n} containing the gold standard 
 #'partition of the \code{n} observations to compare to the point estimate
@@ -12,10 +19,15 @@
 #'@return a \code{list}: 
 #'  \itemize{
 #'      \item{\code{burnin}:}{an integer passing along the \code{burnin} argument}
+#'      \item{\code{thin}:}{an integer passing along the \code{thin} argument}
+#'      \item{\code{lossFn}:}{a character string passing along the \code{lossFn} argument}
 #'      \item{\code{point_estim}:}{}
 #'      \item{\code{loss}:}{}
 #'      \item{\code{index_estim}:}{}
 #'  }
+#'
+#'@details The cost of a point estimate partition is calculated using either a pairwise
+#' coincidence loss function (Binder), or 1-Fmeasure (F-measure).
 #'
 #'@author Boris Hejblum
 #'
@@ -26,17 +38,27 @@
 #'@seealso \link{similarityMat}
 #'
 
-summary.DPMMclust <- function(x, burnin=0, gs=NULL,...){
+summary.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measure", ...){
     
-    x_invar <- burn.DPMMclust(x, burnin = burnin)
-    point_estim <- cluster_est_binder(x_invar$mcmc_partitions)
+    x_invar <- burn.DPMMclust(x, burnin = burnin, thin=thin)
+    
+    if(lossFn == "F-measure"){
+        point_estim <- cluster_est_Fmeasure(x_invar$mcmc_partitions)
+    }else if(lossFn == "Binder"){
+        point_estim <- cluster_est_binder(x_invar$mcmc_partitions)
+    }else{
+        stop("Specified loss function not available.\n 
+             Specify either 'F-measure' or 'Binder' for the lossFn argument.")
+    }
+    
     index_estim <- point_estim$opt_ind
     loss <- NA
     if(!is.null(gs)){
-        loss <- evalClust_Binder(c=point_estim$c_est, gs=gs, ...)
+        loss <- evalClustLoss(c=point_estim$c_est, gs=gs, lossFn=lossFn, ...)
     }
     
-    s <- c(x_invar, list("burnin"=burnin, 
+    s <- c(x_invar, list("burnin"=burnin,
+                         "thin"=thin,
                          "point_estim"=point_estim,
                          "loss"=loss,
                          "index_estim"=index_estim))
