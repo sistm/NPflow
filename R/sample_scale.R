@@ -3,17 +3,18 @@ sample_scale <- function(c, m, z, U_xi, U_psi,
     
     n <- length(c)
     
+    #     # Gamma(1/10,2) prior    
+    #     prior_df <- function(x, log=FALSE){
+    #         if(log){
+    #             y <- log(x/100)-x/10
+    #         }else{
+    #             y <- x/100*exp(-x/10)
+    #         }
+    #         return(y)
+    #     }
     
-#             prior_df <- function(x, log=FALSE){
-#                 if(log){
-#                     y <- log(x/100)-x/10
-#                 }else{
-#                     y <- x/100*exp(-x/10)
-#                 }
-#                 return(y)
-#             }
-    
-    #     #Hierarchical prior
+    #     # Hierarchical prior:
+    #     # Gamma(s,2) prior with hyperparameter s ~ Gamma(1,d)
     #     prior_df <- function(x, d, log=FALSE){
     #         if(log){
     #             y <- log(2)+log(d)+log(x)-3*log(x+d)

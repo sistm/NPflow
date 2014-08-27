@@ -64,9 +64,9 @@ ncl <- 4
 
 
 xi <- matrix(nrow=d, ncol=1, c(-2.5, -3))
-psi <- matrix(nrow=d, ncol=1, c(-0.3, -0.8))
-nu <- 200
-sdev <- .3*diag(2)
+psi <- matrix(nrow=d, ncol=1, c(-0.3, -0.7))
+nu <- 27
+sdev <- .5*diag(2)
 
 
 c <- rep(1,n)
@@ -74,7 +74,7 @@ w <- rep(1,n)
 z <- matrix(0, nrow=d, ncol=n)
 for(k in 1:n){
  w <- rgamma(n, shape=nu/2, rate=nu/2)
- z[,k] <- xi + psi*rtruncnorm(n=1, a=0, b=Inf, mean=0, sd=1/w[k]) + (sdev/sqrt(w[k]))\%*\%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
+ z[,k] <- xi + psi*rtruncnorm(n=1, a=0, b=Inf, mean=0, sd=1/sqrt(w[k])) + (sdev/sqrt(w[k]))\%*\%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
  cat(k, "/", n, " observations simulated\\n", sep="")
 }
 
@@ -93,7 +93,7 @@ hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))
  b <- 0.0001
 
  # do some plots
- doPlot <- TRUE
+ doPlot <- FALSE
  nbclust_init <- 30
 
 
@@ -111,9 +111,13 @@ hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))
 
  # Gibbs sampler for Dirichlet Process Mixtures
  ##############################################
- MCMCsample_st <- DPMGibbsSkewT_test1K(z, hyperG0, a, b, N=200,
+ MCMCsample_st <- DPMGibbsSkewT_test1K(z, hyperG0, a, b, N=1000,
  doPlot, nbclust_init, diagVar=FALSE)
  sapply(MCMCsample_st$U_SS_list, "[[", "df")
+ sapply(MCMCsample_st$U_SS_list, "[[", "xi")
+ sapply(MCMCsample_st$U_SS_list, "[[", "psi")
+ plot(density(sapply(MCMCsample_st$U_SS_list, "[[", "df")[500:1000]))
+ plot(density(sapply(MCMCsample_st$U_SS_list, "[[", "psi")[2,500:1000]))
 }
 \author{
 Boris Hejblum

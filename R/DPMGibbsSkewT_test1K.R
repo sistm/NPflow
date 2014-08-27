@@ -58,7 +58,7 @@
 #' 
 #' xi <- matrix(nrow=d, ncol=1, c(-2.5, -3))
 #' psi <- matrix(nrow=d, ncol=1, c(-0.3, -0.7))
-#' nu <- 2
+#' nu <- 27
 #' sdev <- .5*diag(2)
 #' 
 #'  
