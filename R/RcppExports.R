@@ -49,6 +49,17 @@ Fmeasure_costC <- function(c) {
     .Call('NPflow_Fmeasure_costC', PACKAGE = 'NPflow', c)
 }
 
+#' C++ implementation of residual trace computation step used when sampling the scale
+#' 
+#'@param eps
+#'@keywords internal
+#'
+#'@export
+#'
+traceEpsC <- function(eps, sigma) {
+    .Call('NPflow_traceEpsC', PACKAGE = 'NPflow', eps, sigma)
+}
+
 #' C++ implementation of multivariate Normal probability density function for multiple inputs
 #'
 #'@param x data matrix of dimension p x n, p being the dimension of the 
@@ -274,6 +285,34 @@ mvnpdfC <- function(x, mean, varcovM) {
 #'
 mvstlikC <- function(x, c, clustval, xi, psi, sigma, df, loglik) {
     .Call('NPflow_mvstlikC', PACKAGE = 'NPflow', x, c, clustval, xi, psi, sigma, df, loglik)
+}
+
+#' C++ implementation of the multinomial sampling from a matrix 
+#' of column vectors each containing the sampling probabilities 
+#' for their respective draw
+#' 
+#'@param probMat
+#'@keywords internal
+#'
+#'@export
+#'
+sampleClassC <- function(probMat) {
+    .Call('NPflow_sampleClassC', PACKAGE = 'NPflow', probMat)
+}
+
+#' C++ implementation of the multinomial sampling from a matrix 
+#' of column vectors each containing the sampling probabilities 
+#' for their respective draw
+#' 
+#' @details Slower than sampleClassC
+#' 
+#'@param probMat
+#'@keywords internal
+#'
+#'@export
+#'
+sampleClassC_bis <- function(probMat) {
+    .Call('NPflow_sampleClassC_bis', PACKAGE = 'NPflow', probMat)
 }
 
 #' C++ implementation

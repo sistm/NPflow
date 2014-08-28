@@ -85,8 +85,8 @@ sample_scale <- function(c, m, z, U_xi, U_psi,
             
             obs_j <- which(c==fullCl_ind[j])
             eps <- z[,obs_j] - U_xi_full[,j] - sapply(X=ltn[obs_j], FUN=function(x){x*U_psi_full[,j]})
-            tra <- apply(X=eps, MARGIN=2, FUN=function(v){sum(diag(tcrossprod(v)%*%solve(U_Sigma_full[[j]])))})
-            
+            tra <- traceEpsC(eps, U_Sigma_full[[j]])[,1] # fast C++ code
+            #             tra <- apply(X=eps, MARGIN=2, FUN=function(v){sum(diag(tcrossprod(v)%*%solve(U_Sigma_full[[j]])))}) # slow vectorized R code
             scale[obs_j] <- rgamma(length(obs_j), 
                                    shape=(U_df[j] + nrow(z) + 1)/2, 
                                    rate=(U_df[j] + ltn[obs_j]^2 + tra)/2)
