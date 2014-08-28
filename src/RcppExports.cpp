@@ -36,22 +36,6 @@ BEGIN_RCPP
     return __sexp_result;
 END_RCPP
 }
-// traceEpsC
-NumericVector traceEpsC(NumericMatrix eps, NumericMatrix sigma);
-RcppExport SEXP NPflow_traceEpsC(SEXP epsSEXP, SEXP sigmaSEXP) {
-BEGIN_RCPP
-    SEXP __sexp_result;
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< NumericMatrix >::type eps(epsSEXP );
-        Rcpp::traits::input_parameter< NumericMatrix >::type sigma(sigmaSEXP );
-        NumericVector __result = traceEpsC(eps, sigma);
-        PROTECT(__sexp_result = Rcpp::wrap(__result));
-    }
-    UNPROTECT(1);
-    return __sexp_result;
-END_RCPP
-}
 // mmvnpdfC
 NumericMatrix mmvnpdfC(NumericMatrix x, NumericMatrix mean, List varcovM);
 RcppExport SEXP NPflow_mmvnpdfC(SEXP xSEXP, SEXP meanSEXP, SEXP varcovMSEXP) {
@@ -163,21 +147,6 @@ BEGIN_RCPP
     return __sexp_result;
 END_RCPP
 }
-// sampleClassC
-IntegerVector sampleClassC(NumericMatrix probMat);
-RcppExport SEXP NPflow_sampleClassC(SEXP probMatSEXP) {
-BEGIN_RCPP
-    SEXP __sexp_result;
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< NumericMatrix >::type probMat(probMatSEXP );
-        IntegerVector __result = sampleClassC(probMat);
-        PROTECT(__sexp_result = Rcpp::wrap(__result));
-    }
-    UNPROTECT(1);
-    return __sexp_result;
-END_RCPP
-}
 // sampleClassC_bis
 IntegerVector sampleClassC_bis(NumericMatrix probMat);
 RcppExport SEXP NPflow_sampleClassC_bis(SEXP probMatSEXP) {
@@ -193,6 +162,21 @@ BEGIN_RCPP
     return __sexp_result;
 END_RCPP
 }
+// sampleClassC
+IntegerVector sampleClassC(NumericMatrix probMat);
+RcppExport SEXP NPflow_sampleClassC(SEXP probMatSEXP) {
+BEGIN_RCPP
+    SEXP __sexp_result;
+    {
+        Rcpp::RNGScope __rngScope;
+        Rcpp::traits::input_parameter< NumericMatrix >::type probMat(probMatSEXP );
+        IntegerVector __result = sampleClassC(probMat);
+        PROTECT(__sexp_result = Rcpp::wrap(__result));
+    }
+    UNPROTECT(1);
+    return __sexp_result;
+END_RCPP
+}
 // similarityMatC
 List similarityMatC(NumericMatrix c);
 RcppExport SEXP NPflow_similarityMatC(SEXP cSEXP) {
@@ -202,6 +186,22 @@ BEGIN_RCPP
         Rcpp::RNGScope __rngScope;
         Rcpp::traits::input_parameter< NumericMatrix >::type c(cSEXP );
         List __result = similarityMatC(c);
+        PROTECT(__sexp_result = Rcpp::wrap(__result));
+    }
+    UNPROTECT(1);
+    return __sexp_result;
+END_RCPP
+}
+// traceEpsC
+NumericVector traceEpsC(NumericMatrix eps, NumericMatrix sigma);
+RcppExport SEXP NPflow_traceEpsC(SEXP epsSEXP, SEXP sigmaSEXP) {
+BEGIN_RCPP
+    SEXP __sexp_result;
+    {
+        Rcpp::RNGScope __rngScope;
+        Rcpp::traits::input_parameter< NumericMatrix >::type eps(epsSEXP );
+        Rcpp::traits::input_parameter< NumericMatrix >::type sigma(sigmaSEXP );
+        NumericVector __result = traceEpsC(eps, sigma);
         PROTECT(__sexp_result = Rcpp::wrap(__result));
     }
     UNPROTECT(1);

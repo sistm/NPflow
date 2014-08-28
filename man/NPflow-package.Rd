@@ -11,8 +11,8 @@ This package implements
 \tabular{ll}{
 Package: \tab NPflow\cr
 Type: \tab Package\cr
-Version: \tab 0.1.0\cr
-Date: \tab 2014-08-02\cr
+Version: \tab 0.2.0\cr
+Date: \tab 2014-08-28\cr
 License:\tab \href{http://www.gnu.org/licenses/lgpl.txt}{LGPL-3}\cr
 }
 The main function in this package is \code{\link{DPMgibbs}} which
