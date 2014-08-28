@@ -33,7 +33,6 @@ burn.DPMMclust <- function(x, burnin=0, thin=1){
     
     N <- x[["nb_mcmcit"]]
     
-    n <- length(c[[1]])
     if(thin>1){
         select <- c(TRUE, rep(FALSE, thin-1))
         xburnt[["mcmc_partitions"]] <- x[["mcmc_partitions"]][(burnin+1):N][select]

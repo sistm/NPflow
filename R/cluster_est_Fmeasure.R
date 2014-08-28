@@ -36,7 +36,7 @@
 #'@seealso \link{similarityMat}
 #'
 
-cluster_est_binder <- function(c, thin=1){
+cluster_est_Fmeasure <- function(c, thin=1){
     #    n <- length(c[[1]])
     
     if(thin>1){
