@@ -45,22 +45,27 @@ sliceSampler_SkewN <- function(c, m, alpha, z, hyperG0, U_xi, U_psi,
     }
     
     fullCl_ind <- which(w != 0)
-    # calcul de la vraisemblance pour chaque données pour chaque clusters
-    # assignation de chaque données à 1 cluster
-    
-    #C++ armadillo code
+
+    # likelihood of belonging to each cluster computation
+    # sampling clusters
     U_xi_full <- sapply(fullCl_ind, function(j) U_xi[, j])
     U_psi_full <- sapply(fullCl_ind, function(j) U_psi[, j])
     U_Sigma_full <- lapply(fullCl_ind, function(j) U_Sigma[, ,j])
     if(length(fullCl_ind)>1){
         l <- mmvsnpdfC(x=z, xi=U_xi_full, psi=U_psi_full, sigma=U_Sigma_full)
-        u_mat <- t(apply(X=sapply(w[fullCl_ind], function(x){u < x}), MARGIN=2, FUN= as.numeric))
+        u_mat <- t(sapply(w[fullCl_ind], function(x){as.numeric(u < x)}))
         prob_mat <- u_mat * l
-        c <- fullCl_ind[apply(X= prob_mat, MARGIN=2, FUN=function(v){match(1,rmultinom(n=1, size=1, prob=v))})]
-        #alternative implementation:
-        #prob_colsum <- colSums(prob_mat)
-        #prob_norm <- apply(X=prob_mat, MARGIN=1, FUN=function(r){r/prob_colsum})
-        #c <- fullCl_ind[apply(X=prob_norm, MARGIN=1, FUN=function(r){match(TRUE,runif(1) <cumsum(r))})]
+        
+        #fast C++ code
+        c <- fullCl_ind[sampleClassC(prob_mat)]        
+        #         #slow C++ code
+        #         c <- fullCl_ind[sampleClassC_bis(prob_mat)]
+        #         #vectorized R code
+        #         c <- fullCl_ind[apply(X= prob_mat, MARGIN=2, FUN=function(v){match(1,rmultinom(n=1, size=1, prob=v))})]
+        #         #alternative implementation:
+        #         prob_colsum <- colSums(prob_mat)
+        #         prob_norm <- apply(X=prob_mat, MARGIN=1, FUN=function(r){r/prob_colsum})
+        #         c <- fullCl_ind[apply(X=prob_norm, MARGIN=1, FUN=function(r){match(TRUE,runif(1) <cumsum(r))})]
     }else{
         c <- rep(fullCl_ind, maxCl)
     }
@@ -83,6 +88,7 @@ sliceSampler_SkewN <- function(c, m, alpha, z, hyperG0, U_xi, U_psi,
 #                  
 #                  )           
 #              }
+#              c[i] <- rmultinom(n=1, size=1, prob=l
 #          }
 
     

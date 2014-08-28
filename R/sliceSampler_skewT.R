@@ -46,9 +46,8 @@ sliceSampler_skewT <- function(c, m, alpha, z, hyperG0, U_xi, U_psi,
     }
     
     fullCl_ind <- which(w != 0)
-    # calcul de la vraisemblance pour chaque données pour chaque clusters
-    # assignation de chaque données à 1 cluster
-    
+    # likelihood of belonging to each cluster computation
+    # sampling clusters
     U_xi_full <- sapply(fullCl_ind, function(j) U_xi[, j])
     U_psi_full <- sapply(fullCl_ind, function(j) U_psi[, j])
     U_Sigma_full <- lapply(fullCl_ind, function(j) U_Sigma[, ,j])
@@ -62,8 +61,8 @@ sliceSampler_skewT <- function(c, m, alpha, z, hyperG0, U_xi, U_psi,
         c <- fullCl_ind[sampleClassC(prob_mat)]        
         #         #slow C++ code
         #         c <- fullCl_ind[sampleClassC_bis(prob_mat)]
-        #        #vectorized R code
-        #        c <- fullCl_ind[apply(X= prob_mat, MARGIN=2, FUN=function(v){match(1,rmultinom(n=1, size=1, prob=v))})]
+        #         #vectorized R code
+        #         c <- fullCl_ind[apply(X= prob_mat, MARGIN=2, FUN=function(v){match(1,rmultinom(n=1, size=1, prob=v))})]
         #         #alternative implementation:
         #         prob_colsum <- colSums(prob_mat)
         #         prob_norm <- apply(X=prob_mat, MARGIN=1, FUN=function(r){r/prob_colsum})

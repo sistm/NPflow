@@ -48,22 +48,33 @@ slice_sample_parallel <- function(c, m, alpha, z, hyperG0, U_mu, U_Sigma){
             }
         }
     }
-    nb_fullCl <- nb_fullCl + t
+
     fullCl_ind <- which(w != 0)
-    # calcul de la vraisemblance pour chaque données pour chaque clusters
-    # assignation de chaque données à 1 cluster
-    # likelihood of belonging to each cluster 
     
-    #TODO
-    c <- foreach(i=1:maxCl, .combine='c')%dopar%{
-        l <- numeric(nb_fullCl)
-        for (j in fullCl_ind){
-            k <- as.character(j)
-            l[j] <- mvnpdf(x = matrix(z[,i], ncol= 1, nrow=length(z[,i])) , 
-                           mean = U_mu[[k]], 
-                           varcovM = U_Sigma[[k]])*w[j]  
-        }
-        c_par <- which.max(l)
+    # likelihood of belonging to each cluster computation
+    # sampling clusters
+    if(length(fullCl_ind)>1){
+        U_mu_full <- sapply(fullCl_ind, function(j) U_mu[, j])
+        U_Sigma_full <- lapply(fullCl_ind, function(j) U_Sigma[, ,j])
+        
+        c <- foreach(i=1:Ncpus, .combine='c')%dopar%{
+            l <- mmvnpdfC(x=z[, parallel_index[[i]]], mean=U_xi_full, varcovM=U_Sigma_full)
+            u_mat <- t(sapply(w[fullCl_ind], function(x){as.numeric(u[parallel_index[[i]]] < x)}))
+            prob_mat <- u_mat * l
+            
+            #fast C++ code
+            c <- fullCl_ind[sampleClassC(prob_mat)]        
+            #         #slow C++ code
+            #         c <- fullCl_ind[sampleClassC_bis(prob_mat)]
+            #         #vectorized R code
+            #         c <- fullCl_ind[apply(X= prob_mat, MARGIN=2, FUN=function(v){match(1,rmultinom(n=1, size=1, prob=v))})]
+            #         #alternative implementation:
+            #         prob_colsum <- colSums(prob_mat)
+            #         prob_norm <- apply(X=prob_mat, MARGIN=1, FUN=function(r){r/prob_colsum})
+            #         c <- fullCl_ind[apply(X=prob_norm, MARGIN=1, FUN=function(r){match(TRUE,runif(1) <cumsum(r))})]
+        }        
+    }else{
+        c <- rep(fullCl_ind, maxCl)
     }
     
     m_new <- numeric(maxCl) # number of observations in each cluster
