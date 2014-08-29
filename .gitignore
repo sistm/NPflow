@@ -2,8 +2,7 @@
 .Rhistory
 .RData
 NPflow.Rproj
-src/NPflow.so
-src/NPflow.dll
+R/RcppExport.R
 src/RcppExports.cpp
 src/RcppExports.o
 src/mvnpdfC.o
@@ -17,3 +16,5 @@ src/similarityMatC.o
 src/TraceEpsC.o
 src/sampleClassC.o
 src/sampleClassC_bis.o
+src/NPflow.so
+src/NPflow.dll
