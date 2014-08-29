@@ -6,7 +6,7 @@
 #'\tabular{ll}{
 #'Package: \tab NPflow\cr
 #'Type: \tab Package\cr
-#'Version: \tab 0.2.1\cr
+#'Version: \tab 0.2.2\cr
 #'Date: \tab 2014-08-29\cr
 #'License:\tab \href{http://www.gnu.org/licenses/lgpl.txt}{LGPL-3}\cr
 #'}

@@ -41,6 +41,10 @@ update_SSsn <- function(z, S, ltn){
         }
     }
     
+    #conjugate hyperprior on lambda: whishart distribution
+    g0 <- ncol(lambda0)
+    lambda0 <- wishrnd(n=g0, Sigma=lambda0)
+    
     lambda1 <- lambda0 + (eps2 + tcrossprod(b_xi-b0_xi)/D0_xi + tcrossprod(b_psi-b0_psi)/D0_psi)
     
     

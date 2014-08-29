@@ -63,15 +63,15 @@ sliceSampler_skewT_parallel <- function(Ncpus, c, m, alpha, z, hyperG0,
             prob_mat <- u_mat * l
             
             #fast C++ code
-            fullCl_ind[sampleClassC(prob_mat)]        
+            #fullCl_ind[sampleClassC(prob_mat)]        
             #         #slow C++ code
-            #         c <- fullCl_ind[sampleClassC_bis(prob_mat)]
+                     fullCl_ind[sampleClassC_bis(prob_mat)]
             #         #vectorized R code
-            #         c <- fullCl_ind[apply(X= prob_mat, MARGIN=2, FUN=function(v){match(1,rmultinom(n=1, size=1, prob=v))})]
+            #         fullCl_ind[apply(X= prob_mat, MARGIN=2, FUN=function(v){match(1,rmultinom(n=1, size=1, prob=v))})]
             #         #alternative implementation:
             #         prob_colsum <- colSums(prob_mat)
             #         prob_norm <- apply(X=prob_mat, MARGIN=1, FUN=function(r){r/prob_colsum})
-            #         c <- fullCl_ind[apply(X=prob_norm, MARGIN=1, FUN=function(r){match(TRUE,runif(1) <cumsum(r))})]
+            #         fullCl_ind[apply(X=prob_norm, MARGIN=1, FUN=function(r){match(TRUE,runif(1) <cumsum(r))})]
         }
     }else{
         c <- rep(fullCl_ind, maxCl)
