@@ -3,7 +3,7 @@
 \alias{mvstlikC}
 \title{C++ implementation of multivariate Normal probability density function for multiple inputs}
 \usage{
-mvstlikC(x, c, clustval, xi, psi, sigma, df, loglik)
+mvstlikC(x, c, clustval, xi, psi, sigma, df, loglik = TRUE)
 }
 \arguments{
 \item{x}{data matrix of dimension p x n, p being the dimension of the
@@ -11,7 +11,7 @@ data and n the number of data points}
 
 \item{c}{integer vector of cluster allocations with values from 1 to K}
 
-\item{clustval}{vector unique values of c in the order corresponding to
+\item{clustval}{vector of unique values from c in the order corresponding to
 the storage of cluster parameters in \code{xi}, \code{psi}, and \code{varcovM}}
 
 \item{xi}{mean vectors matrix of dimension p x K, K being the number of
@@ -61,5 +61,8 @@ microbenchmark(mvstpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1),
                         xi=matrix(c(0, 0)), psi=matrix(c(1, 1),ncol=1),
                         sigma=list(diag(2)), df=10),
               times=10000L)
+}
+\seealso{
+mmvstpdfC, mvstpdf
 }
 

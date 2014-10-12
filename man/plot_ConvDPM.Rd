@@ -4,7 +4,7 @@
 \title{Convergence diagnostic plots}
 \usage{
 plot_ConvDPM(MCMCsample, from = 1,
-  to = length(MCMCsample$logposterior_list), shift = 0)
+  to = length(MCMCsample$logposterior_list), shift = 0, ...)
 }
 \description{
 Convergence diagnostic plots

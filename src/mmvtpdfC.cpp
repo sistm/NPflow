@@ -13,9 +13,14 @@ using namespace arma;
 //'@param varcovM list of length K of variance-covariance matrices, 
 //'each of dimensions p x p
 //'@param df vector of length K of degree of freedom parameters
+//'@param logical flag for returning the log of the probability density 
+//'function. Defaults is \code{TRUE}.
 //'@return matrix of densities of dimension K x n
 //'@export
 //'@examples
+//'mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE)
+//'mvtpdf(x=matrix(1.96), mean=0, varcovM=diag(1), df=10000000, Log=FALSE)
+//'mmvtpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1)), df=10000000, Log=FALSE)
 //'mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1))
 //'mvtpdf(x=matrix(1.96), mean=0, varcovM=diag(1), df=10000000)
 //'mmvtpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1)), df=10000000)
@@ -25,13 +30,17 @@ using namespace arma;
 //'
 //'
 //'library(microbenchmark)
-//'microbenchmark(mvtpdf(x=matrix(1.96), mean=0, varcovM=diag(1)),
-//'               #mvpdfC(x=matrix(1.96), mean=0, varcovM=diag(1)),
-//'               mmvtpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1))),
+//'microbenchmark(mvtpdf(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE),
+//'               #mvpdfC(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE),
+//'               mmvtpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1)), Log=FALSE),
 //'               times=10000L)
 //'
 // [[Rcpp::export]]
-NumericMatrix mmvtpdfC(NumericMatrix x, NumericMatrix mean, List varcovM, NumericVector df){
+NumericMatrix mmvtpdfC(NumericMatrix x, 
+                       NumericMatrix mean, 
+                       List varcovM, 
+                       NumericVector df,
+                       bool Log=true){
     
     mat xx = as<mat>(x);
     mat m = as<mat>(mean); 
@@ -51,9 +60,14 @@ NumericMatrix mmvtpdfC(NumericMatrix x, NumericMatrix mean, List varcovM, Numeri
             colvec x_i = xx.col(i) - mtemp;
             rowvec xRinv = trans(x_i)*Rinv;
             double quadform = sum(xRinv%xRinv);
-            double a = lgamma((dftemp + p)/2) - lgamma(dftemp/2) - log(dftemp*M_PI)*p/2;
-            y(k,i) = pow((1 + quadform/dftemp),(-(dftemp + p)/2))*exp(a+logSqrtDetvarcovM);
+            double a = lgamma((dftemp + p)/2) - lgamma(dftemp/2) - log(dftemp*M_PI)*p/2 ;
+            if (!Log) {
+                y(k,i) = pow((1 + quadform/dftemp),(-(dftemp + p)/2))*exp(a+logSqrtDetvarcovM) ;
+            } else{
+                y(k,i) = (-(dftemp + p)/2)*log(1 + quadform/dftemp) + a + logSqrtDetvarcovM ;
+            } 
         }
+        
     }
     
     return y;

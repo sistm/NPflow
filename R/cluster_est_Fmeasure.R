@@ -4,8 +4,8 @@
 #'the cluster allocation of observation \code{i=1...n} at iteration 
 #'\code{j=1...N}.
 #'
-#'@param thin integer indicating the thinning of the MCMC output. 
-#'Default is \code{1}.
+#'@param logposterior vector of logposterior correponding to each 
+#'partition from \code{c} used to break ties when minimizing the cost function
 #'
 #'@return a \code{list}: 
 #'  \itemize{
@@ -36,13 +36,8 @@
 #'@seealso \link{similarityMat}
 #'
 
-cluster_est_Fmeasure <- function(c, thin=1){
+cluster_est_Fmeasure <- function(c, logposterior){
     #    n <- length(c[[1]])
-    
-    if(thin>1){
-        select <- c(TRUE, rep(FALSE, thin-1))
-        c <- c[select]
-    }
     
     #    N <- length(c)
     
@@ -100,7 +95,9 @@ cluster_est_Fmeasure <- function(c, thin=1){
     
     
     opt_ind <- which(cost==min(cost)) #not use which.min because we want the last MCMC iteration in case of ties
-    opt_ind <- opt_ind[length(opt_ind)]
+    if(length(opt_ind)>1){
+        opt_ind <- opt_ind[which.max(logposterior[opt_ind])]
+    }
     c_est <- c[[opt_ind]]
     
     return(list("c_est"=c_est, "cost"=cost, "Fmeas"=Fmeas, "opt_ind"=opt_ind))

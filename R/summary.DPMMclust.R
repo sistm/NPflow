@@ -43,9 +43,11 @@ summary.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measure", 
     x_invar <- burn.DPMMclust(x, burnin = burnin, thin=thin)
     
     if(lossFn == "F-measure"){
-        point_estim <- cluster_est_Fmeasure(x_invar$mcmc_partitions)
+        point_estim <- cluster_est_Fmeasure(x_invar$mcmc_partitions, 
+                                            logposterior = sapply(x_invar$logposterior_list, sum))
     }else if(lossFn == "Binder"){
-        point_estim <- cluster_est_binder(x_invar$mcmc_partitions)
+        point_estim <- cluster_est_binder(x_invar$mcmc_partitions, 
+                                          logposterior = sapply(x_invar$logposterior_list, sum))
     }else{
         stop("Specified loss function not available.\n 
              Specify either 'F-measure' or 'Binder' for the lossFn argument.")
@@ -135,12 +137,16 @@ plot.summaryDPMMclust <- function(s, hm=FALSE, nbsim_densities=50000, ...){
                    ellipses=TRUE,
                    gg.add=list(theme_bw()),
                    nbsim_dens=nbsim_densities,
+                   nice=TRUE,
                    ...
         )
     }
     cat("DONE!\n")
     
     if(hm){
+        if(is.null(s$point_estim$similarity)){
+            stop("In order to plot the similarity matrix, the 'Binder' loss function should be used")
+        }
         cat("Plotting heatmap of similarity (may take a few min)...\n")
         pheatmap(s$point_estim$similarity, scale="none", border_color=NA,
                  color=colorRampPalette(c("#F7FBFF", "#DEEBF7", "#C6DBEF", 

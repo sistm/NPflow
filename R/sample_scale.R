@@ -71,6 +71,10 @@ sample_scale <- function(c, m, z, U_xi, U_psi,
             
             prob_new <- exp(sum(loglikold$clust[-j],logliknew$clust[j]) + prior_df(df_new[j], log=TRUE) + log(df_new[j]-1)
                             -(loglikold$total + prior_df(U_df_full[j], log=TRUE) + log(U_df_full[j]-1)))
+            if(is.na(prob_new)){
+                warning("MH probability is NA\n Covariance matrix could be too small, try increasing the hyperprior parameter nu")
+                #prob_new <- 0
+            }
             if(prob_new==-Inf){
                 prob_new <- 0
             }else if(prob_new==Inf){
@@ -84,6 +88,7 @@ sample_scale <- function(c, m, z, U_xi, U_psi,
             }
             
             obs_j <- which(c==fullCl_ind[j])
+            #TODO optimize the way to calculate eps (Rcpp ?)
             eps <- z[,obs_j] - U_xi_full[,j] - sapply(X=ltn[obs_j], FUN=function(x){x*U_psi_full[,j]})
             tra <- traceEpsC(eps, U_Sigma_full[[j]])[,1] # fast C++ code
             #             tra <- apply(X=eps, MARGIN=2, FUN=function(v){sum(diag(tcrossprod(v)%*%solve(U_Sigma_full[[j]])))}) # slow vectorized R code
@@ -97,7 +102,8 @@ sample_scale <- function(c, m, z, U_xi, U_psi,
                         -(loglikold$total + prior_df(U_df_full[j], log=TRUE) +log(U_df_full[j]-1)))
         
         if(prob_new==-Inf){
-            prob_new <- 0
+            warning("MH probability is NA\n Covariance matrix could be too small, try increasing the hyperprior parameter nu")
+            #prob_new <- 0
         }else if(prob_new==Inf){
             prob_new <- 1
         }else{ 

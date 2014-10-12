@@ -3,7 +3,7 @@
 \alias{mmvstpdfC}
 \title{C++ implementation of multivariate Normal probability density function for multiple inputs}
 \usage{
-mmvstpdfC(x, xi, psi, sigma, df)
+mmvstpdfC(x, xi, psi, sigma, df, Log = TRUE)
 }
 \arguments{
 \item{x}{data matrix of dimension p x n, p being the dimension of the
@@ -19,6 +19,9 @@ distributions for which the density probability has to be ealuated}
 each of dimensions p x p}
 
 \item{df}{vector of length K of degree of freedom parameters}
+
+\item{logical}{flag for returning the log of the probability density
+function. Defaults is \code{TRUE}.}
 }
 \value{
 matrix of densities of dimension K x n
@@ -27,6 +30,17 @@ matrix of densities of dimension K x n
 C++ implementation of multivariate Normal probability density function for multiple inputs
 }
 \examples{
+mmvstpdfC(x = matrix(c(3.399890,-5.936962), ncol=1), xi=matrix(c(0.2528859,-2.4234067), ncol=1),
+psi=matrix(c(11.20536,-12.51052), ncol=1),
+sigma=list(matrix(c(0.2134011, -0.2382573, -0.2382573, 0.2660086), ncol=2)),
+df=c(7.784106)
+)
+mvstpdf(x = matrix(c(3.399890,-5.936962), ncol=1), xi=matrix(c(0.2528859,-2.4234067), ncol=1),
+psi=matrix(c(11.20536,-12.51052), ncol=1),
+sigma=list(matrix(c(0.2134011, -0.2382573, -0.2382573, 0.2660086), ncol=2)),
+df=c(7.784106)
+)
+
 #skew-normal limit
 mmvsnpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1),
          xi=matrix(c(0, 0)), psi=matrix(c(1, 1),ncol=1), sigma=list(diag(2))
@@ -50,6 +64,7 @@ mmvstpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1),
          df=10
          )
 
+library(microbenchmark)
 microbenchmark(mvstpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1),
                       xi=c(0, 0), psi=c(1, 1),
                       sigma=diag(2), df=10),

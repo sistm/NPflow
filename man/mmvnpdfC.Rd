@@ -3,7 +3,7 @@
 \alias{mmvnpdfC}
 \title{C++ implementation of multivariate Normal probability density function for multiple inputs}
 \usage{
-mmvnpdfC(x, mean, varcovM)
+mmvnpdfC(x, mean, varcovM, Log = TRUE)
 }
 \arguments{
 \item{x}{data matrix of dimension p x n, p being the dimension of the
@@ -14,6 +14,9 @@ distributions for which the density probability has to be ealuated}
 
 \item{varcovM}{list of length K of variance-covariance matrices,
 each of dimensions p x p}
+
+\item{logical}{flag for returning the log of the probability density
+function. Defaults is \code{TRUE}}
 }
 \value{
 matrix of densities of dimension K x n
@@ -22,22 +25,22 @@ matrix of densities of dimension K x n
 C++ implementation of multivariate Normal probability density function for multiple inputs
 }
 \examples{
-microbenchmark(mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1)),
-              mvnpdfC(x=matrix(1.96), mean=0, varcovM=diag(1)),
-              mmvnpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1))),
+microbenchmark(mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE),
+              mvnpdfC(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE),
+              mmvnpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1)), Log=FALSE),
               times=10000L)
-microbenchmark(mvnpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1), mean=c(0, 0), varcovM=diag(2)),
-              mvnpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1), mean=c(0, 0), varcovM=diag(2)),
+microbenchmark(mvnpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1), mean=c(0, 0), varcovM=diag(2), Log=FALSE),
+              mvnpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1), mean=c(0, 0), varcovM=diag(2), Log=FALSE),
               mmvnpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1),
                        mean=matrix(c(0, 0), nrow=2, ncol=1),
-                       varcovM=list(diag(2))),
+                       varcovM=list(diag(2)), Log=FALSE),
               times=10000L)
 microbenchmark(mvnpdf(x=matrix(c(rep(1.96,2),rep(0,2)), nrow=2, ncol=2),
                      mean=list(c(0,0),c(-1,-1), c(1.5,1.5)),
-                     varcovM=list(diag(2),10*diag(2), 20*diag(2))),
+                     varcovM=list(diag(2),10*diag(2), 20*diag(2)), Log=FALSE),
               mmvnpdfC(matrix(c(rep(1.96,2),rep(0,2)), nrow=2, ncol=2),
                      mean=matrix(c(0,0,-1,-1, 1.5,1.5), nrow=2, ncol=3),
-                     varcovM=list(diag(2),10*diag(2), 20*diag(2))),
+                     varcovM=list(diag(2),10*diag(2), 20*diag(2)), Log=FALSE),
               times=10000L)
 }
 

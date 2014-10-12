@@ -22,6 +22,11 @@
 #'@param verbose logical flag indicating wether partition info is 
 #'written in the console at each MCMC iteration.
 #'
+#'@param monitorfile
+#'a writable \link{connections} or a character string naming a file to write into, 
+#'to monitor the progress of the analysis.  
+#'Default is \code{""} which is no monitoring.  See Details.
+#'
 #'@return a object of class \code{DPMclust} with the following attributes: 
 #'  \itemize{
 #'      \item{\code{mcmc_partitions}:}{a list of length \code{N}. Each
@@ -245,6 +250,7 @@ DPMGibbsSkewT_parallel <- function (Ncpus, type_connec,
     U_Sigma = array(0, dim=c(p, p, n))
     U_df = rep(10,n)
     U_B = array(0, dim=c(2, 2, n))
+    U_nu <- rep(p,n)
     
     par_ind <- list()
     temp_ind <- 0
@@ -384,7 +390,10 @@ DPMGibbsSkewT_parallel <- function (Ncpus, type_connec,
                 #cat("cluster ", j, ":\n")
                 U_SS[[j]] <- update_SSst(z=z[, obs_j, drop=FALSE], S=hyperG0, 
                                          ltn=ltn[obs_j], scale=sc[obs_j], 
-                                         df=U_df[j])
+                                         df=U_df[j], 
+                                         hyperprior= list("Sigma"=U_Sigma[,,j]) 
+                )
+                U_nu[j] <- U_SS[[j]][["nu"]]
                 NNiW <- rNNiW(U_SS[[j]], diagVar)
                 U_xi[, j] <- NNiW[["xi"]]
                 U_SS[[j]][["xi"]] <- NNiW[["xi"]]

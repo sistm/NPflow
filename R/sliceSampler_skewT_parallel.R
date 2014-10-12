@@ -58,7 +58,7 @@ sliceSampler_skewT_parallel <- function(Ncpus, c, m, alpha, z, hyperG0,
     
     if(length(fullCl_ind)>1){
         c <- foreach(i=1:Ncpus, .combine='c')%dopar%{
-            l <- mmvstpdfC(x=z[, parallel_index[[i]]], xi=U_xi_full, psi=U_psi_full, sigma=U_Sigma_full, df=U_df_full)
+            l <- mmvstpdfC(x=z[, parallel_index[[i]]], xi=U_xi_full, psi=U_psi_full, sigma=U_Sigma_full, df=U_df_full, Log=FALSE)
             u_mat <- t(sapply(w[fullCl_ind], function(x){as.numeric(u[parallel_index[[i]]] < x)}))
             prob_mat <- u_mat * l
             

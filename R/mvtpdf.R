@@ -13,6 +13,9 @@
 #'@param df a numeric vector or a list of the degrees of freedom
 #'(either a vector or a list)
 #'
+#'@param logical flag for returning the log of the probability density 
+#'function. Defaults is \code{TRUE}.
+#'
 #'@export
 #'
 #'@examples
@@ -25,7 +28,7 @@
 #'       mean=c(0, 0), varcovM=diag(2), df=10
 #')
 #'
-mvtpdf <- function(x, mean, varcovM, df){
+mvtpdf <- function(x, mean, varcovM, df, Log=TRUE){
     if(!is.matrix(x)){
         stop("x should be a matrix")
     }
@@ -74,7 +77,7 @@ mvtpdf <- function(x, mean, varcovM, df){
         logSqrtDetvarcovM <- sum(log(diag(Rinv)))
         a <- lgamma((df + p)/2)-lgamma(df/2)-p/2*log(df*pi)
         quadform <- apply(X=xRinv, MARGIN=2, FUN=crossprod)
-        y <- (1+quadform/df)^(-(df+p)/2)*exp(a+logSqrtDetvarcovM)
+        y <- (-(df+p)/2)*log(1+quadform/df)+a+logSqrtDetvarcovM
         
 #         dMvn <- function(X,mu,Sigma) {
 #             k <- ncol(X)
@@ -102,7 +105,7 @@ mvtpdf <- function(x, mean, varcovM, df){
             logSqrtDetvarcovM <- sum(log(diag(Rinv)))
             a <- lgamma((df + p)/2)-lgamma(df/2)-p/2*log(df*pi)
             quadform <- tcrossprod(xRinv)
-            y <- (1+quadform/df)^(-(df+p)/2)*exp(a+logSqrtDetvarcovM)
+            y <- (-(df+p)/2)*log(1+quadform/df)+a+logSqrtDetvarcovM
         }
         y <-mapply(FUN=likelihood, x0, varcovM, df)
         
@@ -114,10 +117,14 @@ mvtpdf <- function(x, mean, varcovM, df){
         logSqrtDetvarcovM <- lapply(X=Rinv, FUN=function(X){sum(log(diag(X)))})
         a <- lapply(df, FUN=function(x){lgamma((x + p)/2)-lgamma(x/2)-p/2*log(x*pi)})
         quadform <- lapply(X=xRinv, FUN=function(x){apply(X=x, MARGIN=2, FUN=crossprod)})
-        y <- mapply(FUN=function(u,v,w,z){(1+v/u)^(-(u+p)/2)*exp(w+z)},
+        y <- mapply(FUN=function(u,v,w,z){(-(u+p)/2)*log(1+v/u)+w+z},
                     u=df, v=quadform, w=a, z=logSqrtDetvarcovM)  
     }
     
+    if(!Log){
+        y <- exp(y)
+    }
+
     return(y)
     
 }

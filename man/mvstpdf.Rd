@@ -3,7 +3,7 @@
 \alias{mvstpdf}
 \title{multivariate skew-t  probability density function}
 \usage{
-mvstpdf(x, xi, sigma, psi, df)
+mvstpdf(x, xi, sigma, psi, df, Log = TRUE)
 }
 \arguments{
 \item{x}{p x n data matrix with n the number of observations and
@@ -20,11 +20,22 @@ matrices (either a matrix or a list)}
 
 \item{df}{a numeric vector or a list of the degrees of freedom
 (either a vector or a list)}
+
+\item{logical}{flag for returning the log of the probability density
+function. Defaults is \code{TRUE}.}
 }
 \description{
 multivariate skew-t  probability density function
 }
 \examples{
+#'mvstpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1),
+      xi=c(0, 0), psi=c(1, 1), sigma=diag(2),
+      df=100000000, Log=FALSE
+)
+mvsnpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1),
+      xi=c(0, 0), psi=c(1, 1), sigma=diag(2),
+      Log=FALSE
+)
 mvstpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1),
       xi=c(0, 0), psi=c(1, 1), sigma=diag(2),
       df=100000000
@@ -32,5 +43,8 @@ mvstpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1),
 mvsnpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1),
       xi=c(0, 0), psi=c(1, 1), sigma=diag(2)
 )
+}
+\seealso{
+mvtpdf, mvsnpdf, mmvstpdfC, mvstlikC
 }
 

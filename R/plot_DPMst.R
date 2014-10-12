@@ -5,7 +5,7 @@
 plot_DPMst <- function(z, c, i="", alpha="?", U_SS,
                        dims2plot=1:nrow(z),
                        ellipses=ifelse(length(dims2plot)<3,TRUE,FALSE),
-                       gg.add=list(theme()), nbsim_dens=1000){ 
+                       gg.add=list(theme()), nbsim_dens=1000, nice=FALSE){ 
     library(ellipse)
     library(reshape2)
     mean_sn01 <- (dnorm(0)-dnorm(Inf))/(pnorm(Inf)-pnorm(0))
@@ -82,24 +82,6 @@ plot_DPMst <- function(z, c, i="", alpha="?", U_SS,
                 UDplotfull, UDplottemp)
         }
         
-        #         ellipse95 <- data.frame()
-        #         for(dx in 1:p){
-        #             for(dy in 1:p){
-        #                 for(g in 1:length(fullCl)){
-        #                     glabel <- levels(zClusters)[g]
-        #                     U_corr2plot_g <- cov2cor(U_Sigma2plot[c(dx,dy),c(dx,dy),g])
-        #                     ellipse95 <- rbind(ellipse95, 
-        #                                cbind(as.data.frame(ellipse(U_corr2plot_g, 
-        #                                                            scale=sqrt(diag(U_Sigma2plot[c(dx,dy),c(dx,dy),g])), 
-        #                                                            centre=U_mu2plot[c(dx,dy),g])),
-        #                                      Cluster=as.character(glabel), 
-        #                                      dimensionX=as.character(dx), 
-        #                                      dimensionY=as.character(dy)
-        #                                ))
-        #                 }
-        #             }
-        #         }
-        
         p <- (ggplot(zDplotfull) 
               + facet_grid(dimensionY~dimensionX, scales="free")
               + geom_point(aes(x=X, y=Y, colour=Cluster, order=Cluster), 
@@ -129,38 +111,44 @@ plot_DPMst <- function(z, c, i="", alpha="?", U_SS,
                                                      levels=as.character(fullCl), 
                                                      ordered=TRUE)
         )
-        p <- (ggplot(z2plot) 
-              
-              + geom_point(aes(x=D1, y=D2, colour=Cluster, order=Cluster), 
-                           data=z2plot)
-              + geom_point(aes(x=D1, y=D2, fill=Cluster, order=Cluster, shape="22"),
-                           data=U2plot, size=5)
-              + geom_point(aes(x=D1, y=D2, fill=Cluster, order=Cluster, shape="23"),
-                           data=xi2plot, size=5)
-              + ggtitle(paste(n, " obs.",
-                              "\niteration ", i, " : ", 
-                              length(fullCl)," clusters",
-                              "\nexpected number of clusters: ", expK,
-                              " (alpha = ", alpha2print, ")",
-                              sep=""))
-              + scale_fill_discrete(guide=FALSE)
-              + scale_colour_discrete(guide=guide_legend(override.aes = list(size = 6)))
-              
-        )
         
+        if(!nice){
+            p <- (ggplot(z2plot) 
+                  + geom_point(aes(x=D1, y=D2, colour=Cluster, order=Cluster, fill=Cluster), alpha=0.7, 
+                               data=z2plot, size=3)
+                  + scale_alpha_continuous(guide=FALSE)
+                  + scale_fill_discrete(guide=FALSE)
+                  + scale_colour_discrete(guide=guide_legend(override.aes = list(size = 6, alpha=1)))
+                  + geom_point(aes(x=D1, y=D2, fill=Cluster, order=Cluster, shape="22"),
+                               data=U2plot, size=5)
+                  + geom_point(aes(x=D1, y=D2, fill=Cluster, order=Cluster, shape="23"),
+                               data=xi2plot, size=5)
+                  + ggtitle(paste(n, " obs.",
+                                  "\niteration ", i, " : ", 
+                                  length(fullCl)," clusters",
+                                  "\nexpected number of clusters: ", expK,
+                                  " (alpha = ", alpha2print, ")",
+                                  sep=""))
+            )
+            #empirical mean of the clusters
+            zmean2plot<- cbind.data.frame(D1=tapply(X=z2plot[,1], INDEX=z2plot$Cluster, FUN=mean),
+                                          D2=tapply(X=z2plot[,2], INDEX=z2plot$Cluster, FUN=mean)
+            )
+            zmean2plot <- cbind.data.frame(zmean2plot, Cluster=rownames(zmean2plot))
+            p <- (p + geom_point(aes(x=D1, y=D2, fill=Cluster, order=Cluster, shape="24"), 
+                                 data=zmean2plot, size=5)
+                  + scale_shape_manual(values=c(24,22,23), 
+                                       labels=c("observed mean", "sampled mean", "xi param"), 
+                                       name="", limits=c(24,22,23))
+            )
+        }else{
+            p <- (ggplot(z2plot) 
+                  + geom_point(aes(x=D1, y=D2, colour=Cluster, order=Cluster, shape=Cluster, fill=Cluster), alpha=0.65, 
+                               data=z2plot, size=2)
+                  + scale_alpha_continuous(guide=FALSE)
+            )
+        }
         
-        #empirical mean of the clusters
-        
-        zmean2plot<- cbind.data.frame(D1=tapply(X=z2plot[,1], INDEX=z2plot$Cluster, FUN=mean),
-                                      D2=tapply(X=z2plot[,2], INDEX=z2plot$Cluster, FUN=mean)
-        )
-        zmean2plot <- cbind.data.frame(zmean2plot, Cluster=rownames(zmean2plot))
-        p <- (p + geom_point(aes(x=D1, y=D2, fill=Cluster, order=Cluster, shape="24"), 
-                             data=zmean2plot, size=5)
-              + scale_shape_manual(values=c(24,22,23), 
-                                   labels=c("observed mean", "sampled mean", "xi param"), 
-                                   name="", limits=c(24,22,23))
-        )
         if(ellipses){
             simuDens <- NULL
             for(g in 1:length(fullCl)){
@@ -182,13 +170,21 @@ plot_DPMst <- function(z, c, i="", alpha="?", U_SS,
             p <- (p 
                   + stat_density2d(data=simuDens, aes(x=D1,y=D2, colour=Cluster, linetype="1"))
                   + scale_linetype_manual(values=c(1),
-                                          labels=c("simulations derived\n from sampled xi & psi"),
+                                          labels=c("simulations derived\n from sampled parameters"),
                                           name="Density contour", limits=c(1))
             )
         }
+        if(nice){
+            p <- (p
+                  + scale_shape_manual(values=c(21:(20+length(unique(z2plot$Cluster)))))
+                  + scale_colour_discrete(guide=guide_legend(override.aes = list(size = 4, alpha=0.8, linetype=0)))
+            )
+        }
+        
     }
     for (a in gg.add) {
         p <- p + a
     }
+    
     print(p)
 }

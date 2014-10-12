@@ -3,7 +3,7 @@
 \alias{mvnpdfC}
 \title{C++ implementation of multivariate Normal probability density function}
 \usage{
-mvnpdfC(x, mean, varcovM)
+mvnpdfC(x, mean, varcovM, Log = TRUE)
 }
 \arguments{
 \item{x}{data matrix}
@@ -11,6 +11,9 @@ mvnpdfC(x, mean, varcovM)
 \item{mean}{mean vector}
 
 \item{varcovM}{variance covariance matrix}
+
+\item{logical}{flag for returning the log of the probability density
+function. Defaults is \code{TRUE}}
 }
 \value{
 vector of densities
@@ -21,12 +24,14 @@ http://gallery.rcpp.org/articles/dmvnorm_arma/
 (accessed in August 2014)
 }
 \examples{
-mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1)
+mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE)
+mvnpdfC(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE)
+mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1))
 mvnpdfC(x=matrix(1.96), mean=0, varcovM=diag(1))
 
 library(microbenchmark)
-microbenchmark(mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1)),
-              mvnpdfC(x=matrix(1.96), mean=0, varcovM=diag(1)),
+microbenchmark(mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE),
+              mvnpdfC(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE),
               times=10000L)
 }
 

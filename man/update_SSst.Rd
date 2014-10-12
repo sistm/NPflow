@@ -4,7 +4,7 @@
 \title{Return updated sufficient statistics S of Normal Wishart distribution
 with new data matrix z}
 \usage{
-update_SSst(z, S, ltn, scale, df)
+update_SSst(z, S, ltn, scale, df, hyperprior = NULL)
 }
 \description{
 For internal use only.

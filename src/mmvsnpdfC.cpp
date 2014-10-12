@@ -15,31 +15,39 @@ const double log2pi2 = log(2.0 * M_PI)/2;
 //'distributions for which the density probability has to be ealuated
 //'@param varcovM list of length K of variance-covariance matrices, 
 //'each of dimensions p x p
+//'@param logical flag for returning the log of the probability density 
+//'function. Defaults is \code{TRUE}.
 //'@return matrix of densities of dimension K x n
 //'@export 
 //'@examples
+//'mmvsnpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1), 
+//'          xi=matrix(c(0, 0)), psi=matrix(c(1, 1),ncol=1), sigma=list(diag(2)), Log=FALSE
+//'          )
 //'mmvsnpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1), 
 //'          xi=matrix(c(0, 0)), psi=matrix(c(1, 1),ncol=1), sigma=list(diag(2))
 //'          )
 //'          
 //'library(microbenchmark)
-//'microbenchmark(mvsnpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1), xi=c(0, 0), psi=c(1, 1), sigma=diag(2)),
-//'               mmvsnpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1), xi=matrix(c(0, 0)), psi=matrix(c(1, 1),ncol=1), sigma=list(diag(2))),
+//'microbenchmark(mvsnpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1), xi=c(0, 0), psi=c(1, 1), sigma=diag(2), Log=FALSE),
+//'               mmvsnpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1), xi=matrix(c(0, 0)), psi=matrix(c(1, 1),ncol=1), sigma=list(diag(2)), Log=FALSE),
 //'               times=10000L
 //'              )
 //'microbenchmark(mvsnpdf(x=matrix(c(rep(1.96,2),rep(0,2)), nrow=2, ncol=2), 
 //'                      xi=list(c(0,0),c(-1,-1), c(1.5,1.5)),
 //'                      psi=list(c(0.1,0.1),c(-0.1,-1), c(0.5,-1.5)),
-//'                      sigma=list(diag(2),10*diag(2), 20*diag(2))),
+//'                      sigma=list(diag(2),10*diag(2), 20*diag(2)), Log=FALSE),
 //'               mmvsnpdfC(matrix(c(rep(1.96,2),rep(0,2)), nrow=2, ncol=2), 
 //'                      xi=matrix(c(0,0,-1,-1, 1.5,1.5), nrow=2, ncol=3), 
 //'                      psi=matrix(c(0.1,0.1,-0.1,-1, 0.5,-1.5), nrow=2, ncol=3),
-//'                      sigma=list(diag(2),10*diag(2), 20*diag(2))),
+//'                      sigma=list(diag(2),10*diag(2), 20*diag(2)), Log=FALSE),
 //'               times=10000L)
 //'              
 // [[Rcpp::export]]
-NumericMatrix mmvsnpdfC(NumericMatrix x, NumericMatrix xi, 
-                        NumericMatrix psi, List sigma){
+NumericMatrix mmvsnpdfC(NumericMatrix x, 
+                        NumericMatrix xi, 
+                        NumericMatrix psi, 
+                        List sigma,
+                        bool Log=true){
     
     mat xx = as<mat>(x);
     mat mxi = as<mat>(xi); 
@@ -69,10 +77,14 @@ NumericMatrix mmvsnpdfC(NumericMatrix x, NumericMatrix xi,
             colvec x_i = xx.col(i) - mtemp;
             rowvec xRinv = trans(x_i)*Rinv;
             double quadform = sum(xRinv%xRinv);
-            double part1 = 2*exp(-0.5*quadform + logSqrtDetvarcovM + constant);
+            double part1 = log(2) -0.5*quadform + logSqrtDetvarcovM + constant;
             mat quant = trans(alph)*diagmat(1/sqrt(diagvec(omega)))*x_i;
             double part2 = Rcpp::stats::pnorm_0(quant(0,0), 1, 0);
-            y(k,i) = part1*part2;
+            if (!Log) {
+                y(k,i) = exp(part1)*part2;
+            } else{
+                y(k,i) = part1 + log(part2);
+            }
         }
     }
     

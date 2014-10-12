@@ -1,4 +1,4 @@
-sliceSampler_SkewN_EB <- function(c, m, alpha, z, hyperG0, U_xi, U_psi, U_Sigma){
+sliceSampler_SkewN_EB <- function(c, m, alpha, z, hyperG0, U_xi, U_psi, U_Sigma, diagVar=FALSE){
     
     maxCl <- length(m) #maximum number of clusters
     ind <- which(m!=0) # indexes of non empty clusters
@@ -36,8 +36,8 @@ sliceSampler_SkewN_EB <- function(c, m, alpha, z, hyperG0, U_xi, U_psi, U_Sigma)
         
         # Sample the centers and spread of each new cluster from prior
         for (i in 1:t){
-            hyper_num <- sample(x=1:nbmix_prior, size=1, prob=hyperG0[[1]])
-            NNiW <- rNNiW(hyperG0[["parameters"]][[hyper_num]])
+            hyper_num <- sample(x=1:nbmix_prior, size=1, prob=hyperG0[["weights"]])
+            NNiW <- rNNiW(hyperG0[["parameters"]][[hyper_num]], diagVar)
             #TODO
             U_xi[, ind_new[i]] <- NNiW[["xi"]]
             U_psi[, ind_new[i]] <- NNiW[["psi"]]
@@ -48,42 +48,19 @@ sliceSampler_SkewN_EB <- function(c, m, alpha, z, hyperG0, U_xi, U_psi, U_Sigma)
     fullCl_ind <- which(w != 0)
     # likelihood of belonging to each cluster computation
     # sampling clusters
-    U_xi_list <- lapply(fullCl_ind, function(j) U_xi[, j])
-    U_psi_list <- lapply(fullCl_ind, function(j) U_psi[, j])
-    U_Sigma_list <- lapply(fullCl_ind, function(j) U_Sigma[, ,j])
+    U_xi_full <- sapply(fullCl_ind, function(j) U_xi[, j])
+    U_psi_full <- sapply(fullCl_ind, function(j) U_psi[, j])
+    U_Sigma_full <- lapply(fullCl_ind, function(j) U_Sigma[, ,j])
     if(length(fullCl_ind)>1){
-        l <- mmvsnpdfC(x=z, xi=U_xi_full, psi=U_psi_full, sigma=U_Sigma_full)
+        l <- mmvsnpdfC(x=z, xi=U_xi_full, psi=U_psi_full, sigma=U_Sigma_full, Log = FALSE)
         u_mat <- t(sapply(w[fullCl_ind], function(x){as.numeric(u < x)}))
         prob_mat <- u_mat * l
         
-        #fast C++ code
         c <- fullCl_ind[sampleClassC(prob_mat)]        
-        #         #slow C++ code
-        #         c <- fullCl_ind[sampleClassC_bis(prob_mat)]
-        #        #vectorized R code
-        #        c <- fullCl_ind[apply(X= prob_mat, MARGIN=2, FUN=function(v){match(1,rmultinom(n=1, size=1, prob=v))})]
-        #         #alternative implementation:
-        #         prob_colsum <- colSums(prob_mat)
-        #         prob_norm <- apply(X=prob_mat, MARGIN=1, FUN=function(r){r/prob_colsum})
-        #         c <- fullCl_ind[apply(X=prob_norm, MARGIN=1, FUN=function(r){match(TRUE,runif(1) <cumsum(r))})]
+        
     }else{
         c <- rep(fullCl_ind, maxCl)
     }
-    
-    # non vectorized code for cluster allocation:
-    #     nb_fullCl_ind <- length(fullCl_ind)
-    #     l <- numeric(nb_fullCl_ind) # likelihood of belonging to each cluster 
-    #     for(i in 1:maxCl){
-    #         for (j in fullCl_ind){
-    #             l[j] <- mvsnpdf(x = matrix(z[,i], ncol= 1, nrow=length(z[,i])) , 
-    #                             xi = U_xi[, j], 
-    #                             sigma = U_Sigma[, , j],
-    #                             psi = U_psi[,j]
-    #             
-    #             )*w[j]            
-    #         }
-    #         c[i] <- which.max(l)
-    #     }
     
     m_new <- numeric(maxCl) # number of observations in each cluster
     m_new[unique(c)] <- table(c)[as.character(unique(c))]

@@ -52,7 +52,7 @@ sliceSampler_SkewN <- function(c, m, alpha, z, hyperG0, U_xi, U_psi,
     U_psi_full <- sapply(fullCl_ind, function(j) U_psi[, j])
     U_Sigma_full <- lapply(fullCl_ind, function(j) U_Sigma[, ,j])
     if(length(fullCl_ind)>1){
-        l <- mmvsnpdfC(x=z, xi=U_xi_full, psi=U_psi_full, sigma=U_Sigma_full)
+        l <- mmvsnpdfC(x=z, xi=U_xi_full, psi=U_psi_full, sigma=U_Sigma_full, Log = FALSE)
         u_mat <- t(sapply(w[fullCl_ind], function(x){as.numeric(u < x)}))
         prob_mat <- u_mat * l
         

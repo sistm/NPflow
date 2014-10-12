@@ -13,18 +13,27 @@
 #'@param psi skew parameter vector or list of skew parameter vectors 
 #'(either a vector, a matrix or a list)
 #'
+#'@param logical flag for returning the log of the probability density 
+#'function. Defaults is \code{TRUE}.
+#'
+#'@seealso mvnpdf, mmvsnpdfC
+#'
 #'@export
 #'
 #'@examples
 #'
-#'mvsnpdf(x=matrix(1.96), mean=0, omega=diag(1))
+#'mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE)
 #'dnorm(1.96)
+#'mvsnpdf(x=matrix(rep(1.96,1), nrow=1, ncol=1), 
+#'       xi=c(0), psi=c(0), sigma=diag(1), 
+#'       Log=FALSE
+#')
 #'
 #'mvsnpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1), 
 #'       xi=c(0, 0), psi=c(1, 1), sigma=diag(2)
 #')
 #'
-mvsnpdf <- function(x, xi, sigma, psi){
+mvsnpdf <- function(x, xi, sigma, psi, Log=TRUE){
     
     
     if(is.null(x) | is.null(xi) | is.null(sigma) | is.null(psi)){
@@ -66,7 +75,7 @@ mvsnpdf <- function(x, xi, sigma, psi){
         if(dim(omega)[1]!=p){
             stop("omega is of the wrong size")
         }
-        part1 <- 2*mvnpdf(x, mean=xi, varcovM=omega)
+        part1 <- log(2) + mvnpdf(x, mean=xi, varcovM=omega, Log=TRUE)
         part2 <- pnorm(t(alph)%*%diag(1/sqrt(diag(omega)))%*%(x0))
     }
     else{
@@ -87,13 +96,18 @@ mvsnpdf <- function(x, xi, sigma, psi){
             o=omega, oI=omegaInv, ps=psi, SIMPLIFY=FALSE
         )
         
-        part1 <- 2*mvnpdf(x, mean=xi, varcovM=omega)
+        part1 <- log(2) + mvnpdf(x, mean=xi, varcovM=omega, Log=TRUE)
         part2 <- mapply(FUN=function(a, o, x){
             pnorm(crossprod(a,diag(1/sqrt(diag(o))))%*%(x))}, 
             x=x0, o=omega, a=alph)
         
     }
-    return(part1*part2)
+    
+    res <- part1 + log(part2)
+    if (!Log){
+        res <- exp(part1)*part2
+    }
+    return(res)
     
 }
 

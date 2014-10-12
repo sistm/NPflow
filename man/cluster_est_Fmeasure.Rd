@@ -3,15 +3,15 @@
 \alias{cluster_est_Fmeasure}
 \title{Gets a point estimate of the partition using the F-measure as the cost function}
 \usage{
-cluster_est_Fmeasure(c, thin = 1)
+cluster_est_Fmeasure(c, logposterior)
 }
 \arguments{
 \item{c}{a list of vector of length \code{n}. \code{c[[j]][i]} is
 the cluster allocation of observation \code{i=1...n} at iteration
 \code{j=1...N}.}
 
-\item{thin}{integer indicating the thinning of the MCMC output.
-Default is \code{1}.}
+\item{logposterior}{vector of logposterior correponding to each
+partition from \code{c} used to break ties when minimizing the cost function}
 }
 \value{
 a \code{list}:

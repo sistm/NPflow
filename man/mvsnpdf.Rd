@@ -3,7 +3,7 @@
 \alias{mvsnpdf}
 \title{multivariate Skew-Normal probability density function}
 \usage{
-mvsnpdf(x, xi, sigma, psi)
+mvsnpdf(x, xi, sigma, psi, Log = TRUE)
 }
 \arguments{
 \item{x}{p x n data matrix with n the number of observations and
@@ -17,16 +17,26 @@ matrices (either a matrix or a list)}
 
 \item{psi}{skew parameter vector or list of skew parameter vectors
 (either a vector, a matrix or a list)}
+
+\item{logical}{flag for returning the log of the probability density
+function. Defaults is \code{TRUE}.}
 }
 \description{
 multivariate Skew-Normal probability density function
 }
 \examples{
-mvsnpdf(x=matrix(1.96), mean=0, omega=diag(1))
+mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE)
 dnorm(1.96)
+mvsnpdf(x=matrix(rep(1.96,1), nrow=1, ncol=1),
+      xi=c(0), psi=c(0), sigma=diag(1),
+      Log=FALSE
+)
 
 mvsnpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1),
       xi=c(0, 0), psi=c(1, 1), sigma=diag(2)
 )
+}
+\seealso{
+mvnpdf, mmvsnpdfC
 }
 

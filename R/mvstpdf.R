@@ -16,9 +16,22 @@
 #'@param df a numeric vector or a list of the degrees of freedom
 #'(either a vector or a list)
 #'
+#'@param logical flag for returning the log of the probability density 
+#'function. Defaults is \code{TRUE}.
+#'
+#'@seealso mvtpdf, mvsnpdf, mmvstpdfC, mvstlikC
+#'
 #'@export
 #'
 #'@examples
+#'#'mvstpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1),
+#'       xi=c(0, 0), psi=c(1, 1), sigma=diag(2),
+#'       df=100000000, Log=FALSE
+#')
+#'mvsnpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1),
+#'       xi=c(0, 0), psi=c(1, 1), sigma=diag(2),
+#'       Log=FALSE
+#')
 #'mvstpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1),
 #'       xi=c(0, 0), psi=c(1, 1), sigma=diag(2),
 #'       df=100000000
@@ -28,7 +41,7 @@
 #')
 #'
 #'
-mvstpdf <- function(x, xi, sigma, psi, df){
+mvstpdf <- function(x, xi, sigma, psi, df, Log=TRUE){
     
     if(is.null(x) | is.null(xi) | is.null(sigma) | is.null(psi)| is.null(df)){
         stop("some arguments are empty")
@@ -70,7 +83,7 @@ mvstpdf <- function(x, xi, sigma, psi, df){
         if(dim(omega)[1]!=p){
             stop("omega is of the wrong size")
         }        
-        part1 <- 2*mvtpdf(x, mean=xi, varcovM=omega, df=df)
+        part1 <- log(2) + mvtpdf(x, mean=xi, varcovM=omega, df=df, Log=TRUE)
         part2 <- pt(q=(t(alph)%*%diag(1/sqrt(diag(omega)))%*%(x0)*
                            sqrt((df+p)/(df+Qy))),
                     df=df+p)
@@ -100,7 +113,7 @@ mvstpdf <- function(x, xi, sigma, psi, df){
             Qy <- mapply(FUN=function(v, oI){crossprod(v,oI)%*%v},
                 v=x0, oI=omegaInv, SIMPLIFY=FALSE)
         }
-        part1 <- 2*mvtpdf(x, mean=xi, varcovM=omega, df=df)
+        part1 <- log(2) + mvtpdf(x, mean=xi, varcovM=omega, df=df, Log=TRUE)
         part2 <- mapply(FUN=function(a, o, Q, d, x){
             pt(q=(crossprod(a,diag(1/sqrt(diag(o))))%*%(x)*
                       sqrt((d+p)/(d+Q))),
@@ -109,7 +122,11 @@ mvstpdf <- function(x, xi, sigma, psi, df){
         
     }
     
-    return(part1*part2)
+    res <- part1 + log(part2)
+    if (!Log){
+        res <- exp(part1)*part2
+    }
+    return(res)
     
 }
 

@@ -29,6 +29,10 @@ Default to 30 (or less if there are less than 30 observations).}
 
 \item{verbose}{logical flag indicating wether partition info is
 written in the console at each MCMC iteration.}
+
+\item{monitorfile}{a writable \link{connections} or a character string naming a file to write into,
+to monitor the progress of the analysis.
+Default is \code{""} which is no monitoring.  See Details.}
 }
 \value{
 a object of class \code{DPMclust} with the following attributes:

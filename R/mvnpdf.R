@@ -10,18 +10,23 @@
 #'@param varcovM variance-covariance matrix or list of variance-covariance 
 #'matrices (either a matrix or a list)
 #'
+#'@param logical flag for returning the log of the probability density 
+#'function. Defaults is \code{TRUE}.
+#'
+#'@seealso mvnpdf, mmvnpdfC
+#'
 #'@export
 #'
 #'@examples
 #'
-#'mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1))
+#'mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE)
 #'dnorm(1.96)
 #'
 #'mvnpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1), 
-#'       mean=c(0, 0), varcovM=diag(2)
+#'       mean=c(0, 0), varcovM=diag(2), Log=FALSE
 #')
 #'
-mvnpdf <- function(x, mean, varcovM){
+mvnpdf <- function(x, mean, varcovM, Log=TRUE){
     if(!is.matrix(x)){
         stop("x should be a matrix")
     }
@@ -48,8 +53,8 @@ mvnpdf <- function(x, mean, varcovM){
     if(is.null(varcovM)){
         stop("varcovM is empty")
     }
-
-
+    
+    
     if(is.matrix(varcovM)){
         if(dim(varcovM)[1]!=dim(varcovM)[2]){
             stop("varcovM is not a square matrix")
@@ -67,14 +72,14 @@ mvnpdf <- function(x, mean, varcovM){
         logSqrtDetvarcovM <- sum(log(diag(Rinv)))
         
         quadform <- apply(X=xRinv, MARGIN=2, FUN=crossprod)
-        y <- exp(-0.5*quadform + logSqrtDetvarcovM -p*log(2*pi)/2)
+        y <- (-0.5*quadform + logSqrtDetvarcovM -p*log(2*pi)/2)
         
-#         dMvn <- function(X,mu,Sigma) {
-#             k <- ncol(X)
-#             rooti <- backsolve(chol(Sigma),diag(k))
-#             quads <- colSums((crossprod(rooti,(t(X)-mu)))^2)
-#             return(exp(-(k/2)*log(2*pi) + sum(log(diag(rooti))) - .5*quads))
-#         }
+        #         dMvn <- function(X,mu,Sigma) {
+        #             k <- ncol(X)
+        #             rooti <- backsolve(chol(Sigma),diag(k))
+        #             quads <- colSums((crossprod(rooti,(t(X)-mu)))^2)
+        #             return(exp(-(k/2)*log(2*pi) + sum(log(diag(rooti))) - .5*quads))
+        #         }
     }else if(!is.list(mean)){
         if(!is.list(varcovM)){
             varcovM <- apply(X=varcovM, MARGIN=3, FUN=list)
@@ -90,23 +95,26 @@ mvnpdf <- function(x, mean, varcovM){
             Rinv = backsolve(chol(varcovM),x=diag(p))
             xRinv <- x0 %*% Rinv
             logSqrtDetvarcovM <- sum(log(diag(Rinv)))
-        
+            
             quadform <- tcrossprod(xRinv)
-            y <- exp(-0.5*quadform + logSqrtDetvarcovM -p*log(2*pi)/2)
+            y <- (-0.5*quadform + logSqrtDetvarcovM -p*log(2*pi)/2)
         }
         y <-mapply(FUN=likelihood, x0, varcovM)
         
         
-     }else{
+    }else{
         R <- lapply(varcovM, FUN=chol)
         Rinv <- lapply(X=R, FUN=backsolve, x=diag(p))
         xRinv <- mapply(FUN=function(x,y){apply(X=x,MARGIN=2, FUN=crossprod, y=y)}, x=x0, y=Rinv, SIMPLIFY=FALSE)
         logSqrtDetvarcovM <- lapply(X=Rinv, FUN=function(X){sum(log(diag(X)))})
         quadform <- lapply(X=xRinv, FUN=function(x){apply(X=x, MARGIN=2, FUN=crossprod)})
-        y <- mapply(FUN=function(x,y){exp(-0.5*x + y -p*log(2*pi)/2)},
+        y <- mapply(FUN=function(x,y){(-0.5*x + y -p*log(2*pi)/2)},
                     x=quadform, y=logSqrtDetvarcovM)  
     }
     
+    if(!Log){
+        y <- exp(y)
+    }
     
     return(y)
     

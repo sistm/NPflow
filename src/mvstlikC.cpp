@@ -9,7 +9,7 @@ using namespace arma;
 //'@param x data matrix of dimension p x n, p being the dimension of the 
 //'data and n the number of data points 
 //'@param c integer vector of cluster allocations with values from 1 to K
-//'@param clustval vector unique values of c in the order corresponding to 
+//'@param clustval vector of unique values from c in the order corresponding to 
 //'the storage of cluster parameters in \code{xi}, \code{psi}, and \code{varcovM}
 //'@param xi mean vectors matrix of dimension p x K, K being the number of 
 //'clusters
@@ -18,6 +18,7 @@ using namespace arma;
 //'each of dimensions p x p
 //'@param df vector of length K of degree of freedom parameters
 //'@return vector of likelihood of length n
+//'@seealso mmvstpdfC, mvstpdf
 //'@export
 //'@examples
 //'
@@ -54,7 +55,7 @@ using namespace arma;
 //'
 // [[Rcpp::export]]
 List mvstlikC(NumericMatrix x, IntegerVector c, IntegerVector clustval, NumericMatrix xi, 
-NumericMatrix psi, List sigma, NumericVector df, bool loglik){
+NumericMatrix psi, List sigma, NumericVector df, bool loglik=true){
     
     mat xx = as<mat>(x);
     mat mxi = as<mat>(xi); 
@@ -78,7 +79,7 @@ NumericMatrix psi, List sigma, NumericVector df, bool loglik){
         double dftemp = df(k);
         
         mat omega = sigmatemp + psitemp*trans(psitemp);
-        mat omegaInv = inv(omega);
+        mat omegaInv =  inv_sympd(omega);
         mat Rinv=inv(trimatu(chol(omega)));
         mat smallomega = diagmat(sqrt(diagvec(omega)));
         vec alphnum = smallomega*omegaInv*psitemp;
@@ -93,10 +94,10 @@ NumericMatrix psi, List sigma, NumericVector df, bool loglik){
             mat Qy = x_i.t()*omegaInv*x_i;
             double quadform = sum(xRinv%xRinv);
             double a = lgamma((dftemp + p)/2) - lgamma(dftemp/2) - log(dftemp*M_PI)*p/2;
-            double part1 = 2*pow((1 + quadform/dftemp),(-(dftemp + p)/2))*exp(a+logSqrtDetvarcovM);
+            double part1 = log(2) + (-(dftemp + p)/2)*log(1 + quadform/dftemp) + a + logSqrtDetvarcovM;
             mat quant = trans(alph)*diagmat(1/sqrt(diagvec(omega)))*x_i*sqrt((dftemp + p)/(dftemp+Qy));
             double part2 = ::Rf_pt(quant(0,0), (dftemp + p) , 1, 0);
-            yindiv(indk(i)) = log(part1*part2);
+            yindiv(indk(i)) = part1 + log(part2);
         }
         yclust(k) = sum(yindiv(indk));
     }

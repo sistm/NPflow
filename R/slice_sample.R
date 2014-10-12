@@ -49,7 +49,7 @@ slice_sample <- function(c, m, alpha, z, hyperG0, U_mu, U_Sigma){
     if(length(fullCl_ind)>1){
         U_mu_full <- sapply(fullCl_ind, function(j) U_mu[, j])
         U_Sigma_list <- lapply(fullCl_ind, function(j) U_Sigma[, ,j])
-        l <- mvnpdfC(z, mean=U_mu_full, varcovM=U_Sigma_list)
+        l <- mvnpdfC(z, mean=U_mu_full, varcovM=U_Sigma_list, Log = FALSE)
         u_mat <- t(sapply(w[fullCl_ind], function(x){as.numeric(u < x)}))
         prob_mat <- u_mat * l
         

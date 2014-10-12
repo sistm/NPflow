@@ -58,7 +58,7 @@ slice_sample_parallel <- function(c, m, alpha, z, hyperG0, U_mu, U_Sigma){
         U_Sigma_full <- lapply(fullCl_ind, function(j) U_Sigma[, ,j])
         
         c <- foreach(i=1:Ncpus, .combine='c')%dopar%{
-            l <- mmvnpdfC(x=z[, parallel_index[[i]]], mean=U_xi_full, varcovM=U_Sigma_full)
+            l <- mmvnpdfC(x=z[, parallel_index[[i]]], mean=U_xi_full, varcovM=U_Sigma_full, Log = FALSE)
             u_mat <- t(sapply(w[fullCl_ind], function(x){as.numeric(u[parallel_index[[i]]] < x)}))
             prob_mat <- u_mat * l
             

@@ -49,17 +49,6 @@ Fmeasure_costC <- function(c) {
     .Call('NPflow_Fmeasure_costC', PACKAGE = 'NPflow', c)
 }
 
-#' C++ implementation of residual trace computation step used when sampling the scale
-#' 
-#'@param eps
-#'@keywords internal
-#'
-#'@export
-#'
-traceEpsC <- function(eps, sigma) {
-    .Call('NPflow_traceEpsC', PACKAGE = 'NPflow', eps, sigma)
-}
-
 #' C++ implementation of multivariate Normal probability density function for multiple inputs
 #'
 #'@param x data matrix of dimension p x n, p being the dimension of the 
@@ -68,29 +57,31 @@ traceEpsC <- function(eps, sigma) {
 #'distributions for which the density probability has to be ealuated
 #'@param varcovM list of length K of variance-covariance matrices, 
 #'each of dimensions p x p
+#'@param logical flag for returning the log of the probability density 
+#'function. Defaults is \code{TRUE}
 #'@return matrix of densities of dimension K x n
 #'@export
 #'@examples
-#'microbenchmark(mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1)),
-#'               mvnpdfC(x=matrix(1.96), mean=0, varcovM=diag(1)),
-#'               mmvnpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1))),
+#'microbenchmark(mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE),
+#'               mvnpdfC(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE),
+#'               mmvnpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1)), Log=FALSE),
 #'               times=10000L)
-#'microbenchmark(mvnpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1), mean=c(0, 0), varcovM=diag(2)),
-#'               mvnpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1), mean=c(0, 0), varcovM=diag(2)),
+#'microbenchmark(mvnpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1), mean=c(0, 0), varcovM=diag(2), Log=FALSE),
+#'               mvnpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1), mean=c(0, 0), varcovM=diag(2), Log=FALSE),
 #'               mmvnpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1), 
 #'                        mean=matrix(c(0, 0), nrow=2, ncol=1), 
-#'                        varcovM=list(diag(2))),
+#'                        varcovM=list(diag(2)), Log=FALSE),
 #'               times=10000L)
 #'microbenchmark(mvnpdf(x=matrix(c(rep(1.96,2),rep(0,2)), nrow=2, ncol=2), 
 #'                      mean=list(c(0,0),c(-1,-1), c(1.5,1.5)),
-#'                      varcovM=list(diag(2),10*diag(2), 20*diag(2))),
+#'                      varcovM=list(diag(2),10*diag(2), 20*diag(2)), Log=FALSE),
 #'               mmvnpdfC(matrix(c(rep(1.96,2),rep(0,2)), nrow=2, ncol=2), 
 #'                      mean=matrix(c(0,0,-1,-1, 1.5,1.5), nrow=2, ncol=3),
-#'                      varcovM=list(diag(2),10*diag(2), 20*diag(2))),
+#'                      varcovM=list(diag(2),10*diag(2), 20*diag(2)), Log=FALSE),
 #'               times=10000L)
 #'
-mmvnpdfC <- function(x, mean, varcovM) {
-    .Call('NPflow_mmvnpdfC', PACKAGE = 'NPflow', x, mean, varcovM)
+mmvnpdfC <- function(x, mean, varcovM, Log = TRUE) {
+    .Call('NPflow_mmvnpdfC', PACKAGE = 'NPflow', x, mean, varcovM, Log)
 }
 
 #' C++ implementation of multivariate skew Normal probability density function for multiple inputs
@@ -103,30 +94,35 @@ mmvnpdfC <- function(x, mean, varcovM) {
 #'distributions for which the density probability has to be ealuated
 #'@param varcovM list of length K of variance-covariance matrices, 
 #'each of dimensions p x p
+#'@param logical flag for returning the log of the probability density 
+#'function. Defaults is \code{TRUE}.
 #'@return matrix of densities of dimension K x n
 #'@export 
 #'@examples
+#'mmvsnpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1), 
+#'          xi=matrix(c(0, 0)), psi=matrix(c(1, 1),ncol=1), sigma=list(diag(2)), Log=FALSE
+#'          )
 #'mmvsnpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1), 
 #'          xi=matrix(c(0, 0)), psi=matrix(c(1, 1),ncol=1), sigma=list(diag(2))
 #'          )
 #'          
 #'library(microbenchmark)
-#'microbenchmark(mvsnpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1), xi=c(0, 0), psi=c(1, 1), sigma=diag(2)),
-#'               mmvsnpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1), xi=matrix(c(0, 0)), psi=matrix(c(1, 1),ncol=1), sigma=list(diag(2))),
+#'microbenchmark(mvsnpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1), xi=c(0, 0), psi=c(1, 1), sigma=diag(2), Log=FALSE),
+#'               mmvsnpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1), xi=matrix(c(0, 0)), psi=matrix(c(1, 1),ncol=1), sigma=list(diag(2)), Log=FALSE),
 #'               times=10000L
 #'              )
 #'microbenchmark(mvsnpdf(x=matrix(c(rep(1.96,2),rep(0,2)), nrow=2, ncol=2), 
 #'                      xi=list(c(0,0),c(-1,-1), c(1.5,1.5)),
 #'                      psi=list(c(0.1,0.1),c(-0.1,-1), c(0.5,-1.5)),
-#'                      sigma=list(diag(2),10*diag(2), 20*diag(2))),
+#'                      sigma=list(diag(2),10*diag(2), 20*diag(2)), Log=FALSE),
 #'               mmvsnpdfC(matrix(c(rep(1.96,2),rep(0,2)), nrow=2, ncol=2), 
 #'                      xi=matrix(c(0,0,-1,-1, 1.5,1.5), nrow=2, ncol=3), 
 #'                      psi=matrix(c(0.1,0.1,-0.1,-1, 0.5,-1.5), nrow=2, ncol=3),
-#'                      sigma=list(diag(2),10*diag(2), 20*diag(2))),
+#'                      sigma=list(diag(2),10*diag(2), 20*diag(2)), Log=FALSE),
 #'               times=10000L)
 #'              
-mmvsnpdfC <- function(x, xi, psi, sigma) {
-    .Call('NPflow_mmvsnpdfC', PACKAGE = 'NPflow', x, xi, psi, sigma)
+mmvsnpdfC <- function(x, xi, psi, sigma, Log = TRUE) {
+    .Call('NPflow_mmvsnpdfC', PACKAGE = 'NPflow', x, xi, psi, sigma, Log)
 }
 
 #' C++ implementation of multivariate Normal probability density function for multiple inputs
@@ -140,9 +136,22 @@ mmvsnpdfC <- function(x, xi, psi, sigma) {
 #'@param varcovM list of length K of variance-covariance matrices, 
 #'each of dimensions p x p
 #'@param df vector of length K of degree of freedom parameters
+#'@param logical flag for returning the log of the probability density 
+#'function. Defaults is \code{TRUE}.
 #'@return matrix of densities of dimension K x n
 #'@export
 #'@examples
+#'
+#'mmvstpdfC(x = matrix(c(3.399890,-5.936962), ncol=1), xi=matrix(c(0.2528859,-2.4234067), ncol=1), 
+#'psi=matrix(c(11.20536,-12.51052), ncol=1), 
+#'sigma=list(matrix(c(0.2134011, -0.2382573, -0.2382573, 0.2660086), ncol=2)), 
+#'df=c(7.784106)
+#')
+#'mvstpdf(x = matrix(c(3.399890,-5.936962), ncol=1), xi=matrix(c(0.2528859,-2.4234067), ncol=1), 
+#'psi=matrix(c(11.20536,-12.51052), ncol=1), 
+#'sigma=list(matrix(c(0.2134011, -0.2382573, -0.2382573, 0.2660086), ncol=2)), 
+#'df=c(7.784106)
+#')
 #'
 #'#skew-normal limit
 #'mmvsnpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1), 
@@ -166,7 +175,8 @@ mmvsnpdfC <- function(x, xi, psi, sigma) {
 #'          xi=matrix(c(0, 0)), psi=matrix(c(0, 0),ncol=1), sigma=list(diag(2)),
 #'          df=10
 #'          )
-#'          
+#'
+#'library(microbenchmark)
 #'microbenchmark(mvstpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1), 
 #'                       xi=c(0, 0), psi=c(1, 1), 
 #'                       sigma=diag(2), df=10),
@@ -175,8 +185,8 @@ mmvsnpdfC <- function(x, xi, psi, sigma) {
 #'                         sigma=list(diag(2)), df=10),
 #'               times=10000L)
 #'
-mmvstpdfC <- function(x, xi, psi, sigma, df) {
-    .Call('NPflow_mmvstpdfC', PACKAGE = 'NPflow', x, xi, psi, sigma, df)
+mmvstpdfC <- function(x, xi, psi, sigma, df, Log = TRUE) {
+    .Call('NPflow_mmvstpdfC', PACKAGE = 'NPflow', x, xi, psi, sigma, df, Log)
 }
 
 #' C++ implementation of multivariate Normal probability density function for multiple inputs
@@ -188,9 +198,14 @@ mmvstpdfC <- function(x, xi, psi, sigma, df) {
 #'@param varcovM list of length K of variance-covariance matrices, 
 #'each of dimensions p x p
 #'@param df vector of length K of degree of freedom parameters
+#'@param logical flag for returning the log of the probability density 
+#'function. Defaults is \code{TRUE}.
 #'@return matrix of densities of dimension K x n
 #'@export
 #'@examples
+#'mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE)
+#'mvtpdf(x=matrix(1.96), mean=0, varcovM=diag(1), df=10000000, Log=FALSE)
+#'mmvtpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1)), df=10000000, Log=FALSE)
 #'mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1))
 #'mvtpdf(x=matrix(1.96), mean=0, varcovM=diag(1), df=10000000)
 #'mmvtpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1)), df=10000000)
@@ -200,13 +215,13 @@ mmvstpdfC <- function(x, xi, psi, sigma, df) {
 #'
 #'
 #'library(microbenchmark)
-#'microbenchmark(mvtpdf(x=matrix(1.96), mean=0, varcovM=diag(1)),
-#'               #mvpdfC(x=matrix(1.96), mean=0, varcovM=diag(1)),
-#'               mmvtpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1))),
+#'microbenchmark(mvtpdf(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE),
+#'               #mvpdfC(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE),
+#'               mmvtpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1)), Log=FALSE),
 #'               times=10000L)
 #'
-mmvtpdfC <- function(x, mean, varcovM, df) {
-    .Call('NPflow_mmvtpdfC', PACKAGE = 'NPflow', x, mean, varcovM, df)
+mmvtpdfC <- function(x, mean, varcovM, df, Log = TRUE) {
+    .Call('NPflow_mmvtpdfC', PACKAGE = 'NPflow', x, mean, varcovM, df, Log)
 }
 
 #' C++ implementation of multivariate Normal probability density function
@@ -218,21 +233,25 @@ mmvtpdfC <- function(x, mean, varcovM, df) {
 #'@param x data matrix
 #'@param mean mean vector
 #'@param varcovM variance covariance matrix
+#'@param logical flag for returning the log of the probability density 
+#'function. Defaults is \code{TRUE}
 #'@return vector of densities
 #'
 #'@export
 #'
 #'@examples
-#'mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1)
+#'mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE)
+#'mvnpdfC(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE)
+#'mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1))
 #'mvnpdfC(x=matrix(1.96), mean=0, varcovM=diag(1))
 #'
 #'library(microbenchmark)
-#'microbenchmark(mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1)),
-#'               mvnpdfC(x=matrix(1.96), mean=0, varcovM=diag(1)),
+#'microbenchmark(mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE),
+#'               mvnpdfC(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE),
 #'               times=10000L)     
 #'               
-mvnpdfC <- function(x, mean, varcovM) {
-    .Call('NPflow_mvnpdfC', PACKAGE = 'NPflow', x, mean, varcovM)
+mvnpdfC <- function(x, mean, varcovM, Log = TRUE) {
+    .Call('NPflow_mvnpdfC', PACKAGE = 'NPflow', x, mean, varcovM, Log)
 }
 
 #' C++ implementation of multivariate Normal probability density function for multiple inputs
@@ -240,7 +259,7 @@ mvnpdfC <- function(x, mean, varcovM) {
 #'@param x data matrix of dimension p x n, p being the dimension of the 
 #'data and n the number of data points 
 #'@param c integer vector of cluster allocations with values from 1 to K
-#'@param clustval vector unique values of c in the order corresponding to 
+#'@param clustval vector of unique values from c in the order corresponding to 
 #'the storage of cluster parameters in \code{xi}, \code{psi}, and \code{varcovM}
 #'@param xi mean vectors matrix of dimension p x K, K being the number of 
 #'clusters
@@ -249,6 +268,7 @@ mvnpdfC <- function(x, mean, varcovM) {
 #'each of dimensions p x p
 #'@param df vector of length K of degree of freedom parameters
 #'@return vector of likelihood of length n
+#'@seealso mmvstpdfC, mvstpdf
 #'@export
 #'@examples
 #'
@@ -337,5 +357,16 @@ sampleClassC_bis <- function(probMat) {
 #'
 similarityMatC <- function(c) {
     .Call('NPflow_similarityMatC', PACKAGE = 'NPflow', c)
+}
+
+#' C++ implementation of residual trace computation step used when sampling the scale
+#' 
+#'@param eps
+#'@keywords internal
+#'
+#'@export
+#'
+traceEpsC <- function(eps, sigma) {
+    .Call('NPflow_traceEpsC', PACKAGE = 'NPflow', eps, sigma)
 }
 
