@@ -28,8 +28,8 @@ using namespace arma;
 List similarityMatC(NumericMatrix c){
     
     mat cc = as<mat>(c);
-    double N = cc.n_cols;
-    double n = cc.n_rows;
+    int N = cc.n_cols;
+    int n = cc.n_rows;
     
     NumericVector cost = NumericVector(N);
     mat similarity = mat(n, n, fill::eye);

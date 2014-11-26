@@ -94,7 +94,7 @@ cluster_est_Fmeasure <- function(c, logposterior){
     cost <- tempC$cost
     
     
-    opt_ind <- which(cost==min(cost)) #not use which.min because we want the last MCMC iteration in case of ties
+    opt_ind <- which(cost==min(cost)) #not use which.min because we want the MCMC iteration maximizing logposterior in case of ties
     if(length(opt_ind)>1){
         opt_ind <- opt_ind[which.max(logposterior[opt_ind])]
     }

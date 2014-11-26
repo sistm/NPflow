@@ -54,8 +54,14 @@ using namespace arma;
 //'               times=10000L)
 //'
 // [[Rcpp::export]]
-List mvstlikC(NumericMatrix x, IntegerVector c, IntegerVector clustval, NumericMatrix xi, 
-NumericMatrix psi, List sigma, NumericVector df, bool loglik=true){
+List mvstlikC(NumericMatrix x, 
+              IntegerVector c, 
+              IntegerVector clustval, 
+              NumericMatrix xi, 
+              NumericMatrix psi, 
+              List sigma, 
+              NumericVector df, 
+              bool loglik=true){
     
     mat xx = as<mat>(x);
     mat mxi = as<mat>(xi); 

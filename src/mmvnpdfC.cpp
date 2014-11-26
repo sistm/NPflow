@@ -18,6 +18,7 @@ const double log2pi2 = log(2.0 * M_PI)/2;
 //'@return matrix of densities of dimension K x n
 //'@export
 //'@examples
+//'library(microbenchmark)
 //'microbenchmark(mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE),
 //'               mvnpdfC(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE),
 //'               mmvnpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1)), Log=FALSE),
@@ -63,7 +64,7 @@ NumericMatrix mmvnpdfC(NumericMatrix x,
             if (!Log) {
                 y(k,i) = exp(-0.5*quadform + logSqrtDetvarcovM + constant);
             } else{
-                y(k,i) = -0.5*quadform + logSqrtDetvarcovM + constant;;
+                y(k,i) = -0.5*quadform + logSqrtDetvarcovM + constant;
             }
         }
     }

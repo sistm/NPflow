@@ -1,4 +1,6 @@
 #include <RcppArmadillo.h>
+// #define ARMA_64BIT_WORD // to enable matrix with more than 4 billions elements
+// requires a 64bits machine
 using namespace Rcpp;
 using namespace arma;
 
@@ -70,7 +72,7 @@ double FmeasureC(NumericVector pred, NumericVector ref){
     return Ftotal;
 }
 
-//' C++ implementation
+//' C++ implementation of cost computation with Fmeasure as loss function
 //' 
 //'
 //'@param c list of MCMC partitions
@@ -79,27 +81,64 @@ double FmeasureC(NumericVector pred, NumericVector ref){
 //'
 //'@examples
 //'c <- list(c(1,1,2,3,2,3), c(1,1,1,2,3,3),c(2,2,1,1,1,1))
-//'similarityMatC(sapply(c, "["))
+//'Fmeasure_costC(sapply(c, "["))
 //'
 //'c2 <- list()
-//'for(i in 1:100){
-//'     c2 <- c(c2, list(rmultinom(n=1, size=3000, prob=rexp(n=3000))))
+//'for(i in 1:500){
+//'     c2 <- c(c2, list(rmultinom(n=1, size=10000, prob=rexp(n=10000))))
 //'}
 //'library(microbenchmark)
 //'f <- function(){c3 <-sapply(c2, "[")
-//'             similarityMatC(c3)}
-//'microbenchmark(f(), time=1L)
+//'             Fmeasure_costC(c3)}
+//'fa <- function(){c3 <-sapply(c2, "[")
+//'             Fmeasure_costC_arma(c3)}
+//'microbenchmark(f(), fa(), times=10L)
 //'
 // [[Rcpp::export]]
 List Fmeasure_costC(NumericMatrix c){
     
-    mat cc = as<mat>(c);
-    double N = cc.n_cols;
-    double n = cc.n_rows;
+    //mat cc = as<mat>(c);
+    //int N = cc.n_cols;
+    //int N = cc.n_rows;
+    int N = c.ncol();
+    int n = c.nrow();
     
     
     NumericVector cost = NumericVector(N);
-    mat Fmeas = mat(n, n, fill::eye);
+    mat Fmeas = mat(N, N, fill::eye);
+    
+    for(int i=0; i<N-1; i++){
+        for(int j=i+1; j<N; j++){
+            NumericVector pred_i = c(_,i);
+            NumericVector ref_j = c(_,j);
+            Fmeas(i,j) = FmeasureC(pred_i, ref_j);
+            Fmeas(j,i) = Fmeas(i,j);
+        }
+    }
+    for(int k=0; k<N; k++){
+        cost(k) = 1-(sum(Fmeas.col(k))-1)/N;
+    }
+    return Rcpp::List::create(Rcpp::Named("Fmeas") = Fmeas,
+    Rcpp::Named("cost")=cost);
+}
+
+//' C++ implementation of cost computation with Fmeasure as loss function
+//' using the Armadillo library
+//' 
+//'
+//'@param c list of MCMC partitions
+//'
+//'@export
+// [[Rcpp::export]]
+List Fmeasure_costC_arma(NumericMatrix c){
+    
+    mat cc = as<mat>(c);
+    int N = cc.n_cols;
+    int n = cc.n_rows;
+    
+    
+    NumericVector cost = NumericVector(N);
+    mat Fmeas = mat(N, N, fill::eye);
     
     for(int i=0; i<N-1; i++){
         for(int j=i+1; j<N; j++){

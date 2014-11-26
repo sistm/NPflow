@@ -12,7 +12,8 @@ using namespace arma;
 //'@export
 //'
 // [[Rcpp::export]]
-NumericVector traceEpsC(NumericMatrix eps, NumericMatrix sigma){
+NumericVector traceEpsC(NumericMatrix eps, 
+                        NumericMatrix sigma){
     
     mat epsm =as<mat>(eps);
     mat S = as<mat>(sigma);
