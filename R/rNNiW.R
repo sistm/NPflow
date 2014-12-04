@@ -6,6 +6,7 @@
 #' 
 #'@keywords internal
 #'
+#'@export
 #'
 rNNiW<- function(SufStat, diagVar){
   b0_xi = SufStat[["b_xi"]]

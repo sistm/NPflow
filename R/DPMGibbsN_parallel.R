@@ -252,7 +252,10 @@ DPMGibbsN_parallel <- function (Ncpus, type_connec,
     return(list("clusters" = c, "U_mu" = U_mu, "U_Sigma" = U_Sigma, 
                 "partition" = m, "alpha"=alpha, "U_SS_list"=U_SS_list,
                 "c_list" = c_list, "weights_list"=weights_list, 
-                "logposterior_list"=logposterior_list))
+                "logposterior_list"=logposterior_list,
+                "nb_mcmcit"=N,
+                "clust_distrib"="Normal",
+                "hyperG0"=hyperG0))
 }
 
 

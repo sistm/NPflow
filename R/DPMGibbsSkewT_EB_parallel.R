@@ -348,7 +348,8 @@ DPMGibbsSkewT_EB_parallel <- function (Ncpus, type_connec,
                     "data"=z,
                     "nb_mcmcit"=N,
                     "clust_distrib"="skewT",
-                    "acc_rate"=acc_rate)
+                    "acc_rate"=acc_rate,
+                    "hyperG0"=hyperG0)
     class(dpmclus) <- "DPMMclust"
     return(dpmclus)
 }

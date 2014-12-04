@@ -340,7 +340,8 @@ DPMGibbsSkewT_EB <- function (z, hyperG0, a, b, N, nbclust_init,
                     "data"=z,
                     "nb_mcmcit"=N,
                     "clust_distrib"="skewT",
-                    "acc_rate"=acc_rate)
+                    "acc_rate"=acc_rate,
+                    "hyperG0"=hyperG0)
     class(dpmclus) <- "DPMMclust"
     return(dpmclus)
 }

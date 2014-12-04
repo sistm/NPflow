@@ -450,7 +450,8 @@ DPMGibbsSkewT_parallel <- function (Ncpus, type_connec,
                     "logposterior_list"=logposterior_list, 
                     "data"=z,
                     "nb_mcmcit"=N,
-                    "clust_distrib"="skewT")
+                    "clust_distrib"="skewT",
+                    "hyperG0"=hyperG0)
     class(dpmclus) <- "DPMMclust"
     return(dpmclus)
 }
