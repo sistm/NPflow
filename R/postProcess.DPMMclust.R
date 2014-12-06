@@ -1,6 +1,5 @@
-#'post-processing Dirichlet Process Mixture Models results to get 
+#'Post-processing Dirichlet Process Mixture Models results to get 
 #'a mixture distribution of the posterior locations
-#'
 #'
 #'@param x a \code{DPMMclust} object.
 #'
@@ -38,7 +37,6 @@
 #'
 #'@seealso \link{similarityMat, summary.DPMMclust}
 #'
-
 postProcess.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measure", K=10,...){
     
     x_invar <- burn.DPMMclust(x, burnin = burnin, thin=thin)
@@ -83,17 +81,18 @@ postProcess.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measur
     }
     
     return(mle)
-    
 }
 
+#'EM MLE for mixture of sNiW
+#'
 #'Maximum likelihood estimation of mixture of 
 #'Normal inverse Wishart distributed observations with an EM algorithm
 #'
+#'@rdname MLE_skewT_mmEM
 #'
 #'@export MLE_skewT_mmEM
 #'
-#'@example
-#'
+#'@examples
 #'hyperG0 <- list()
 #'hyperG0$b_xi <- c(0.3, -1.5)
 #'hyperG0$b_psi <- c(0, 0)
@@ -132,7 +131,7 @@ postProcess.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measur
 #'mle <- MLE_skewT_mmEM(xi_list, psi_list, S_list, hyperG0, K=2)
 #'mle
 #'
-MLE_skewT_mmEM <- function( xi_list, psi_list, S_list, hyperG0, K, maxit=500, tol=1E-1){
+MLE_skewT_mmEM <- function( xi_list, psi_list, S_list, hyperG0, K, maxit=50, tol=1E-1){
     
     
     N <- length(xi_list)
@@ -165,7 +164,6 @@ MLE_skewT_mmEM <- function( xi_list, psi_list, S_list, hyperG0, K, maxit=500, to
     loglik[1] <- -Inf
     Q <- numeric(maxit+1)
     Q[1] <- -Inf
-    par("mfrow"=c(1,2))
     
     for(i in 1:maxit){
         
@@ -182,40 +180,36 @@ MLE_skewT_mmEM <- function( xi_list, psi_list, S_list, hyperG0, K, maxit=500, to
         #M step
         N_k <- rowSums(r)
         weights  <- N_k/N
-        cat("weights:", weights, "\n\n")
+        cat("weights:", weights, "\n")
         
-        #TODO
         for(k in 1:K){
-            
-            U_xi[[k]] <- apply(X=(r[k, ]*sapply(xi_list, FUN="[")), MARGIN=1, FUN=sum)/N_k[k]
-            
-            U_psi[[k]] <- apply(X=(r[k, ]*sapply(psi_list, FUN="[")), MARGIN=1, FUN=sum)/N_k[k]
+            U_xi[[k]] <- colSums(apply(X=sapply(xi_list, FUN="["), MARGIN=1, FUN=function(x){r[k, ]*x}))/N_k[k]
+            U_psi[[k]] <- colSums(apply(X=sapply(psi_list, FUN="["), MARGIN=1, FUN=function(x){r[k, ]*x}))/N_k[k]
             
             xim <- lapply(xi_list, function(x){x - U_xi[[k]]})
             psim <- lapply(psi_list, function(x){x - U_psi[[k]]})
+            rSinv_list <- mapply(S = S_list, 
+                                 rik = as.list(r[k, ]), 
+                                 FUN=function(S, rik){rik*solve(S)}, 
+                                 SIMPLIFY=FALSE)
+            rSinv_sum <- Reduce('+', rSinv_list)
             U_B[[k]] <- N_k[k]*d*solve(matrix(rowSums(mapply(x = xim, 
-                                                                 p = psim, 
-                                                                 S = S_list, 
-                                                                 rik=as.list(r[k, ]), 
-                                                                 FUN=function(x,p,S,rik){
-                                                                     v <- rbind(x, p)
-                                                                     rik*v%*%solve(S)%*%t(v)  
-                                                                 }, SIMPLIFY=TRUE)), 
-                                                  nrow=2, byrow=FALSE))
+                                                             p = psim, 
+                                                             rSinv = rSinv_list,
+                                                             FUN=function(x,p,rSinv){
+                                                                 v <- rbind(x, p)
+                                                                 v%*%rSinv%*%t(v)  
+                                                             }, SIMPLIFY=TRUE)), 
+                                              nrow=2, byrow=FALSE))
             tryCatch(
-                U_df[[k]] <- uniroot(function(nu0){(N_k[k]/2*digamma_mv(x=nu0/2, p=d)
-                                                    + 1/2*sum(r[k,]*sapply(S_list, function(S){log(det(S))}))
-                                                    - N_k[k]*d/2*log(N_k[k]*nu0/2) 
-                                                    + N_k[k]/2*log(det(Reduce('+', mapply(S = S_list, rik = as.list(r[k,]), function(S, rik){
-                                                        rik*solve(S)}, SIMPLIFY=FALSE))))
+                U_df[[k]] <- uniroot(function(nu0){(digamma_mv(x=nu0/2, p=d)
+                                                    + 1/N_k[k]*sum(r[k,]*sapply(S_list, function(S){log(det(S))}))
+                                                    - d*log(N_k[k]*nu0/2) 
+                                                    + log(det(rSinv_sum))
                 )}, lower = d+1, upper=1E9)$root, error=function(e){warning("Cluster too wide: inverse-Wishart degree of freedom very high")}
             )
             
-            U_Sigma[[k]] <- N_k[k]*U_df[[k]]*solve(Reduce('+', mapply(S = S_list, 
-                                                                      rik = as.list(r[k, ]), 
-                                                                      FUN=function(S, rik){rik*solve(S)}, 
-                                                                      SIMPLIFY=FALSE)
-            ))
+            U_Sigma[[k]] <- N_k[k]*U_df[[k]]*solve(rSinv_sum)
         }
         
         loglik[i+1] <-sum(r*mmsNiWlogpdf(U_xi = xi_list, U_psi = psi_list, U_Sigma = S_list, 
@@ -225,40 +219,37 @@ MLE_skewT_mmEM <- function( xi_list, psi_list, S_list, hyperG0, K, maxit=500, to
         
         
         
-        cat("it ", i, ": Q = ", Q[i+1], " ; loglik = ",loglik[i+1] ,"\n", sep="")
-        if(is.nan(Q[i+1])){browser()}
+        cat("it ", i, ": Q = ", Q[i+1],"\n\n", sep="")
         if(abs(Q[i+1]-Q[i])<tol){break}
         
         plot(y=Q[2:(i+1)], x=c(1:i), 
              ylab="Q", xlab="Iteration", type="b", col="blue", pch=16)
-        plot(y=loglik[2:(i+1)], x=c(1:i), 
-             ylab="Likelihood", xlab="Iteration", type="b", col="blue", pch=16)
         
     }
     
     plot(y=Q[2:(i+1)], x=c(1:i), 
          ylab="Q", xlab="it.", type="b", col="blue", pch=16)
-    plot(y=loglik[2:(i+1)], x=c(1:i), 
-         ylab="Likelihood", xlab="it.", type="b", col="blue", pch=16)
-    par("mfrow"=c(1,1))
     
-    return(list("U_xi" = U_xi, 
+    return(list("r"=r,
+                "Q" = Q[2:(i+1)],
+                "U_xi" = U_xi,
                 "U_psi" = U_psi, 
                 "U_B" = U_B, 
                 "U_df" = U_df, 
                 "U_Sigma" = U_Sigma,
-                "weights"=weights,
-                "r"=r,
-                "Q" = Q[2:(i+1)],
-                "loglik" = loglik[2:(i+1)]))
+                "weights"=weights))
     
 }
 
+#'MLE for sNiW distributed observations
+#'
 #'Maximum likelihood estimation of Normal inverse Wishart distributed observations
 #'
-#'@export MLE_skewT
-#'@example
+#'@rdname MLE_skewT
 #'
+#'@export
+#'
+#'@examples
 #'hyperG0 <- list()
 #'hyperG0$b_xi <- c(0.3, -1.5)
 #'hyperG0$b_psi <- c(0, 0)
@@ -295,20 +286,22 @@ MLE_skewT <- function( xi_list, psi_list, S_list){
     U_psi <- unlist(rowSums(sapply(psi_list, FUN="["))/N)
     xim <- lapply(xi_list, function(x){x - U_xi})
     psim <- lapply(psi_list, function(x){x - U_psi})
-    U_B <- N*d*solve(matrix(rowSums(mapply(x = xim, p = psim, S = S_list, FUN=function(x,p,S){
+    Sinv_list <- lapply(S_list, solve)
+    Sinv_sum <- Reduce('+', Sinv_list)
+    U_B <- N*d*solve(matrix(rowSums(mapply(x = xim, p = psim, Si = Sinv_list, FUN=function(x,p,Si){
         v <- rbind(x, p)
-        v%*%solve(S)%*%t(v)  
+        tcrossprod(v%*%Si,v)  
     }, SIMPLIFY=TRUE)), 
     nrow=2, byrow=FALSE))
     tryCatch(
         U_df<- uniroot(function(nu0){(N/2*digamma_mv(x=nu0/2, p=d)
                                       + 1/2*sum(sapply(S_list, function(S){log(det(S))}))
                                       - N*d/2*log(N*nu0/2) 
-                                      + N/2*log(det(Reduce('+', lapply(S_list, solve))))
-        )}, lower = d+1, upper=1E12)$root, error=function(e){warning("Cluster too wide: inverse-Wishart degree of freedom very high")}
+                                      + N/2*log(det(Sinv_sum))
+        )}, lower = d+1, upper=1E9)$root, error=function(e){warning("Cluster too wide: inverse-Wishart degree of freedom very high")}
     )
     
-    U_Sigma <- N*U_df*solve(Reduce('+', lapply(S_list, solve)))
+    U_Sigma <- N*U_df*solve(Sinv_sum)
     
     
     return(list("U_xi" = U_xi, 
@@ -316,5 +309,5 @@ MLE_skewT <- function( xi_list, psi_list, S_list){
                 "U_B" = U_B, 
                 "U_df" = U_df, 
                 "U_Sigma" = U_Sigma))
-           
+    
 }

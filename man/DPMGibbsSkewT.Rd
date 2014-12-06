@@ -42,6 +42,7 @@ associated to partition \code{c[[j]]}}
      \item{\code{data}:}{ the data matrix \code{d x n} with \code{d} dimensions in rows
 and \code{n} observations in columns.}
      \item{\code{nb_mcmcit}:}{ the number of MCMC itertations}
+     \item{\code{hyperG0}:}{the prior on the cluster location}
  }
 }
 \description{
