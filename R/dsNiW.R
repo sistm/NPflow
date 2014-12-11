@@ -17,10 +17,11 @@ mmsNiWlogpdf <- function(U_xi, U_psi, U_Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_
         mu <- c(xi,psi)
         mu0 <- c(xi0, psi0)
         Sigmainv <- solve(Sigma)
-        resl <- (-(nu0 + d +1)/2*log(det(Sigma))
+        resl <- (-d/2*log(2*pi)
+                 -(nu0 + d +1)/2*log(det(Sigma))
                  -nu0*d/2*log(2)
                  +nu0/2*log(det(Lambda0))
-                 -log(gamma_mv(nu0/2, p=d)) 
+                 -lgamma_mv(nu0/2, p=d) 
                  -1/2*log(det(kronecker(solve(B0), Sigma)))
                  -1/2*sum(diag(Lambda0%*%Sigmainv))
                  -1/2*t(mu-mu0)%*%kronecker(B0, Sigmainv)%*%(mu-mu0)
@@ -58,10 +59,11 @@ msNiWlogpdf <- function(xi, psi, Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_df0){
         mu <- c(xi,psi)
         mu0 <- c(xi0, psi0)
         Sigmainv <- solve(Sigma)
-        resl <- (-(nu0 + d +1)/2*log(det(Sigma))
+        resl <- (-d/2*log(2*pi)
+                 -(nu0 + d +1)/2*log(det(Sigma))
                  -nu0*d/2*log(2)
                  +nu0/2*log(det(Lambda0))
-                 -log(gamma_mv(nu0/2, p=d)) 
+                 -lgamma_mv(nu0/2, p=d) 
                  -1/2*log(det(kronecker(solve(B0), Sigma)))
                  -1/2*sum(diag(Lambda0%*%Sigmainv))
                  -1/2*t(mu-mu0)%*%kronecker(B0, Sigmainv)%*%(mu-mu0)
@@ -83,14 +85,16 @@ msNiWlogpdf <- function(xi, psi, Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_df0){
 sNiWlogpdf <- function(xi, psi, Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_df0){
     
     loglik <- function(xi, psi, Sigma, xi0, psi0, B0, Lambda0, nu0){
+        browser()
         d <- length(xi)
         mu <- c(xi,psi)
         mu0 <- c(xi0, psi0)
         Sigmainv <- solve(Sigma)
-        resl <- (-(nu0 + d +1)/2*log(det(Sigma))
+        resl <- (-d/2*log(2*pi)
+                 -(nu0 + d +1)/2*log(det(Sigma))
                  -nu0*d/2*log(2)
                  +nu0/2*log(det(Lambda0))
-                 -log(gamma_mv(nu0/2, p=d)) 
+                 -lgamma_mv(nu0/2, p=d) 
                  -1/2*log(det(kronecker(solve(B0), Sigma)))
                  -1/2*sum(diag(Lambda0%*%Sigmainv))
                  -1/2*t(mu-mu0)%*%kronecker(B0, Sigmainv)%*%(mu-mu0)
@@ -108,6 +112,10 @@ sNiWlogpdf <- function(xi, psi, Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_df0){
 
 gamma_mv <- function(x,p){
     pi^(p*(p-1)/4)*prod(gamma(x+(1-1:p)/2))
+}
+
+lgamma_mv <- function(x,p){
+    (p*(p-1)/4)*log(pi) + sum(lgamma(x+(1-1:p)/2))
 }
 
 digamma_mv <- function(x,p){

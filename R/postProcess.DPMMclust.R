@@ -162,8 +162,8 @@ MLE_skewT_mmEM <- function( xi_list, psi_list, S_list, hyperG0, K, maxit=50, tol
     
     loglik <- numeric(maxit+1)
     loglik[1] <- -Inf
-    Q <- numeric(maxit+1)
-    Q[1] <- -Inf
+    #Q <- numeric(maxit+1)
+    #Q[1] <- -Inf
     
     for(i in 1:maxit){
         
@@ -215,27 +215,209 @@ MLE_skewT_mmEM <- function( xi_list, psi_list, S_list, hyperG0, K, maxit=50, tol
         loglik[i+1] <-sum(r*mmsNiWlogpdf(U_xi = xi_list, U_psi = psi_list, U_Sigma = S_list, 
                                          U_xi0 = U_xi, U_psi0 = U_psi, U_B0 =U_B,
                                          U_Sigma0 = U_Sigma, U_df0 = U_df))
-        Q[i+1] <- (sum(r*kronecker(t(rep(1,ncol(r))), log(weights))) + loglik[i+1])
+        #Q[i+1] <- (sum(r*kronecker(t(rep(1,ncol(r))), log(weights))) + loglik[i+1])
         
         
+        cat("it ", i, ": loglik = ", loglik[i+1],"\n\n", sep="")
+        if(abs(loglik[i+1]-loglik[i])<tol){break}
         
-        cat("it ", i, ": Q = ", Q[i+1],"\n\n", sep="")
-        if(abs(Q[i+1]-Q[i])<tol){break}
-        
-        plot(y=Q[2:(i+1)], x=c(1:i), 
-             ylab="Q", xlab="Iteration", type="b", col="blue", pch=16)
+        plot(y=loglik[2:(i+1)], x=c(1:i), 
+             ylab="Log-likelihood", xlab="Iteration", type="b", col="blue", pch=16)
         
     }
     
-    plot(y=Q[2:(i+1)], x=c(1:i), 
-         ylab="Q", xlab="it.", type="b", col="blue", pch=16)
+    plot(y=loglik[2:(i+1)], x=c(1:i), 
+         ylab="Log-likelihood", xlab="it.", type="b", col="blue", pch=16)
     
     return(list("r"=r,
-                "Q" = Q[2:(i+1)],
+                "loglik" = loglik[2:(i+1)],
                 "U_xi" = U_xi,
                 "U_psi" = U_psi, 
                 "U_B" = U_B, 
                 "U_df" = U_df, 
+                "U_Sigma" = U_Sigma,
+                "weights"=weights))
+    
+}
+
+#'EM MAP for mixture of sNiW
+#'
+#'Maximum likelihood estimation of mixture of 
+#'Normal inverse Wishart distributed observations with an EM algorithm
+#'
+#'@rdname MAP_skewT_mmEM
+#'
+#'@export
+#'
+#'@examples
+#'hyperG0 <- list()
+#'hyperG0$b_xi <- c(0.3, -1.5)
+#'hyperG0$b_psi <- c(0, 0)
+#'hyperG0$kappa <- 0.001
+#'hyperG0$D_xi <- 100
+#'hyperG0$D_psi <- 100
+#'hyperG0$nu <- 20
+#'hyperG0$lambda <- diag(c(0.25,0.35))
+#'
+#'xi_list <- list()
+#'psi_list <- list()
+#'S_list <- list()
+#'for(k in 1:1000){
+#'  NNiW <- rNNiW(hyperG0, diagVar=FALSE)
+#'  xi_list[[k]] <- NNiW[["xi"]]
+#'  psi_list[[k]] <- NNiW[["psi"]]
+#'  S_list[[k]] <- NNiW[["S"]]
+#'}
+#'
+#'hyperG02 <- list()
+#'hyperG02$b_xi <- c(-1, 2)
+#'hyperG02$b_psi <- c(-0.1, 0.5)
+#'hyperG02$kappa <- 0.001
+#'hyperG02$D_xi <- 10
+#'hyperG02$D_psi <- 10
+#'hyperG02$nu <- 4
+#'hyperG02$lambda <- 0.5*diag(2)
+#'
+#'for(k in 1001:2000){
+#'  NNiW <- rNNiW(hyperG02, diagVar=FALSE)
+#'  xi_list[[k]] <- NNiW[["xi"]]
+#'  psi_list[[k]] <- NNiW[["psi"]]
+#'  S_list[[k]] <- NNiW[["S"]]
+#'}
+#'
+#'map <- MAP_skewT_mmEM(xi_list, psi_list, S_list, hyperG0, K=2)
+#'map
+#'
+MAP_skewT_mmEM <- function(xi_list, psi_list, S_list, hyperG0, K, maxit=50, tol=1E-1){
+    
+    
+    N <- length(xi_list)
+    d <- length(hyperG0[[1]])
+    
+    if(length(psi_list) != N | length(S_list) != N){
+        stop("Number of MCMC iterations not matching")
+    }
+    
+    U_xi <- list() #matrix(0, nrow=d,ncol=K)
+    U_psi <- list() #matrix(0, nrow=d,ncol=K)
+    U_Sigma <- list() # array(dim=c(d,d,K))
+    U_B <- list() #array(dim=c(2,2,K))
+    U_df <- list() #numeric(K)
+    
+    
+    #priors
+    alpha <- rep(1, K) #parameters of a Dirichlet prior on the cluster weights
+    xi_p <- apply(sapply(xi_list, "["), MARGIN=1, FUN=mean)
+    psi_p <- apply(sapply(psi_list, "["), MARGIN=1, FUN=mean)
+    #xi_s <- apply(sapply(xi_list, "["), MARGIN=1, FUN=var)
+    #psi_s <- apply(sapply(psi_list, "["), MARGIN=1, FUN=var)
+    nu<- d+1
+    lambda<- diag(apply(sapply(xi_list, "["),MARGIN=1, FUN=var))
+    C <- diag(2)*1000
+    L <- (diag(apply(sapply(xi_list, "["), MARGIN=1, FUN=var)) 
+          + diag(apply(sapply(psi_list, "["), MARGIN=1, FUN=var))
+    )/2
+    
+    
+    #initialisation
+    weights <- rep(1/K, K)
+    for(k in 1:K){
+        #sampling the cluster parameters
+        NNiW <- rNNiW(hyperG0, diagVar=FALSE)
+        U_xi[[k]] <- NNiW[["xi"]]
+        U_psi[[k]] <- NNiW[["psi"]]
+        U_Sigma[[k]] <- NNiW[["S"]]
+        U_B[[k]] <- diag(0.01, 2)
+        U_df[[k]] <- d+1
+    }
+    
+    loglik <- numeric(maxit+1)
+    loglik[1] <- -Inf
+    #Q <- numeric(maxit+1)
+    #Q[1] <- -Inf
+    
+    for(i in 1:maxit){
+        
+        r <- mmsNiWlogpdf(U_xi = xi_list, U_psi = psi_list, U_Sigma = S_list, 
+                          U_xi0 = U_xi, U_psi0 = U_psi, U_B0 =U_B,
+                          U_Sigma0 = U_Sigma, U_df0 = U_df)
+        r <- apply(X=r, MARGIN=2, FUN=function(x){x+log(weights)})
+        r <- apply(X=r, MARGIN=2, FUN=function(x){x - log(sum(exp(x)))})
+        r[which(is.infinite(r))] <- -Inf
+        r <- exp(r)
+        
+        
+        
+        #M step
+        N_k <- rowSums(r)
+        weights  <- N_k/N #(N_k + alpha[k] - 1)/(N + sum(alpha) - K) #equivalent for alpha[k]=1
+        
+        for(k in 1:K){
+            #             xi_m_k_xNk <- colSums(apply(X=sapply(xi_list, FUN="["), MARGIN=1, FUN=function(x){r[k, ]*x}))
+            #             U_xi[[k]] <- (xi_m_k_xNk + xi_p/xi_s)/(N_k[k]+1/xi_s)
+            #             psi_m_k_xNk <- colSums(apply(X=sapply(psi_list, FUN="["), MARGIN=1, FUN=function(x){r[k, ]*x}))
+            #             U_psi[[k]] <- (psi_m_k_xNk + psi_p/psi_s)/(N_k[k]+1/psi_s)[k]+1/psi_s)
+            U_xi[[k]] <- colSums(apply(X=sapply(xi_list, FUN="["), MARGIN=1, FUN=function(x){r[k, ]*x}))/N_k[k]
+            U_psi[[k]] <- colSums(apply(X=sapply(psi_list, FUN="["), MARGIN=1, FUN=function(x){r[k, ]*x}))/N_k[k]
+            
+            xim <- lapply(xi_list, function(x){x - U_xi[[k]]})
+            psim <- lapply(psi_list, function(x){x - U_psi[[k]]})
+            rSinv_list <- mapply(S = S_list, 
+                                 rik = as.list(r[k, ]), 
+                                 FUN=function(S, rik){rik*solve(S)}, 
+                                 SIMPLIFY=FALSE)
+            rSinv_sum <- Reduce('+', rSinv_list)
+            U_B[[k]] <- (N_k[k]*d + 1)*solve(solve(C) + matrix(rowSums(mapply(x = xim, 
+                                                             p = psim, 
+                                                             rSinv = rSinv_list,
+                                                             FUN=function(x,p,rSinv){
+                                                                 v <- rbind(x, p)
+                                                                 v%*%rSinv%*%t(v)  
+                                                             }, SIMPLIFY=TRUE)), 
+                                              nrow=2, byrow=FALSE))
+            U_df[[k]] <- try(uniroot(function(nu0){(N_k[k]*digamma_mv(x=nu0/2, p=d)
+                                                    + sum(r[k,]*sapply(S_list, function(S){log(det(S))}))
+                                                    - N_k[k]*d*log(N_k[k]*nu0/2) 
+                                                    + N_k[k]*log(det(rSinv_sum))
+                                                    + 2
+                )}, lower = d+1, upper=1E12)$root, TRUE)
+            if(inherits(U_df[[k]], "try-error")){U_df[[k]] <- d+1}
+            
+            
+            
+            U_Sigma[[k]] <- (N_k[k]*U_df[[k]] + 1)*solve(solve(L) + rSinv_sum)
+        }
+#        cat("df",unlist(U_df), "\n")
+#         loglik[i+1] <-sum(r*mmsNiWlogpdf(U_xi = xi_list, U_psi = psi_list, U_Sigma = S_list, 
+#                                          U_xi0 = U_xi, U_psi0 = U_psi, U_B0 =U_B,
+#                                          U_Sigma0 = U_Sigma, U_df0 = U_df))
+        loglik[i+1] <- sum(log(apply(exp(mmsNiWlogpdf(U_xi = xi_list, U_psi = psi_list, U_Sigma = S_list, 
+                                         U_xi0 = U_xi, U_psi0 = U_psi, U_B0 =U_B,
+                                         U_Sigma0 = U_Sigma, U_df0 = U_df)), MARGIN=2, FUN=function(x){sum(x*weights)})))
+        
+        #Q[i+1] <- (sum(r*kronecker(t(rep(1,ncol(r))), log(weights))) + loglik[i+1])
+        
+        
+        cat("it ", i, ": loglik = ", loglik[i+1],"\n", sep="")
+        cat("weights:", weights, "\n\n")
+
+        if(is.na(loglik[i+1]) | is.nan(loglik[i+1]) | is.infinite(loglik[i+1])){browser()}
+        if(abs(loglik[i+1]-loglik[i])<tol){break}
+        
+        plot(y=loglik[2:(i+1)], x=c(1:i), 
+             ylab="Log-likelihood", xlab="Iteration", type="b", col="blue", pch=16)
+        
+    }
+    
+    plot(y=loglik[2:(i+1)], x=c(1:i), 
+         ylab="Log-likelihood", xlab="it.", type="b", col="blue", pch=16)
+    
+    return(list("r"=r,
+                "loglik" = loglik[2:(i+1)],
+                "U_xi" = U_xi,
+                "U_psi" = U_psi, 
+                "U_B" = U_B, 
+                "U_df" = U_df,
                 "U_Sigma" = U_Sigma,
                 "weights"=weights))
     
