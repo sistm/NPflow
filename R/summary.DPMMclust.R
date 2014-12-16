@@ -59,11 +59,33 @@ summary.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measure", 
         loss <- evalClustLoss(c=point_estim$c_est, gs=gs, lossFn=lossFn, ...)
     }
     
+    #Posterior approximation
+    
+    browser()
+    xi_list_temp <- lapply(x_invar$U_SS_list, FUN=function(x){lapply(x, "[[", "xi")})
+    xi_list <- list()
+    for(i in 1:length(xi_list_temp)){
+        xi_list <- c(xi_list, xi_list_temp[[i]])
+    }
+    psi_list_temp <- lapply(x_invar$U_SS_list, FUN=function(x){lapply(x, "[[", "psi")})
+    psi_list <- list()
+    for(i in 1:length(psi_list_temp)){
+        psi_list <- c(psi_list, psi_list_temp[[i]])
+    }
+    S_list_temp <- lapply(x_invar$U_SS_list, FUN=function(x){lapply(x, "[[", "S")})
+    S_list <- list()
+    for(i in 1:length(S_list_temp)){
+        S_list <- c(S_list, S_list_temp[[i]])
+    }
+    param_post <- MAP_skewT_mmEM(xi_list, psi_list, S_list, hyperG0=x_invar$hyperG0, K=10, plot=FALSE)
+    
     s <- c(x_invar, list("burnin"=burnin,
                          "thin"=thin,
                          "point_estim"=point_estim,
                          "loss"=loss,
-                         "index_estim"=index_estim))
+                         "index_estim"=index_estim,
+                         "param_posterior"=param_post[c("U_xi", "U_psi", 
+                                                        "U_B", "U_Sigma", "U_df")]))
     class(s) <- "summaryDPMMclust"
     
     invisible(s)

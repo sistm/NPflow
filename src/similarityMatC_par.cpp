@@ -26,8 +26,8 @@ using namespace arma;
 //'             similarityMatC(c3)}
 //'microbenchmark(f(), time=1L)
 //'
+//'
 // [[Rcpp::export]]
-// TODO test several position for #pragma omp parallel for shared(cost)
 List similarityMatC_par(NumericMatrix c,
                         int ncores=1){
     
@@ -39,6 +39,7 @@ List similarityMatC_par(NumericMatrix c,
     mat similarity = mat(n, n, fill::eye);
     
     omp_set_num_threads(ncores);
+    // TODO test several position for #pragma omp parallel for shared(cost)
     
     for(int i=0; i<n-1; i++){ 
         for(int j=i+1; j<n; j++){

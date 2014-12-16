@@ -47,6 +47,7 @@ burn.DPMMclust <- function(x, burnin=0, thin=1){
         xburnt[["weights_list"]] <- x[["weights_list"]][(burnin+1):N]
         xburnt[["logposterior_list"]] <- x[["logposterior_list"]][(burnin+1):N]
     }
+    xburnt[["hyperG0"]] <- x[["hyperG0"]]
     xburnt[["data"]] <- x[["data"]]
     xburnt[["nb_mcmcit"]] <- (N-burnin)/thin
     xburnt[["clust_distrib"]] <- x[["clust_distrib"]]

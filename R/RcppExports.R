@@ -62,6 +62,67 @@ Fmeasure_costC_arma <- function(c) {
     .Call('NPflow_Fmeasure_costC_arma', PACKAGE = 'NPflow', c)
 }
 
+#' Parallel C++ implementation of the F-measure computation
+#' 
+#'@param pred
+#'@param ref
+#'
+#'@export
+#'
+#'@examples
+#'c <- list(c(1,1,2,3,2,3), c(1,1,1,2,3,3),c(2,2,1,1,1,1))
+#'similarityMatC(sapply(c, "["))
+#'
+#'c2 <- list()
+#'for(i in 1:100){
+#'     c2 <- c(c2, list(rmultinom(n=1, size=3000, prob=rexp(n=3000))))
+#'}
+#'library(microbenchmark)
+#'f <- function(){c3 <-sapply(c2, "[")
+#'             similarityMatC(c3)}
+#'microbenchmark(f(), time=1L)
+#'
+FmeasureC_par <- function(pred, ref, ncores = 1L) {
+    .Call('NPflow_FmeasureC_par', PACKAGE = 'NPflow', pred, ref, ncores)
+}
+
+#' Parallel C++ implementation of cost computation with Fmeasure as loss function
+#' 
+#'
+#'@param c list of MCMC partitions
+#'
+#'@export
+#'
+#'@examples
+#'c <- list(c(1,1,2,3,2,3), c(1,1,1,2,3,3),c(2,2,1,1,1,1))
+#'Fmeasure_costC(sapply(c, "["))
+#'
+#'c2 <- list()
+#'for(i in 1:500){
+#'     c2 <- c(c2, list(rmultinom(n=1, size=10000, prob=rexp(n=10000))))
+#'}
+#'library(microbenchmark)
+#'f <- function(){c3 <-sapply(c2, "[")
+#'             Fmeasure_costC(c3)}
+#'fa <- function(){c3 <-sapply(c2, "[")
+#'             Fmeasure_costC_arma(c3)}
+#'microbenchmark(f(), fa(), times=10L)
+#'
+Fmeasure_costC_par <- function(c, ncores = 1L) {
+    .Call('NPflow_Fmeasure_costC_par', PACKAGE = 'NPflow', c, ncores)
+}
+
+#' Parallel C++ implementation of cost computation with Fmeasure as loss function
+#' using the Armadillo library
+#' 
+#'
+#'@param c list of MCMC partitions
+#'
+#'@export
+Fmeasure_costC_arma_par <- function(c, ncores = 1L) {
+    .Call('NPflow_Fmeasure_costC_arma_par', PACKAGE = 'NPflow', c, ncores)
+}
+
 #' C++ implementation of residual trace computation step used when sampling the scale
 #' 
 #'@param eps
@@ -71,6 +132,17 @@ Fmeasure_costC_arma <- function(c) {
 #'
 traceEpsC <- function(eps, sigma) {
     .Call('NPflow_traceEpsC', PACKAGE = 'NPflow', eps, sigma)
+}
+
+#' Parallel C++ implementation of residual trace computation step used when sampling the scale
+#' 
+#'@param eps
+#'@keywords internal
+#'
+#'@export
+#'
+traceEpsC_par <- function(eps, sigma, ncores = 1L) {
+    .Call('NPflow_traceEpsC_par', PACKAGE = 'NPflow', eps, sigma, ncores)
 }
 
 #' C++ implementation of multivariate Normal probability density function for multiple inputs
@@ -396,6 +468,41 @@ mmvtpdfC <- function(x, mean, varcovM, df, Log = TRUE) {
     .Call('NPflow_mmvtpdfC', PACKAGE = 'NPflow', x, mean, varcovM, df, Log)
 }
 
+#' Parallel C++ implementation of multivariate Normal probability density function for multiple inputs
+#'
+#'@param x data matrix of dimension p x n, p being the dimension of the 
+#'data and n the number of data points 
+#'@param mean mean vectors matrix of dimension p x K, K being the number of 
+#'distributions for which the density probability has to be ealuated
+#'@param varcovM list of length K of variance-covariance matrices, 
+#'each of dimensions p x p
+#'@param df vector of length K of degree of freedom parameters
+#'@param logical flag for returning the log of the probability density 
+#'function. Defaults is \code{TRUE}.
+#'@return matrix of densities of dimension K x n
+#'@export
+#'@examples
+#'mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE)
+#'mvtpdf(x=matrix(1.96), mean=0, varcovM=diag(1), df=10000000, Log=FALSE)
+#'mmvtpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1)), df=10000000, Log=FALSE)
+#'mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1))
+#'mvtpdf(x=matrix(1.96), mean=0, varcovM=diag(1), df=10000000)
+#'mmvtpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1)), df=10000000)
+#'
+#'mvtpdf(x=matrix(1.96), mean=0, varcovM=diag(1), df=10)
+#'mmvtpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1)), df=10)
+#'
+#'
+#'library(microbenchmark)
+#'microbenchmark(mvtpdf(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE),
+#'               #mvpdfC(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE),
+#'               mmvtpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1)), Log=FALSE),
+#'               times=10000L)
+#'
+mmvtpdfC_par <- function(x, mean, varcovM, df, Log = TRUE, ncores = 1L) {
+    .Call('NPflow_mmvtpdfC_par', PACKAGE = 'NPflow', x, mean, varcovM, df, Log, ncores)
+}
+
 #' C++ implementation of multivariate Normal probability density function
 #' 
 #'Based on the implementation from Nino Hardt and Dicko Ahmadou
@@ -424,6 +531,36 @@ mmvtpdfC <- function(x, mean, varcovM, df, Log = TRUE) {
 #'               
 mvnpdfC <- function(x, mean, varcovM, Log = TRUE) {
     .Call('NPflow_mvnpdfC', PACKAGE = 'NPflow', x, mean, varcovM, Log)
+}
+
+#' Parallel C++ implementation of multivariate Normal probability density function
+#' 
+#'Based on the implementation from Nino Hardt and Dicko Ahmadou
+#'http://gallery.rcpp.org/articles/dmvnorm_arma/ 
+#'(accessed in August 2014)
+#'
+#'@param x data matrix
+#'@param mean mean vector
+#'@param varcovM variance covariance matrix
+#'@param logical flag for returning the log of the probability density 
+#'function. Defaults is \code{TRUE}
+#'@return vector of densities
+#'
+#'@export
+#'
+#'@examples
+#'mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE)
+#'mvnpdfC(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE)
+#'mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1))
+#'mvnpdfC(x=matrix(1.96), mean=0, varcovM=diag(1))
+#'
+#'library(microbenchmark)
+#'microbenchmark(mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE),
+#'               mvnpdfC(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE),
+#'               times=10000L)     
+#'               
+mvnpdfC_par <- function(x, mean, varcovM, Log = TRUE, ncores = 1L) {
+    .Call('NPflow_mvnpdfC_par', PACKAGE = 'NPflow', x, mean, varcovM, Log, ncores)
 }
 
 #' C++ implementation of multivariate Normal probability density function for multiple inputs
@@ -527,6 +664,34 @@ sampleClassC_bis <- function(probMat) {
     .Call('NPflow_sampleClassC_bis', PACKAGE = 'NPflow', probMat)
 }
 
+#' Parallel C++ implementation of the multinomial sampling from a matrix 
+#' of column vectors each containing the sampling probabilities 
+#' for their respective draw
+#' 
+#' @details Slower than sampleClassC
+#' 
+#'@param probMat
+#'@keywords internal
+#'
+#'@export
+#'
+sampleClassC_bis_par <- function(probMat, ncores = 1L) {
+    .Call('NPflow_sampleClassC_bis_par', PACKAGE = 'NPflow', probMat, ncores)
+}
+
+#' Parallel C++ implementation of the multinomial sampling from a matrix 
+#' of column vectors each containing the sampling probabilities 
+#' for their respective draw
+#' 
+#'@param probMat
+#'@keywords internal
+#'
+#'@export
+#'
+sampleClassC_par <- function(probMat, ncores = 1L) {
+    .Call('NPflow_sampleClassC_par', PACKAGE = 'NPflow', probMat, ncores)
+}
+
 #' C++ implementation
 #' 
 #'
@@ -549,5 +714,30 @@ sampleClassC_bis <- function(probMat) {
 #'
 similarityMatC <- function(c) {
     .Call('NPflow_similarityMatC', PACKAGE = 'NPflow', c)
+}
+
+#' Parallel C++ implementation
+#' 
+#'
+#'@param c list of MCMC partitions
+#'
+#'@export
+#'
+#'@examples
+#'c <- list(c(1,1,2,3,2,3), c(1,1,1,2,3,3),c(2,2,1,1,1,1))
+#'similarityMatC(sapply(c, "["))
+#'
+#'c2 <- list()
+#'for(i in 1:100){
+#'     c2 <- c(c2, list(rmultinom(n=1, size=3000, prob=rexp(n=3000))))
+#'}
+#'library(microbenchmark)
+#'f <- function(){c3 <-sapply(c2, "[")
+#'             similarityMatC(c3)}
+#'microbenchmark(f(), time=1L)
+#'
+#'
+similarityMatC_par <- function(c, ncores = 1L) {
+    .Call('NPflow_similarityMatC_par', PACKAGE = 'NPflow', c, ncores)
 }
 

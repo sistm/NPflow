@@ -51,6 +51,55 @@ BEGIN_RCPP
     return __sexp_result;
 END_RCPP
 }
+// FmeasureC_par
+double FmeasureC_par(NumericVector pred, NumericVector ref, int ncores = 1);
+RcppExport SEXP NPflow_FmeasureC_par(SEXP predSEXP, SEXP refSEXP, SEXP ncoresSEXP) {
+BEGIN_RCPP
+    SEXP __sexp_result;
+    {
+        Rcpp::RNGScope __rngScope;
+        Rcpp::traits::input_parameter< NumericVector >::type pred(predSEXP );
+        Rcpp::traits::input_parameter< NumericVector >::type ref(refSEXP );
+        Rcpp::traits::input_parameter< int >::type ncores(ncoresSEXP );
+        double __result = FmeasureC_par(pred, ref, ncores);
+        PROTECT(__sexp_result = Rcpp::wrap(__result));
+    }
+    UNPROTECT(1);
+    return __sexp_result;
+END_RCPP
+}
+// Fmeasure_costC_par
+List Fmeasure_costC_par(NumericMatrix c, int ncores = 1);
+RcppExport SEXP NPflow_Fmeasure_costC_par(SEXP cSEXP, SEXP ncoresSEXP) {
+BEGIN_RCPP
+    SEXP __sexp_result;
+    {
+        Rcpp::RNGScope __rngScope;
+        Rcpp::traits::input_parameter< NumericMatrix >::type c(cSEXP );
+        Rcpp::traits::input_parameter< int >::type ncores(ncoresSEXP );
+        List __result = Fmeasure_costC_par(c, ncores);
+        PROTECT(__sexp_result = Rcpp::wrap(__result));
+    }
+    UNPROTECT(1);
+    return __sexp_result;
+END_RCPP
+}
+// Fmeasure_costC_arma_par
+List Fmeasure_costC_arma_par(NumericMatrix c, int ncores = 1);
+RcppExport SEXP NPflow_Fmeasure_costC_arma_par(SEXP cSEXP, SEXP ncoresSEXP) {
+BEGIN_RCPP
+    SEXP __sexp_result;
+    {
+        Rcpp::RNGScope __rngScope;
+        Rcpp::traits::input_parameter< NumericMatrix >::type c(cSEXP );
+        Rcpp::traits::input_parameter< int >::type ncores(ncoresSEXP );
+        List __result = Fmeasure_costC_arma_par(c, ncores);
+        PROTECT(__sexp_result = Rcpp::wrap(__result));
+    }
+    UNPROTECT(1);
+    return __sexp_result;
+END_RCPP
+}
 // traceEpsC
 NumericVector traceEpsC(NumericMatrix eps, NumericMatrix sigma);
 RcppExport SEXP NPflow_traceEpsC(SEXP epsSEXP, SEXP sigmaSEXP) {
@@ -61,6 +110,23 @@ BEGIN_RCPP
         Rcpp::traits::input_parameter< NumericMatrix >::type eps(epsSEXP );
         Rcpp::traits::input_parameter< NumericMatrix >::type sigma(sigmaSEXP );
         NumericVector __result = traceEpsC(eps, sigma);
+        PROTECT(__sexp_result = Rcpp::wrap(__result));
+    }
+    UNPROTECT(1);
+    return __sexp_result;
+END_RCPP
+}
+// traceEpsC_par
+NumericVector traceEpsC_par(NumericMatrix eps, NumericMatrix sigma, int ncores = 1);
+RcppExport SEXP NPflow_traceEpsC_par(SEXP epsSEXP, SEXP sigmaSEXP, SEXP ncoresSEXP) {
+BEGIN_RCPP
+    SEXP __sexp_result;
+    {
+        Rcpp::RNGScope __rngScope;
+        Rcpp::traits::input_parameter< NumericMatrix >::type eps(epsSEXP );
+        Rcpp::traits::input_parameter< NumericMatrix >::type sigma(sigmaSEXP );
+        Rcpp::traits::input_parameter< int >::type ncores(ncoresSEXP );
+        NumericVector __result = traceEpsC_par(eps, sigma, ncores);
         PROTECT(__sexp_result = Rcpp::wrap(__result));
     }
     UNPROTECT(1);
@@ -203,6 +269,26 @@ BEGIN_RCPP
     return __sexp_result;
 END_RCPP
 }
+// mmvtpdfC_par
+NumericMatrix mmvtpdfC_par(NumericMatrix x, NumericMatrix mean, List varcovM, NumericVector df, bool Log = true, int ncores = 1);
+RcppExport SEXP NPflow_mmvtpdfC_par(SEXP xSEXP, SEXP meanSEXP, SEXP varcovMSEXP, SEXP dfSEXP, SEXP LogSEXP, SEXP ncoresSEXP) {
+BEGIN_RCPP
+    SEXP __sexp_result;
+    {
+        Rcpp::RNGScope __rngScope;
+        Rcpp::traits::input_parameter< NumericMatrix >::type x(xSEXP );
+        Rcpp::traits::input_parameter< NumericMatrix >::type mean(meanSEXP );
+        Rcpp::traits::input_parameter< List >::type varcovM(varcovMSEXP );
+        Rcpp::traits::input_parameter< NumericVector >::type df(dfSEXP );
+        Rcpp::traits::input_parameter< bool >::type Log(LogSEXP );
+        Rcpp::traits::input_parameter< int >::type ncores(ncoresSEXP );
+        NumericMatrix __result = mmvtpdfC_par(x, mean, varcovM, df, Log, ncores);
+        PROTECT(__sexp_result = Rcpp::wrap(__result));
+    }
+    UNPROTECT(1);
+    return __sexp_result;
+END_RCPP
+}
 // mvnpdfC
 NumericVector mvnpdfC(NumericMatrix x, NumericVector mean, NumericMatrix varcovM, bool Log = true);
 RcppExport SEXP NPflow_mvnpdfC(SEXP xSEXP, SEXP meanSEXP, SEXP varcovMSEXP, SEXP LogSEXP) {
@@ -215,6 +301,25 @@ BEGIN_RCPP
         Rcpp::traits::input_parameter< NumericMatrix >::type varcovM(varcovMSEXP );
         Rcpp::traits::input_parameter< bool >::type Log(LogSEXP );
         NumericVector __result = mvnpdfC(x, mean, varcovM, Log);
+        PROTECT(__sexp_result = Rcpp::wrap(__result));
+    }
+    UNPROTECT(1);
+    return __sexp_result;
+END_RCPP
+}
+// mvnpdfC_par
+NumericVector mvnpdfC_par(NumericMatrix x, NumericVector mean, NumericMatrix varcovM, bool Log = true, int ncores = 1);
+RcppExport SEXP NPflow_mvnpdfC_par(SEXP xSEXP, SEXP meanSEXP, SEXP varcovMSEXP, SEXP LogSEXP, SEXP ncoresSEXP) {
+BEGIN_RCPP
+    SEXP __sexp_result;
+    {
+        Rcpp::RNGScope __rngScope;
+        Rcpp::traits::input_parameter< NumericMatrix >::type x(xSEXP );
+        Rcpp::traits::input_parameter< NumericVector >::type mean(meanSEXP );
+        Rcpp::traits::input_parameter< NumericMatrix >::type varcovM(varcovMSEXP );
+        Rcpp::traits::input_parameter< bool >::type Log(LogSEXP );
+        Rcpp::traits::input_parameter< int >::type ncores(ncoresSEXP );
+        NumericVector __result = mvnpdfC_par(x, mean, varcovM, Log, ncores);
         PROTECT(__sexp_result = Rcpp::wrap(__result));
     }
     UNPROTECT(1);
@@ -296,6 +401,38 @@ BEGIN_RCPP
     return __sexp_result;
 END_RCPP
 }
+// sampleClassC_bis_par
+IntegerVector sampleClassC_bis_par(NumericMatrix probMat, int ncores = 1);
+RcppExport SEXP NPflow_sampleClassC_bis_par(SEXP probMatSEXP, SEXP ncoresSEXP) {
+BEGIN_RCPP
+    SEXP __sexp_result;
+    {
+        Rcpp::RNGScope __rngScope;
+        Rcpp::traits::input_parameter< NumericMatrix >::type probMat(probMatSEXP );
+        Rcpp::traits::input_parameter< int >::type ncores(ncoresSEXP );
+        IntegerVector __result = sampleClassC_bis_par(probMat, ncores);
+        PROTECT(__sexp_result = Rcpp::wrap(__result));
+    }
+    UNPROTECT(1);
+    return __sexp_result;
+END_RCPP
+}
+// sampleClassC_par
+IntegerVector sampleClassC_par(NumericMatrix probMat, int ncores = 1);
+RcppExport SEXP NPflow_sampleClassC_par(SEXP probMatSEXP, SEXP ncoresSEXP) {
+BEGIN_RCPP
+    SEXP __sexp_result;
+    {
+        Rcpp::RNGScope __rngScope;
+        Rcpp::traits::input_parameter< NumericMatrix >::type probMat(probMatSEXP );
+        Rcpp::traits::input_parameter< int >::type ncores(ncoresSEXP );
+        IntegerVector __result = sampleClassC_par(probMat, ncores);
+        PROTECT(__sexp_result = Rcpp::wrap(__result));
+    }
+    UNPROTECT(1);
+    return __sexp_result;
+END_RCPP
+}
 // similarityMatC
 List similarityMatC(NumericMatrix c);
 RcppExport SEXP NPflow_similarityMatC(SEXP cSEXP) {
@@ -305,6 +442,22 @@ BEGIN_RCPP
         Rcpp::RNGScope __rngScope;
         Rcpp::traits::input_parameter< NumericMatrix >::type c(cSEXP );
         List __result = similarityMatC(c);
+        PROTECT(__sexp_result = Rcpp::wrap(__result));
+    }
+    UNPROTECT(1);
+    return __sexp_result;
+END_RCPP
+}
+// similarityMatC_par
+List similarityMatC_par(NumericMatrix c, int ncores = 1);
+RcppExport SEXP NPflow_similarityMatC_par(SEXP cSEXP, SEXP ncoresSEXP) {
+BEGIN_RCPP
+    SEXP __sexp_result;
+    {
+        Rcpp::RNGScope __rngScope;
+        Rcpp::traits::input_parameter< NumericMatrix >::type c(cSEXP );
+        Rcpp::traits::input_parameter< int >::type ncores(ncoresSEXP );
+        List __result = similarityMatC_par(c, ncores);
         PROTECT(__sexp_result = Rcpp::wrap(__result));
     }
     UNPROTECT(1);
