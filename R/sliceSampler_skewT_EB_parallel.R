@@ -51,9 +51,9 @@ sliceSampler_skewT_EB_parallel <- function(Ncpus, c, m, alpha, z, hyperG0,
     }
     
     fullCl_ind <- which(w != 0)
+    
     # likelihood of belonging to each cluster computation
     # sampling clusters
-    
     if(length(fullCl_ind)>1){
         U_xi_full <- sapply(fullCl_ind, function(j) U_xi[, j])
         U_psi_full <- sapply(fullCl_ind, function(j) U_psi[, j])

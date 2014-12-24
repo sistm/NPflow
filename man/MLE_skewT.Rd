@@ -3,7 +3,7 @@
 \alias{MLE_skewT}
 \title{MLE for sNiW distributed observations}
 \usage{
-MLE_skewT(xi_list, psi_list, S_list)
+MLE_skewT(xi_list, psi_list, S_list, plot = TRUE)
 }
 \description{
 Maximum likelihood estimation of Normal inverse Wishart distributed observations

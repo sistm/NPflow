@@ -20,7 +20,6 @@ plot_DPMst <- function(z, c, i="", alpha="?", U_SS,
     
     fullCl <- which(m!=0)
     
-    
     U_xi2plot=sapply(U_SS, "[[", "xi")
     U_psi2plot=sapply(U_SS, "[[", "psi")
     U_Sigma2plot=lapply(U_SS, "[[", "S")

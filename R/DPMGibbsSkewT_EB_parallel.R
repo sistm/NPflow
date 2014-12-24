@@ -164,6 +164,7 @@ DPMGibbsSkewT_EB_parallel <- function (Ncpus, type_connec,
         par_ind[[Ncpus]] <- (temp_ind+1):n
     }
     else{
+        cat("Only 1 core specified\n=> non-parallel version of the algorithm would be more efficient")
         cat("Only 1 core specified\n=> non-parallel version of the algorithm would be more efficient",
             file=monitorfile, append = TRUE)
         nb_simult <- n
@@ -283,7 +284,7 @@ DPMGibbsSkewT_EB_parallel <- function (Ncpus, type_connec,
                 obs_j <- which(c==j)
                 #cat("cluster ", j, ":\n")
                 #EB
-                hyper_num <- sample(x=1:nbmix_prior, size=1, prob=hyperG0[[1]])
+                hyper_num <- sample(x=1:nbmix_prior, size=1, prob=hyperG0[["weights"]])
                 priormix <- hyperG0[["parameters"]][[hyper_num]]
                 
                 U_SS[[j]] <- update_SSst(z=z[, obs_j, drop=FALSE], S=priormix, 
@@ -317,7 +318,9 @@ DPMGibbsSkewT_EB_parallel <- function (Ncpus, type_connec,
                 U_SS[[j]][["df"]] <- U_df[j]
             }
             
-            U_SS_list[[i]] <- U_SS[which(m!=0)]
+            U_SS_list[[i]] <- mapply(FUN=function(u, w){c(u, "weights"=w)},
+                                     u=U_SS[which(m!=0)], w=weights_list[[i]][which(m!=0)], 
+                                     SIMPLIFY=FALSE) 
             c_list[[i]] <- c
             
             logposterior_list[[i]] <- 0#logposterior_list[[i]] <- logposterior_DPMST(z, xi=U_xi, psi=U_psi, Sigma=U_Sigma, df=U_df, B=U_B,

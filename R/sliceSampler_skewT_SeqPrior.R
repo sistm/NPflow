@@ -1,12 +1,10 @@
-sliceSampler_skewT_EB <- function(c, m, alpha, z, hyperG0, 
-                                  U_xi, U_psi, U_Sigma, U_df, scale, 
-                                  diagVar){
-    
+sliceSampler_skewT_SeqPrior <- function(c, m, alpha, z, priorG1, U_xi, U_psi, 
+                               U_Sigma, U_df, scale, diagVar){
     
     
     maxCl <- length(m) #maximum number of clusters
     ind <- which(m!=0) # indexes of non empty clusters
-    nbmix_prior <- length(hyperG0[["weights"]])
+    nbmix_prior <- length(priorG1[["weights"]])
     
     # Sample the weights, i.e. the frequency of each existing cluster from a Dirichlet:
     # temp_1 ~ Gamma(m_1,1), ... , temp_K ~ Gamma(m_K,1)    # and sample the rest of the weigth for potential new clusters:
@@ -18,6 +16,7 @@ sliceSampler_skewT_EB <- function(c, m, alpha, z, hyperG0,
     w[ind] <- temp_norm[-length(temp_norm)]
     R <- temp_norm[length(temp_norm)] 
     #R is the rest, i.e. the weight for potential new clusters
+    
     
     # Sample the latent u
     u  <- runif(maxCl)*w[c]
@@ -40,8 +39,8 @@ sliceSampler_skewT_EB <- function(c, m, alpha, z, hyperG0,
         
         # Sample the centers and spread of each new cluster from prior
         for (i in 1:t){
-            hyper_num <- sample(x=1:nbmix_prior, size=1, prob=hyperG0[["weights"]])
-            NNiW <- rNNiW(hyperG0[["parameters"]][[hyper_num]], diagVar)
+            hyper_num <- sample(x=1:nbmix_prior, size=1, prob=priorG1[["weights"]])
+            NNiW <- rNNiW(priorG1[["parameters"]][[hyper_num]], diagVar)
             
             U_xi[, ind_new[i]] <- NNiW[["xi"]]
             U_psi[, ind_new[i]] <- NNiW[["psi"]]
@@ -51,20 +50,17 @@ sliceSampler_skewT_EB <- function(c, m, alpha, z, hyperG0,
     }
     
     fullCl_ind <- which(w != 0)
-    
     # likelihood of belonging to each cluster computation
     # sampling clusters
+    U_xi_full <- sapply(fullCl_ind, function(j) U_xi[, j])
+    U_psi_full <- sapply(fullCl_ind, function(j) U_psi[, j])
+    U_Sigma_full <- lapply(fullCl_ind, function(j) U_Sigma[, ,j])
+    U_df_full <- sapply(fullCl_ind, function(j) U_df[j])
     if(length(fullCl_ind)>1){
-        U_xi_full <- sapply(fullCl_ind, function(j) U_xi[, j])
-        U_psi_full <- sapply(fullCl_ind, function(j) U_psi[, j])
-        U_Sigma_full <- lapply(fullCl_ind, function(j) U_Sigma[, ,j])
-        U_df_full <- sapply(fullCl_ind, function(j) U_df[j])
-        
-        
         l <- mmvstpdfC(x=z, xi=U_xi_full, psi=U_psi_full, sigma=U_Sigma_full, df=U_df_full, Log=FALSE)
         u_mat <- t(sapply(w[fullCl_ind], function(x){as.numeric(u < x)}))
         prob_mat <- u_mat * l
-        
+
         c <- fullCl_ind[sampleClassC(prob_mat)]        
 
     }else{

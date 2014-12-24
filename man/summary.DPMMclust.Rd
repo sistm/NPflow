@@ -4,7 +4,7 @@
 \title{Summarizing Dirichlet Process Mixture Models}
 \usage{
 \method{summary}{DPMMclust}(x, burnin = 0, thin = 1, gs = NULL,
-  lossFn = "F-measure", ...)
+  lossFn = "F-measure", K = 10)
 }
 \arguments{
 \item{x}{a \code{DPMMclust} object.}

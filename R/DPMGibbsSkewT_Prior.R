@@ -159,7 +159,7 @@
 #'  
 #'  
 
-DPMGibbsSkewT_EB <- function (z, hyperG0, a, b, N, nbclust_init,
+DPMGibbsSkewT_Prior <- function (z, prior, hyperG0, a, b, N, nbclust_init,
                               doPlot=TRUE, plotevery=1, 
                               diagVar=TRUE, verbose=TRUE,
                               ...){
@@ -193,7 +193,11 @@ DPMGibbsSkewT_EB <- function (z, hyperG0, a, b, N, nbclust_init,
     c <- numeric(n) # cluster label of ech observation
     ltn <- rtruncnorm(n, a=0, b=Inf, mean=0, sd=1) # latent truncated normal
     sc <- rep(1,n)
-    nbmix_prior <- length(hyperG0[["weights"]])
+    nbmix_prior <- length(prior[["weights"]])+1
+    priorG1 <- prior
+    priorG1[["parameters"]][[nbmix_prior]] <- hyperG0
+    priorG1$weights <- c(priorG1$weights, mean(priorG1$weights))
+    priorG1$weights <- priorG1$weights/sum(priorG1$weights)
     
     # Initialisation----
     # each observation is assigned to a different cluster
@@ -206,8 +210,8 @@ DPMGibbsSkewT_EB <- function (z, hyperG0, a, b, N, nbclust_init,
     # c <- kmeans(x=t(z), centers=t(sapply(hyperG0[["parameters"]],'[[', 'b_xi')))$cluster
     for (k in unique(c)){
         obs_k <- which(c==k)
-        hyper_num <- sample(x=1:nbmix_prior, size=1)#k
-        priormix <- hyperG0[["parameters"]][[hyper_num]]
+        hyper_num <- sample(x=1:nbmix_prior, size=1)#, prob=priorG1$weights)
+        priormix <- priorG1[["parameters"]][[hyper_num]]
         U_SS[[k]] <- update_SSst(z=z[, obs_k], S=priormix, ltn=ltn[obs_k], scale=sc[obs_k], df=U_df[k])
         
         NNiW <- rNNiW(U_SS[[k]], diagVar)
@@ -245,6 +249,7 @@ DPMGibbsSkewT_EB <- function (z, hyperG0, a, b, N, nbclust_init,
         cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
     }
     
+    
     acc_rate <- 0
     
     if(N>1){
@@ -256,17 +261,11 @@ DPMGibbsSkewT_EB <- function (z, hyperG0, a, b, N, nbclust_init,
                                     K=nbClust, a=a, b=b)
             )
             
-            slice <- sliceSampler_skewT_EB(
-                                           c=c, m=m, 
-                                           alpha=alpha[i], 
-                                           z=z, hyperG0=hyperG0, 
-                                           U_xi=U_xi, 
-                                           U_psi=U_psi, 
-                                           U_Sigma=U_Sigma, 
-                                           U_df=U_df,
+            slice <- sliceSampler_skewT_EB(c=c, m=m, alpha=alpha[i], 
+                                           z=z, hyperG0=priorG1, 
+                                           U_xi=U_xi, U_psi=U_psi, 
+                                           U_Sigma=U_Sigma, U_df=U_df,
                                            scale=sc, diagVar)
-            
-            
             m <- slice[["m"]]
             c <- slice[["c"]]        
             weights_list[[i]] <- slice[["weights"]]
@@ -284,9 +283,9 @@ DPMGibbsSkewT_EB <- function (z, hyperG0, a, b, N, nbclust_init,
                 j <- fullCl[k]
                 obs_j <- which(c==j)
                 #cat("cluster ", j, ":\n")
-                #EB
-                hyper_num <- sample(x=1:nbmix_prior, size=1, prob=hyperG0[["weights"]])
-                priormix <- hyperG0[["parameters"]][[hyper_num]]
+                #prior
+                hyper_num <- sample(x=1:nbmix_prior, size=1, prob=priorG1[["weights"]])
+                priormix <- priorG1[["parameters"]][[hyper_num]]
                 
                 U_SS[[j]] <- update_SSst(z=z[, obs_j, drop=FALSE], S=priormix, 
                                          ltn=ltn[obs_j], scale=sc[obs_j], 
@@ -319,11 +318,9 @@ DPMGibbsSkewT_EB <- function (z, hyperG0, a, b, N, nbclust_init,
                 U_SS[[j]][["df"]] <- U_df[j]
             }
             
-            
-            
             U_SS_list[[i]] <- mapply(FUN=function(u, w){c(u, "weights"=w)},
                                      u=U_SS[which(m!=0)], w=weights_list[[i]][which(m!=0)], 
-                                     SIMPLIFY=FALSE)
+                                     SIMPLIFY=FALSE)  
             c_list[[i]] <- c
             
             logposterior_list[[i]] <- 0#logposterior_list[[i]] <- logposterior_DPMST(z, xi=U_xi, psi=U_psi, Sigma=U_Sigma, df=U_df, B=U_B,

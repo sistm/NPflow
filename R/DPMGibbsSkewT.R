@@ -308,6 +308,7 @@ DPMGibbsSkewT <- function (z, hyperG0, a, b, N, doPlot=TRUE,
             U_SS[[k]][["S"]] <- NNiW[["S"]]
             U_B[, ,k] <- U_SS[[k]][["B"]]
             m[k] <- m[k]+1
+            U_SS[[k]][["weight"]] <- 1/n
         }
     } else{
         c <- sample(x=1:nbclust_init, size=n, replace=TRUE)
@@ -323,6 +324,7 @@ DPMGibbsSkewT <- function (z, hyperG0, a, b, N, doPlot=TRUE,
             U_SS[[k]][["S"]] <- NNiW[["S"]]
             U_B[, ,k] <- U_SS[[k]][["B"]]
             m[k] <- length(obs_k)
+            U_SS[[k]][["weight"]] <- m[k]/n
         }
     }
     
@@ -395,6 +397,7 @@ DPMGibbsSkewT <- function (z, hyperG0, a, b, N, doPlot=TRUE,
                 U_Sigma[, , j] <- NNiW[["S"]]
                 U_SS[[j]][["S"]] <- NNiW[["S"]]
                 U_B[, ,j] <- U_SS[[j]][["B"]]
+                U_SS[[j]][["weight"]] <- weights_list[[i]][j]
             }
             
             update_scale <- sample_scale(c=c, m=m, z=z, U_xi=U_xi, 
@@ -412,7 +415,7 @@ DPMGibbsSkewT <- function (z, hyperG0, a, b, N, doPlot=TRUE,
                 U_SS[[j]][["df"]] <- U_df[j]
             }
             
-            U_SS_list[[i]] <- U_SS[which(m!=0)]
+            U_SS_list[[i]] <- c(U_SS[which(m!=0)])
             c_list[[i]] <- c
             
             logposterior_list[[i]] <- logposterior_DPMST(z, xi=U_xi, psi=U_psi, Sigma=U_Sigma, df=U_df, B=U_B,

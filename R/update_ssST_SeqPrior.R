@@ -8,7 +8,7 @@
 #'@export
 
 
-update_SSst <- function(z, S, ltn, scale, df, hyperprior=NULL){
+update_SSst_SeqPrior <- function(z, S, ltn, scale, df, hyperprior=NULL){
     
     b0_xi <- S[["b_xi"]]
     b0_psi <- S[["b_psi"]]
@@ -20,10 +20,9 @@ update_SSst <- function(z, S, ltn, scale, df, hyperprior=NULL){
         D0_psi <- S[["D_psi"]]
         B0 <- diag(c(1/D0_xi, 1/D0_psi))
     }else{ 
-        D0_xi <- solve(B0)[1,1]
-        D0_psi <- solve(B0)[2,2]
+        D0_xi <- 1/B0[1,1]
+        D0_psi <- 1/B0[2,2]
     }
-    
     
     sc_sr <- sqrt(scale)
     
@@ -31,18 +30,15 @@ update_SSst <- function(z, S, ltn, scale, df, hyperprior=NULL){
         z <- matrix(z, ncol=1)
     }
     n <- ncol(z)
-
+    
     X <- matrix(c(sc_sr, sc_sr*ltn), ncol=2, byrow=FALSE)
-    B <- try(solve(crossprod(X) + B0))
-    if(class(B)=="try-error"){
-        browser()
-    }
+    B <- solve(crossprod(X) + B0)
     temp <- apply(X=z, MARGIN=1, FUN=function(x){x*sc_sr})
     if(n<2){
         temp <- matrix(temp, ncol=nrow(z))
     }
     b <- (crossprod(temp,X) + cbind(b0_xi/D0_xi, b0_psi/D0_psi))%*%B
-
+    
     
     b_xi <- b[,1]
     b_psi <- b[,2]
@@ -58,12 +54,11 @@ update_SSst <- function(z, S, ltn, scale, df, hyperprior=NULL){
         }
     }
     
-    
     #conjugate hyperprior on lambda: whishart distribution
     if(!is.null(hyperprior)){
         #g0 <- ncol(lambda0) + 5
         g0 <- nu0
-        lambda0 <- wishrnd(n=round(nu0+g0), Sigma=solve(solve(lambda0)+solve(hyperprior[["Sigma"]])))
+        lambda0 <- wishrnd(n=nu0+g0, Sigma=solve(solve(lambda0)+solve(hyperprior[["Sigma"]])))
     }
     
     lambda1 <- lambda0 + (eps2 + tcrossprod(b_xi-b0_xi)/D0_xi + tcrossprod(b_psi-b0_psi)/D0_psi)

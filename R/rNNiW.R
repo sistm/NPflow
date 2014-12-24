@@ -12,16 +12,17 @@ rNNiW<- function(SufStat, diagVar){
   b0_xi = SufStat[["b_xi"]]
   b0_psi = SufStat[["b_psi"]]
   B = SufStat[["B"]] # B
-  B0 <- diag(c(1/SufStat[["D_xi"]], 1/SufStat[["D_psi"]]))
-  nu0 = SufStat[["nu"]] #c
+  nu0 = round(SufStat[["nu"]]) #c
   lambda0 = SufStat[["lambda"]] #C
   
   if(is.null(B)){
+      B0 <- diag(c(1/SufStat[["D_xi"]], 1/SufStat[["D_psi"]]))
       B <- B0
   }
   
+  #B <- diag(c(1/100, 1/100))
+  
   # Sample S from an inverse Wishart distribution
-
   if(diagVar){
       betas <- diag(lambda0)
       S <- diag(1/rgamma(n=length(b0_xi), shape=nu0, 

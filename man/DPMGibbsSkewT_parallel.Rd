@@ -70,7 +70,6 @@ ncl <- 4
 sdev <- array(dim=c(d,d,ncl))
 
 xi <- matrix(nrow=d, ncol=ncl, c(-1.5, 1, 1.5, 1, 1.5, -2, -2, -2))
-#xi <- matrix(nrow=d, ncol=ncl, c(-0.5, 0, 0.5, 0, 0.5, -1, -1, 1))
 psi <- matrix(nrow=d, ncol=4, c(0.4, -0.6, 0.8, 0, 0.3, -0.7, -0.3, -0.8))
 p <- c(0.2, 0.1, 0.4, 0.3) # frequence des clusters
 sdev[, ,1] <- matrix(nrow=d, ncol=d, c(0.3, 0, 0, 0.3))
@@ -147,9 +146,9 @@ hyperG0[["lambda"]] <- diag(d)
 
  # Gibbs sampler for Dirichlet Process Mixtures
  ##############################################
- MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=500,
- doPlot, nbclust_init, plotevery=50, gg.add=list(theme_bw()),
- diagVar=FALSE)
+ MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=2000,
+                                doPlot, nbclust_init, plotevery=50, gg.add=list(theme_bw()),
+                                diagVar=FALSE)
  s <- summary(MCMCsample_st, burnin = 350)
  print(s)
  plot(s)
@@ -163,77 +162,6 @@ hyperG0[["lambda"]] <- diag(d)
  hyperG0[["mu"]] <- rep(0,d)
  MCMCsample_n <- gibbsDPMsliceprior(z, hyperG0, a, b, N=500, doPlot, nbclust_init, plotevery=50)
  plot_ConvDPM(MCMCsample_n, from=2)
-
-
-
-
-
- # k-means
-
- plot(x=z[1,], y=z[2,], col=kmeans(t(z), centers=4)$cluster,
-      xlab = "d = 1", ylab= "d = 2", main="k-means with K=4 clusters")
-
- KM <- kmeans(t(z), centers=4)
- KMclust <- factor(KM$cluster)
- levels(KMclust) <- c("2", "4", "1", "3")
- dataKM <- data.frame("X"=z[1,], "Y"=z[2,],
-                    "Cluster"=as.character(KMclust))
- dataCenters <- data.frame("X"=KM$centers[,1],
-                           "Y"=KM$centers[,2],
-                           "Cluster"=c("2", "4", "1", "3"))
-
- p <- (ggplot(dataKM)
-       + geom_point(aes(x=X, y=Y, col=Cluster))
-       + geom_point(aes(x=X, y=Y, fill=Cluster, order=Cluster),
-                    data=dataCenters, shape=22, size=5)
-       + scale_colour_discrete(name="Cluster", guide=guide_legend(override.aes=list(size=6, shape=22)))
-       + ggtitle("K-means with K=4 clusters\\n")
-       + theme_bw()
- )
- p
-
- postalpha <- data.frame("alpha"=MCMCsample_sn$alpha[501:1000],
-                         "distribution" = factor(rep("posterior",1000-500),
-                         levels=c("prior", "posterior")))
-
- postK <- data.frame("K"=sapply(lapply(postalpha$alpha, "["),
-                                function(x){sum(x/(x+0:(1000-1)))}))
-
- p <- (ggplot(postalpha, aes(x=alpha))
-       + geom_histogram(aes(y=..density..), binwidth=.1,
-                        colour="black", fill="white")
-       + geom_density(alpha=.2, fill="blue")
-       + ggtitle("Posterior distribution of alpha\\n")
-       + geom_vline(aes(xintercept=mean(alpha, na.rm=T)),   # Ignore NA values for mean
-                    color="red", linetype="dashed", size=1)  # Overlay with transparent density plot
-     )
- p
-
- p <- (ggplot(postK, aes(x=K))
-       + geom_histogram(aes(y=..density..),
-                        colour="black", fill="white")
-       + geom_density(alpha=.2, fill="blue")
-       + ggtitle("Posterior distribution of K\\n")
-       + geom_vline(aes(xintercept=mean(K, na.rm=T)),   # Ignore NA values for mean
-                    color="red", linetype="dashed", size=1)  # Overlay with transparent density plot
-       #+ scale_x_continuous(breaks=c(0:6)*2, minor_breaks=c(0:6)*2+1)
-       + scale_x_continuous(breaks=c(1:12))
-     )
- p
-
- p <- (ggplot(drop=FALSE, alpha=.6)
-       + geom_density(aes(x=alpha, fill=distribution),
-                      color=NA, alpha=.6,
-                      data=postalpha)
-       + geom_density(aes(x=alpha, fill=distribution),
-                      color=NA, alpha=.6,
-                      data=prioralpha)
-       + ggtitle("Prior and posterior distributions of alpha\\n")
-       + scale_fill_discrete(drop=FALSE)
-       + theme_bw()
-       + xlim(0,100)
-     )
- p
 }
 \author{
 Boris Hejblum

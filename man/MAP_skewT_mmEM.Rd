@@ -2,12 +2,17 @@
 \name{MAP_skewT_mmEM_vague}
 \alias{MAP_skewT_mmEM}
 \alias{MAP_skewT_mmEM_vague}
+\alias{MAP_skewT_mmEM_weighted}
 \title{EM MAP for mixture of sNiW}
 \usage{
 MAP_skewT_mmEM_vague(xi_list, psi_list, S_list, hyperG0, K, maxit = 50,
-  tol = 0.1)
+  tol = 0.1, plot = TRUE)
 
-MAP_skewT_mmEM(xi_list, psi_list, S_list, hyperG0, K, maxit = 50, tol = 0.1)
+MAP_skewT_mmEM(xi_list, psi_list, S_list, hyperG0, K, maxit = 50, tol = 0.1,
+  plot = TRUE)
+
+MAP_skewT_mmEM_weighted(xi_list, psi_list, S_list, obsweight_list, hyperG0, K,
+  maxit = 50, tol = 0.1, plot = TRUE)
 }
 \description{
 Maximum likelihood estimation of mixture of
@@ -26,12 +31,16 @@ hyperG0$lambda <- diag(c(0.25,0.35))
 xi_list <- list()
 psi_list <- list()
 S_list <- list()
+w_list <- list()
+
 for(k in 1:1000){
  NNiW <- rNNiW(hyperG0, diagVar=FALSE)
  xi_list[[k]] <- NNiW[["xi"]]
  psi_list[[k]] <- NNiW[["psi"]]
  S_list[[k]] <- NNiW[["S"]]
+ w_list [[k]] <- 0.75
 }
+
 
 hyperG02 <- list()
 hyperG02$b_xi <- c(-1, 2)
@@ -47,9 +56,11 @@ for(k in 1001:2000){
  xi_list[[k]] <- NNiW[["xi"]]
  psi_list[[k]] <- NNiW[["psi"]]
  S_list[[k]] <- NNiW[["S"]]
+ w_list [[k]] <- 0.25
+
 }
 
-map <- MAP_skewT_mmEM(xi_list, psi_list, S_list, hyperG0, K=2)
+map <- MAP_skewT_mmEM(xi_list, psi_list, S_list, hyperG0, K=3)
 map
 }
 
