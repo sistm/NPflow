@@ -118,7 +118,7 @@
 #'  cat(k, "/", n, " observations simulated\n", sep="")
 #' }
 #'  MCMCsample_st2 <- DPMGibbsSkewT_SeqPrior(z, prior=s$param_post, 
-#'                                           hyperG0, a, b, N=3000, 
+#'                                           hyperG0, N=3000, 
 #'                                           doPlot=TRUE, plotevery=100,
 #'                                           nbclust_init, diagVar=FALSE)
 #' s2 <- summary(MCMCsample_st2, burnin = 2000, thin=5)
@@ -127,7 +127,7 @@
 #'  
 #'  
 
-DPMGibbsSkewT_SeqPrior <- function (z, prior, hyperG0, a, b, N, nbclust_init,
+DPMGibbsSkewT_SeqPrior <- function (z, prior, hyperG0, N, nbclust_init,
                               doPlot=TRUE, plotevery=1, 
                               diagVar=TRUE, verbose=TRUE,
                               ...){
@@ -166,6 +166,9 @@ DPMGibbsSkewT_SeqPrior <- function (z, prior, hyperG0, a, b, N, nbclust_init,
     priorG1[["parameters"]][[nbmix_prior]] <- hyperG0
     priorG1$weights <- c(priorG1$weights, sum(priorG1$weights)/3)
     priorG1$weights <- priorG1$weights/sum(priorG1$weights)
+    
+    a <- prior$alpha_param$shape
+    b <- prior$alpha_param$rate
     
     # Initialisation----
     # each observation is assigned to a different cluster

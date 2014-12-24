@@ -91,6 +91,8 @@ postProcess.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measur
         stop("clust_distrib is not skewT\n other distrib nort implemented yet")
     }
 
+    mle_g <- MLE_gamma(x_invar$alpha)
+
     parameters <- list()
     for (i in 1:length(param_post$U_xi)){
         parameters[[i]] <- list("b_xi" = param_post[["U_xi"]][[i]],
@@ -101,7 +103,8 @@ postProcess.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measur
         )
     }
     
-    return(list("parameters"=parameters, "weights"=param_post$weights))
+    return(list("parameters"=parameters, "weights"=param_post$weights,
+                "alpha_param"=mle_g))
 }
 
 #'EM MLE for mixture of sNiW
@@ -799,4 +802,37 @@ MLE_skewT <- function( xi_list, psi_list, S_list, plot=TRUE){
                 "U_df" = U_df, 
                 "U_Sigma" = U_Sigma))
     
+}
+
+#'MLE for Gamma distribution
+#'
+#'Maximum likelihood estimation of Gamma distributed observations 
+#'distribution parameters
+#'
+#'
+#'@export
+#'
+#'@examples
+#'
+#' g_list <- list()
+#' for(i in 1:1000){
+#'  g_list <- c(g_list, rgamma(1, shape=100, rate=5))
+#' }
+#' 
+#' mle <- MLE_gamma(g_list)
+#' mle
+#'
+MLE_gamma <- function(g){
+    N <- length(g)
+    
+    a_mle <- try(uniroot(function(a){(N*mean(log(g))
+                                     - N*digamma(a)
+                                     - N*log(mean(g))
+                                     + N*log(a)
+    )}, lower = 0.000001, upper=1E9)$root, TRUE)
+    if(inherits(a_mle, "try-error")){a_mle <- 0.0001;warning("unable to estimate a_mle properly")}    
+
+    b_mle <- mean(g)/a_mle
+
+    return(list("shape"=a_mle, "scale"=b_mle, "rate"=1/b_mle))
 }

@@ -3,20 +3,14 @@
 \alias{DPMGibbsSkewT_SeqPrior}
 \title{Slice Sampling of Dirichlet Process Mixture of skew  Students's t-distibutions}
 \usage{
-DPMGibbsSkewT_SeqPrior(z, prior, hyperG0, a, b, N, nbclust_init,
-  doPlot = TRUE, plotevery = 1, diagVar = TRUE, verbose = TRUE, ...)
+DPMGibbsSkewT_SeqPrior(z, prior, hyperG0, N, nbclust_init, doPlot = TRUE,
+  plotevery = 1, diagVar = TRUE, verbose = TRUE, ...)
 }
 \arguments{
 \item{z}{data matrix \code{d x n} with \code{d} dimensions in rows
 and \code{n} observations in columns.}
 
 \item{hyperG0}{prior mixing distribution.}
-
-\item{a}{shape hyperparameter of the Gamma prior
-on the parameter of the Dirichlet Process.}
-
-\item{b}{scale hyperparameter of the Gamma prior
-on the parameter of the Dirichlet Process.}
 
 \item{N}{number of MCMC iterations.}
 
@@ -28,6 +22,12 @@ Default to \code{TRUE}.}
 
 \item{verbose}{logical flag indicating wether partition info is
 written in the console at each MCMC iteration.}
+
+\item{a}{shape hyperparameter of the Gamma prior
+on the parameter of the Dirichlet Process.}
+
+\item{b}{scale hyperparameter of the Gamma prior
+on the parameter of the Dirichlet Process.}
 }
 \value{
 a object of class \code{DPMclust} with the following attributes:
@@ -125,7 +125,7 @@ for(k in 1:n){
  cat(k, "/", n, " observations simulated\\n", sep="")
 }
  MCMCsample_st2 <- DPMGibbsSkewT_SeqPrior(z, prior=s$param_post,
-                                          hyperG0, a, b, N=3000,
+                                          hyperG0, N=3000,
                                           doPlot=TRUE, plotevery=100,
                                           nbclust_init, diagVar=FALSE)
 s2 <- summary(MCMCsample_st2, burnin = 2000, thin=5)
