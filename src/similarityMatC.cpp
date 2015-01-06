@@ -36,7 +36,8 @@ List similarityMatC(NumericMatrix c){
     
     for(int i=0; i<n-1; i++){
         for(int j=i+1; j<n; j++){
-            similarity(i,j) = sum(cc.row(i) == cc.row(j))/N;
+            similarity(i,j) = sum(cc.row(i) == cc.row(j));
+            similarity(i,j) = similarity(i,j)/N;
             similarity(j,i) = similarity(i,j);
             for(int k=0; k<N; k++){
                 cost(k) = cost(k) + std::abs(similarity(i,j) - (cc(i,k) == cc(j,k)));
