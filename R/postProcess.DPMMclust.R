@@ -75,34 +75,38 @@ postProcess.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measur
         
     }
     
-    if(x$clust_distrib=="skewT"){
-        if(K>1){
-#             param_post <- MAP_skewT_mmEM_weighted(xi_list, psi_list, S_list, 
-#                                                   obsweight_list=w_list, 
-#                                                   hyperG0 = x_invar$hyperG0, K=K, ...)
-            param_post <- MAP_skewT_mmEM(xi_list, psi_list, S_list, 
-                                                  hyperG0 = x_invar$hyperG0, K=K, ...)
-        }
-        else{
-            param_post <- MLE_skewT(xi_list, psi_list, S_list, ...)
+    if(x$clust_distrib!="skewT"){ 
+        stop("clust_distrib is not skewT\n other distrib nort implemented yet")
+    }
+    
+    mle_g <- MLE_gamma(x_invar$alpha)
+    
+    if(K>1){
+#       param_post <- MAP_skewT_mmEM_weighted(xi_list, psi_list, S_list, 
+#                                             obsweight_list=w_list, 
+#                                             hyperG0 = x_invar$hyperG0, K=K, ...)
+        param_post <- MAP_skewT_mmEM(xi_list, psi_list, S_list, 
+                                     hyperG0 = x_invar$hyperG0, K=K, ...)
+        parameters <- list()
+        for (i in 1:length(param_post$U_xi)){
+            parameters[[i]] <- list("b_xi" = param_post[["U_xi"]][[i]],
+                                    "b_psi" = param_post[["U_psi"]][[i]],
+                                    "B" = solve(param_post[["U_B"]][[i]]),
+                                    "lambda" = param_post[["U_Sigma"]][[i]],
+                                    "nu" = param_post[["U_df"]][[i]]
+            )
         }
     }
     else{
-        stop("clust_distrib is not skewT\n other distrib nort implemented yet")
-    }
-
-    mle_g <- MLE_gamma(x_invar$alpha)
-
-    parameters <- list()
-    for (i in 1:length(param_post$U_xi)){
-        parameters[[i]] <- list("b_xi" = param_post[["U_xi"]][[i]],
-                                "b_psi" = param_post[["U_psi"]][[i]],
-                                "B" = solve(param_post[["U_B"]][[i]]),
-                                "lambda" = param_post[["U_Sigma"]][[i]],
-                                "nu" = param_post[["U_df"]][[i]]
+        param_post <- MLE_skewT(xi_list, psi_list, S_list, ...)
+        parameters <- list("b_xi" = param_post[["U_xi"]],
+                            "b_psi" = param_post[["U_psi"]],
+                            "B" = solve(param_post[["U_B"]]),
+                            "lambda" = param_post[["U_Sigma"]],
+                            "nu" = param_post[["U_df"]]
         )
     }
-    
+
     return(list("parameters"=parameters, "weights"=param_post$weights,
                 "alpha_param"=mle_g))
 }
@@ -499,10 +503,10 @@ MAP_skewT_mmEM<- function(xi_list, psi_list, S_list, hyperG0, K, maxit=50, tol=1
     #Q[1] <- -Inf
     
     for(i in 1:maxit){
-#         browser()
-#         r <- mmsNiWpdfC(xi = sapply(xi_list, "["), psi = sapply(psi_list, "["), Sigma = S_list, 
-#                           U_xi0 = sapply(U_xi, "["), U_psi0 = sapply(U_psi, "["), U_B0 =U_B,
-#                           U_Sigma0 = U_Sigma, U_df0 = sapply(U_df, "["))
+        #         browser()
+        #         r <- mmsNiWpdfC(xi = sapply(xi_list, "["), psi = sapply(psi_list, "["), Sigma = S_list, 
+        #                           U_xi0 = sapply(U_xi, "["), U_psi0 = sapply(U_psi, "["), U_B0 =U_B,
+        #                           U_Sigma0 = U_Sigma, U_df0 = sapply(U_df, "["))
         
         r <- mmsNiWlogpdf(U_xi = xi_list, U_psi = psi_list, U_Sigma = S_list, 
                           U_xi0 = U_xi, U_psi0 = U_psi, U_B0 =U_B,
@@ -805,7 +809,7 @@ MLE_skewT <- function( xi_list, psi_list, S_list, plot=TRUE){
                                       - N*d/2*log(N*nu0/2) 
                                       + N/2*log(det(Sinv_sum))
     )}, lower = d+1, upper=1E9)$root, TRUE)
-    if(inherits(U_df[[k]], "try-error")){U_df[[k]] <- d+1}
+    if(inherits(U_df, "try-error")){U_df <- d+1}
     
     U_Sigma <- N*U_df*solve(Sinv_sum)
     
@@ -840,13 +844,13 @@ MLE_gamma <- function(g){
     N <- length(g)
     
     a_mle <- try(uniroot(function(a){(N*mean(log(g))
-                                     - N*digamma(a)
-                                     - N*log(mean(g))
-                                     + N*log(a)
+                                      - N*digamma(a)
+                                      - N*log(mean(g))
+                                      + N*log(a)
     )}, lower = 0.000001, upper=1E9)$root, TRUE)
     if(inherits(a_mle, "try-error")){a_mle <- 0.0001;warning("unable to estimate a_mle properly")}    
-
+    
     b_mle <- mean(g)/a_mle
-
+    
     return(list("shape"=a_mle, "scale"=b_mle, "rate"=1/b_mle))
 }

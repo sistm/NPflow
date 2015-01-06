@@ -60,7 +60,7 @@
 #' #xi <- matrix(nrow=d, ncol=ncl, c(-1.5, 1.5, 1.5, 1.5, 2, -2.5, -2.5, -3))
 #' #psi <- matrix(nrow=d, ncol=4, c(0.4, -0.6, 0.8, 0, 0.3, -0.7, -0.3, -0.8))
 #' xi <- matrix(nrow=d, ncol=ncl, c(-0.2, 0.5, 2.4, 0.4, 0.6, -1.3, -0.9, -2.7))
-#' psi <- matrix(nrow=d, ncol=4, c(0.3, -0.7, -0.8, 0, 0.3, -0.7, 0.2, 0.9))
+#' psi <- matrix(nrow=d, ncol=4, c(0.3, -0.7, -0.8, 0, 0.4, -0.5, 0.2, 0.9))
 #' nu <- c(100,15,8,5)
 #' p <- c(0.15, 0.05, 0.5, 0.3) # frequence des clusters
 #' sdev[, ,1] <- matrix(nrow=d, ncol=d, c(0.3, 0, 0, 0.3))
@@ -105,10 +105,10 @@
 #'        +theme_bw())
 #'  q
 #'  
-#'  MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=3000, 
+#'  MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=4000, 
 #'                                 doPlot=TRUE, plotevery=250,
 #'                                 nbclust_init, diagVar=FALSE)
-#'  s <- summary(MCMCsample_st, burnin = 2000, thin=5, posterior_approx=TRUE)
+#'  s <- summary(MCMCsample_st, burnin = 3000, thin=4, posterior_approx=TRUE)
 #'  F <- FmeasureC(pred=s$point_estim$c_est, ref=c)
 #'  
 #' for(k in 1:n){
@@ -142,6 +142,7 @@ DPMGibbsSkewT_SeqPrior <- function (z, prior, hyperG0, N, nbclust_init,
     U_df <- rep(10,n)
     U_B <- array(0, dim=c(2, 2, n))
     U_nu <- rep(p,n)
+    U_hypernum <- rep(0, n)
     
     # U_SS is a list where each U_SS[[k]] contains the sufficient
     # statistics associated to cluster k
@@ -182,7 +183,9 @@ DPMGibbsSkewT_SeqPrior <- function (z, prior, hyperG0, N, nbclust_init,
     for (k in unique(c)){
         obs_k <- which(c==k)
         hyper_num <- sample(x=1:nbmix_prior, size=1)#, prob=priorG1$weights)
-        priormix <- priorG1[["parameters"]][[hyper_num]]
+        U_hypernum[k] <- hyper_num 
+        #hypernum is stocked to avoid issues if updating matrices with wrong informative prior element
+        priormix <- priorG1[["parameters"]][[U_hypernum[k]]]
         U_SS[[k]] <- update_SSst(z=z[, obs_k], S=priormix, ltn=ltn[obs_k], scale=sc[obs_k], df=U_df[k])
         
         NNiW <- rNNiW(U_SS[[k]], diagVar)
@@ -237,6 +240,7 @@ DPMGibbsSkewT_SeqPrior <- function (z, prior, hyperG0, N, nbclust_init,
                                            z=z, priorG1=priorG1, 
                                            U_xi=U_xi, U_psi=U_psi, 
                                            U_Sigma=U_Sigma, U_df=U_df,
+                                           U_hypernum = U_hypernum,
                                            scale=sc, diagVar)
             m <- slice[["m"]]
             c <- slice[["c"]]        
@@ -246,7 +250,7 @@ DPMGibbsSkewT_SeqPrior <- function (z, prior, hyperG0, N, nbclust_init,
             U_psi <- slice[["psi"]]        
             U_Sigma <- slice[["Sigma"]]
             U_df <- slice[["df"]]
-            
+            U_hypernum <- slice[["hypernum"]]
             
             # Update cluster locations            
             fullCl <- which(m!=0)
@@ -255,15 +259,15 @@ DPMGibbsSkewT_SeqPrior <- function (z, prior, hyperG0, N, nbclust_init,
                 j <- fullCl[k]
                 obs_j <- which(c==j)
                 #cat("cluster ", j, ":\n")
-                #prior
-                hyper_num <- sample(x=1:nbmix_prior, size=1, prob=priorG1[["weights"]])
-                priormix <- priorG1[["parameters"]][[hyper_num]]
                 
+                #prior
+                priormix <- priorG1[["parameters"]][[U_hypernum[j]]]                
                 U_SS[[j]] <- update_SSst(z=z[, obs_j, drop=FALSE], S=priormix, 
                                          ltn=ltn[obs_j], scale=sc[obs_j], 
                                          df=U_df[j], 
-                                         hyperprior= list("Sigma"=U_Sigma[,,j]) 
+                                         hyperprior=NULL 
                 )
+                #z=z[, obs_j, drop=FALSE]; S=priormix;ltn=ltn[obs_j]; scale=sc[obs_j]; df=U_df[j]; hyperprior=NULL
                 U_nu[j] <- U_SS[[j]][["nu"]]
                 NNiW <- rNNiW(U_SS[[j]], diagVar)
                 U_xi[, j] <- NNiW[["xi"]]

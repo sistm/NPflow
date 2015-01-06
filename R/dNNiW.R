@@ -5,10 +5,18 @@ dNNiW <- function(xi, psi, Sigma, B, hyperprior, log=FALSE){
     xi0 <- hyperprior[["b_xi"]]
     psi0 <- hyperprior[["b_psi"]]
     nu0 <- hyperprior[["nu"]]
-    D0_xi <- hyperprior[["D_xi"]]
-    D0_psi <- hyperprior[["D_psi"]]
-    B0 <- diag(c(1/hyperprior[["D_xi"]], 1/hyperprior[["D_psi"]]))
+    B0 <- hyperprior[["B"]]
+    if(is.null(B0)){
+        D0_xi <- hyperprior[["D_xi"]]
+        D0_psi <- hyperprior[["D_psi"]]
+        B0 <- diag(c(D0_xi, D0_psi))
+    }else{
+        D0_xi <- B0[1,1]
+        D0_psi <- B0[2,2]
+    }
     lambda0 <- hyperprior[["lambda"]]
+    
+
     
     p <- ncol(lambda0)
     

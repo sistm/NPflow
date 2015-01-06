@@ -68,7 +68,7 @@ sdev <- array(dim=c(d,d,ncl))
 #xi <- matrix(nrow=d, ncol=ncl, c(-1.5, 1.5, 1.5, 1.5, 2, -2.5, -2.5, -3))
 #psi <- matrix(nrow=d, ncol=4, c(0.4, -0.6, 0.8, 0, 0.3, -0.7, -0.3, -0.8))
 xi <- matrix(nrow=d, ncol=ncl, c(-0.2, 0.5, 2.4, 0.4, 0.6, -1.3, -0.9, -2.7))
-psi <- matrix(nrow=d, ncol=4, c(0.3, -0.7, -0.8, 0, 0.3, -0.7, 0.2, 0.9))
+psi <- matrix(nrow=d, ncol=4, c(0.3, -0.7, -0.8, 0, 0.4, -0.5, 0.2, 0.9))
 nu <- c(100,15,8,5)
 p <- c(0.15, 0.05, 0.5, 0.3) # frequence des clusters
 sdev[, ,1] <- matrix(nrow=d, ncol=d, c(0.3, 0, 0, 0.3))
@@ -113,10 +113,10 @@ hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
        +theme_bw())
  q
 
- MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=3000,
+ MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=4000,
                                 doPlot=TRUE, plotevery=250,
                                 nbclust_init, diagVar=FALSE)
- s <- summary(MCMCsample_st, burnin = 2000, thin=5, posterior_approx=TRUE)
+ s <- summary(MCMCsample_st, burnin = 3000, thin=4, posterior_approx=TRUE)
  F <- FmeasureC(pred=s$point_estim$c_est, ref=c)
 
 for(k in 1:n){

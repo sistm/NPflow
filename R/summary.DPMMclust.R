@@ -62,7 +62,11 @@ summary.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measure", 
     #Posterior approximation
     
     if(posterior_approx){
-        param_post <- postProcess.DPMMclust(x_invar, plot=FALSE, tol=tol, K=K, maxit=maxit)
+        if(K>1){
+            param_post <- postProcess.DPMMclust(x_invar, plot=FALSE, tol=tol, K=K, maxit=maxit)
+        }else{
+            param_post <- postProcess.DPMMclust(x_invar, K=1)
+        }
     }
     else{
         param_post <- NULL

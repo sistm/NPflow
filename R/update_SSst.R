@@ -23,7 +23,6 @@ update_SSst <- function(z, S, ltn, scale, df, hyperprior=NULL){
         B0inv <- solve(B0)
         D0_xi <- B0[1,1]
         D0_psi <- B0[2,2]
-        browser()
     }
     
     
