@@ -38,7 +38,7 @@
 #'@seealso \link{similarityMat}
 #'
 
-summary.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measure", K=10){
+summary.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measure", K=10, posterior_approx=FALSE, tol=2, maxit=50){
     
     x_invar <- burn.DPMMclust(x, burnin = burnin, thin=thin)
     
@@ -56,12 +56,17 @@ summary.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measure", 
     index_estim <- point_estim$opt_ind
     loss <- NA
     if(!is.null(gs)){
-        loss <- evalClustLoss(c=point_estim$c_est, gs=gs, lossFn=lossFn, ...)
+        loss <- evalClustLoss(c=point_estim$c_est, gs=gs, lossFn=lossFn)
     }
     
     #Posterior approximation
     
-    param_post <- postProcess.DPMMclust(x_invar, plot=FALSE, tol=2, K=K)
+    if(posterior_approx){
+        param_post <- postProcess.DPMMclust(x_invar, plot=FALSE, tol=tol, K=K, maxit=maxit)
+    }
+    else{
+        param_post <- NULL
+    }
     
     s <- c(x_invar, list("burnin"=burnin,
                          "thin"=thin,
@@ -105,9 +110,10 @@ print.summaryDPMMclust <- function(s,...){
 
 #'@export
 #'@rdname methods.summaryDPMMclust
-plot.summaryDPMMclust <- function(s, hm=FALSE, nbsim_densities=50000, ...){
-    plot_ConvDPM(s, shift=s$burnin)
-    
+plot.summaryDPMMclust <- function(s, hm=FALSE, nbsim_densities=5000, gg.add=list(theme_bw()),...){
+    if(length(s$logposterior_list[[1]])>1){
+        plot_ConvDPM(s, shift=s$burnin)
+    }
     ind <- s$index_estim
     
     
@@ -119,7 +125,7 @@ plot.summaryDPMMclust <- function(s, hm=FALSE, nbsim_densities=50000, ...){
                  alpha=s$alpha[ind], 
                  U_SS=s$U_SS_list[[ind]], 
                  ellipses=TRUE,
-                 gg.add=list(theme_bw()),
+                 gg.add=gg.add,
                  ...
         )
     }else if(s$clust_distrib=="skewNormal"){
@@ -129,7 +135,7 @@ plot.summaryDPMMclust <- function(s, hm=FALSE, nbsim_densities=50000, ...){
                    alpha=s$alpha[ind], 
                    U_SS=s$U_SS_list[[ind]], 
                    ellipses=TRUE,
-                   gg.add=list(theme_bw()),
+                   gg.add= gg.add,
                    nbsim_dens=nbsim_densities,
                    ...
         )
@@ -140,7 +146,7 @@ plot.summaryDPMMclust <- function(s, hm=FALSE, nbsim_densities=50000, ...){
                    alpha=s$alpha[ind], 
                    U_SS=s$U_SS_list[[ind]], 
                    ellipses=TRUE,
-                   gg.add=list(theme_bw()),
+                   gg.add=gg.add,
                    nbsim_dens=nbsim_densities,
                    nice=TRUE,
                    ...

@@ -32,7 +32,7 @@ logposterior_DPMST <- function(z, xi, psi, Sigma, df, B, hyper, c, m, alpha, n, 
         U_df_full <- sapply(df, "[")
     }
     
-    log_lik <- mvstlikC(x=z, c=c, clustval=indfull, 
+    log_lik <- mvstlikC_par(x=z, c=c, clustval=indfull, 
                         xi=U_xi_full, psi=U_psi_full, sigma=U_Sigma_full, df=U_df_full,
                         loglik=TRUE)
     log_vrais <- log_lik$total

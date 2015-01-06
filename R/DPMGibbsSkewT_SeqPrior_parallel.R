@@ -117,20 +117,28 @@
 #'  z[,k] <- xi[, c[k]] + psi[, c[k]]*rtruncnorm(n=1, a=0, b=Inf, mean=0, sd=1/sqrt(w[k])) + (sdev[, , c[k]]/sqrt(w[k]))%*%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
 #'  cat(k, "/", n, " observations simulated\n", sep="")
 #' }
-#'  MCMCsample_st2 <- DPMGibbsSkewT_SeqPrior(z, prior=s$param_posterior, 
-#'                                           hyperG0, N=3000, 
-#'                                           doPlot=TRUE, plotevery=100,
-#'                                           nbclust_init, diagVar=FALSE)
+#'  MCMCsample_st2 <- DPMGibbsSkewT_SeqPrior_parallel(Ncpus=2, type_connec="SOCK", 
+#'                                                    z, prior=s$param_posterior, 
+#'                                                    hyperG0, N=3000, 
+#'                                                    doPlot=TRUE, plotevery=100,
+#'                                                    nbclust_init, diagVar=FALSE, verbose=FALSE)
 #' s2 <- summary(MCMCsample_st2, burnin = 2000, thin=5)
 #' F2 <- FmeasureC(pred=s2$point_estim$c_est, ref=c)
 #'  
 #'  
 #'  
 
-DPMGibbsSkewT_SeqPrior <- function (z, prior, hyperG0, N, nbclust_init,
-                              doPlot=TRUE, plotevery=1, 
-                              diagVar=TRUE, verbose=TRUE,
-                              ...){
+DPMGibbsSkewT_SeqPrior_parallel <- function (Ncpus, type_connec,
+                                             z, prior, hyperG0, N, nbclust_init,
+                                             doPlot=TRUE, plotevery=1, 
+                                             diagVar=TRUE, verbose=TRUE,
+                                             monitorfile="defaultmonitor.txt",
+                                             ...){
+    
+    # declare the cores
+    library(doSNOW)
+    cl <- makeCluster(Ncpus, type = type_connec)
+    registerDoSNOW(cl)
     
     if(doPlot){library(ggplot2)}
     
@@ -142,6 +150,24 @@ DPMGibbsSkewT_SeqPrior <- function (z, prior, hyperG0, N, nbclust_init,
     U_df <- rep(10,n)
     U_B <- array(0, dim=c(2, 2, n))
     U_nu <- rep(p,n)
+    
+    par_ind <- list()
+    temp_ind <- 0
+    if(Ncpus>1){
+        nb_simult <- floor(n%/%(Ncpus))
+        for(i in 1:(Ncpus-1)){
+            par_ind[[i]] <- temp_ind + 1:nb_simult
+            temp_ind <- temp_ind + nb_simult
+        }
+        par_ind[[Ncpus]] <- (temp_ind+1):n
+    }
+    else{
+        cat("Only 1 core specified\n=> non-parallel version of the algorithm would be more efficient")
+        cat("Only 1 core specified\n=> non-parallel version of the algorithm would be more efficient",
+            file=monitorfile, append = TRUE)
+        nb_simult <- n
+        par_ind[[Ncpus]] <- (temp_ind+1):n
+    }
     
     # U_SS is a list where each U_SS[[k]] contains the sufficient
     # statistics associated to cluster k
@@ -209,21 +235,22 @@ DPMGibbsSkewT_SeqPrior <- function (z, prior, hyperG0, N, nbclust_init,
     weights_list[[1]][unique(c)] <- table(c)/length(c)
     
     logposterior_list[[i]] <- 0#logposterior_list[[i]] <- logposterior_DPMST(z, xi=U_xi, psi=U_psi, Sigma=U_Sigma, df=U_df, B=U_B,
-                                                 #hyper=hyperG0, c=c, m=m, alpha=alpha[i], n=n, a=a, b=b, diagVar)
+    #hyper=hyperG0, c=c, m=m, alpha=alpha[i], n=n, a=a, b=b, diagVar)
     
     if(doPlot){
         plot_DPMst(z=z, c=c, i=i, alpha=alpha[i], U_SS=U_SS_list[[i]], ellipses=TRUE, ...)
     }
     if(verbose){
-        cat(i, "/", N, " samplings:\n", sep="")
-        cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="")
+        cat(i, "/", N, " samplings:\n", sep="",
+            file=monitorfile, append = TRUE)
+        cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="",
+            file=monitorfile, append = TRUE)
         cl2print <- unique(c)
-        cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
+        cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n",
+            file=monitorfile, append = TRUE)
     }
     
-    
-    acc_rate <- 0
-
+        
     if(N>1){
         for(i in 2:N){
             nbClust <- length(unique(c))
@@ -233,11 +260,16 @@ DPMGibbsSkewT_SeqPrior <- function (z, prior, hyperG0, N, nbclust_init,
                                     K=nbClust, a=a, b=b)
             )
             
-            slice <- sliceSampler_skewT_SeqPrior(c=c, m=m, alpha=alpha[i], 
-                                           z=z, priorG1=priorG1, 
-                                           U_xi=U_xi, U_psi=U_psi, 
-                                           U_Sigma=U_Sigma, U_df=U_df,
-                                           scale=sc, diagVar)
+            slice <- sliceSampler_skewT_SeqPrior_parallel(Ncpus=Ncpus,
+                                                          c=c, m=m, 
+                                                          alpha=alpha[i], 
+                                                          z=z, priorG1=priorG1, 
+                                                          U_xi=U_xi, 
+                                                          U_psi=U_psi, 
+                                                          U_Sigma=U_Sigma, 
+                                                          U_df=U_df,
+                                                          scale=sc, diagVar, 
+                                                          parallel_index=par_ind)
             m <- slice[["m"]]
             c <- slice[["c"]]        
             weights_list[[i]] <- slice[["weights"]]
@@ -283,7 +315,6 @@ DPMGibbsSkewT_SeqPrior <- function (z, prior, hyperG0, N, nbclust_init,
                                          scale=sc)
             U_df_list <- update_scale[["df"]]
             sc <- update_scale[["scale"]]
-            acc_rate <- acc_rate + update_scale[["acc_rate"]]
             
             for(k in 1:fullCl_nb){
                 j <- fullCl[k]
@@ -295,20 +326,26 @@ DPMGibbsSkewT_SeqPrior <- function (z, prior, hyperG0, N, nbclust_init,
             c_list[[i]] <- c
             
             logposterior_list[[i]] <- 0#logposterior_list[[i]] <- logposterior_DPMST(z, xi=U_xi, psi=U_psi, Sigma=U_Sigma, df=U_df, B=U_B,
-                                                         #hyper=hyperG0, c=c, m=m, alpha=alpha[i], n=n, a=a, b=b, diagVar)
+            #hyper=hyperG0, c=c, m=m, alpha=alpha[i], n=n, a=a, b=b, diagVar)
             
             if(doPlot && i/plotevery==floor(i/plotevery)){
                 plot_DPMst(z=z, c=c, i=i, alpha=alpha[i], U_SS=U_SS_list[[i]], ellipses=TRUE, ...)
             }
             if(verbose){
-                cat(i, "/", N, " samplings:\n", sep="")
-                cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="")
+                cat(i, "/", N, " samplings:\n", sep="",
+                    file=monitorfile, append = TRUE)
+                cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="",
+                    file=monitorfile, append = TRUE)
                 cl2print <- unique(c)
-                cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
+                cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n",
+                    file=monitorfile, append = TRUE)
             }
         }
     }
-    acc_rate <- acc_rate/N
+    
+    
+    
+    stopCluster(cl)
     
     dpmclus <- list("mcmc_partitions" = c_list, 
                     "alpha"=alpha, 
@@ -318,7 +355,6 @@ DPMGibbsSkewT_SeqPrior <- function (z, prior, hyperG0, N, nbclust_init,
                     "data"=z,
                     "nb_mcmcit"=N,
                     "clust_distrib"="skewT",
-                    "acc_rate"=acc_rate,
                     "hyperG0"=hyperG0)
     class(dpmclus) <- "DPMMclust"
     return(dpmclus)

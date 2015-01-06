@@ -174,8 +174,16 @@ plot_DPMst <- function(z, c, i="", alpha="?", U_SS,
             )
         }
         if(nice){
+            if(length(unique(z2plot$Cluster)<5)){
+                p <- (p
+                      + scale_shape_manual(values=c(21:(20+length(unique(z2plot$Cluster)))))
+                )
+            }else{
+                p <- (p
+                      + scale_shape_manual(values=rep(21,length(unique(z2plot$Cluster))))
+                )
+            }
             p <- (p
-                  + scale_shape_manual(values=c(21:(20+length(unique(z2plot$Cluster)))))
                   + scale_colour_discrete(guide=guide_legend(override.aes = list(size = 4, alpha=0.8, linetype=0)))
             )
         }

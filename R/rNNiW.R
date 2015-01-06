@@ -16,10 +16,9 @@ rNNiW<- function(SufStat, diagVar){
   lambda0 = SufStat[["lambda"]] #C
   
   if(is.null(B)){
-      B0 <- diag(c(1/SufStat[["D_xi"]], 1/SufStat[["D_psi"]]))
+      B0 <- diag(c(SufStat[["D_xi"]], SufStat[["D_psi"]]))
       B <- B0
   }
-  
   #B <- diag(c(1/100, 1/100))
   
   # Sample S from an inverse Wishart distribution

@@ -1,11 +1,12 @@
-sliceSampler_skewT_parallel <- function(Ncpus, c, m, alpha, z, hyperG0, 
-                                        U_xi, U_psi, U_Sigma, 
-                                        U_df, scale, diagVar, 
-                                        parallel_index){
+sliceSampler_skewT_SeqPrior_parallel <- function(Ncpus, c, m, alpha, z, priorG1, 
+                                                 U_xi, U_psi, U_Sigma, 
+                                                 U_df, scale, diagVar,
+                                                 parallel_index){
     
     
     maxCl <- length(m) #maximum number of clusters
     ind <- which(m!=0) # indexes of non empty clusters
+    nbmix_prior <- length(priorG1[["weights"]])
     
     # Sample the weights, i.e. the frequency of each existing cluster from a Dirichlet:
     # temp_1 ~ Gamma(m_1,1), ... , temp_K ~ Gamma(m_K,1)    # and sample the rest of the weigth for potential new clusters:
@@ -17,6 +18,7 @@ sliceSampler_skewT_parallel <- function(Ncpus, c, m, alpha, z, hyperG0,
     w[ind] <- temp_norm[-length(temp_norm)]
     R <- temp_norm[length(temp_norm)] 
     #R is the rest, i.e. the weight for potential new clusters
+    
     
     # Sample the latent u
     u  <- runif(maxCl)*w[c]
@@ -39,7 +41,9 @@ sliceSampler_skewT_parallel <- function(Ncpus, c, m, alpha, z, hyperG0,
         
         # Sample the centers and spread of each new cluster from prior
         for (i in 1:t){
-            NNiW <- rNNiW(hyperG0, diagVar)
+            hyper_num <- sample(x=1:nbmix_prior, size=1, prob=priorG1[["weights"]])
+            NNiW <- rNNiW(priorG1[["parameters"]][[hyper_num]], diagVar)
+            
             U_xi[, ind_new[i]] <- NNiW[["xi"]]
             U_psi[, ind_new[i]] <- NNiW[["psi"]]
             U_Sigma[, , ind_new[i]] <- NNiW[["S"]]
@@ -48,31 +52,18 @@ sliceSampler_skewT_parallel <- function(Ncpus, c, m, alpha, z, hyperG0,
     }
     
     fullCl_ind <- which(w != 0)
-    nb_fullCl_ind <- length(fullCl_ind)
     # likelihood of belonging to each cluster computation
     # sampling clusters
     U_xi_full <- sapply(fullCl_ind, function(j) U_xi[, j])
     U_psi_full <- sapply(fullCl_ind, function(j) U_psi[, j])
     U_Sigma_full <- lapply(fullCl_ind, function(j) U_Sigma[, ,j])
     U_df_full <- sapply(fullCl_ind, function(j) U_df[j])
-    
     if(length(fullCl_ind)>1){
         c <- foreach(i=1:Ncpus, .combine='c')%dopar%{
             l <- mmvstpdfC(x=z[, parallel_index[[i]]], xi=U_xi_full, psi=U_psi_full, sigma=U_Sigma_full, df=U_df_full, Log=FALSE)
             u_mat <- t(sapply(w[fullCl_ind], function(x){as.numeric(u[parallel_index[[i]]] < x)}))
             prob_mat <- u_mat * l
-            
-            #fast C++ code
-            fullCl_ind[sampleClassC(prob_mat)]        
-            
-            #         #slow C++ code
-            #         fullCl_ind[sampleClassC_bis(prob_mat)]
-            #         #vectorized R code
-            #         fullCl_ind[apply(X= prob_mat, MARGIN=2, FUN=function(v){match(1,rmultinom(n=1, size=1, prob=v))})]
-            #         #alternative implementation:
-            #         prob_colsum <- colSums(prob_mat)
-            #         prob_norm <- apply(X=prob_mat, MARGIN=1, FUN=function(r){r/prob_colsum})
-            #         fullCl_ind[apply(X=prob_norm, MARGIN=1, FUN=function(r){match(TRUE,runif(1) <cumsum(r))})]
+            fullCl_ind[sampleClassC(prob_mat)] 
         }
     }else{
         c <- rep(fullCl_ind, maxCl)

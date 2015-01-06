@@ -85,7 +85,6 @@ msNiWlogpdf <- function(xi, psi, Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_df0){
 sNiWlogpdf <- function(xi, psi, Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_df0){
     
     loglik <- function(xi, psi, Sigma, xi0, psi0, B0, Lambda0, nu0){
-        browser()
         d <- length(xi)
         mu <- c(xi,psi)
         mu0 <- c(xi0, psi0)
@@ -114,6 +113,7 @@ gamma_mv <- function(x,p){
     pi^(p*(p-1)/4)*prod(gamma(x+(1-1:p)/2))
 }
 
+#'@export
 lgamma_mv <- function(x,p){
     (p*(p-1)/4)*log(pi) + sum(lgamma(x+(1-1:p)/2))
 }

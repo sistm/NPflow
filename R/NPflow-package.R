@@ -6,8 +6,8 @@
 #'\tabular{ll}{
 #'Package: \tab NPflow\cr
 #'Type: \tab Package\cr
-#'Version: \tab 0.2.5\cr
-#'Date: \tab 2014-11-19\cr
+#'Version: \tab 0.2.6\cr
+#'Date: \tab 2014-12-27\cr
 #'License:\tab \href{http://www.gnu.org/licenses/lgpl.txt}{LGPL-3}\cr
 #'}
 #'The main function in this package is \code{\link{DPMgibbs}} which 

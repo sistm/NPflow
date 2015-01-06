@@ -18,10 +18,12 @@ update_SSst <- function(z, S, ltn, scale, df, hyperprior=NULL){
     if(is.null(B0)){
         D0_xi <- S[["D_xi"]]
         D0_psi <- S[["D_psi"]]
-        B0 <- diag(c(1/D0_xi, 1/D0_psi))
-    }else{ 
-        D0_xi <- solve(B0)[1,1]
-        D0_psi <- solve(B0)[2,2]
+        B0inv <- diag(c(1/D0_xi, 1/D0_psi))
+    }else{
+        B0inv <- solve(B0)
+        D0_xi <- B0[1,1]
+        D0_psi <- B0[2,2]
+        browser()
     }
     
     
@@ -33,7 +35,7 @@ update_SSst <- function(z, S, ltn, scale, df, hyperprior=NULL){
     n <- ncol(z)
 
     X <- matrix(c(sc_sr, sc_sr*ltn), ncol=2, byrow=FALSE)
-    B <- try(solve(crossprod(X) + B0))
+    B <- try(solve(crossprod(X) + B0inv))
     if(class(B)=="try-error"){
         browser()
     }

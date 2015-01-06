@@ -275,6 +275,7 @@ MLE_skewT_mmEM <- function( xi_list, psi_list, S_list, hyperG0, K, maxit=50, tol
 #'@export
 #'
 #'@examples
+#'set.seed(123)
 #'hyperG0 <- list()
 #'hyperG0$b_xi <- c(0.3, -1.5)
 #'hyperG0$b_psi <- c(0, 0)
@@ -316,7 +317,8 @@ MLE_skewT_mmEM <- function( xi_list, psi_list, S_list, hyperG0, K, maxit=50, tol
 #'  
 #'}
 #'
-#'map <- MAP_skewT_mmEM(xi_list, psi_list, S_list, hyperG0, K=3)
+#'library(lineprof)
+#'map <- MAP_skewT_mmEM(xi_list, psi_list, S_list, hyperG0, K=4, tol=0.01)
 #'map
 #'
 MAP_skewT_mmEM_vague <- function(xi_list, psi_list, S_list, hyperG0, K, maxit=50, tol=1E-1, plot=TRUE){
@@ -416,10 +418,13 @@ MAP_skewT_mmEM_vague <- function(xi_list, psi_list, S_list, hyperG0, K, maxit=50
         
         
         
+        if(is.na(loglik[i+1]) | is.nan(loglik[i+1]) | is.infinite(loglik[i+1])){
+            temp_logliks[which(is.infinite(temp_logliks))] <- min(temp_logliks[-which(is.infinite(temp_logliks))])
+            loglik[i+1] <- sum(temp_logliks)
+        }
+        
         cat("it ", i, ": loglik = ", loglik[i+1],"\n", sep="")
         cat("weights:", weights, "\n\n")
-        
-        #if(is.na(loglik[i+1]) | is.nan(loglik[i+1]) | is.infinite(loglik[i+1])){browser()}
         if(abs(loglik[i+1]-loglik[i])<tol){break}
         
         if(plot){
@@ -494,6 +499,10 @@ MAP_skewT_mmEM<- function(xi_list, psi_list, S_list, hyperG0, K, maxit=50, tol=1
     #Q[1] <- -Inf
     
     for(i in 1:maxit){
+#         browser()
+#         r <- mmsNiWpdfC(xi = sapply(xi_list, "["), psi = sapply(psi_list, "["), Sigma = S_list, 
+#                           U_xi0 = sapply(U_xi, "["), U_psi0 = sapply(U_psi, "["), U_B0 =U_B,
+#                           U_Sigma0 = U_Sigma, U_df0 = sapply(U_df, "["))
         
         r <- mmsNiWlogpdf(U_xi = xi_list, U_psi = psi_list, U_Sigma = S_list, 
                           U_xi0 = U_xi, U_psi0 = U_psi, U_B0 =U_B,
@@ -553,17 +562,22 @@ MAP_skewT_mmEM<- function(xi_list, psi_list, S_list, hyperG0, K, maxit=50, tol=1
         #         loglik[i+1] <-sum(r*mmsNiWlogpdf(U_xi = xi_list, U_psi = psi_list, U_Sigma = S_list, 
         #                                          U_xi0 = U_xi, U_psi0 = U_psi, U_B0 =U_B,
         #                                          U_Sigma0 = U_Sigma, U_df0 = U_df))
-        loglik[i+1] <- sum(log(apply(exp(mmsNiWlogpdf(U_xi = xi_list, U_psi = psi_list, U_Sigma = S_list, 
-                                                      U_xi0 = U_xi, U_psi0 = U_psi, U_B0 =U_B,
-                                                      U_Sigma0 = U_Sigma, U_df0 = U_df)), MARGIN=2, FUN=function(x){sum(x*weights)})))
+        temp_logliks <- log(apply(exp(mmsNiWlogpdf(U_xi = xi_list, U_psi = psi_list, U_Sigma = S_list, 
+                                                   U_xi0 = U_xi, U_psi0 = U_psi, U_B0 =U_B,
+                                                   U_Sigma0 = U_Sigma, U_df0 = U_df)), MARGIN=2, FUN=function(x){sum(x*weights)}))
+        loglik[i+1] <- sum(temp_logliks)
         
         #Q[i+1] <- (sum(r*kronecker(t(rep(1,ncol(r))), log(weights))) + loglik[i+1])
         
         
+        
+        if(is.na(loglik[i+1]) | is.nan(loglik[i+1]) | is.infinite(loglik[i+1])){
+            temp_logliks[which(is.infinite(temp_logliks))] <- min(temp_logliks[-which(is.infinite(temp_logliks))])
+            loglik[i+1] <- sum(temp_logliks)
+        }
+        
         cat("it ", i, ": loglik = ", loglik[i+1],"\n", sep="")
         cat("weights:", weights, "\n\n")
-        
-        if(is.na(loglik[i+1]) | is.nan(loglik[i+1]) | is.infinite(loglik[i+1])){browser()}
         if(abs(loglik[i+1]-loglik[i])<tol){break}
         
         if(plot){

@@ -9,39 +9,73 @@
 #'@export rCRP
 #'
 #'@examples
-#'f <- function(x){sum(x/(x+0:12751))-39}
-#'alpha_otpim <- uniroot(f, c(0.0000001,100))
-#'alpha_otpim$root
-#'set.seed(50)
-#'GvHD_sims <- rCRP(n=12751, alpha=alpha_otpim$root, hyperG0)
-#'s <- summary(factor(GvHD_sims$cluster))
-#'s_ord <- s[order(s, decreasing = TRUE)]
-#'names(s_ord)<-1:length(s_ord)
-#'barplot(s_ord,
-#'xlab="Cluster", ylab="Size", ylim=c(0,5000),
-#'main="DP(alpha=4.9): CRP simulations\n(n=12,751)")
 #'
-#'plot(y=as.numeric(names(summary(factor(s_ord)))), 
-#'x=summary(factor(s_ord)), 
-#'log="xy", col="blue", pch=20, ylim=c(1,5000),
-#'main="DP(alpha=4.9): CRP simulations\n(n=12,751)", 
-#'xlab="Number of clusters", ylab="Cluster size")
+#'rm(list=ls())
 #'
-#'s_hist <- hist(log(s), col="grey")
-#'plot(x=exp(s_hist$mids), y=s_hist$counts, pch=20,log="xy", 
-#'     xlab="Cluster size", ylab="Number of clusters",col="blue", type="p", cex=1.5)
+#' d=2
+#' hyperG0 <- list()
+#' hyperG0[["NNiW"]] <- list()
+#' hyperG0[["NNiW"]][["b_xi"]] <- rep(0,d)
+#' hyperG0[["NNiW"]][["b_psi"]] <- rep(0,d)
+#' hyperG0[["NNiW"]][["kappa"]] <- 0.001
+#' hyperG0[["NNiW"]][["D_xi"]] <- 100
+#' hyperG0[["NNiW"]][["D_psi"]] <- 100
+#' hyperG0[["NNiW"]][["nu"]] <- d+1
+#' hyperG0[["NNiW"]][["lambda"]] <- diag(d)
+#' 
+#' hyperG0[["scale"]] <- list()
+#' 
+#' set.seed(123)
+#' alph <- runif(n=1,0.2,2)
+#' GvHD_sims <- rCRP(n=2000, alpha=alph, hyperG0=hyperG0)
+#' p <- (ggplot(data=cbind.data.frame("D1"=GvHD_sims$data[1,], 
+#'                                   "D2"=GvHD_sims$data[2,],
+#'                                   "Cluster"=GvHD_sims$cluster),
+#'              aes(x=D1, y=D2, colour=Cluster)) 
+#'       + geom_point()
+#'       + stat_density2d()
+#'       + theme_bw()
+#'       )
+#'p 
 #'
-#'barplot(height=s_hist$count,log="y", 
-#'        xlab="Cluster size", ylab="Number of clusters", space=0,
-#'        main="DP(alpha=4.9): CRP simulations\n(n=12,751)")
-#'axis(1, at= log(c(2,5,10,20,50,100,200,500,1000,2000,5000)), 
-#'     labels=c(2,5,10,20,50,100,200,500,1000,2000,5000))
+#' MCMCy1 <- DPMGibbsSkewT(z=GvHD_sims$data[,1:1000], 
+#'                         hyperG0$NNiW, a=0.0001, b=0.0001, N=5000, 
+#'                         doPlot=TRUE, nbclust_init=64, plotevery=500, 
+#'                         gg.add=list(theme_bw()), diagVar=FALSE)
+#'  s1 <- summary(MCMCy1, burnin=4000, thin=5,
+#'                posterior_approx=TRUE)
+#'  F1 <- FmeasureC(ref=GvHD_sims$cluster[1:1000], pred=s1$point_estim$c_est)
 #'
-rCRP <- function(n=1000, alpha=10, hyperG0){
+#'  MCMCy2_seqPrior <- DPMGibbsSkewT_SeqPrior(z=GvHD_sims$data[,1001:2000], 
+#'                                            prior=s1$param_post, hyperG0=hyperG0$NNiW, , N=5000, 
+#'                                            doPlot=TRUE, nbclust_init=64, plotevery=500, 
+#'                                            gg.add=list(theme_bw()), diagVar=FALSE)
+#'  s2_seqPrior <- summary(MCMCy2_seqPrior, burnin=4000, thin=5)
+#'  F2_seqPrior <- FmeasureC(ref=GvHD_sims$cluster[1001:2000], pred=s2_seqPrior$point_estim$c_est)
+#'      
+#' MCMCy2 <- DPMGibbsSkewT(z=GvHD_sims$data[,1001:2000], 
+#'                         hyperG0$NNiW, a=0.0001, b=0.0001, N=5000, 
+#'                         doPlot=TRUE, nbclust_init=64, plotevery=500, 
+#'                         gg.add=list(theme_bw()), diagVar=FALSE)
+#'  s2 <- summary(MCMCy2, burnin=4000, thin=5)
+#'  F2 <- FmeasureC(ref=GvHD_sims$cluster[1001:2000], pred=s2$point_estim$c_est)
+#'  
+#'  MCMCtot <- DPMGibbsSkewT(z=GvHD_sims$data, 
+#'                           hyperG0$NNiW, a=0.0001, b=0.0001, N=5000, 
+#'                           doPlot=TRUE, nbclust_init=64, plotevery=500, 
+#'                           gg.add=list(theme_bw()), diagVar=FALSE)
+#'  stot <- summary(MCMCtot, burnin=4000, thin=5)
+#'  F2tot <- FmeasureC(ref=GvHD_sims$cluster[1001:2000], pred=stot$point_estim$c_est[1001:2000])
+#'  
+#'  c(F1, F2, F2_seqPrior, F2tot)
+#'
+rCRP <- function(n=1000, alpha=2, hyperG0){
     
+    d <- length(hyperG0$NNiW[[1]])
     theta <- list()
     cluster <- numeric(n)
-        
+    z <- matrix(NA, ncol=n, nrow=d)
+    
     for (c in 1:n){
         p0 <- alpha/(c-1+alpha)
         u <- runif(n=1, min = 0, max = 1)
@@ -50,7 +84,8 @@ rCRP <- function(n=1000, alpha=10, hyperG0){
             # Accept: sample new value
             # cat("acceptation:", u, "<", p0, "\n")
             cluster[c] <- max(cluster)+1
-            theta[[cluster[c]]] <- nniw_rnd(hyperG0, diagVar=FALSE)
+            theta[[cluster[c]]] <- rNNiW(hyperG0$NNiW, diagVar=FALSE)
+            theta[[cluster[c]]][["nu"]] <- 1 + rgamma(n=1, shape = 2, rate=1/10)
             
         }else{
             # Reject: sample old value
@@ -59,8 +94,14 @@ rCRP <- function(n=1000, alpha=10, hyperG0){
             weights <- summary(factor(cluster))[-1]
             cluster[c] <- which(rmultinom(n=1, size=1, prob=weights)==1)
         }
+        w <- rgamma(n=1, shape=theta[[cluster[c]]]$nu/2, rate=theta[[cluster[c]]]$nu/2)
+        ltnz <- rtruncnorm(n=1, a=0, sd=1/sqrt(w))
+        eps <- matrix(rnorm(d), ncol=d)%*%chol(theta[[cluster[c]]]$S/w)
+        z[1,c] <- theta[[cluster[c]]]$xi[1]+theta[[cluster[c]]]$psi[1]*ltnz+eps[,1]
+        z[2,c] <- theta[[cluster[c]]]$xi[2]+theta[[cluster[c]]]$psi[2]*ltnz+eps[,2] 
+        
         cat(c,"/", n," sim\n", sep="")
     }
     
-    return(list("theta"=theta, "cluster"=cluster))
+    return(list("theta"=theta, "cluster"=as.factor(cluster), "data"=z))
 }
