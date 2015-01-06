@@ -17,7 +17,7 @@ using namespace arma;
 //'@param varcovM list of length K of variance-covariance matrices, 
 //'each of dimensions p x p
 //'@param df vector of length K of degree of freedom parameters
-//'@return vector of likelihood of length n
+//'@return a list: "indiv": vector of likelihood of length n; "clust": vector of likelihood of length K; "total": total (log)-likelihood
 //'@seealso mmvstpdfC, mvstpdf
 //'@export
 //'@examples

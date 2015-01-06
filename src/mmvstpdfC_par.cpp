@@ -22,8 +22,6 @@ using namespace arma;
 //'@export
 //'@examples
 //'
-//'library(microbenchmark)
-//'
 //'K=1000
 //'d=10
 //'z_mat <- NULL
@@ -45,6 +43,7 @@ using namespace arma;
 //' xi_mat <- matrix(xi_mat, ncol=K, nrow=d)
 //' psi_mat <- matrix(psi_mat, ncol=K, nrow=d)
 //'
+//'library(microbenchmark)
 //'microbenchmark(mmvstpdfC(x=z_mat, xi=xi_mat, psi=psi_mat, sigma=S_list, df=rep(10,K), Log=FALSE),
 //'               mmvstpdfC_par(x=z_mat, xi=xi_mat, psi=psi_mat, sigma=S_list, df=rep(10,K),  Log=FALSE, 
 //'                      ncores = 4),
