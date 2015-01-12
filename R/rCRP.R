@@ -79,7 +79,7 @@
 #'  
 #'  c(F1, F2, F2_seqPrior, F2tot)
 #'
-rCRP <- function(n=1000, alpha=2, hyperG0){
+rCRP <- function(n=1000, alpha=2, hyperG0, verbose=TRUE){
     
     d <- length(hyperG0$NNiW[[1]])
     theta <- list()
@@ -110,7 +110,9 @@ rCRP <- function(n=1000, alpha=2, hyperG0){
         z[1,c] <- theta[[cluster[c]]]$xi[1]+theta[[cluster[c]]]$psi[1]*ltnz+eps[,1]
         z[2,c] <- theta[[cluster[c]]]$xi[2]+theta[[cluster[c]]]$psi[2]*ltnz+eps[,2] 
         
-        cat(c,"/", n," sim\n", sep="")
+        if(verbose){
+            cat(c,"/", n," sim\n", sep="")
+        }
     }
     
     return(list("theta"=theta, "cluster"=as.factor(cluster), "data"=z))
