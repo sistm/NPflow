@@ -57,10 +57,8 @@
 #' 
 #' sdev <- array(dim=c(d,d,ncl))
 #' 
-#' #xi <- matrix(nrow=d, ncol=ncl, c(-1.5, 1.5, 1.5, 1.5, 2, -2.5, -2.5, -3))
-#' #psi <- matrix(nrow=d, ncol=4, c(0.4, -0.6, 0.8, 0, 0.3, -0.7, -0.3, -0.8))
-#' xi <- matrix(nrow=d, ncol=ncl, c(-0.2, 0.5, 2.4, 0.4, 0.6, -1.3, -0.9, -2.7))
-#' psi <- matrix(nrow=d, ncol=4, c(0.3, -0.7, -0.8, 0, 0.4, -0.5, 0.2, 0.9))
+#' xi <- matrix(nrow=d, ncol=ncl, c(-1.5, 1, 1.5, 1, 1.5, -2, -2, -2))
+#' psi <- matrix(nrow=d, ncol=4, c(0.4, -0.6, 0.8, 0, 0.3, -0.7, -0.3, -0.8))
 #' nu <- c(100,15,8,5)
 #' p <- c(0.15, 0.05, 0.5, 0.3) # frequence des clusters
 #' sdev[, ,1] <- matrix(nrow=d, ncol=d, c(0.3, 0, 0, 0.3))
@@ -105,10 +103,10 @@
 #'        +theme_bw())
 #'  q
 #'  
-#'  MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=4000, 
+#'  MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=2000, 
 #'                                 doPlot=TRUE, plotevery=250,
 #'                                 nbclust_init, diagVar=FALSE)
-#'  s <- summary(MCMCsample_st, burnin = 3000, thin=4, posterior_approx=TRUE)
+#'  s <- summary(MCMCsample_st, burnin = 1500, thin=2, posterior_approx=TRUE)
 #'  F <- FmeasureC(pred=s$point_estim$c_est, ref=c)
 #'  
 #' for(k in 1:n){
@@ -118,19 +116,25 @@
 #'  cat(k, "/", n, " observations simulated\n", sep="")
 #' }
 #'  MCMCsample_st2 <- DPMGibbsSkewT_SeqPrior(z, prior=s$param_posterior, 
-#'                                           hyperG0, N=3000, 
+#'                                           hyperG0, N=2000, 
 #'                                           doPlot=TRUE, plotevery=100,
 #'                                           nbclust_init, diagVar=FALSE)
-#' s2 <- summary(MCMCsample_st2, burnin = 2000, thin=5)
+#' s2 <- summary(MCMCsample_st2, burnin = 1500, thin=5)
 #' F2 <- FmeasureC(pred=s2$point_estim$c_est, ref=c)
+#' 
+#' MCMCsample_st2_par <- DPMGibbsSkewT_SeqPrior_parallel(Ncpus= 2, type_connec="SOCK",
+#'                                                       z, prior=s$param_posterior, 
+#'                                                       hyperG0, N=2000, 
+#'                                                       doPlot=TRUE, plotevery=50,
+#'                                                       nbclust_init, diagVar=FALSE) 
 #'  
 #'  
 #'  
 
 DPMGibbsSkewT_SeqPrior <- function (z, prior, hyperG0, N, nbclust_init,
-                              doPlot=TRUE, plotevery=1, 
-                              diagVar=TRUE, verbose=TRUE,
-                              ...){
+                                    doPlot=TRUE, plotevery=1, 
+                                    diagVar=TRUE, verbose=TRUE,
+                                    ...){
     
     if(doPlot){library(ggplot2)}
     
@@ -142,7 +146,6 @@ DPMGibbsSkewT_SeqPrior <- function (z, prior, hyperG0, N, nbclust_init,
     U_df <- rep(10,n)
     U_B <- array(0, dim=c(2, 2, n))
     U_nu <- rep(p,n)
-    U_hypernum <- rep(0, n)
     
     # U_SS is a list where each U_SS[[k]] contains the sufficient
     # statistics associated to cluster k
@@ -162,9 +165,16 @@ DPMGibbsSkewT_SeqPrior <- function (z, prior, hyperG0, N, nbclust_init,
     c <- numeric(n) # cluster label of ech observation
     ltn <- rtruncnorm(n, a=0, b=Inf, mean=0, sd=1) # latent truncated normal
     sc <- rep(1,n)
-    nbmix_prior <- length(prior[["weights"]])+1
+    
     priorG1 <- prior
+    nullpriors_ind <- which(priorG1$weights==0)
+    priorG1$weights <- priorG1$weights[-nullpriors_ind]
+    priorG1$parameters <- priorG1$parameters[-nullpriors_ind]
+    nbmix_prior <- length(priorG1[["weights"]])+1
     priorG1[["parameters"]][[nbmix_prior]] <- hyperG0
+    priorG1[["parameters"]][[nbmix_prior]][["B"]] <- diag(c(priorG1[["parameters"]][[nbmix_prior]][["D_xi"]],
+                                                            priorG1[["parameters"]][[nbmix_prior]][["D_psi"]])
+    )
     priorG1$weights <- c(priorG1$weights, 1/length(priorG1$weights))
     priorG1$weights <- priorG1$weights/sum(priorG1$weights)
     
@@ -183,9 +193,7 @@ DPMGibbsSkewT_SeqPrior <- function (z, prior, hyperG0, N, nbclust_init,
     for (k in unique(c)){
         obs_k <- which(c==k)
         hyper_num <- sample(x=1:nbmix_prior, size=1)#, prob=priorG1$weights)
-        U_hypernum[k] <- hyper_num 
-        #hypernum is stocked to avoid issues if updating matrices with wrong informative prior element
-        priormix <- priorG1[["parameters"]][[U_hypernum[k]]]
+        priormix <- priorG1[["parameters"]][[hyper_num]]
         U_SS[[k]] <- update_SSst(z=z[, obs_k], S=priormix, ltn=ltn[obs_k], scale=sc[obs_k], df=U_df[k])
         
         NNiW <- rNNiW(U_SS[[k]], diagVar)
@@ -212,7 +220,7 @@ DPMGibbsSkewT_SeqPrior <- function (z, prior, hyperG0, N, nbclust_init,
     weights_list[[1]][unique(c)] <- table(c)/length(c)
     
     logposterior_list[[i]] <- 0#logposterior_list[[i]] <- logposterior_DPMST(z, xi=U_xi, psi=U_psi, Sigma=U_Sigma, df=U_df, B=U_B,
-                                                 #hyper=hyperG0, c=c, m=m, alpha=alpha[i], n=n, a=a, b=b, diagVar)
+    #hyper=hyperG0, c=c, m=m, alpha=alpha[i], n=n, a=a, b=b, diagVar)
     
     if(doPlot){
         plot_DPMst(z=z, c=c, i=i, alpha=alpha[i], U_SS=U_SS_list[[i]], ellipses=TRUE, ...)
@@ -226,7 +234,7 @@ DPMGibbsSkewT_SeqPrior <- function (z, prior, hyperG0, N, nbclust_init,
     
     
     acc_rate <- 0
-
+    
     if(N>1){
         for(i in 2:N){
             nbClust <- length(unique(c))
@@ -237,11 +245,10 @@ DPMGibbsSkewT_SeqPrior <- function (z, prior, hyperG0, N, nbclust_init,
             )
             
             slice <- sliceSampler_skewT_SeqPrior(c=c, m=m, alpha=alpha[i], 
-                                           z=z, priorG1=priorG1, 
-                                           U_xi=U_xi, U_psi=U_psi, 
-                                           U_Sigma=U_Sigma, U_df=U_df,
-                                           U_hypernum = U_hypernum,
-                                           scale=sc, diagVar)
+                                                 z=z, priorG1=priorG1, 
+                                                 U_xi=U_xi, U_psi=U_psi, 
+                                                 U_Sigma=U_Sigma, U_df=U_df,
+                                                 scale=sc, diagVar)
             m <- slice[["m"]]
             c <- slice[["c"]]        
             weights_list[[i]] <- slice[["weights"]]
@@ -250,24 +257,77 @@ DPMGibbsSkewT_SeqPrior <- function (z, prior, hyperG0, N, nbclust_init,
             U_psi <- slice[["psi"]]        
             U_Sigma <- slice[["Sigma"]]
             U_df <- slice[["df"]]
-            U_hypernum <- slice[["hypernum"]]
             
             # Update cluster locations            
             fullCl <- which(m!=0)
             fullCl_nb <- length(fullCl)
+            
+            pfin <- matrix(nrow=fullCl_nb, ncol=nbmix_prior)
+            U_SS_prior <- list()
+            p <- matrix(nrow=nbmix_prior, ncol=fullCl_nb)
+            vrais <- rep(NA,fullCl_nb)
+            
+            for(k in 1:fullCl_nb){
+                j <- fullCl[k]
+                obs_j <- which(c==j)
+                U_SS_prior[[k]] <- list()
+                for(l in 1:nbmix_prior){
+                    U_SS_prior[[k]][[l]] <- update_SSst(z=z[, obs_j, drop=FALSE], 
+                                                        S=priorG1[["parameters"]][[l]], 
+                                                        ltn=ltn[obs_j], scale=sc[obs_j], 
+                                                        df=U_df[j], 
+                                                        hyperprior=NULL 
+                    )
+                }
+                p[,k] <- mmsNiWpdfC(xi=U_xi[,j, drop=FALSE], psi=U_psi[,j, drop=FALSE], Sigma=list(U_Sigma[,,j]), 
+                                    U_xi0=sapply(U_SS_prior[[k]], "[[", "b_xi"), 
+                                    U_psi0=sapply(U_SS_prior[[k]], "[[", "b_psi"), 
+                                    U_B0=lapply(U_SS_prior[[k]], "[[", "B"), 
+                                    U_Sigma0=lapply(U_SS_prior[[k]], "[[", "lambda"), 
+                                    U_df0=sapply(U_SS_prior[[k]], "[[", "nu"),
+                                    Log=TRUE)
+                vrais[k] <- sum(mmvstpdfC(x=z[,obs_j, drop=FALSE], xi=U_xi[,j, drop=FALSE], psi=U_psi[,j, drop=FALSE], 
+                                          sigma=list(U_Sigma[,,j]), df=U_df[j], Log=TRUE))
+            }                
+            p0 <- mmsNiWpdfC(xi=U_xi[, fullCl, drop=FALSE], psi=U_psi[, fullCl, drop=FALSE], 
+                             Sigma=lapply(fullCl, function(m) U_Sigma[, ,m]), 
+                             U_xi0=sapply(priorG1[["parameters"]], "[[", "b_xi"), 
+                             U_psi0=sapply(priorG1[["parameters"]], "[[", "b_psi"), 
+                             U_B0=lapply(priorG1[["parameters"]], "[[", "B"), 
+                             U_Sigma0=lapply(priorG1[["parameters"]], "[[", "lambda"), 
+                             U_df0=sapply(priorG1[["parameters"]], "[[", "nu"),
+                             Log=TRUE)
+            
+            
+            pfin_log <- apply(X=(p0 - p), MARGIN=1, FUN=function(r){vrais+r})
+            logexptrick_const <- apply(X=pfin_log, MARGIN=1, FUN=max)
+            wfin_log_const <- apply(X=pfin_log, MARGIN=2, FUN=function(cv){cv - logexptrick_const})
+            w2fin <- apply(X=exp(wfin_log_const), MARGIN=1, FUN=function(r){r*priorG1[["weights"]]})
+            w2fin_sums <- colSums(w2fin)
+            #w2fin_sums0_ind <- which(w2fin_sums==0)
+            #             if(length(w2fin_sums0_ind)>0){
+            #                 browser()
+            #                 w2fin[nbmix_prior,w2fin_sums0_ind] <- 1
+            #                 w2fin_sums[w2fin_sums0_ind] <- 1
+            #             }
+            wfin <- apply(X=w2fin, MARGIN=1, FUN=function(r){r/w2fin_sums})
+            #any(rowSums(wfin)!=1) #should all be 1
+            
             for(k in 1:fullCl_nb){
                 j <- fullCl[k]
                 obs_j <- which(c==j)
                 #cat("cluster ", j, ":\n")
                 
-                #prior
-                priormix <- priorG1[["parameters"]][[U_hypernum[j]]]                
+                #sample prior mixture element to update
+                hyper_num <- sample(x=1:nbmix_prior, size=1, prob=wfin[k,])
+                priormix <- priorG1[["parameters"]][[hyper_num]]  
+                
                 U_SS[[j]] <- update_SSst(z=z[, obs_j, drop=FALSE], S=priormix, 
                                          ltn=ltn[obs_j], scale=sc[obs_j], 
                                          df=U_df[j], 
-                                         hyperprior=NULL 
+                                         hyperprior = NULL
                 )
-                #z=z[, obs_j, drop=FALSE]; S=priormix;ltn=ltn[obs_j]; scale=sc[obs_j]; df=U_df[j]; hyperprior=NULL
+                
                 U_nu[j] <- U_SS[[j]][["nu"]]
                 NNiW <- rNNiW(U_SS[[j]], diagVar)
                 U_xi[, j] <- NNiW[["xi"]]
@@ -299,7 +359,7 @@ DPMGibbsSkewT_SeqPrior <- function (z, prior, hyperG0, N, nbclust_init,
             c_list[[i]] <- c
             
             logposterior_list[[i]] <- 0#logposterior_list[[i]] <- logposterior_DPMST(z, xi=U_xi, psi=U_psi, Sigma=U_Sigma, df=U_df, B=U_B,
-                                                         #hyper=hyperG0, c=c, m=m, alpha=alpha[i], n=n, a=a, b=b, diagVar)
+            #hyper=hyperG0, c=c, m=m, alpha=alpha[i], n=n, a=a, b=b, diagVar)
             
             if(doPlot && i/plotevery==floor(i/plotevery)){
                 plot_DPMst(z=z, c=c, i=i, alpha=alpha[i], U_SS=U_SS_list[[i]], ellipses=TRUE, ...)
@@ -312,7 +372,7 @@ DPMGibbsSkewT_SeqPrior <- function (z, prior, hyperG0, N, nbclust_init,
             }
         }
     }
-    acc_rate <- acc_rate/N
+    #acc_rate <- acc_rate/N
     
     dpmclus <- list("mcmc_partitions" = c_list, 
                     "alpha"=alpha, 
@@ -322,7 +382,7 @@ DPMGibbsSkewT_SeqPrior <- function (z, prior, hyperG0, N, nbclust_init,
                     "data"=z,
                     "nb_mcmcit"=N,
                     "clust_distrib"="skewT",
-                    "acc_rate"=acc_rate,
+                    #"acc_rate"=acc_rate,
                     "hyperG0"=hyperG0)
     class(dpmclus) <- "DPMMclust"
     return(dpmclus)

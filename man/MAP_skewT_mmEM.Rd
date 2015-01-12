@@ -6,14 +6,14 @@
 \alias{MAP_skewT_mmEM_weighted}
 \title{EM MAP for mixture of sNiW}
 \usage{
-MAP_skewT_mmEM_vague(xi_list, psi_list, S_list, hyperG0, K, maxit = 50,
+MAP_skewT_mmEM_vague(xi_list, psi_list, S_list, hyperG0, K, maxit = 100,
   tol = 0.1, plot = TRUE)
 
-MAP_skewT_mmEM(xi_list, psi_list, S_list, hyperG0, K, maxit = 50, tol = 0.1,
-  plot = TRUE)
+MAP_skewT_mmEM(xi_list, psi_list, S_list, hyperG0, K, maxit = 100,
+  tol = 0.1, plot = TRUE, verbose = TRUE)
 
 MAP_skewT_mmEM_weighted(xi_list, psi_list, S_list, obsweight_list, hyperG0, K,
-  maxit = 50, tol = 0.1, plot = TRUE)
+  maxit = 100, tol = 0.1, plot = TRUE)
 }
 \description{
 Maximum likelihood estimation of mixture of
@@ -63,7 +63,7 @@ for(k in 1001:2000){
 }
 
 library(lineprof)
-map <- MAP_skewT_mmEM(xi_list, psi_list, S_list, hyperG0, K=4, tol=0.01)
+map <- MAP_skewT_mmEM(xi_list, psi_list, S_list, hyperG0, K=3, tol=0.1)
 map
 }
 

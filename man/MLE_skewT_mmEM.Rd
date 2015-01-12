@@ -4,8 +4,8 @@
 \alias{MLE_skewT_mmEM}
 \title{EM MLE for mixture of sNiW}
 \usage{
-MLE_skewT_mmEM(xi_list, psi_list, S_list, hyperG0, K, maxit = 50, tol = 0.1,
-  plot = TRUE)
+MLE_skewT_mmEM(xi_list, psi_list, S_list, hyperG0, K, maxit = 100,
+  tol = 0.1, plot = TRUE)
 }
 \description{
 Maximum likelihood estimation of mixture of

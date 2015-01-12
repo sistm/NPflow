@@ -4,7 +4,7 @@
 \alias{rCRP}
 \title{Generating cluster data from the Chinese Restaurant Process}
 \usage{
-rCRP(n = 1000, alpha = 2, hyperG0)
+rCRP(n = 1000, alpha = 2, hyperG0, verbose = TRUE)
 }
 \arguments{
 \item{n}{}
@@ -64,7 +64,7 @@ MCMCy1 <- DPMGibbsSkewT(z=GvHD_sims$data[,1:1000],
  #                                  gg.add=list(theme_bw()), diagVar=FALSE)
 
  MCMCy2_seqPrior <- DPMGibbsSkewT_SeqPrior(z=GvHD_sims$data[,1001:2000],
-                                           prior=s2$param_post, hyperG0=hyperG0$NNiW, , N=5000,
+                                           prior=s1$param_post, hyperG0=hyperG0$NNiW, , N=5000,
                                            doPlot=TRUE, nbclust_init=64, plotevery=100,
                                            gg.add=list(theme_bw()), diagVar=FALSE)
  s2_seqPrior <- summary(MCMCy2_seqPrior, burnin=4000, thin=5)

@@ -1,5 +1,5 @@
 sliceSampler_skewT_SeqPrior <- function(c, m, alpha, z, priorG1, U_xi, U_psi, 
-                               U_Sigma, U_df, U_hypernum, scale, diagVar){
+                               U_Sigma, U_df, scale, diagVar){
     
     
     maxCl <- length(m) #maximum number of clusters
@@ -40,8 +40,7 @@ sliceSampler_skewT_SeqPrior <- function(c, m, alpha, z, priorG1, U_xi, U_psi,
         # Sample the centers and spread of each new cluster from prior
         for (i in 1:t){
             hyper_num <- sample(x=1:nbmix_prior, size=1, prob=priorG1[["weights"]])
-            U_hypernum[ind_new[i]] <- hyper_num
-            NNiW <- rNNiW(priorG1[["parameters"]][[U_hypernum[ind_new[i]]]], diagVar)
+            NNiW <- rNNiW(priorG1[["parameters"]][[hyper_num]], diagVar)
             
             U_xi[, ind_new[i]] <- NNiW[["xi"]]
             U_psi[, ind_new[i]] <- NNiW[["psi"]]
@@ -83,6 +82,5 @@ sliceSampler_skewT_SeqPrior <- function(c, m, alpha, z, priorG1, U_xi, U_psi,
     }
     
     return(list("c"=c, "m"=m_new, "weights"=w, "latentTrunc"=ltn, 
-                "xi"=U_xi, "psi"=U_psi, "Sigma"=U_Sigma, "df"=U_df, 
-                "hypernum"= U_hypernum))
+                "xi"=U_xi, "psi"=U_psi, "Sigma"=U_Sigma, "df"=U_df))
 }

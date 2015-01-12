@@ -187,9 +187,16 @@ DPMGibbsSkewT_SeqPrior_parallel <- function (Ncpus, type_connec,
     c <- numeric(n) # cluster label of ech observation
     ltn <- rtruncnorm(n, a=0, b=Inf, mean=0, sd=1) # latent truncated normal
     sc <- rep(1,n)
-    nbmix_prior <- length(prior[["weights"]])+1
+    
     priorG1 <- prior
+    nullpriors_ind <- which(priorG1$weights==0)
+    priorG1$weights <- priorG1$weights[-nullpriors_ind]
+    priorG1$parameters <- priorG1$parameters[-nullpriors_ind]
+    nbmix_prior <- length(priorG1[["weights"]])+1
     priorG1[["parameters"]][[nbmix_prior]] <- hyperG0
+    priorG1[["parameters"]][[nbmix_prior]][["B"]] <- diag(c(priorG1[["parameters"]][[nbmix_prior]][["D_xi"]],
+                                                            priorG1[["parameters"]][[nbmix_prior]][["D_psi"]])
+    )
     priorG1$weights <- c(priorG1$weights, 1/length(priorG1$weights))
     priorG1$weights <- priorG1$weights/sum(priorG1$weights)
     
@@ -249,7 +256,6 @@ DPMGibbsSkewT_SeqPrior_parallel <- function (Ncpus, type_connec,
         cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n",
             file=monitorfile, append = TRUE)
     }
-    
         
     if(N>1){
         for(i in 2:N){
@@ -283,19 +289,73 @@ DPMGibbsSkewT_SeqPrior_parallel <- function (Ncpus, type_connec,
             # Update cluster locations            
             fullCl <- which(m!=0)
             fullCl_nb <- length(fullCl)
+            
+            pfin <- matrix(nrow=fullCl_nb, ncol=nbmix_prior)
+            U_SS_prior <- list()
+            p <- matrix(nrow=nbmix_prior, ncol=fullCl_nb)
+            vrais <- rep(NA,fullCl_nb)
+            
+            for(k in 1:fullCl_nb){
+                j <- fullCl[k]
+                obs_j <- which(c==j)
+                U_SS_prior[[k]] <- list()
+                for(l in 1:nbmix_prior){
+                    U_SS_prior[[k]][[l]] <- update_SSst(z=z[, obs_j, drop=FALSE], 
+                                                        S=priorG1[["parameters"]][[l]], 
+                                                        ltn=ltn[obs_j], scale=sc[obs_j], 
+                                                        df=U_df[j], 
+                                                        hyperprior=NULL 
+                    )
+                }
+                p[,k] <- mmsNiWpdfC(xi=U_xi[,j, drop=FALSE], psi=U_psi[,j, drop=FALSE], Sigma=list(U_Sigma[,,j]), 
+                                    U_xi0=sapply(U_SS_prior[[k]], "[[", "b_xi"), 
+                                    U_psi0=sapply(U_SS_prior[[k]], "[[", "b_psi"), 
+                                    U_B0=lapply(U_SS_prior[[k]], "[[", "B"), 
+                                    U_Sigma0=lapply(U_SS_prior[[k]], "[[", "lambda"), 
+                                    U_df0=sapply(U_SS_prior[[k]], "[[", "nu"),
+                                    Log=TRUE)
+                vrais[k] <- sum(mmvstpdfC(x=z[,obs_j, drop=FALSE], xi=U_xi[,j, drop=FALSE], psi=U_psi[,j, drop=FALSE], 
+                                          sigma=list(U_Sigma[,,j]), df=U_df[j], Log=TRUE))
+            }
+            p0 <- mmsNiWpdfC(xi=U_xi[, fullCl, drop=FALSE], psi=U_psi[, fullCl, drop=FALSE], 
+                             Sigma=lapply(fullCl, function(m) U_Sigma[, ,m]), 
+                             U_xi0=sapply(priorG1[["parameters"]], "[[", "b_xi"), 
+                             U_psi0=sapply(priorG1[["parameters"]], "[[", "b_psi"), 
+                             U_B0=lapply(priorG1[["parameters"]], "[[", "B"), 
+                             U_Sigma0=lapply(priorG1[["parameters"]], "[[", "lambda"), 
+                             U_df0=sapply(priorG1[["parameters"]], "[[", "nu"),
+                             Log=TRUE)
+            
+            
+            pfin_log <- apply(X=(p0 - p), MARGIN=1, FUN=function(r){vrais+r})
+            logexptrick_const <- apply(X=pfin_log, MARGIN=1, FUN=max)
+            wfin_log_const <- apply(X=pfin_log, MARGIN=2, FUN=function(cv){cv - logexptrick_const})
+            w2fin <- apply(X=exp(wfin_log_const), MARGIN=1, FUN=function(r){r*priorG1[["weights"]]})
+            w2fin_sums <- colSums(w2fin)
+            #w2fin_sums0_ind <- which(w2fin_sums==0)
+            #             if(length(w2fin_sums0_ind)>0){
+            #                 browser()
+            #                 w2fin[nbmix_prior,w2fin_sums0_ind] <- 1
+            #                 w2fin_sums[w2fin_sums0_ind] <- 1
+            #             }
+            wfin <- apply(X=w2fin, MARGIN=1, FUN=function(r){r/w2fin_sums})
+            #any(rowSums(wfin)!=1) #should all be 1
+            
             for(k in 1:fullCl_nb){
                 j <- fullCl[k]
                 obs_j <- which(c==j)
                 #cat("cluster ", j, ":\n")
-                #prior
-                hyper_num <- sample(x=1:nbmix_prior, size=1, prob=priorG1[["weights"]])
-                priormix <- priorG1[["parameters"]][[hyper_num]]
+                
+                #sample prior mixture element to update
+                hyper_num <- sample(x=1:nbmix_prior, size=1, prob=wfin[k,])
+                priormix <- priorG1[["parameters"]][[hyper_num]]     
                 
                 U_SS[[j]] <- update_SSst(z=z[, obs_j, drop=FALSE], S=priormix, 
                                          ltn=ltn[obs_j], scale=sc[obs_j], 
                                          df=U_df[j], 
-                                         hyperprior= list("Sigma"=U_Sigma[,,j]) 
+                                         hyperprior = NULL 
                 )
+                
                 U_nu[j] <- U_SS[[j]][["nu"]]
                 NNiW <- rNNiW(U_SS[[j]], diagVar)
                 U_xi[, j] <- NNiW[["xi"]]

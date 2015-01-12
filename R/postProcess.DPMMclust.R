@@ -82,16 +82,23 @@ postProcess.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measur
     mle_g <- MLE_gamma(x_invar$alpha)
     
     if(K>1){
-#       param_post <- MAP_skewT_mmEM_weighted(xi_list, psi_list, S_list, 
-#                                             obsweight_list=w_list, 
-#                                             hyperG0 = x_invar$hyperG0, K=K, ...)
-        param_post <- MAP_skewT_mmEM(xi_list, psi_list, S_list, 
-                                     hyperG0 = x_invar$hyperG0, K=K, ...)
+
+        MAPprior <- x_invar$hyperG0
+        #MAPprior$lambda <-10*MAPprior$lambda
+        param_post_list <- list()
+        for (j in 1:10){
+            param_post_list[[j]] <- MAP_skewT_mmEM(xi_list, psi_list, S_list, 
+                                        hyperG0 = MAPprior, K=K, verbose=FALSE,...)
+            cat("EM ", j, "/10 computed", "\n", sep="")
+        }
+        param_post <- param_post_list[[which.max(sapply(lapply(param_post_list, "[[", "loglik"), FUN=max))]]
+        
+        
         parameters <- list()
         for (i in 1:length(param_post$U_xi)){
             parameters[[i]] <- list("b_xi" = param_post[["U_xi"]][[i]],
                                     "b_psi" = param_post[["U_psi"]][[i]],
-                                    "B" = solve(param_post[["U_B"]][[i]]),
+                                    "B" = param_post[["U_B"]][[i]],
                                     "lambda" = param_post[["U_Sigma"]][[i]],
                                     "nu" = param_post[["U_df"]][[i]]
             )
@@ -100,13 +107,13 @@ postProcess.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measur
     else{
         param_post <- MLE_skewT(xi_list, psi_list, S_list, ...)
         parameters <- list("b_xi" = param_post[["U_xi"]],
-                            "b_psi" = param_post[["U_psi"]],
-                            "B" = solve(param_post[["U_B"]]),
-                            "lambda" = param_post[["U_Sigma"]],
-                            "nu" = param_post[["U_df"]]
+                           "b_psi" = param_post[["U_psi"]],
+                           "B" = param_post[["U_B"]],
+                           "lambda" = param_post[["U_Sigma"]],
+                           "nu" = param_post[["U_df"]]
         )
     }
-
+    
     return(list("parameters"=parameters, "weights"=param_post$weights,
                 "alpha_param"=mle_g))
 }
@@ -159,7 +166,7 @@ postProcess.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measur
 #'mle <- MLE_skewT_mmEM(xi_list, psi_list, S_list, hyperG0, K=2)
 #'mle
 #'
-MLE_skewT_mmEM <- function( xi_list, psi_list, S_list, hyperG0, K, maxit=50, tol=1E-1, plot=TRUE){
+MLE_skewT_mmEM <- function( xi_list, psi_list, S_list, hyperG0, K, maxit=100, tol=1E-1, plot=TRUE){
     
     
     N <- length(xi_list)
@@ -184,7 +191,7 @@ MLE_skewT_mmEM <- function( xi_list, psi_list, S_list, hyperG0, K, maxit=50, tol
         U_xi[[k]] <- NNiW[["xi"]]
         U_psi[[k]] <- NNiW[["psi"]]
         U_Sigma[[k]] <- NNiW[["S"]]
-        U_B[[k]] <- diag(0.01, 2)
+        U_B[[k]] <- diag(100, 2)
         U_df[[k]] <- d+1
     }
     
@@ -195,13 +202,15 @@ MLE_skewT_mmEM <- function( xi_list, psi_list, S_list, hyperG0, K, maxit=50, tol
     
     for(i in 1:maxit){
         
-        r <- mmsNiWlogpdf(U_xi = xi_list, U_psi = psi_list, U_Sigma = S_list, 
-                          U_xi0 = U_xi, U_psi0 = U_psi, U_B0 =U_B,
-                          U_Sigma0 = U_Sigma, U_df0 = U_df)
-        r <- apply(X=r, MARGIN=2, FUN=function(x){x+log(weights)})
-        r <- apply(X=r, MARGIN=2, FUN=function(x){x - log(sum(exp(x)))})
-        r[which(is.infinite(r))] <- -Inf
-        r <- exp(r)
+        #E step
+        r <- mmsNiWpdfC(xi = sapply(xi_list, "["), psi = sapply(psi_list, "["), Sigma = S_list, 
+                        U_xi0 = sapply(U_xi, "["), U_psi0 = sapply(U_psi, "["), U_B0 =U_B,
+                        U_Sigma0 = U_Sigma, U_df0 = sapply(U_df, "["))
+        
+        logexptrick_const <- apply(X=r, MARGIN=2, FUN=max)
+        r_log_const <- apply(X=r, MARGIN=1, FUN=function(rv){rv-logexptrick_const})
+        rw_const <- apply(X=exp(r_log_const), MARGIN=1, FUN=function(rv){rv*weights})
+        r <- t(apply(X=rw_const, MARGIN=1, FUN=function(rv){rv/colSums(rw_const)}))
         
         
         
@@ -221,7 +230,7 @@ MLE_skewT_mmEM <- function( xi_list, psi_list, S_list, hyperG0, K, maxit=50, tol
                                  FUN=function(S, rik){rik*solve(S)}, 
                                  SIMPLIFY=FALSE)
             rSinv_sum <- Reduce('+', rSinv_list)
-            U_B[[k]] <- N_k[k]*d*solve(matrix(rowSums(mapply(x = xim, 
+            U_B[[k]] <- 1/(N_k[k]*d)*(matrix(rowSums(mapply(x = xim, 
                                                              p = psim, 
                                                              rSinv = rSinv_list,
                                                              FUN=function(x,p,rSinv){
@@ -229,21 +238,21 @@ MLE_skewT_mmEM <- function( xi_list, psi_list, S_list, hyperG0, K, maxit=50, tol
                                                                  v%*%rSinv%*%t(v)  
                                                              }, SIMPLIFY=TRUE)), 
                                               nrow=2, byrow=FALSE))
-            tryCatch(
-                U_df[[k]] <- uniroot(function(nu0){(digamma_mv(x=nu0/2, p=d)
-                                                    + 1/N_k[k]*sum(r[k,]*sapply(S_list, function(S){log(det(S))}))
-                                                    - d*log(N_k[k]*nu0/2) 
-                                                    + log(det(rSinv_sum))
-                )}, lower = d+1, upper=1E9)$root, error=function(e){warning("Cluster too wide: inverse-Wishart degree of freedom very high")}
-            )
+            const_nu0_uniroot <- (sum(r[k,]*sapply(S_list, function(S){log(det(S))}))
+                                  + N_k[k]*log(det(rSinv_sum))
+                                  + 2)
+            U_df[[k]] <- try(uniroot(function(nu0){(N_k[k]*digamma_mv(x=nu0/2, p=d)
+                                                    - N_k[k]*d*log(N_k[k]*nu0/2) 
+                                                    + const_nu0_uniroot
+            )}, lower = d+1, upper=1E12)$root, TRUE)
+            if(inherits(U_df[[k]], "try-error")){U_df[[k]] <- d+1}
             
             U_Sigma[[k]] <- N_k[k]*U_df[[k]]*solve(rSinv_sum)
         }
         
-        loglik[i+1] <-sum(r*mmsNiWlogpdf(U_xi = xi_list, U_psi = psi_list, U_Sigma = S_list, 
-                                         U_xi0 = U_xi, U_psi0 = U_psi, U_B0 =U_B,
-                                         U_Sigma0 = U_Sigma, U_df0 = U_df))
-        #Q[i+1] <- (sum(r*kronecker(t(rep(1,ncol(r))), log(weights))) + loglik[i+1])
+        loglik[i+1] <-sum(r*mmsNiWpdfC(xi = sapply(xi_list, "["), psi = sapply(psi_list, "["), Sigma = S_list, 
+                                       U_xi0 = sapply(U_xi, "["), U_psi0 = sapply(U_psi, "["), U_B0 =U_B,
+                                       U_Sigma0 = U_Sigma, U_df0 = sapply(U_df, "["), Log=FALSE))
         
         
         cat("it ", i, ": loglik = ", loglik[i+1],"\n\n", sep="")
@@ -322,10 +331,10 @@ MLE_skewT_mmEM <- function( xi_list, psi_list, S_list, hyperG0, K, maxit=50, tol
 #'}
 #'
 #'library(lineprof)
-#'map <- MAP_skewT_mmEM(xi_list, psi_list, S_list, hyperG0, K=4, tol=0.01)
+#'map <- MAP_skewT_mmEM(xi_list, psi_list, S_list, hyperG0, K=3, tol=0.1)
 #'map
 #'
-MAP_skewT_mmEM_vague <- function(xi_list, psi_list, S_list, hyperG0, K, maxit=50, tol=1E-1, plot=TRUE){
+MAP_skewT_mmEM_vague <- function(xi_list, psi_list, S_list, hyperG0, K, maxit=100, tol=1E-1, plot=TRUE){
     
     
     N <- length(xi_list)
@@ -360,7 +369,7 @@ MAP_skewT_mmEM_vague <- function(xi_list, psi_list, S_list, hyperG0, K, maxit=50
         U_xi[[k]] <- NNiW[["xi"]]
         U_psi[[k]] <- NNiW[["psi"]]
         U_Sigma[[k]] <- NNiW[["S"]]
-        U_B[[k]] <- diag(0.01, 2)
+        U_B[[k]] <- diag(100, 2)
         U_df[[k]] <- d+1
     }
     
@@ -371,13 +380,15 @@ MAP_skewT_mmEM_vague <- function(xi_list, psi_list, S_list, hyperG0, K, maxit=50
     
     for(i in 1:maxit){
         
-        r <- mmsNiWlogpdf(U_xi = xi_list, U_psi = psi_list, U_Sigma = S_list, 
-                          U_xi0 = U_xi, U_psi0 = U_psi, U_B0 =U_B,
-                          U_Sigma0 = U_Sigma, U_df0 = U_df)
-        r <- apply(X=r, MARGIN=2, FUN=function(x){x+log(weights)})
-        r <- apply(X=r, MARGIN=2, FUN=function(x){x - log(sum(exp(x)))})
-        r[which(is.infinite(r))] <- -Inf
-        r <- exp(r)
+        #E step
+        r <- mmsNiWpdfC(xi = sapply(xi_list, "["), psi = sapply(psi_list, "["), Sigma = S_list, 
+                        U_xi0 = sapply(U_xi, "["), U_psi0 = sapply(U_psi, "["), U_B0 =U_B,
+                        U_Sigma0 = U_Sigma, U_df0 = sapply(U_df, "["))
+        
+        logexptrick_const <- apply(X=r, MARGIN=2, FUN=max)
+        r_log_const <- apply(X=r, MARGIN=1, FUN=function(rv){rv-logexptrick_const})
+        rw_const <- apply(X=exp(r_log_const), MARGIN=1, FUN=function(rv){rv*weights})
+        r <- t(apply(X=rw_const, MARGIN=1, FUN=function(rv){rv/colSums(rw_const)}))
         
         
         
@@ -396,7 +407,7 @@ MAP_skewT_mmEM_vague <- function(xi_list, psi_list, S_list, hyperG0, K, maxit=50
                                  FUN=function(S, rik){rik*solve(S)}, 
                                  SIMPLIFY=FALSE)
             rSinv_sum <- Reduce('+', rSinv_list)
-            U_B[[k]] <- (N_k[k]*d + 1)*solve(solve(C) + matrix(rowSums(mapply(x = xim, 
+            U_B[[k]] <- 1/(N_k[k]*d + 1)*(solve(C) + matrix(rowSums(mapply(x = xim, 
                                                                               p = psim, 
                                                                               rSinv = rSinv_list,
                                                                               FUN=function(x,p,rSinv){
@@ -404,21 +415,22 @@ MAP_skewT_mmEM_vague <- function(xi_list, psi_list, S_list, hyperG0, K, maxit=50
                                                                                   v%*%rSinv%*%t(v)  
                                                                               }, SIMPLIFY=TRUE)), 
                                                                nrow=2, byrow=FALSE))
+            const_nu0_uniroot <- (sum(r[k,]*sapply(S_list, function(S){log(det(S))}))
+                                  + N_k[k]*log(det(rSinv_sum))
+                                  + 2)
             U_df[[k]] <- try(uniroot(function(nu0){(N_k[k]*digamma_mv(x=nu0/2, p=d)
-                                                    + sum(r[k,]*sapply(S_list, function(S){log(det(S))}))
                                                     - N_k[k]*d*log(N_k[k]*nu0/2) 
-                                                    + N_k[k]*log(det(rSinv_sum))
-                                                    + 2
+                                                    + const_nu0_uniroot
             )}, lower = d+1, upper=1E12)$root, TRUE)
-            if(inherits(U_df[[k]], "try-error")){U_df[[k]] <- d+1}
-            
+            if(inherits(U_df[[k]], "try-error")){U_df[[k]] <- d+1}            
             
             
             U_Sigma[[k]] <- (N_k[k]*U_df[[k]] + 1)*solve(solve(L) + rSinv_sum)
         }
-        loglik[i+1] <- sum(log(apply(exp(mmsNiWlogpdf(U_xi = xi_list, U_psi = psi_list, U_Sigma = S_list, 
-                                                      U_xi0 = U_xi, U_psi0 = U_psi, U_B0 =U_B,
-                                                      U_Sigma0 = U_Sigma, U_df0 = U_df)), MARGIN=2, FUN=function(x){sum(x*weights)})))
+        loglik[i+1] <- sum(log(apply(mmsNiWpdfC(xi = sapply(xi_list, "["), psi = sapply(psi_list, "["), Sigma = S_list, 
+                                                U_xi0 = sapply(U_xi, "["), U_psi0 = sapply(U_psi, "["), U_B0 =U_B,
+                                                U_Sigma0 = U_Sigma, U_df0 = sapply(U_df, "["), Log=FALSE),
+                                     MARGIN=2, FUN=function(x){sum(x*weights)})))
         
         
         
@@ -455,7 +467,7 @@ MAP_skewT_mmEM_vague <- function(xi_list, psi_list, S_list, hyperG0, K, maxit=50
 
 #'@rdname MAP_skewT_mmEM
 #'@export
-MAP_skewT_mmEM<- function(xi_list, psi_list, S_list, hyperG0, K, maxit=50, tol=1E-1, plot=TRUE){
+MAP_skewT_mmEM<- function(xi_list, psi_list, S_list, hyperG0, K, maxit=100, tol=1E-1, plot=TRUE, verbose=TRUE){
     
     
     N <- length(xi_list)
@@ -493,7 +505,7 @@ MAP_skewT_mmEM<- function(xi_list, psi_list, S_list, hyperG0, K, maxit=50, tol=1
         U_xi[[k]] <- NNiW[["xi"]]
         U_psi[[k]] <- NNiW[["psi"]]
         U_Sigma[[k]] <- NNiW[["S"]]
-        U_B[[k]] <- diag(0.01, 2)
+        U_B[[k]] <- diag(100, 2)
         U_df[[k]] <- d+1
     }
     
@@ -503,19 +515,15 @@ MAP_skewT_mmEM<- function(xi_list, psi_list, S_list, hyperG0, K, maxit=50, tol=1
     #Q[1] <- -Inf
     
     for(i in 1:maxit){
-        #         browser()
-        #         r <- mmsNiWpdfC(xi = sapply(xi_list, "["), psi = sapply(psi_list, "["), Sigma = S_list, 
-        #                           U_xi0 = sapply(U_xi, "["), U_psi0 = sapply(U_psi, "["), U_B0 =U_B,
-        #                           U_Sigma0 = U_Sigma, U_df0 = sapply(U_df, "["))
         
-        r <- mmsNiWlogpdf(U_xi = xi_list, U_psi = psi_list, U_Sigma = S_list, 
-                          U_xi0 = U_xi, U_psi0 = U_psi, U_B0 =U_B,
-                          U_Sigma0 = U_Sigma, U_df0 = U_df)
-        r <- apply(X=r, MARGIN=2, FUN=function(x){x+log(weights)})
-        r <- apply(X=r, MARGIN=2, FUN=function(x){x - log(sum(exp(x)))})
-        r[which(is.infinite(r))] <- -Inf
-        r <- exp(r)
-        
+        #E step
+        r <- mmsNiWpdfC(xi = sapply(xi_list, "["), psi = sapply(psi_list, "["), Sigma = S_list, 
+                        U_xi0 = sapply(U_xi, "["), U_psi0 = sapply(U_psi, "["), U_B0 =U_B,
+                        U_Sigma0 = U_Sigma, U_df0 = sapply(U_df, "["))
+        logexptrick_const <- apply(X=r, MARGIN=2, FUN=max)
+        r_log_const <- apply(X=r, MARGIN=1, FUN=function(rv){rv-logexptrick_const})
+        rw_const <- apply(X=exp(r_log_const), MARGIN=1, FUN=function(rv){rv*weights})
+        r <- t(apply(X=rw_const, MARGIN=1, FUN=function(rv){rv/colSums(rw_const)}))
         
         
         #M step
@@ -540,7 +548,7 @@ MAP_skewT_mmEM<- function(xi_list, psi_list, S_list, hyperG0, K, maxit=50, tol=1
                                  FUN=function(Sinv, rik){rik*Sinv}, 
                                  SIMPLIFY=FALSE)
             rSinv_sum <- Reduce('+', rSinv_list)
-            U_B[[k]] <- (N_k[k]*d + d + 1)*solve(solve(C) + matrix(rowSums(mapply(x = xim, 
+            U_B[[k]] <- 1/(N_k[k]*d + d + 1)*(solve(C) + matrix(rowSums(mapply(x = xim, 
                                                                                   p = psim, 
                                                                                   rSinv = rSinv_list,
                                                                                   FUN=function(x,p,rSinv){
@@ -550,11 +558,12 @@ MAP_skewT_mmEM<- function(xi_list, psi_list, S_list, hyperG0, K, maxit=50, tol=1
                                                                    nrow=2, byrow=FALSE)
                                                  +kappa0/N*rbind(xim0, psim0)%*%Sinv_sum%*%t(rbind(xim0, psim0))
             )
+            const_nu0_uniroot <- (sum(r[k,]*sapply(S_list, function(S){log(det(S))}))
+                                  + N_k[k]*log(det(rSinv_sum))
+                                  + 2)
             U_df[[k]] <- try(uniroot(function(nu0){(N_k[k]*digamma_mv(x=nu0/2, p=d)
-                                                    + sum(r[k,]*sapply(S_list, function(S){log(det(S))}))
                                                     - N_k[k]*d*log(N_k[k]*nu0/2) 
-                                                    + N_k[k]*log(det(rSinv_sum))
-                                                    + 2
+                                                    + const_nu0_uniroot
             )}, lower = d+1, upper=1E12)$root, TRUE)
             if(inherits(U_df[[k]], "try-error")){U_df[[k]] <- d+1}
             
@@ -563,36 +572,32 @@ MAP_skewT_mmEM<- function(xi_list, psi_list, S_list, hyperG0, K, maxit=50, tol=1
             U_Sigma[[k]] <- (N_k[k]*U_df[[k]] + 1)*solve(solve(L) + rSinv_sum)
         }
         #        cat("df",unlist(U_df), "\n")
-        #         loglik[i+1] <-sum(r*mmsNiWlogpdf(U_xi = xi_list, U_psi = psi_list, U_Sigma = S_list, 
-        #                                          U_xi0 = U_xi, U_psi0 = U_psi, U_B0 =U_B,
-        #                                          U_Sigma0 = U_Sigma, U_df0 = U_df))
-        temp_logliks <- log(apply(exp(mmsNiWlogpdf(U_xi = xi_list, U_psi = psi_list, U_Sigma = S_list, 
-                                                   U_xi0 = U_xi, U_psi0 = U_psi, U_B0 =U_B,
-                                                   U_Sigma0 = U_Sigma, U_df0 = U_df)), MARGIN=2, FUN=function(x){sum(x*weights)}))
-        loglik[i+1] <- sum(temp_logliks)
         
-        #Q[i+1] <- (sum(r*kronecker(t(rep(1,ncol(r))), log(weights))) + loglik[i+1])
+        temp_logliks <- log(apply(mmsNiWpdfC(xi = sapply(xi_list, "["), psi = sapply(psi_list, "["), Sigma = S_list, 
+                                             U_xi0 = sapply(U_xi, "["), U_psi0 = sapply(U_psi, "["), U_B0 =U_B,
+                                             U_Sigma0 = U_Sigma, U_df0 = sapply(U_df, "["), Log=FALSE), 
+                                  MARGIN=2, FUN=function(x){sum(x*weights)}))
+        loglik[i+1] <- sum(temp_logliks)
         
         
         
         if(is.na(loglik[i+1]) | is.nan(loglik[i+1]) | is.infinite(loglik[i+1])){
+            browser()
             temp_logliks[which(is.infinite(temp_logliks))] <- min(temp_logliks[-which(is.infinite(temp_logliks))])
             loglik[i+1] <- sum(temp_logliks)
         }
         
-        cat("it ", i, ": loglik = ", loglik[i+1],"\n", sep="")
-        cat("weights:", weights, "\n\n")
-        if(abs(loglik[i+1]-loglik[i])<tol){break}
+        if(verbose){
+            cat("it ", i, ": loglik = ", loglik[i+1],"\n", sep="")
+            cat("weights:", weights, "\n\n")
+        }    
         
         if(plot){
             plot(y=loglik[2:(i+1)], x=c(1:i), 
                  ylab="Log-likelihood", xlab="Iteration", type="b", col="blue", pch=16)
         }
-    }
-    
-    if(plot){
-        plot(y=loglik[2:(i+1)], x=c(1:i), 
-             ylab="Log-likelihood", xlab="it.", type="b", col="blue", pch=16)
+        
+        if(abs(loglik[i+1]-loglik[i])<tol){break}
     }
     
     return(list("r"=r,
@@ -608,7 +613,7 @@ MAP_skewT_mmEM<- function(xi_list, psi_list, S_list, hyperG0, K, maxit=50, tol=1
 
 #'@rdname MAP_skewT_mmEM
 #'@export
-MAP_skewT_mmEM_weighted<- function(xi_list, psi_list, S_list, obsweight_list, hyperG0, K, maxit=50, tol=1E-1, plot=TRUE){
+MAP_skewT_mmEM_weighted<- function(xi_list, psi_list, S_list, obsweight_list, hyperG0, K, maxit=100, tol=1E-1, plot=TRUE){
     
     
     pseudoN <- length(xi_list)
@@ -646,7 +651,7 @@ MAP_skewT_mmEM_weighted<- function(xi_list, psi_list, S_list, obsweight_list, hy
         U_xi[[k]] <- NNiW[["xi"]]
         U_psi[[k]] <- NNiW[["psi"]]
         U_Sigma[[k]] <- NNiW[["S"]]
-        U_B[[k]] <- diag(0.01, 2)
+        U_B[[k]] <- diag(100, 2)
         U_df[[k]] <- d+1
     }
     
@@ -657,15 +662,15 @@ MAP_skewT_mmEM_weighted<- function(xi_list, psi_list, S_list, obsweight_list, hy
     
     for(i in 1:maxit){
         
-        r <- mmsNiWlogpdf(U_xi = xi_list, U_psi = psi_list, U_Sigma = S_list, 
-                          U_xi0 = U_xi, U_psi0 = U_psi, U_B0 =U_B,
-                          U_Sigma0 = U_Sigma, U_df0 = U_df)
-        r <- apply(X=r, MARGIN=2, FUN=function(x){x + log(weights)})
-        #r <- t(apply(X=r, MARGIN=1, FUN=function(x){x + log(unlist(obsweight_list))}))
-        r <- apply(X=r, MARGIN=2, FUN=function(x){x - log(sum(exp(x)))})
-        r[which(is.infinite(r))] <- -Inf
-        r <- exp(r)
-        r <- t(apply(X=r, MARGIN=1, FUN=function(x){x*unlist(obsweight_list)}))
+        #E step
+        r <- mmsNiWpdfC(xi = sapply(xi_list, "["), psi = sapply(psi_list, "["), Sigma = S_list, 
+                        U_xi0 = sapply(U_xi, "["), U_psi0 = sapply(U_psi, "["), U_B0 =U_B,
+                        U_Sigma0 = U_Sigma, U_df0 = sapply(U_df, "["))
+        
+        logexptrick_const <- apply(X=r, MARGIN=2, FUN=max)
+        r_log_const <- apply(X=r, MARGIN=1, FUN=function(rv){rv-logexptrick_const})
+        rw_const <- apply(X=exp(r_log_const), MARGIN=1, FUN=function(rv){rv*weights})
+        r <- t(apply(X=rw_const, MARGIN=1, FUN=function(rv){rv/colSums(rw_const)}))
         
         
         #M step
@@ -690,7 +695,7 @@ MAP_skewT_mmEM_weighted<- function(xi_list, psi_list, S_list, obsweight_list, hy
                                  FUN=function(Sinv, rik){rik*Sinv}, 
                                  SIMPLIFY=FALSE)
             rSinv_sum <- Reduce('+', rSinv_list)
-            U_B[[k]] <- (N_k[k]*d + d + 1)*solve(solve(C) + matrix(rowSums(mapply(x = xim, 
+            U_B[[k]] <- 1/(N_k[k]*d + d + 1)*solve(solve(C) + matrix(rowSums(mapply(x = xim, 
                                                                                   p = psim, 
                                                                                   rSinv = rSinv_list,
                                                                                   FUN=function(x,p,rSinv){
@@ -700,27 +705,23 @@ MAP_skewT_mmEM_weighted<- function(xi_list, psi_list, S_list, obsweight_list, hy
                                                                    nrow=2, byrow=FALSE)
                                                  +kappa0/N*rbind(xim0, psim0)%*%Sinv_sum%*%t(rbind(xim0, psim0))
             )
+            const_nu0_uniroot <- (sum(r[k,]*sapply(S_list, function(S){log(det(S))}))
+                                  + N_k[k]*log(det(rSinv_sum))
+                                  + 2)
             U_df[[k]] <- try(uniroot(function(nu0){(N_k[k]*digamma_mv(x=nu0/2, p=d)
-                                                    + sum(r[k,]*sapply(S_list, function(S){log(det(S))}))
                                                     - N_k[k]*d*log(N_k[k]*nu0/2) 
-                                                    + N_k[k]*log(det(rSinv_sum))
-                                                    + 2
+                                                    + const_nu0_uniroot
             )}, lower = d+1, upper=1E12)$root, TRUE)
-            if(inherits(U_df[[k]], "try-error")){U_df[[k]] <- d+1}
-            
+            if(inherits(U_df[[k]], "try-error")){U_df[[k]] <- d+1}            
             
             
             U_Sigma[[k]] <- (N_k[k]*U_df[[k]] + 1)*solve(solve(L) + rSinv_sum)
         }
-        #        cat("df",unlist(U_df), "\n")
-        #         loglik[i+1] <-sum(r*mmsNiWlogpdf(U_xi = xi_list, U_psi = psi_list, U_Sigma = S_list, 
-        #                                          U_xi0 = U_xi, U_psi0 = U_psi, U_B0 =U_B,
-        #                                          U_Sigma0 = U_Sigma, U_df0 = U_df))
-        loglik[i+1] <- sum(log(apply(exp(mmsNiWlogpdf(U_xi = xi_list, U_psi = psi_list, U_Sigma = S_list, 
-                                                      U_xi0 = U_xi, U_psi0 = U_psi, U_B0 =U_B,
-                                                      U_Sigma0 = U_Sigma, U_df0 = U_df)), MARGIN=2, FUN=function(x){sum(x*weights)})))
-        
-        #Q[i+1] <- (sum(r*kronecker(t(rep(1,ncol(r))), log(weights))) + loglik[i+1])
+
+        loglik[i+1] <- sum(log(apply(mmsNiWpdfC(xi = sapply(xi_list, "["), psi = sapply(psi_list, "["), Sigma = S_list, 
+                                                U_xi0 = sapply(U_xi, "["), U_psi0 = sapply(U_psi, "["), U_B0 =U_B,
+                                                U_Sigma0 = U_Sigma, U_df0 = sapply(U_df, "["), Log=FALSE),
+                                     MARGIN=2, FUN=function(x){sum(x*weights)})))
         
         
         cat("it ", i, ": loglik = ", loglik[i+1],"\n", sep="")
@@ -804,11 +805,13 @@ MLE_skewT <- function( xi_list, psi_list, S_list, plot=TRUE){
     }, SIMPLIFY=TRUE)), 
     nrow=2, byrow=FALSE))
     
-    U_df<- try(uniroot(function(nu0){(N/2*digamma_mv(x=nu0/2, p=d)
-                                      + 1/2*sum(sapply(S_list, function(S){log(det(S))}))
-                                      - N*d/2*log(N*nu0/2) 
-                                      + N/2*log(det(Sinv_sum))
-    )}, lower = d+1, upper=1E9)$root, TRUE)
+    const_nu0_uniroot <- (sum(r[k,]*sapply(S_list, function(S){log(det(S))}))
+                          + N_k[k]*log(det(rSinv_sum))
+                          )
+    U_df[[k]] <- try(uniroot(function(nu0){(N_k[k]*digamma_mv(x=nu0/2, p=d)
+                                            - N_k[k]*d*log(N_k[k]*nu0/2) 
+                                            + const_nu0_uniroot
+    )}, lower = d+1, upper=1E12)$root, TRUE)
     if(inherits(U_df, "try-error")){U_df <- d+1}
     
     U_Sigma <- N*U_df*solve(Sinv_sum)

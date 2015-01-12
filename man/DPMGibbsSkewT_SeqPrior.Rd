@@ -65,10 +65,8 @@ ncl <- 4
 
 sdev <- array(dim=c(d,d,ncl))
 
-#xi <- matrix(nrow=d, ncol=ncl, c(-1.5, 1.5, 1.5, 1.5, 2, -2.5, -2.5, -3))
-#psi <- matrix(nrow=d, ncol=4, c(0.4, -0.6, 0.8, 0, 0.3, -0.7, -0.3, -0.8))
-xi <- matrix(nrow=d, ncol=ncl, c(-0.2, 0.5, 2.4, 0.4, 0.6, -1.3, -0.9, -2.7))
-psi <- matrix(nrow=d, ncol=4, c(0.3, -0.7, -0.8, 0, 0.4, -0.5, 0.2, 0.9))
+xi <- matrix(nrow=d, ncol=ncl, c(-1.5, 1, 1.5, 1, 1.5, -2, -2, -2))
+psi <- matrix(nrow=d, ncol=4, c(0.4, -0.6, 0.8, 0, 0.3, -0.7, -0.3, -0.8))
 nu <- c(100,15,8,5)
 p <- c(0.15, 0.05, 0.5, 0.3) # frequence des clusters
 sdev[, ,1] <- matrix(nrow=d, ncol=d, c(0.3, 0, 0, 0.3))
@@ -113,10 +111,10 @@ hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
        +theme_bw())
  q
 
- MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=4000,
+ MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=2000,
                                 doPlot=TRUE, plotevery=250,
                                 nbclust_init, diagVar=FALSE)
- s <- summary(MCMCsample_st, burnin = 3000, thin=4, posterior_approx=TRUE)
+ s <- summary(MCMCsample_st, burnin = 1500, thin=2, posterior_approx=TRUE)
  F <- FmeasureC(pred=s$point_estim$c_est, ref=c)
 
 for(k in 1:n){
@@ -126,11 +124,17 @@ for(k in 1:n){
  cat(k, "/", n, " observations simulated\\n", sep="")
 }
  MCMCsample_st2 <- DPMGibbsSkewT_SeqPrior(z, prior=s$param_posterior,
-                                          hyperG0, N=3000,
+                                          hyperG0, N=2000,
                                           doPlot=TRUE, plotevery=100,
                                           nbclust_init, diagVar=FALSE)
-s2 <- summary(MCMCsample_st2, burnin = 2000, thin=5)
+s2 <- summary(MCMCsample_st2, burnin = 1500, thin=5)
 F2 <- FmeasureC(pred=s2$point_estim$c_est, ref=c)
+
+MCMCsample_st2_par <- DPMGibbsSkewT_SeqPrior_parallel(Ncpus= 2, type_connec="SOCK",
+                                                      z, prior=s$param_posterior,
+                                                      hyperG0, N=2000,
+                                                      doPlot=TRUE, plotevery=50,
+                                                      nbclust_init, diagVar=FALSE)
 }
 \author{
 Boris Hejblum
