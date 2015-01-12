@@ -189,9 +189,9 @@ DPMGibbsSkewT_SeqPrior_parallel <- function (Ncpus, type_connec,
     sc <- rep(1,n)
     
     priorG1 <- prior
-    nullpriors_ind <- which(priorG1$weights==0)
-    priorG1$weights <- priorG1$weights[-nullpriors_ind]
-    priorG1$parameters <- priorG1$parameters[-nullpriors_ind]
+    nonnullpriors_ind <- which(priorG1$weights!=0)
+    priorG1$weights <- priorG1$weights[nonnullpriors_ind]
+    priorG1$parameters <- priorG1$parameters[nonnullpriors_ind]
     nbmix_prior <- length(priorG1[["weights"]])+1
     priorG1[["parameters"]][[nbmix_prior]] <- hyperG0
     priorG1[["parameters"]][[nbmix_prior]][["B"]] <- diag(c(priorG1[["parameters"]][[nbmix_prior]][["D_xi"]],

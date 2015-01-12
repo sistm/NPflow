@@ -582,7 +582,7 @@ MAP_skewT_mmEM<- function(xi_list, psi_list, S_list, hyperG0, K, maxit=100, tol=
         
         
         if(is.na(loglik[i+1]) | is.nan(loglik[i+1]) | is.infinite(loglik[i+1])){
-            browser()
+            #browser()
             temp_logliks[which(is.infinite(temp_logliks))] <- min(temp_logliks[-which(is.infinite(temp_logliks))])
             loglik[i+1] <- sum(temp_logliks)
         }
@@ -727,7 +727,9 @@ MAP_skewT_mmEM_weighted<- function(xi_list, psi_list, S_list, obsweight_list, hy
         cat("it ", i, ": loglik = ", loglik[i+1],"\n", sep="")
         cat("weights:", weights, "\n\n")
         
-        if(is.na(loglik[i+1]) | is.nan(loglik[i+1]) | is.infinite(loglik[i+1])){browser()}
+        if(is.na(loglik[i+1]) | is.nan(loglik[i+1]) | is.infinite(loglik[i+1])){
+            #browser()
+        }
         if(abs(loglik[i+1]-loglik[i])<tol){break}
         
         if(plot){
