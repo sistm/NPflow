@@ -82,13 +82,13 @@ postProcess.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measur
     mle_g <- MLE_gamma(x_invar$alpha)
     
     if(K>1){
-
+        
         MAPprior <- x_invar$hyperG0
         #MAPprior$lambda <-10*MAPprior$lambda
         param_post_list <- list()
         for (j in 1:10){
             param_post_list[[j]] <- MAP_skewT_mmEM(xi_list, psi_list, S_list, 
-                                        hyperG0 = MAPprior, K=K, verbose=FALSE,...)
+                                                   hyperG0 = MAPprior, K=K, verbose=FALSE,...)
             cat("EM ", j, "/10 computed", "\n", sep="")
         }
         param_post <- param_post_list[[which.max(sapply(lapply(param_post_list, "[[", "loglik"), FUN=max))]]
@@ -231,13 +231,13 @@ MLE_skewT_mmEM <- function( xi_list, psi_list, S_list, hyperG0, K, maxit=100, to
                                  SIMPLIFY=FALSE)
             rSinv_sum <- Reduce('+', rSinv_list)
             U_B[[k]] <- 1/(N_k[k]*d)*(matrix(rowSums(mapply(x = xim, 
-                                                             p = psim, 
-                                                             rSinv = rSinv_list,
-                                                             FUN=function(x,p,rSinv){
-                                                                 v <- rbind(x, p)
-                                                                 v%*%rSinv%*%t(v)  
-                                                             }, SIMPLIFY=TRUE)), 
-                                              nrow=2, byrow=FALSE))
+                                                            p = psim, 
+                                                            rSinv = rSinv_list,
+                                                            FUN=function(x,p,rSinv){
+                                                                v <- rbind(x, p)
+                                                                v%*%rSinv%*%t(v)  
+                                                            }, SIMPLIFY=TRUE)), 
+                                             nrow=2, byrow=FALSE))
             const_nu0_uniroot <- (sum(r[k,]*sapply(S_list, function(S){log(det(S))}))
                                   + N_k[k]*log(det(rSinv_sum))
                                   + 2)
@@ -408,13 +408,13 @@ MAP_skewT_mmEM_vague <- function(xi_list, psi_list, S_list, hyperG0, K, maxit=10
                                  SIMPLIFY=FALSE)
             rSinv_sum <- Reduce('+', rSinv_list)
             U_B[[k]] <- 1/(N_k[k]*d + 1)*(solve(C) + matrix(rowSums(mapply(x = xim, 
-                                                                              p = psim, 
-                                                                              rSinv = rSinv_list,
-                                                                              FUN=function(x,p,rSinv){
-                                                                                  v <- rbind(x, p)
-                                                                                  v%*%rSinv%*%t(v)  
-                                                                              }, SIMPLIFY=TRUE)), 
-                                                               nrow=2, byrow=FALSE))
+                                                                           p = psim, 
+                                                                           rSinv = rSinv_list,
+                                                                           FUN=function(x,p,rSinv){
+                                                                               v <- rbind(x, p)
+                                                                               v%*%rSinv%*%t(v)  
+                                                                           }, SIMPLIFY=TRUE)), 
+                                                            nrow=2, byrow=FALSE))
             const_nu0_uniroot <- (sum(r[k,]*sapply(S_list, function(S){log(det(S))}))
                                   + N_k[k]*log(det(rSinv_sum))
                                   + 2)
@@ -549,14 +549,14 @@ MAP_skewT_mmEM<- function(xi_list, psi_list, S_list, hyperG0, K, maxit=100, tol=
                                  SIMPLIFY=FALSE)
             rSinv_sum <- Reduce('+', rSinv_list)
             U_B[[k]] <- 1/(N_k[k]*d + d + 1)*(solve(C) + matrix(rowSums(mapply(x = xim, 
-                                                                                  p = psim, 
-                                                                                  rSinv = rSinv_list,
-                                                                                  FUN=function(x,p,rSinv){
-                                                                                      v <- rbind(x, p)
-                                                                                      v%*%rSinv%*%t(v)  
-                                                                                  }, SIMPLIFY=TRUE)), 
-                                                                   nrow=2, byrow=FALSE)
-                                                 +kappa0/N*rbind(xim0, psim0)%*%Sinv_sum%*%t(rbind(xim0, psim0))
+                                                                               p = psim, 
+                                                                               rSinv = rSinv_list,
+                                                                               FUN=function(x,p,rSinv){
+                                                                                   v <- rbind(x, p)
+                                                                                   v%*%rSinv%*%t(v)  
+                                                                               }, SIMPLIFY=TRUE)), 
+                                                                nrow=2, byrow=FALSE)
+                                              +kappa0/N*rbind(xim0, psim0)%*%Sinv_sum%*%t(rbind(xim0, psim0))
             )
             const_nu0_uniroot <- (sum(r[k,]*sapply(S_list, function(S){log(det(S))}))
                                   + N_k[k]*log(det(rSinv_sum))
@@ -696,14 +696,14 @@ MAP_skewT_mmEM_weighted<- function(xi_list, psi_list, S_list, obsweight_list, hy
                                  SIMPLIFY=FALSE)
             rSinv_sum <- Reduce('+', rSinv_list)
             U_B[[k]] <- 1/(N_k[k]*d + d + 1)*solve(solve(C) + matrix(rowSums(mapply(x = xim, 
-                                                                                  p = psim, 
-                                                                                  rSinv = rSinv_list,
-                                                                                  FUN=function(x,p,rSinv){
-                                                                                      v <- rbind(x, p)
-                                                                                      v%*%rSinv%*%t(v)  
-                                                                                  }, SIMPLIFY=TRUE)), 
-                                                                   nrow=2, byrow=FALSE)
-                                                 +kappa0/N*rbind(xim0, psim0)%*%Sinv_sum%*%t(rbind(xim0, psim0))
+                                                                                    p = psim, 
+                                                                                    rSinv = rSinv_list,
+                                                                                    FUN=function(x,p,rSinv){
+                                                                                        v <- rbind(x, p)
+                                                                                        v%*%rSinv%*%t(v)  
+                                                                                    }, SIMPLIFY=TRUE)), 
+                                                                     nrow=2, byrow=FALSE)
+                                                   +kappa0/N*rbind(xim0, psim0)%*%Sinv_sum%*%t(rbind(xim0, psim0))
             )
             const_nu0_uniroot <- (sum(r[k,]*sapply(S_list, function(S){log(det(S))}))
                                   + N_k[k]*log(det(rSinv_sum))
@@ -717,7 +717,7 @@ MAP_skewT_mmEM_weighted<- function(xi_list, psi_list, S_list, obsweight_list, hy
             
             U_Sigma[[k]] <- (N_k[k]*U_df[[k]] + 1)*solve(solve(L) + rSinv_sum)
         }
-
+        
         loglik[i+1] <- sum(log(apply(mmsNiWpdfC(xi = sapply(xi_list, "["), psi = sapply(psi_list, "["), Sigma = S_list, 
                                                 U_xi0 = sapply(U_xi, "["), U_psi0 = sapply(U_psi, "["), U_B0 =U_B,
                                                 U_Sigma0 = U_Sigma, U_df0 = sapply(U_df, "["), Log=FALSE),
@@ -795,6 +795,7 @@ MLE_skewT <- function( xi_list, psi_list, S_list, plot=TRUE){
         stop("Number of MCMC iterations not matching")
     }
     
+    
     U_xi <- unlist(rowSums(sapply(xi_list, FUN="["))/N)
     U_psi <- unlist(rowSums(sapply(psi_list, FUN="["))/N)
     xim <- lapply(xi_list, function(x){x - U_xi})
@@ -807,13 +808,11 @@ MLE_skewT <- function( xi_list, psi_list, S_list, plot=TRUE){
     }, SIMPLIFY=TRUE)), 
     nrow=2, byrow=FALSE))
     
-    const_nu0_uniroot <- (sum(r[k,]*sapply(S_list, function(S){log(det(S))}))
-                          + N_k[k]*log(det(rSinv_sum))
-                          )
-    U_df[[k]] <- try(uniroot(function(nu0){(N_k[k]*digamma_mv(x=nu0/2, p=d)
-                                            - N_k[k]*d*log(N_k[k]*nu0/2) 
-                                            + const_nu0_uniroot
-    )}, lower = d+1, upper=1E12)$root, TRUE)
+    U_df<- try(uniroot(function(nu0){(N/2*digamma_mv(x=nu0/2, p=d)
+                                      + 1/2*sum(sapply(S_list, function(S){log(det(S))}))
+                                      - N*d/2*log(N*nu0/2)
+                                      + N/2*log(det(Sinv_sum))
+    )}, lower = d+1, upper=1E9)$root, TRUE)
     if(inherits(U_df, "try-error")){U_df <- d+1}
     
     U_Sigma <- N*U_df*solve(Sinv_sum)
@@ -853,9 +852,16 @@ MLE_gamma <- function(g){
                                       - N*log(mean(g))
                                       + N*log(a)
     )}, lower = 0.000001, upper=1E9)$root, TRUE)
-    if(inherits(a_mle, "try-error")){a_mle <- 0.0001;warning("unable to estimate a_mle properly")}    
-    
-    b_mle <- mean(g)/a_mle
+    if(inherits(a_mle, "try-error")){
+        #either
+        a_mle <- 0.0001
+        b_mle <- 0.0001
+        warning("Unable to estimate Gamma hyperpriors properly\n
+                 (this can happen when only a few clusters are fitted).\n 
+                 => Non informative values are returned instead")
+    }else{
+        b_mle <- mean(g)/a_mle
+    }    
     
     return(list("shape"=a_mle, "scale"=b_mle, "rate"=1/b_mle))
 }
