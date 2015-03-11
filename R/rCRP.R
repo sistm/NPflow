@@ -25,8 +25,9 @@
 #' hyperG0[["scale"]] <- list()
 #' 
 #' set.seed(4321)
+#' N <- 50
 #' alph <- runif(n=1,0.2,2)
-#' GvHD_sims <- rCRP(n=2000, alpha=alph, hyperG0=hyperG0)
+#' GvHD_sims <- rCRP(n=2*N, alpha=alph, hyperG0=hyperG0)
 #' q <- (ggplot(data=cbind.data.frame("D1"=GvHD_sims$data[1,], 
 #'                                   "D2"=GvHD_sims$data[2,],
 #'                                   "Cluster"=GvHD_sims$cluster),
@@ -37,45 +38,46 @@
 #'       )
 #'q 
 #'
-#' MCMCy1 <- DPMGibbsSkewT(z=GvHD_sims$data[,1:1000], 
+#'
+#' MCMCy1 <- DPMGibbsSkewT(z=GvHD_sims$data[,1:N], 
 #'                         hyperG0$NNiW, a=0.0001, b=0.0001, N=5000, 
 #'                         doPlot=TRUE, nbclust_init=64, plotevery=500, 
 #'                         gg.add=list(theme_bw()), diagVar=FALSE)
 #'  s1 <- summary(MCMCy1, burnin=4000, thin=5,
 #'                posterior_approx=TRUE)
-#'  F1 <- FmeasureC(ref=GvHD_sims$cluster[1:1000], pred=s1$point_estim$c_est)
+#'  F1 <- FmeasureC(ref=GvHD_sims$cluster[1:N], pred=s1$point_estim$c_est)
 #'  
 #'  # s <- summary(MCMCy1, burnin=4000, thin=5,
 #'  #               posterior_approx=TRUE, K=1)
 #'  # s2 <- summary(MCMCy1, burnin=4000, thin=5,
 #'  #               posterior_approx=TRUE, K=2)
-#'  # MCMCy2_seqPrior <- DPMGibbsSkewT(z=GvHD_sims$data[,1001:2000], 
+#'  # MCMCy2_seqPrior <- DPMGibbsSkewT(z=GvHD_sims$data[,(N+1):(2*N)], 
 #'  #                                  hyperG0=s1$param_post$parameters, 
 #'  #                                  a=s1$param_post$alpha_param$shape, 
 #'  #                                  b=s1$param_post$alpha_param$rate, 
 #'  #                                  N=5000, doPlot=TRUE, nbclust_init=64, plotevery=500, 
 #'  #                                  gg.add=list(theme_bw()), diagVar=FALSE)
 #'
-#'  MCMCy2_seqPrior <- DPMGibbsSkewT_SeqPrior(z=GvHD_sims$data[,1001:2000], 
+#'  MCMCy2_seqPrior <- DPMGibbsSkewT_SeqPrior(z=GvHD_sims$data[,(N+1):(2*N)], 
 #'                                            prior=s1$param_post, hyperG0=hyperG0$NNiW, , N=5000, 
 #'                                            doPlot=TRUE, nbclust_init=64, plotevery=100, 
 #'                                            gg.add=list(theme_bw()), diagVar=FALSE)
 #'  s2_seqPrior <- summary(MCMCy2_seqPrior, burnin=4000, thin=5)
-#'  F2_seqPrior <- FmeasureC(ref=GvHD_sims$cluster[1001:2000], pred=s2_seqPrior$point_estim$c_est)
+#'  F2_seqPrior <- FmeasureC(ref=GvHD_sims$cluster[(N+1):(2*N)], pred=s2_seqPrior$point_estim$c_est)
 #'      
-#' MCMCy2 <- DPMGibbsSkewT(z=GvHD_sims$data[,1001:2000], 
+#' MCMCy2 <- DPMGibbsSkewT(z=GvHD_sims$data[,(N+1):(2*N)], 
 #'                         hyperG0$NNiW, a=0.0001, b=0.0001, N=5000, 
 #'                         doPlot=TRUE, nbclust_init=64, plotevery=500, 
 #'                         gg.add=list(theme_bw()), diagVar=FALSE)
 #'  s2 <- summary(MCMCy2, burnin=4000, thin=5)
-#'  F2 <- FmeasureC(ref=GvHD_sims$cluster[1001:2000], pred=s2$point_estim$c_est)
+#'  F2 <- FmeasureC(ref=GvHD_sims$cluster[(N+1):(2*N)], pred=s2$point_estim$c_est)
 #'  
 #'  MCMCtot <- DPMGibbsSkewT(z=GvHD_sims$data, 
 #'                           hyperG0$NNiW, a=0.0001, b=0.0001, N=5000, 
 #'                           doPlot=TRUE, nbclust_init=64, plotevery=500, 
 #'                           gg.add=list(theme_bw()), diagVar=FALSE)
 #'  stot <- summary(MCMCtot, burnin=4000, thin=5)
-#'  F2tot <- FmeasureC(ref=GvHD_sims$cluster[1001:2000], pred=stot$point_estim$c_est[1001:2000])
+#'  F2tot <- FmeasureC(ref=GvHD_sims$cluster[(N+1):(2*N)], pred=stot$point_estim$c_est[(N+1):(2*N)])
 #'  
 #'  c(F1, F2, F2_seqPrior, F2tot)
 #'

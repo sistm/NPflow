@@ -42,7 +42,7 @@ summary.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measure", 
     
     x_invar <- burn.DPMMclust(x, burnin = burnin, thin=thin)
     
-    if(!posterior_approx){
+    #if(!posterior_approx){
     if(lossFn == "F-measure"){
         point_estim <- cluster_est_Fmeasure(x_invar$mcmc_partitions, 
                                             logposterior = sapply(x_invar$logposterior_list, sum))
@@ -59,10 +59,10 @@ summary.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measure", 
     if(!is.null(gs)){
         loss <- evalClustLoss(c=point_estim$c_est, gs=gs, lossFn=lossFn)
     }
-    }
-    point_estim=NULL
-    index_estim <- NA
-    loss <- NA
+    #}
+    #point_estim=NULL
+    #index_estim <- NA
+    #loss <- NA
     #Posterior approximation
     
     if(posterior_approx){

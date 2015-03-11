@@ -106,7 +106,7 @@
 #'  MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=2000, 
 #'                                 doPlot=TRUE, plotevery=250,
 #'                                 nbclust_init, diagVar=FALSE)
-#'  s <- summary(MCMCsample_st, burnin = 1500, thin=2, posterior_approx=TRUE)
+#'  s <- summary(MCMCsample_st, burnin = 1500, thin=2, posterior_approx=TRUE, K=4)
 #'  F <- FmeasureC(pred=s$point_estim$c_est, ref=c)
 #'  
 #' for(k in 1:n){
@@ -132,9 +132,14 @@
 #'  
 
 DPMGibbsSkewT_SeqPrior <- function (z, prior, hyperG0, N, nbclust_init,
+                                    add.vagueprior = TRUE, weightnoninf=NULL,
                                     doPlot=TRUE, plotevery=1, 
                                     diagVar=TRUE, verbose=TRUE,
                                     ...){
+    
+    if(nbclust_init > ncol(z)){
+        stop("'nbclust_init' is larger than the number of observations")
+    }
     
     if(doPlot){library(ggplot2)}
     
@@ -149,6 +154,7 @@ DPMGibbsSkewT_SeqPrior <- function (z, prior, hyperG0, N, nbclust_init,
     
     # U_SS is a list where each U_SS[[k]] contains the sufficient
     # statistics associated to cluster k
+
     U_SS <- list()
     
     #store U_SS :
@@ -166,26 +172,31 @@ DPMGibbsSkewT_SeqPrior <- function (z, prior, hyperG0, N, nbclust_init,
     ltn <- rtruncnorm(n, a=0, b=Inf, mean=0, sd=1) # latent truncated normal
     sc <- rep(1,n)
     
-    
     priorG1 <- prior
     nonnullpriors_ind <- which(priorG1$weights!=0)
     priorG1$weights <- priorG1$weights[nonnullpriors_ind]
     priorG1$parameters <- priorG1$parameters[nonnullpriors_ind]
-    nbmix_prior <- length(priorG1[["weights"]])+1
-    priorG1[["parameters"]][[nbmix_prior]] <- hyperG0
-    priorG1[["parameters"]][[nbmix_prior]][["B"]] <- diag(c(priorG1[["parameters"]][[nbmix_prior]][["D_xi"]],
-                                                            priorG1[["parameters"]][[nbmix_prior]][["D_psi"]])
-    )
-    priorG1$weights <- c(priorG1$weights, 1/length(priorG1$weights))
-    priorG1$weights <- priorG1$weights/sum(priorG1$weights)
+    nbmix_prior <- length(priorG1[["weights"]])
+    if(add.vagueprior){
+        nbmix_prior <- nbmix_prior + 1
+        priorG1[["parameters"]][[nbmix_prior]] <- hyperG0
+        priorG1[["parameters"]][[nbmix_prior]][["B"]] <- diag(c(priorG1[["parameters"]][[nbmix_prior]][["D_xi"]],
+                                                                priorG1[["parameters"]][[nbmix_prior]][["D_psi"]])
+        )
+        if(is.null(weightnoninf)){
+            priorG1$weights <- c(priorG1$weights, 1/length(priorG1$weights))
+            priorG1$weights <- priorG1$weights/sum(priorG1$weights)
+        }else{
+            #TODO
+            priorG1$weights <- c(rep((1-weightnoninf)/(nbmix_prior-1), (nbmix_prior-1)), weightnoninf)
+        }
+    }
     
     a <- prior$alpha_param$shape
     b <- prior$alpha_param$rate
     
     # Initialisation----
-    # each observation is assigned to a different cluster
-    # or to 1 of the 50 initial clusters if there are more than
-    # 50 observations
+    # each observation is assigned to cluster
     
     i <- 1
     
@@ -215,7 +226,7 @@ DPMGibbsSkewT_SeqPrior <- function (z, prior, hyperG0, N, nbclust_init,
         alpha <- hyperG0[["alpha"]]
     }
     
-    U_SS_list[[i]] <- U_SS
+    U_SS_list[[i]] <- U_SS[which(m!=0)]
     c_list[[i]] <- c
     weights_list[[1]] <- numeric(length(m))
     weights_list[[1]][unique(c)] <- table(c)/length(c)
@@ -263,7 +274,7 @@ DPMGibbsSkewT_SeqPrior <- function (z, prior, hyperG0, N, nbclust_init,
             fullCl <- which(m!=0)
             fullCl_nb <- length(fullCl)
             
-            pfin <- matrix(nrow=fullCl_nb, ncol=nbmix_prior)
+            
             U_SS_prior <- list()
             p <- matrix(nrow=nbmix_prior, ncol=fullCl_nb)
             vrais <- rep(NA,fullCl_nb)
@@ -299,21 +310,46 @@ DPMGibbsSkewT_SeqPrior <- function (z, prior, hyperG0, N, nbclust_init,
                              U_df0=sapply(priorG1[["parameters"]], "[[", "nu"),
                              Log=TRUE)
             
+
+            pfin_log <- apply(X=(p0 - p), MARGIN=1, FUN=function(r){vrais + r})
             
-            pfin_log <- apply(X=(p0 - p), MARGIN=1, FUN=function(r){vrais+r})
-            logexptrick_const <- apply(X=pfin_log, MARGIN=1, FUN=max)
-            wfin_log_const <- apply(X=pfin_log, MARGIN=2, FUN=function(cv){cv - logexptrick_const})
-            w2fin <- apply(X=exp(wfin_log_const), MARGIN=1, FUN=function(r){r*priorG1[["weights"]]})
-            w2fin_sums <- colSums(w2fin)
-            #w2fin_sums0_ind <- which(w2fin_sums==0)
-            #             if(length(w2fin_sums0_ind)>0){
-            #                 browser()
-            #                 w2fin[nbmix_prior,w2fin_sums0_ind] <- 1
-            #                 w2fin_sums[w2fin_sums0_ind] <- 1
-            #             }
-            wfin <- apply(X=w2fin, MARGIN=1, FUN=function(r){r/w2fin_sums})
+            if(i>50){browser()}
+            
+            if(is.null(dim(pfin_log))){
+                #only one sampled cluster non empty
+                logexptrick_const <- max(pfin_log)
+                wfin_log_const <- pfin_log - logexptrick_const
+                w2fin <- exp(wfin_log_const)*priorG1[["weights"]]
+                w2fin_sums <- sum(w2fin)
+                wfin <- matrix(w2fin/w2fin_sums, nrow=1)
+            }else if(ncol(pfin_log)==1){
+                #only one prior component
+                logexptrick_const <- apply(X=pfin_log, MARGIN=1, FUN=max)
+                wfin_log_const <- apply(X=pfin_log, MARGIN=2, FUN=function(cv){cv - logexptrick_const})
+                w2fin <- apply(X=exp(wfin_log_const), MARGIN=1, FUN=function(r){r*priorG1[["weights"]]})
+                wfin <- matrix(w2fin, ncol=1)
+            }else{
+                logexptrick_const <- apply(X=pfin_log, MARGIN=1, FUN=max)
+                wfin_log_const <- apply(X=pfin_log, MARGIN=2, FUN=function(cv){cv - logexptrick_const})
+                w2fin <- apply(X=exp(wfin_log_const), MARGIN=1, FUN=function(r){r*priorG1[["weights"]]})
+                w2fin_sums <- colSums(w2fin)
+                #w2fin_sums0_ind <- which(w2fin_sums==0)
+                #             if(length(w2fin_sums0_ind)>0){
+                #                 w2fin[nbmix_prior,w2fin_sums0_ind] <- 1
+                #                 w2fin_sums[w2fin_sums0_ind] <- 1
+                #             }
+                wfin <- apply(X=w2fin, MARGIN=1, FUN=function(r){r/w2fin_sums})
             #any(rowSums(wfin)!=1) #should all be 1
+            }
             
+            if(any(is.nan(wfin))){
+                na_rws <- unique(which(is.nan(wfin), arr.ind=TRUE)[,"row"])
+                for(ro in na_rws){
+                    wfin[ro,] <- priorG1[["weights"]]
+                }
+            }
+                        
+            #if(i>200){browser()}
             for(k in 1:fullCl_nb){
                 j <- fullCl[k]
                 obs_j <- which(c==j)
@@ -321,7 +357,8 @@ DPMGibbsSkewT_SeqPrior <- function (z, prior, hyperG0, N, nbclust_init,
                 
                 #sample prior mixture element to update
                 hyper_num <- sample(x=1:nbmix_prior, size=1, prob=wfin[k,])
-                priormix <- priorG1[["parameters"]][[hyper_num]]  
+                priormix <- priorG1[["parameters"]][[hyper_num]]
+                #cat(hyper_num, " ")
                 
                 U_SS[[j]] <- update_SSst(z=z[, obs_j, drop=FALSE], S=priormix, 
                                          ltn=ltn[obs_j], scale=sc[obs_j], 

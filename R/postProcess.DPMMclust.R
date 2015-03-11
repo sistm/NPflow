@@ -106,12 +106,14 @@ postProcess.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measur
     }
     else{
         param_post <- MLE_skewT(xi_list, psi_list, S_list, ...)
-        parameters <- list("b_xi" = param_post[["U_xi"]],
+        parameters <- list()
+        parameters[[1]] <- list("b_xi" = param_post[["U_xi"]],
                            "b_psi" = param_post[["U_psi"]],
                            "B" = param_post[["U_B"]],
                            "lambda" = param_post[["U_Sigma"]],
                            "nu" = param_post[["U_df"]]
         )
+        param_post$weights <- 1
     }
     
     return(list("parameters"=parameters, "weights"=param_post$weights,
@@ -856,8 +858,8 @@ MLE_gamma <- function(g){
         #either
         a_mle <- 0.0001
         b_mle <- 0.0001
-        warning("Unable to estimate Gamma hyperpriors properly\n
-                 (this can happen when only a few clusters are fitted).\n 
+        warning("Unable to estimate Gamma hyperpriors properly
+                 (this can happen when only a few clusters are fitted). 
                  => Non informative values are returned instead")
     }else{
         b_mle <- mean(g)/a_mle

@@ -328,18 +328,26 @@ DPMGibbsSkewT_SeqPrior_parallel <- function (Ncpus, type_connec,
             
             
             pfin_log <- apply(X=(p0 - p), MARGIN=1, FUN=function(r){vrais+r})
-            logexptrick_const <- apply(X=pfin_log, MARGIN=1, FUN=max)
-            wfin_log_const <- apply(X=pfin_log, MARGIN=2, FUN=function(cv){cv - logexptrick_const})
-            w2fin <- apply(X=exp(wfin_log_const), MARGIN=1, FUN=function(r){r*priorG1[["weights"]]})
-            w2fin_sums <- colSums(w2fin)
-            #w2fin_sums0_ind <- which(w2fin_sums==0)
-            #             if(length(w2fin_sums0_ind)>0){
-            #                 browser()
-            #                 w2fin[nbmix_prior,w2fin_sums0_ind] <- 1
-            #                 w2fin_sums[w2fin_sums0_ind] <- 1
-            #             }
-            wfin <- apply(X=w2fin, MARGIN=1, FUN=function(r){r/w2fin_sums})
-            #any(rowSums(wfin)!=1) #should all be 1
+            if(is.null(dim(pfin_log))){
+                logexptrick_const <- max(pfin_log)
+                wfin_log_const <- pfin_log - logexptrick_const
+                w2fin <- exp(wfin_log_const)*priorG1[["weights"]]
+                w2fin_sums <- sum(w2fin)
+                wfin <- matrix(w2fin/w2fin_sums, nrow=1)
+            }else{
+                logexptrick_const <- apply(X=pfin_log, MARGIN=1, FUN=max)
+                wfin_log_const <- apply(X=pfin_log, MARGIN=2, FUN=function(cv){cv - logexptrick_const})
+                w2fin <- apply(X=exp(wfin_log_const), MARGIN=1, FUN=function(r){r*priorG1[["weights"]]})
+                w2fin_sums <- colSums(w2fin)
+                #w2fin_sums0_ind <- which(w2fin_sums==0)
+                #             if(length(w2fin_sums0_ind)>0){
+                #                 browser()
+                #                 w2fin[nbmix_prior,w2fin_sums0_ind] <- 1
+                #                 w2fin_sums[w2fin_sums0_ind] <- 1
+                #             }
+                wfin <- apply(X=w2fin, MARGIN=1, FUN=function(r){r/w2fin_sums})
+                #any(rowSums(wfin)!=1) #should all be 1
+            }
             
             for(k in 1:fullCl_nb){
                 j <- fullCl[k]

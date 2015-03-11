@@ -13,7 +13,7 @@ This package implements
 Package: \tab NPflow\cr
 Type: \tab Package\cr
 Version: \tab 0.2.7\cr
-Date: \tab 2015-01-11\cr
+Date: \tab 2015-01-12\cr
 License:\tab \href{http://www.gnu.org/licenses/lgpl.txt}{LGPL-3}\cr
 }
 The main function in this package is \code{\link{DPMgibbs}} which
