@@ -123,28 +123,6 @@ Fmeasure_costC_arma_par <- function(c, ncores = 1L) {
     .Call('NPflow_Fmeasure_costC_arma_par', PACKAGE = 'NPflow', c, ncores)
 }
 
-#' C++ implementation of residual trace computation step used when sampling the scale
-#' 
-#'@param eps
-#'@keywords internal
-#'
-#'@export
-#'
-traceEpsC <- function(eps, sigma) {
-    .Call('NPflow_traceEpsC', PACKAGE = 'NPflow', eps, sigma)
-}
-
-#' Parallel C++ implementation of residual trace computation step used when sampling the scale
-#' 
-#'@param eps
-#'@keywords internal
-#'
-#'@export
-#'
-traceEpsC_par <- function(eps, sigma, ncores = 1L) {
-    .Call('NPflow_traceEpsC_par', PACKAGE = 'NPflow', eps, sigma, ncores)
-}
-
 #' C++ implementation of multivariate log gamma function
 #' 
 #'@param x strictly positive real number
@@ -671,19 +649,6 @@ mvstlikC_par <- function(x, c, clustval, xi, psi, sigma, df, loglik = TRUE, ncor
 #' of column vectors each containing the sampling probabilities 
 #' for their respective draw
 #' 
-#'@param probMat
-#'@keywords internal
-#'
-#'@export
-#'
-sampleClassC <- function(probMat) {
-    .Call('NPflow_sampleClassC', PACKAGE = 'NPflow', probMat)
-}
-
-#' C++ implementation of the multinomial sampling from a matrix 
-#' of column vectors each containing the sampling probabilities 
-#' for their respective draw
-#' 
 #' @details Slower than sampleClassC
 #' 
 #'@param probMat
@@ -708,6 +673,19 @@ sampleClassC_bis <- function(probMat) {
 #'
 sampleClassC_bis_par <- function(probMat, ncores = 1L) {
     .Call('NPflow_sampleClassC_bis_par', PACKAGE = 'NPflow', probMat, ncores)
+}
+
+#' C++ implementation of the multinomial sampling from a matrix 
+#' of column vectors each containing the sampling probabilities 
+#' for their respective draw
+#' 
+#'@param probMat
+#'@keywords internal
+#'
+#'@export
+#'
+sampleClassC <- function(probMat) {
+    .Call('NPflow_sampleClassC', PACKAGE = 'NPflow', probMat)
 }
 
 #' Parallel C++ implementation of the multinomial sampling from a matrix 
@@ -770,5 +748,27 @@ similarityMatC <- function(c) {
 #'
 similarityMatC_par <- function(c, ncores = 1L) {
     .Call('NPflow_similarityMatC_par', PACKAGE = 'NPflow', c, ncores)
+}
+
+#' C++ implementation of residual trace computation step used when sampling the scale
+#' 
+#'@param eps
+#'@keywords internal
+#'
+#'@export
+#'
+traceEpsC <- function(eps, sigma) {
+    .Call('NPflow_traceEpsC', PACKAGE = 'NPflow', eps, sigma)
+}
+
+#' Parallel C++ implementation of residual trace computation step used when sampling the scale
+#' 
+#'@param eps
+#'@keywords internal
+#'
+#'@export
+#'
+traceEpsC_par <- function(eps, sigma, ncores = 1L) {
+    .Call('NPflow_traceEpsC_par', PACKAGE = 'NPflow', eps, sigma, ncores)
 }
 
