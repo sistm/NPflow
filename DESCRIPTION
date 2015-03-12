@@ -1,10 +1,15 @@
 Package: NPflow
 Type: Package
 Title: Non Parametric Bayesian clustering of flow-cytometry data
-Version: 0.2.7
-Date: 2015-01-12
-Author: Boris P. Hejblum, Francois Caron
-Maintainer: Boris P. Hejblum <boris.hejblum@isped.u-bordeaux2.fr>
+Version: 0.2.71
+Date: 2015-03-12
+Authors@R: c(person("Boris P.", "Hejblum", role = c("aut", "cre"),
+email = "boris.hejblum@isped.fr"),
+person("Francois", "Caron", role = c("aut"),
+email = "francois.caron@stats.ox.ac.uk")
+)
+Author: Boris P. Hejblum [aut, cre], Francois Caron [aut]
+Maintainer: Boris P. Hejblum <boris.hejblum@isped.fr>
 Linkingto: Rcpp, RcppArmadillo
 Depends:
     R (>= 3.0.0),
@@ -18,5 +23,5 @@ Imports:
     ggplot2,
     Rcpp (>= 0.11.2),
     RcppArmadillo (>= 0.4.320.0)
-Description: NA
-License: NA
+Description: This package implements a Dirichlet process mixture of skew t-distributions oriented towards flow-cytometry data preprocessing application
+License: LGPL-3 | file LICENSE
