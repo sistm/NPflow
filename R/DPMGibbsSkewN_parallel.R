@@ -92,7 +92,7 @@
 #' hyperG0[["kappa"]] <- 0.001
 #' hyperG0[["D_xi"]] <- 100
 #' hyperG0[["D_psi"]] <- 100
-#' hyperG0[["nu"]] <- d+0.1
+#' hyperG0[["nu"]] <- d + 1
 #' hyperG0[["lambda"]] <- diag(d)/10
 #'  
 #'  # hyperprior on the Scale parameter of DPM
