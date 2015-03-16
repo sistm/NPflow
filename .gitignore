@@ -8,3 +8,4 @@ R/RcppExport.R
 *.o
 *.so
 *.dll
+defaultmonitor.txt
