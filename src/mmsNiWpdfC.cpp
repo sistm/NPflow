@@ -85,8 +85,16 @@ NumericMatrix mmsNiWpdfC(NumericMatrix xi,
             mat sigmainv = inv_sympd(sigma);
             mat quadform = mu.t()*kron(B0inv, sigmainv)*mu;
             
-            double res = (-(nu0 + d +1)*log(det(sigma))
-                          - log(det(kron(B0, sigma)))
+            double logdet_Kron_B0sigma;
+            double sign;
+            log_det(logdet_Kron_B0sigma, sign, kron(B0, sigma));
+            
+            double logdet_sigma;
+            double sign2;
+            log_det(logdet_sigma, sign2, sigma);
+            
+            double res = (-(nu0 + d +1)*logdet_sigma
+                          - logdet_Kron_B0sigma
                           - trace(lambda0*sigmainv)
                           - quadform(0,0)
             );

@@ -1,5 +1,4 @@
 PKG_LIBS = -fopenmp $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) $(SHLIB_OPENMP_CXXFLAGS) \
 $(shell "Rscript" -e "Rcpp:::LdFlags()")
 
-PKG_CPPFLAGS = -fopenmp -I"${R_HOME}/include" -I"P:/R/win-library/3.1/Rcpp/include" \
-   -I"P:/R/win-library/3.1/RcppArmadillo/include"  -I. -DNDEBUG
+PKG_CPPFLAGS = -fopenmp -DNDEBUG
