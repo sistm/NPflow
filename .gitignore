@@ -1,11 +1,12 @@
 .Rproj.user
 .Rhistory
+.Rbuildignore
 NPflow.Rproj
-R/RcppExport.R
 *.RData
 *.Rdata
 *.pdf
 *.o
 *.so
 *.dll
+src/RcppExports.cpp
 defaultmonitor.txt
