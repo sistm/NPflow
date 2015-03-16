@@ -37,54 +37,7 @@
 #'
 
 cluster_est_Fmeasure <- function(c, logposterior){
-    #    n <- length(c[[1]])
-    
-    #    N <- length(c)
-    
-    
-    #     #Non vectorized piece of code for reference
-    #         cost <- numeric(N)
-    #         similarity <- matrix(ncol=n, nrow=n)
-    #         for(i in 1:(n-1)){
-    #              for(j in (i+1):n){
-    #                  similarity[i,j] <- 1/N*sum(unlist(lapply(c, "[", i)) == unlist(lapply(c, "[", j)))
-    #                  #cost = cost + abs(as.numeric(unlist(lapply(c, "[",i))==unlist(lapply(c, "[",j)))-similarity[i,j])
-    #                  for(k in 1:N){
-    #                      cost[k] = cost[k] + abs(as.numeric(c[[k]][i]==c[[k]][j]) - similarity[i,j])
-    #                  }
-    #             }
-    #         }
-    #         cost <- 2*cost
-    
-    #    #Fully vectorized code uses too much live memory :-(
-    #     vclust2mcoclust <- function(v){
-    #         m <- sapply(v, FUN=function(x){v==x})
-    #         return(m)
-    #     }
-    #     list_mcoclust <- lapply(c, vclust2mcoclust)
-    #     
-    #     similarity <- Reduce('+', list_mcoclust)/N
-    #     list_cost <- lapply(list_mcoclust, function(m){abs(m-similarity)})
-    #     cost <- unlist(lapply(list_cost, sum))
-    
-    #     #Best R implementation 
-    #         cost <- numeric(N)
-    #         vclust2mcoclust <- function(v){
-    #             m <- sapply(v, FUN=function(x){v==x})
-    #             return(m)
-    #         }
-    #         cat("Estimating posterior similarity matrix...\n(this may take some time, complexity in O(n^2))\n")
-    #         similarity <- matrix(0, ncol=n, nrow=n)
-    #         for (i in 1:N){
-    #             similarity <- similarity + vclust2mcoclust(c[[i]])
-    #         }
-    #         similarity <- similarity/N
-    #         cat("DONE!\n")
-    #         cat("Estimating cost of MCMC partitions...\n(this may take some time, complexity in O(n^2))\n")
-    #         for (i in 1:N){
-    #             cost[i] <- sum(abs(vclust2mcoclust(c[[i]])-similarity))
-    #         }
-    #         
+
     cat("Estimating posterior F-measures matrix...\n(this may take some time, complexity in O(n^2))\n")
     cmat <- sapply(c, "[")
     tempC <- Fmeasure_costC(cmat)

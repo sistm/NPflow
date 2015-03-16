@@ -15,6 +15,8 @@
 #'
 #'@seealso mvnpdf, mmvnpdfC
 #'
+#'@author Boris P. Hejblum
+#'
 #'@export
 #'
 #'@examples

@@ -112,7 +112,7 @@ List Fmeasure_costC(NumericMatrix c){
             NumericVector pred_i = c(_,i);
             NumericVector ref_j = c(_,j);
             Fmeas(i,j) = FmeasureC(pred_i, ref_j);
-            Fmeas(j,i) = Fmeas(i,j);
+            Fmeas(j,i) = FmeasureC(ref_j, pred_i); // WATCHOUT: FmeasureC is not symetric
         }
     }
     for(int k=0; k<N; k++){

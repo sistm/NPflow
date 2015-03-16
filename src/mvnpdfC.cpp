@@ -18,6 +18,8 @@ const double log2pi2 = log(2.0 * M_PI)/2;
 //'function. Defaults is \code{TRUE}
 //'@return vector of densities
 //'
+//'@author Boris P. Hejblum
+//'
 //'@export
 //'
 //'@examples

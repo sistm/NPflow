@@ -1,7 +1,8 @@
 .Rproj.user
 .Rhistory
 .Rbuildignore
-NPflow.Rproj
+*.Rproj
+*.db
 *.RData
 *.Rdata
 *.pdf
