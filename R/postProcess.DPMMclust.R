@@ -76,7 +76,7 @@ postProcess.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measur
     }
     
     if(x$clust_distrib!="skewT"){ 
-        stop("clust_distrib is not skewT\n other distrib nort implemented yet")
+        stop("clust_distrib is not skewT\n other distrib not implemented yet")
     }
     
     mle_g <- MLE_gamma(x_invar$alpha)

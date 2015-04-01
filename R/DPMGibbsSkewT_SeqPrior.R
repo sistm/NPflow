@@ -313,7 +313,7 @@ DPMGibbsSkewT_SeqPrior <- function (z, prior, hyperG0, N, nbclust_init,
 
             pfin_log <- apply(X=(p0 - p), MARGIN=1, FUN=function(r){vrais + r})
             
-            if(i>50){browser()}
+            #if(i>50){browser()}
             
             if(is.null(dim(pfin_log))){
                 #only one sampled cluster non empty
