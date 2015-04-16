@@ -7,8 +7,11 @@ logposterior_DPMG <- function(z, mu, Sigma, hyper, c, m, alpha, n, a, b){
     K <- length(indfull)
     
     if(!is.list(mu)){
-        log_vrais <- sum(log(mvnpdf(x = z, mean = mu[, c], varcovM = Sigma[, , c])))
-        log_prior_NiW <-  sum(log(dNiW(mu[,indfull], Sigma[,,indfull], hyperprior=hyper)))
+        log_vrais <- sum(mvnpdf(x = z, mean = mu[, c], varcovM = Sigma[, , c],Log=TRUE))
+        
+      
+        
+        log_prior_NiW <-log(dNiW(mu[,indfull], Sigma[,,indfull], hyperprior=hyper))
     }else{
         log_vrais <- sum(log(mvnpdf(x = z, mean = mu[as.character(c)], varcovM = Sigma[as.character(c)])))
         log_prior_NiW <-  sum(log(dNiW(mu[as.character(indfull)], Sigma[as.character(indfull)], hyperprior=hyper)))

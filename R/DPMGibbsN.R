@@ -201,7 +201,7 @@ DPMGibbsN <- function (z, hyperG0, a, b, N, doPlot=TRUE,
             c[k] <- k
             #cat("cluster ", k, ":\n")
             U_SS[[c[k]]] <- update_SS(z=z[, k], S=hyperG0)
-            NiW <- rNiW(U_SS[[c[k]]])
+            NiW <- rNiW(U_SS[[c[k]]],diagVar=FALSE)
             U_mu[, c[k]] <- NiW[["mu"]]
             U_Sigma[, , c[k]] <- NiW[["S"]]
             m[c[k]] <- m[c[k]]+1
@@ -212,7 +212,7 @@ DPMGibbsN <- function (z, hyperG0, a, b, N, doPlot=TRUE,
             obs_k <- which(c==k)
             #cat("cluster ", k, ":\n")
             U_SS[[k]] <- update_SS(z=z[, obs_k], S=hyperG0)
-            NiW <- rNiW(U_SS[[k]])
+            NiW <- rNiW(U_SS[[k]],diagVar=FALSE)
             U_mu[, k] <- NiW[["mu"]]
             U_Sigma[, , k] <- NiW[["S"]]
             m[k] <- length(obs_k)
@@ -260,7 +260,7 @@ DPMGibbsN <- function (z, hyperG0, a, b, N, doPlot=TRUE,
             obs_j <- which(c==j)
             #cat("cluster ", j, ":\n")
             U_SS[[j]] <- update_SS(z=z[, obs_j], S=hyperG0)
-            NiW <- rNiW(U_SS[[j]])
+            NiW <- rNiW(U_SS[[j]],diagVar=FALSE)
             U_mu[, j] <- NiW[["mu"]]
             U_Sigma[, , j] <- NiW[["S"]]
             #cat("sampled S =", NiW[["S"]], "\n\n\n")
