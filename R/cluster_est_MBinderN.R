@@ -58,7 +58,7 @@ cluster_est_MBinderN<-function(c,Mu,Sigma,lambda,a=1,b=1,logposterior){
       theta_grid<- rbind(theta_grid, cbind(i,uni))
     }
     theta_grid<-theta_grid[-which(theta_grid[,1]==theta_grid[,2]),]
-    theta_grid<-unique(theta_grid)
+    theta_grid<-unique(t(apply(theta_grid,1,FUN=sort)))
     # Number of iterations is the binomial coefficients n=2, k=total number of centers/partition.
     for (i in 1:nrow(theta_grid)){
       mu1<-Mu[,theta_grid[i,1]]
