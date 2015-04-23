@@ -19,6 +19,5 @@ clusDPM <- function(data,
     }
     
     res <- list(data, )
-    
     class(res) <- "NPlow"
 }

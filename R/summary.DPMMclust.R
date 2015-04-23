@@ -38,9 +38,12 @@
 #'@seealso \link{similarityMat}
 #'
 
-summary.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measure", K=10, posterior_approx=FALSE, tol=2, maxit=50){
+summary.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measure", K=10,
+                              posterior_approx=FALSE, tol=2, maxit=50,dist="Normal",lambda=0,a=1,b=1){
     
-    x_invar <- burn.DPMMclust(x, burnin = burnin, thin=thin)
+    x_invar <- burn.DPMMclust(x, burnin = burnin, thin=thin, dist=dist)
+    
+    
     
     #if(!posterior_approx){
     if(lossFn == "F-measure"){
@@ -49,6 +52,11 @@ summary.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measure", 
     }else if(lossFn == "Binder"){
         point_estim <- cluster_est_binder(x_invar$mcmc_partitions, 
                                           logposterior = sapply(x_invar$logposterior_list, sum))
+    }else if(lossFn == "MBinderN"){
+      if (dist!="Normal"){stop("Clusters distribution must be Gaussian")}
+      point_estim <- cluster_est_MBinderN(x_invar$mcmc_partitions,x_invar$listU_mu,
+                                     x_invar$listU_Sigma,lambda,a,b,
+                                     logposterior = sapply(x_invar$logposterior_list, sum))
     }else{
         stop("Specified loss function not available.\n 
              Specify either 'F-measure' or 'Binder' for the lossFn argument.")
