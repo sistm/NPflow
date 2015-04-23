@@ -104,9 +104,10 @@
 #'                  
 #'  plot_ConvDPM(MCMCsample, from=2)
 #'  
+#'  s <- summary(MCMCsample, burnin = 10, thin=2, posterior_approx=FALSE, K=0,dist="Normal",
+#'  lossFn = "MBinderN",lambda=0,a=1,b=1)
 #'  
-#'  
-#'  
+#'  F <- FmeasureC(pred=s$point_estim$c_est, ref=c)
 #'  
 #'  
 #'  # k-means
@@ -168,6 +169,8 @@ DPMGibbsN <- function (z, hyperG0, a, b, N, doPlot=TRUE,
     n <- ncol(z)
     U_mu <- matrix(0, nrow=p, ncol=n)
     U_Sigma = array(0, dim=c(p, p, n))
+    listU_mu<-list()
+    listU_Sigma<-list()
     
     # U_SS is a list where each U_SS[[k]] contains the sufficient
     # statistics associated to cluster k
@@ -218,8 +221,8 @@ DPMGibbsN <- function (z, hyperG0, a, b, N, doPlot=TRUE,
             m[k] <- length(obs_k)
         }
     }
-    
-    
+    listU_mu[[i]]<-U_mu
+    listU_Sigma[[i]]<-U_Sigma
     
     alpha[[i]] <- c(log(n))
     U_SS_list[[i]] <- U_SS
@@ -241,7 +244,7 @@ DPMGibbsN <- function (z, hyperG0, a, b, N, doPlot=TRUE,
         cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
     }
     
-    
+   
     for(i in 2:N){
         nbClust <- length(unique(c))
         alpha[[i]] <- sample_alpha(alpha_old=alpha[[i-1]], n=n, 
@@ -266,7 +269,8 @@ DPMGibbsN <- function (z, hyperG0, a, b, N, doPlot=TRUE,
             #cat("sampled S =", NiW[["S"]], "\n\n\n")
         }
         
-        
+        listU_mu[[i]]<-U_mu
+        listU_Sigma[[i]]<-U_Sigma
         U_SS_list[[i]] <- U_SS[which(m!=0)]
         c_list[[i]] <- c
         logposterior_list[[i]] <- logposterior_DPMG(z, mu=U_mu, Sigma=U_Sigma, 
@@ -285,13 +289,28 @@ DPMGibbsN <- function (z, hyperG0, a, b, N, doPlot=TRUE,
         
     }
     
-    return(list("clusters" = c, "U_mu" = U_mu, "U_Sigma" = U_Sigma, 
-                "partition" = m, "alpha"=alpha, "U_SS_list"=U_SS_list,
-                "c_list" = c_list, "weights_list"=weights_list, 
-                "logposterior_list"=logposterior_list,
+#     return(list("clusters" = c, "U_mu" = U_mu, "U_Sigma" = U_Sigma, 
+#                 "partition" = m, "alpha"=alpha, "U_SS_list"=U_SS_list,
+#                 "c_list" = c_list, "weights_list"=weights_list, 
+#                 "logposterior_list"=logposterior_list,
+#                 "nb_mcmcit"=N,
+#                 "clust_distrib"="Normal",
+#                 "hyperG0"=hyperG0))
+dpmclus <- list("mcmc_partitions" = c_list, 
+                "alpha"=alpha, 
+#                 "U_mu" = U_mu, 
+#                 "U_Sigma" = U_Sigma,
+                "listU_mu"=listU_mu,
+                "listU_Sigma"=listU_Sigma,
+                "U_SS_list"=U_SS_list,
+                "weights_list"=weights_list, 
+                "logposterior_list"=logposterior_list, 
+                "data"=z,
                 "nb_mcmcit"=N,
                 "clust_distrib"="Normal",
-                "hyperG0"=hyperG0))
+                "hyperG0"=hyperG0)
+class(dpmclus) <- "DPMMclust"
+return(dpmclus)
 }
 
 
