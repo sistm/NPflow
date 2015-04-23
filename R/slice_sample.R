@@ -36,23 +36,23 @@ slice_sample <- function(c, m, alpha, z, hyperG0, U_mu, U_Sigma){
         
         # Sample the centers and spread of each new cluster from prior
         for (i in 1:t){
-            NiW <- rNiW(hyperG0)
+            NiW <- rNiW(hyperG0,diagVar=FALSE)
             U_mu[, ind_new[i]] <- NiW[["mu"]]
             U_Sigma[, , ind_new[i]] <- NiW[["S"]]
         }
     }
     
     fullCl_ind <- which(w != 0)
-    
+  
     # likelihood of belonging to each cluster computation
     # sampling clusters
     if(length(fullCl_ind)>1){
         U_mu_full <- sapply(fullCl_ind, function(j) U_mu[, j])
         U_Sigma_list <- lapply(fullCl_ind, function(j) U_Sigma[, ,j])
-        l <- mvnpdfC(z, mean=U_mu_full, varcovM=U_Sigma_list, Log = FALSE)
+        l <- mmvnpdfC(z, mean=U_mu_full, varcovM=U_Sigma_list, Log = FALSE)
         u_mat <- t(sapply(w[fullCl_ind], function(x){as.numeric(u < x)}))
         prob_mat <- u_mat * l
-        
+           
         #fast C++ code
         c <- fullCl_ind[sampleClassC(prob_mat)]        
         #         #slow C++ code
