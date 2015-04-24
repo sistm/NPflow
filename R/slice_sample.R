@@ -83,5 +83,5 @@ slice_sample <- function(c, m, alpha, z, hyperG0, U_mu, U_Sigma){
     #         m_new[c[i]] <- m_new[c[i]] + 1
     #     }
     
-    return(list("c"=c, "m"=m_new, "weights"=w))
+    return(list("c"=c, "m"=m_new, "weights"=w,"U_mu"=U_mu,"U_Sigma"=U_Sigma))
 }
