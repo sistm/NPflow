@@ -184,7 +184,7 @@ DPMGibbsN <- function (z, hyperG0, a, b, N, doPlot=TRUE,
     weights_list <- list()
     
     #store concentration parameter
-    alpha <- list()
+    #alpha <- list()
     
     #store log posterior probability
     logposterior_list <- list()
@@ -224,14 +224,14 @@ DPMGibbsN <- function (z, hyperG0, a, b, N, doPlot=TRUE,
     listU_mu[[i]]<-U_mu
     listU_Sigma[[i]]<-U_Sigma
     
-    alpha[[i]] <- c(log(n))
+    alpha <- c(log(n))
     U_SS_list[[i]] <- U_SS
     c_list[[i]] <- c
     weights_list[[i]] <- numeric(length(m))
     weights_list[[i]][unique(c)] <- table(c)/length(c)
     
     logposterior_list[[i]] <- logposterior_DPMG(z, mu=U_mu, Sigma=U_Sigma, 
-                                                hyper=hyperG0, c=c, m=m, alpha=alpha[[i]], n=n, a=a, b=b)
+                                                hyper=hyperG0, c=c, m=m, alpha=alpha[i], n=n, a=a, b=b)
     
     cat(i, "/", N, " samplings:\n", sep="")
     cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="")
@@ -247,15 +247,17 @@ DPMGibbsN <- function (z, hyperG0, a, b, N, doPlot=TRUE,
    
     for(i in 2:N){
         nbClust <- length(unique(c))
-        alpha[[i]] <- sample_alpha(alpha_old=alpha[[i-1]], n=n, 
-                                K=nbClust, a=a, b=b)
-        slice <- slice_sample(c=c, m=m, alpha=alpha[[i]], 
+        alpha <- c(alpha,sample_alpha(alpha_old=alpha[i-1], n=n, 
+                                K=nbClust, a=a, b=b))
+        
+        slice <- slice_sample(c=c, m=m, alpha=alpha[i], 
                               z=z, hyperG0=hyperG0, 
                               U_mu=U_mu, U_Sigma=U_Sigma)
         m <- slice[["m"]]
         c <- slice[["c"]]        
         weights_list[[i]] <- slice[["weights"]]
-        
+        U_mu<-slice[["U_mu"]]
+        U_Sigma<-slice[["U_Sigma"]]
 
         # Update cluster locations
         fullCl <- which(m!=0)
@@ -274,14 +276,14 @@ DPMGibbsN <- function (z, hyperG0, a, b, N, doPlot=TRUE,
         U_SS_list[[i]] <- U_SS[which(m!=0)]
         c_list[[i]] <- c
         logposterior_list[[i]] <- logposterior_DPMG(z, mu=U_mu, Sigma=U_Sigma, 
-                                                    hyper=hyperG0, c=c, m=m, alpha=alpha[[i]], n=n, a=a, b=b)
+                                                    hyper=hyperG0, c=c, m=m, alpha=alpha[i], n=n, a=a, b=b)
         
         cat(i, "/", N, " samplings:\n", sep="")
         cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="")
         
         if(doPlot && i/plotevery==floor(i/plotevery)){
             plot_DPM(z=z, U_mu=U_mu, U_Sigma=U_Sigma, m=m, c=c, i=i,
-                     alpha=alpha[[i]], U_SS=U_SS, ...)
+                     alpha=alpha[i], U_SS=U_SS, ...)
         }else{
             cl2print <- unique(c)
             cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
