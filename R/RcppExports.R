@@ -130,6 +130,36 @@ Fmeasure_costC_arma_par <- function(c, ncores = 1L) {
 #'
 #'@export
 #'
+lgamma_mv2C <- function(x, p) {
+    .Call('NPflow_lgamma_mv2C', PACKAGE = 'NPflow', x, p)
+}
+
+#' C++ implementation of multivariate Normal inverse Wishart probability density function for multiple inputs
+#'
+#'@param x data matrix of dimension p x n, p being the dimension of the 
+#'data and n the number of data points 
+#'@param Mu mean vectors matrix of dimension p x K, K being the number of 
+#'distributions for which the density probability has to be ealuated
+#'@param varcovM list of length K of variance-covariance matrices, 
+#'each of dimensions p x p
+#'@param U_Nu0 vector of length K of degree of freedom parameters
+#'@param logical flag for returning the log of the probability density 
+#'function. Defaults is \code{TRUE}.
+#'@return matrix of densities of dimension K x n
+#'@export
+#'
+#'
+mmNiWpdfC <- function(Mu, Sigma, U_Mu0, U_Kappa0, U_Nu0, U_Sigma0, Log = TRUE) {
+    .Call('NPflow_mmNiWpdfC', PACKAGE = 'NPflow', Mu, Sigma, U_Mu0, U_Kappa0, U_Nu0, U_Sigma0, Log)
+}
+
+#' C++ implementation of multivariate log gamma function
+#' 
+#'@param x strictly positive real number
+#'@param p integer
+#'
+#'@export
+#'
 lgamma_mvC <- function(x, p) {
     .Call('NPflow_lgamma_mvC', PACKAGE = 'NPflow', x, p)
 }

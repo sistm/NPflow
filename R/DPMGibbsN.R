@@ -203,22 +203,34 @@ DPMGibbsN <- function (z, hyperG0, a, b, N, doPlot=TRUE,
         for (k in 1:n){
             c[k] <- k
             #cat("cluster ", k, ":\n")
-            U_SS[[c[k]]] <- update_SS(z=z[, k], S=hyperG0)
-            NiW <- rNiW(U_SS[[c[k]]],diagVar=FALSE)
-            U_mu[, c[k]] <- NiW[["mu"]]
-            U_Sigma[, , c[k]] <- NiW[["S"]]
-            m[c[k]] <- m[c[k]]+1
+            U_SS[[k]] <- update_SS(z=z[, k, drop=FALSE], S=hyperG0)
+            NiW <- rNiW(U_SS[[k]],diagVar=FALSE)
+            
+            U_mu[, k] <- NiW[["mu"]]
+            U_SS[[k]][["mu"]] <- NiW[["mu"]]
+            
+            U_Sigma[, , k] <- NiW[["S"]]
+            U_SS[[k]][["S"]] <- NiW[["S"]]
+            
+            m[k] <- m[k]+1
+            U_SS[[k]][["weight"]] <- 1/n
         }
     } else{
         c <- sample(x=1:nbclust_init, size=n, replace=TRUE)
         for (k in unique(c)){
             obs_k <- which(c==k)
             #cat("cluster ", k, ":\n")
-            U_SS[[k]] <- update_SS(z=z[, obs_k], S=hyperG0)
+            U_SS[[k]] <- update_SS(z=z[, obs_k,drop=FALSE], S=hyperG0)
             NiW <- rNiW(U_SS[[k]],diagVar=FALSE)
+            
             U_mu[, k] <- NiW[["mu"]]
+            U_SS[[k]][["mu"]] <- NiW[["mu"]]
+            
             U_Sigma[, , k] <- NiW[["S"]]
+            U_SS[[k]][["S"]] <- NiW[["S"]]
+            
             m[k] <- length(obs_k)
+            U_SS[[k]][["weight"]] <- m[k]/n
         }
     }
     listU_mu[[i]]<-U_mu
@@ -264,10 +276,16 @@ DPMGibbsN <- function (z, hyperG0, a, b, N, doPlot=TRUE,
         for(j in fullCl){
             obs_j <- which(c==j)
             #cat("cluster ", j, ":\n")
-            U_SS[[j]] <- update_SS(z=z[, obs_j], S=hyperG0)
+            U_SS[[j]] <- update_SS(z=z[, obs_j,drop=FALSE], S=hyperG0)
             NiW <- rNiW(U_SS[[j]],diagVar=FALSE)
+            
             U_mu[, j] <- NiW[["mu"]]
+            U_SS[[j]][["mu"]] <- NiW[["mu"]]
+            
             U_Sigma[, , j] <- NiW[["S"]]
+            U_SS[[j]][["S"]] <- NiW[["S"]]
+            
+            U_SS[[j]][["weight"]] <- weights_list[[i]][j]
             #cat("sampled S =", NiW[["S"]], "\n\n\n")
         }
         

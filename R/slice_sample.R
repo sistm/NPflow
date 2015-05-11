@@ -22,7 +22,7 @@ slice_sample <- function(c, m, alpha, z, hyperG0, U_mu, U_Sigma){
     # Sample the remaining weights that are needed with stick-breaking
     # i.e. the new clusters
     ind_new <- which(m==0) # potential new clusters
-    if(length(ind_new)>0){
+    if(length(ind_new)>0 & R){
         t <- 0 # the number of new non empty clusters
         while(R>u_star && (t<length(ind_new))){ 
             # sum(w)<1-min(u) <=> R>min(u) car R=1-sum(w)
