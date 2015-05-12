@@ -1,4 +1,4 @@
-slice_sample_parallel <- function(c, m, alpha, z, hyperG0, U_mu, U_Sigma){
+slice_sample_parallel <- function(c, m, alpha, z, hyperG0, U_mu, U_Sigma, diagVar){
     
     maxCl <- length(m) #maximum number of clusters
     ind <- which(m!=0) #indexes of non empty clusters
@@ -42,7 +42,7 @@ slice_sample_parallel <- function(c, m, alpha, z, hyperG0, U_mu, U_Sigma){
             ind_new <- ind_new[1:t]
             # Sample the centers and spread of each new cluster from prior
             for (i in 1:t){
-                NiW <- rNiW(hyperG0)
+                NiW <- rNiW(hyperG0, diagVar)
                 U_mu[[as.character(ind_new[i])]] <- NiW[["mu"]]
                 U_Sigma[[as.character(ind_new[i])]] <- NiW[["S"]]
             }

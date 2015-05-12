@@ -6,6 +6,8 @@
 #'
 #'@keywords internal
 #'
+#'@export
+#'
 
 rNiW <- function(hyper, diagVar){
   
@@ -17,7 +19,7 @@ rNiW <- function(hyper, diagVar){
   # Sample S from an inverse Wishart distribution  
   if(diagVar){
       betas <- diag(lambda0)
-      S <- diag(1/rgamma(n=length(b0_xi), shape=nu0, 
+      S <- diag(1/rgamma(n=length(mu0), shape=nu0, 
                          rate=betas))
   }else{
       S = invwishrnd(n = nu0, lambda = lambda0)

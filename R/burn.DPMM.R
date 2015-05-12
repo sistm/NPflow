@@ -34,35 +34,30 @@ burn.DPMMclust <- function(x, burnin=0, thin=1, dist="Normal"){
   
   if(thin>1){
     select <- c(TRUE, rep(FALSE, thin-1))
-    if (dist=="Normal"){
-      xburnt[["listU_mu"]] <- x[["listU_mu"]][(burnin+1):N][select]
-      xburnt[["listU_Sigma"]] <- x[["listU_Sigma"]][(burnin+1):N][select]
-      xburnt[["mcmc_partitions"]] <- x[["mcmc_partitions"]][(burnin+1):N][select]
-      xburnt[["alpha"]] <- x[["alpha"]][(burnin+1):N][select]
-      xburnt[["U_SS_list"]] <- x[["U_SS_list"]][(burnin+1):N][select]
-      xburnt[["weights_list"]] <- x[["weights_list"]][(burnin+1):N][select]
-      xburnt[["logposterior_list"]] <- x[["logposterior_list"]][(burnin+1):N][select]}
     
     xburnt[["mcmc_partitions"]] <- x[["mcmc_partitions"]][(burnin+1):N][select]
     xburnt[["alpha"]] <- x[["alpha"]][(burnin+1):N][select]
     xburnt[["U_SS_list"]] <- x[["U_SS_list"]][(burnin+1):N][select]
     xburnt[["weights_list"]] <- x[["weights_list"]][(burnin+1):N][select]
     xburnt[["logposterior_list"]] <- x[["logposterior_list"]][(burnin+1):N][select]
-  }else{
     
     if (dist=="Normal"){
-      xburnt[["listU_mu"]] <- x[["listU_mu"]]#[(burnin+1):N]
-      xburnt[["listU_Sigma"]] <- x[["listU_Sigma"]][(burnin+1):N]
-      xburnt[["mcmc_partitions"]] <- x[["mcmc_partitions"]][(burnin+1):N]
-      xburnt[["alpha"]] <- x[["alpha"]][(burnin+1):N]
-      xburnt[["U_SS_list"]] <- x[["U_SS_list"]][(burnin+1):N]
-      xburnt[["weights_list"]] <- x[["weights_list"]][(burnin+1):N]
-      xburnt[["logposterior_list"]] <- x[["logposterior_list"]][(burnin+1):N]}
+      xburnt[["listU_mu"]] <- x[["listU_mu"]][(burnin+1):N][select]
+      xburnt[["listU_Sigma"]] <- x[["listU_Sigma"]][(burnin+1):N][select]
+    }
+
+  }else{
     xburnt[["mcmc_partitions"]] <- x[["mcmc_partitions"]][(burnin+1):N]
     xburnt[["alpha"]] <- x[["alpha"]][(burnin+1):N]
     xburnt[["U_SS_list"]] <- x[["U_SS_list"]][(burnin+1):N]
     xburnt[["weights_list"]] <- x[["weights_list"]][(burnin+1):N]
     xburnt[["logposterior_list"]] <- x[["logposterior_list"]][(burnin+1):N]
+    
+    if (dist=="Normal"){
+      xburnt[["listU_mu"]] <- x[["listU_mu"]]#[(burnin+1):N]
+      xburnt[["listU_Sigma"]] <- x[["listU_Sigma"]][(burnin+1):N]
+    }
+
   }
   
   xburnt[["hyperG0"]] <- x[["hyperG0"]]

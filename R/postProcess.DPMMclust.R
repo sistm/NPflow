@@ -964,11 +964,10 @@ MLE_gamma <- function(g){
 #' U_nu<-list()
 #' U_kappa<-list()
 #' 
-#' 
+#' d <- 2
 #' hyperG0 <- list()
 #' hyperG0[["mu"]] <- rep(1,d)
-#' #'hyperG0[["kappa"]] <- 0.001
-#' hyperG0[["kappa"]] <- 1
+#' hyperG0[["kappa"]] <- 0.01
 #' hyperG0[["nu"]] <- d+1
 #' hyperG0[["lambda"]] <- diag(d)
 #' 
@@ -983,7 +982,7 @@ MLE_gamma <- function(g){
 #' hyperG02 <- list()
 #' hyperG02[["mu"]] <- rep(2,d)
 #' hyperG02[["kappa"]] <- 1
-#' hyperG02[["nu"]] <- d+1
+#' hyperG02[["nu"]] <- d+10
 #' hyperG02[["lambda"]] <- diag(d)/10
 #' 
 #' for(k in 1001:2000){
@@ -993,8 +992,24 @@ MLE_gamma <- function(g){
 #'   U_Sigma[[k]] <-NiW[["S"]]
 #' }
 #' 
-#' ml=MLE_N_mmEM( U_mu, U_Sigma, hyperG0, K=2)
-#' ml
+#' 
+#' mlMLE_N_mmEM( U_mu, U_Sigma, hyperG0, K=2)
+#' 
+#' hyperG0[["mu"]]
+#' hyperG02[["mu"]]
+#' ml$U_mu
+#' 
+#' hyperG0[["lambda"]]
+#' hyperG02[["lambda"]]
+#' ml$U_lambda
+#' 
+#' hyperG0[["nu"]]
+#' hyperG02[["nu"]]
+#' ml$U_nu
+#' 
+#' hyperG0[["kappa"]]
+#' hyperG02[["kappa"]]
+#' ml$U_kappa
 
 
 MLE_N_mmEM <- function( mu_list, S_list, hyperG0, K, maxit=100, tol=1e-1, plot=TRUE){

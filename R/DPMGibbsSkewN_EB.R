@@ -16,6 +16,10 @@
 #'@param doPlot logical flag indicating wether to plot MCMC iteration or not.
 #'Default to \code{TRUE}.
 #'
+#'@param diagVar logical flag indicating wether the variance of each cluster is 
+#'estimated as a diagonal matrix, or as a full matrix. 
+#'Default is \code{TRUE} (diagonal variance).
+#'
 #'@param nbclust_init number of clusters at initialisation. 
 #'Default to 30 (or less if there are less than 30 observations).
 #'

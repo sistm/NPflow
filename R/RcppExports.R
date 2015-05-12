@@ -123,6 +123,48 @@ Fmeasure_costC_arma_par <- function(c, ncores = 1L) {
     .Call('NPflow_Fmeasure_costC_arma_par', PACKAGE = 'NPflow', c, ncores)
 }
 
+#' C++ implementation
+#' 
+#'
+#'@param \code{c} is an MCMC partitions of length \code{n}.
+#'
+#'@param \code{d} is a symmetric \code{n x n} matrix containing distances
+#'between each group distributions.
+#'
+#'@export
+#'
+#'@examples
+#'c <- c(1,1,2,3,2,3)
+#'d <- matrix(runif(length(c)^2),length(c))
+#'NuMatParC(c,d)
+#'
+#'
+NuMatParC <- function(c, d) {
+    .Call('NPflow_NuMatParC', PACKAGE = 'NPflow', c, d)
+}
+
+#' C++ implementation of residual trace computation step used when sampling the scale
+#' 
+#'@param eps
+#'@keywords internal
+#'
+#'@export
+#'
+traceEpsC <- function(eps, sigma) {
+    .Call('NPflow_traceEpsC', PACKAGE = 'NPflow', eps, sigma)
+}
+
+#' Parallel C++ implementation of residual trace computation step used when sampling the scale
+#' 
+#'@param eps
+#'@keywords internal
+#'
+#'@export
+#'
+traceEpsC_par <- function(eps, sigma, ncores = 1L) {
+    .Call('NPflow_traceEpsC_par', PACKAGE = 'NPflow', eps, sigma, ncores)
+}
+
 #' C++ implementation of multivariate log gamma function
 #' 
 #'@param x strictly positive real number
@@ -555,6 +597,8 @@ mmvtpdfC_par <- function(x, mean, varcovM, df, Log = TRUE, ncores = 1L) {
 #'function. Defaults is \code{TRUE}
 #'@return vector of densities
 #'
+#'@author Boris P. Hejblum
+#'
 #'@export
 #'
 #'@examples
@@ -673,26 +717,6 @@ mvstlikC <- function(x, c, clustval, xi, psi, sigma, df, loglik = TRUE) {
 #'@export
 mvstlikC_par <- function(x, c, clustval, xi, psi, sigma, df, loglik = TRUE, ncores = 1L) {
     .Call('NPflow_mvstlikC_par', PACKAGE = 'NPflow', x, c, clustval, xi, psi, sigma, df, loglik, ncores)
-}
-
-#' C++ implementation
-#' 
-#'
-#'@param \code{c} is an MCMC partitions of length \code{n}.
-#'
-#'@param \code{d} is a symmetric \code{n x n} matrix containing distances
-#'between each group distributions.
-#'
-#'@export
-#'
-#'@examples
-#'c <- c(1,1,2,3,2,3)
-#'d <- matrix(runif(length(c)^2),length(c))
-#'NuMatParC(c,d)
-#'
-#'
-NuMatParC <- function(c, d) {
-    .Call('NPflow_NuMatParC', PACKAGE = 'NPflow', c, d)
 }
 
 #' C++ implementation of the multinomial sampling from a matrix 
@@ -822,28 +846,6 @@ similarityMatC <- function(c) {
 #'
 similarityMatC_par <- function(c, ncores = 1L) {
     .Call('NPflow_similarityMatC_par', PACKAGE = 'NPflow', c, ncores)
-}
-
-#' C++ implementation of residual trace computation step used when sampling the scale
-#' 
-#'@param eps
-#'@keywords internal
-#'
-#'@export
-#'
-traceEpsC <- function(eps, sigma) {
-    .Call('NPflow_traceEpsC', PACKAGE = 'NPflow', eps, sigma)
-}
-
-#' Parallel C++ implementation of residual trace computation step used when sampling the scale
-#' 
-#'@param eps
-#'@keywords internal
-#'
-#'@export
-#'
-traceEpsC_par <- function(eps, sigma, ncores = 1L) {
-    .Call('NPflow_traceEpsC_par', PACKAGE = 'NPflow', eps, sigma, ncores)
 }
 
 #' C++ implementation

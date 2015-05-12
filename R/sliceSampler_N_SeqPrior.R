@@ -1,4 +1,4 @@
-sliceSampler_N_SeqPrior<- function(c, m, alpha, z, priorG1, U_mu, U_Sigma){
+sliceSampler_N_SeqPrior<- function(c, m, alpha, z, priorG1, U_mu, U_Sigma, diagVar){
   maxCl <- length(m) #maximum number of clusters
   ind <- which(m!=0) # indexes of non empty clusters
   nbmix_prior <- length(priorG1[["weights"]])
@@ -39,7 +39,7 @@ sliceSampler_N_SeqPrior<- function(c, m, alpha, z, priorG1, U_mu, U_Sigma){
     for (i in 1:t){
       hyper_num <- sample(x=1:nbmix_prior, size=1, prob=priorG1[["weights"]])
       
-      NiW <- rNiW(priorG1[["parameters"]][[hyper_num]],diagVar=FALSE)
+      NiW <- rNiW(priorG1[["parameters"]][[hyper_num]], diagVar)
       U_mu[, ind_new[i]] <- NiW[["mu"]]
       U_Sigma[, , ind_new[i]] <- NiW[["S"]]
     }

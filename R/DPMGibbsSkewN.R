@@ -19,6 +19,9 @@
 #'@param nbclust_init number of clusters at initialisation. 
 #'Default to 30 (or less if there are less than 30 observations).
 #'
+#'@param diagVar logical flag indicating wether the variance of a cluster is a diagonal matrice. 
+#'Default is \code{FALSE} (full matrix).
+#'
 #'@param verbose logical flag indicating wether partition info is 
 #'written in the console at each MCMC iteration.
 #'

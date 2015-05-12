@@ -99,9 +99,9 @@ sliceSampler_skewT_parC <- function(c, m, alpha, z, hyperG0, U_xi, U_psi,
     for (k in which(m_new!=0)){
         obs_k <- which(c==k)
         siginv <- solve(U_Sigma[, , k])
-        psi <- U_psi[,k]
+        psi <- U_psi[,k, drop=FALSE]
         A_k <-  1/(1 + (crossprod(psi, siginv)%*%psi))
-        a_ik <- (tcrossprod(A_k, psi)%*%siginv%*%(z[,obs_k]-U_xi[,k]))
+        a_ik <- (tcrossprod(A_k, psi)%*%siginv%*%(z[,obs_k, drop=FALSE]-U_xi[,k]))
         A_k <- A_k/scale[obs_k]
         ltn[obs_k] <- rtruncnorm(length(obs_k), a=0, b=Inf, mean = a_ik, sd = sqrt(A_k))
     }

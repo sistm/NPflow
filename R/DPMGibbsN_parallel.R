@@ -20,8 +20,12 @@
 #'@param nbclust_init number of clusters at initialisation. 
 #'Default to 30 (or less if there are less than 30 observations).
 #'
-#'@param verbose logical flag indicating whether the MCMC iterations 
-#'are printed in the log.  Default is \code{FALSE}.
+#'@param diagVar logical flag indicating wether the variance of each cluster is 
+#'estimated as a diagonal matrix, or as a full matrix. 
+#'Default is \code{TRUE} (diagonal variance).
+#'
+#'@param verbose logical flag indicating wether partition info is 
+#'written in the console at each MCMC iteration.
 #'
 #'@author Boris Hejblum
 #'
@@ -92,170 +96,171 @@
 #' 
 #'
 DPMGibbsN_parallel <- function (Ncpus, type_connec,
-                                         z, hyperG0, a, b, N, doPlot=TRUE, 
-                                         nbclust_init=30, plotevery=1, 
-                                         verbose=FALSE, ...){
+                                z, hyperG0, a, b, N, doPlot=TRUE, 
+                                nbclust_init=30, plotevery=1,
+                                diagVar=TRUE, verbose=TRUE,
+                                ...){
+  
+  if(doPlot){library(ggplot2)}
+  library(doSNOW)
+  
+  p <- nrow(z)
+  n <- ncol(z)
+  U_mu <- matrix(0, nrow=p, ncol=n)
+  U_Sigma = array(0, dim=c(p, p, n))
+  
+  # U_SS is a list where each U_SS[[k]] contains the sufficient
+  # statistics associated to cluster k
+  U_SS <- list()
+  
+  #store U_SS :
+  U_SS_list <- list()
+  #store clustering :
+  c_list <- list()
+  #store sliced weights
+  weights_list <- list()
+  
+  #store log posterior probability
+  logposterior_list <- list()
+  
+  
+  m <- numeric(n) # number of obs in each clusters
+  c <-numeric(n) # initial number of clusters
+  
+  # declare the cores
+  cl <- makeCluster(Ncpus, type = type_connec)
+  registerDoSNOW(cl)
+  
+  
+  # Initialisation----
+  # each observation is assigned to a different cluster
+  # or to 1 of the 50 initial clusters if there are more than
+  # 50 observations
+  
+  i <- 1
+  if(n < nbclust_init){       
+    c <- sample(x=1:ncol(z), size=n, replace=FALSE)
+  }else{
+    c <- sample(x=1:nbclust_init, size=n, replace=TRUE)
+  }
+  
+  browser()
+  
+  res <- foreach(k=unique(c), .packages="NPflow")%dopar%{
+    obs_k <- which(c==k)
+    U_SS_par <- update_SS(z=z[, obs_k], S=hyperG0)
+    NiW <- rNiW(U_SS_par, diagVar)
+    U_mu_par <- NiW[["mu"]]
+    U_Sigma_par <- NiW[["S"]]
+    m_par <- length(obs_k)
+    list("U_SS_par"=U_SS_par, "U_mu_par"=U_mu_par, 
+         "U_Sigma_par"=U_Sigma_par, "m_par"=m_par)
+  }
+  
+  U_SS <- lapply(res, FUN="[[", "U_SS_par")
+  names(U_SS) <- unique(c)
+  U_mu <- lapply(res, FUN="[[", "U_mu_par")
+  names(U_mu) <- unique(c)
+  U_Sigma <- lapply(res, FUN="[[", "U_Sigma_par")
+  names(U_Sigma) <- unique(c)
+  m[unique(c)] <- unlist(lapply(res, FUN="[[", "m_par"))
+  
+  
+  
+  alpha <- log(n)
+  
+  U_SS_list[[i]] <- U_SS
+  c_list[[i]] <- c
+  weights_list[[1]] <- numeric(length(m))
+  weights_list[[1]][unique(c)] <- table(c)/length(c)
+  
+  logposterior_list[[i]] <- logposterior_DPMG(z=z, mu=U_mu, Sigma=U_Sigma,
+                                              hyper=hyperG0, m=m, 
+                                              c=c, alpha=alpha[i], 
+                                              n=n, a=a, b=b)
+  
+  if(verbose){    
+    cat(i, "/", N, " samplings:\n", sep="")
+    cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="")
+    cl2print <- unique(c)
+    cat("  ",length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
+  }
+  
+  if(doPlot){
+    plot_DPM(z=z, U_mu=U_mu, U_Sigma=U_Sigma, 
+             m=m, c=c, i=i, alpha=alpha[length(alpha)], U_SS=U_SS, ...)
+  }
+  
+  
+  
+  
+  # MCMC iterations
+  
+  for(i in 2:N){
+    nbClust <- length(unique(c))
+    alpha <- c(alpha,
+               sample_alpha(alpha_old=alpha[i-1], n=n, 
+                            K=nbClust, a=a, b=b)
+    )
+    slice <- slice_sample_parallel(c=c, m=m, alpha=alpha[i], 
+                                   z=z, hyperG0=hyperG0, 
+                                   U_mu=U_mu, U_Sigma=U_Sigma, diagVar=diagVar)
+    m <- slice[["m"]]
+    c <- slice[["c"]]
+    weights_list[[i]] <- slice[["weights"]]
     
-    if(doPlot){library(ggplot2)}
-    library(doSNOW)
     
-    p <- nrow(z)
-    n <- ncol(z)
-    U_mu <- matrix(0, nrow=p, ncol=n)
-    U_Sigma = array(0, dim=c(p, p, n))
-    
-    # U_SS is a list where each U_SS[[k]] contains the sufficient
-    # statistics associated to cluster k
-    U_SS <- list()
-    
-    #store U_SS :
-    U_SS_list <- list()
-    #store clustering :
-    c_list <- list()
-    #store sliced weights
-    weights_list <- list()
-    
-    #store log posterior probability
-    logposterior_list <- list()
-    
-    
-    m <- numeric(n) # number of obs in each clusters
-    c <-numeric(n) # initial number of clusters
-    
-    # declare the cores
-    cl <- makeCluster(Ncpus, type = type_connec)
-    registerDoSNOW(cl)
-    
-    
-    # Initialisation----
-    # each observation is assigned to a different cluster
-    # or to 1 of the 50 initial clusters if there are more than
-    # 50 observations
-    
-    i <- 1
-    if(n < nbclust_init){       
-        c <- sample(x=1:ncol(z), size=n, replace=FALSE)
-    }else{
-        c <- sample(x=1:nbclust_init, size=n, replace=TRUE)
-    }
-    
-    browser()
-    
-    res <- foreach(k=unique(c), .packages="NPflow")%dopar%{
-        obs_k <- which(c==k)
-        U_SS_par <- update_SS(z=z[, obs_k], S=hyperG0)
-        NiW <- rNiW(U_SS_par)
-        U_mu_par <- NiW[["mu"]]
-        U_Sigma_par <- NiW[["S"]]
-        m_par <- length(obs_k)
-        list("U_SS_par"=U_SS_par, "U_mu_par"=U_mu_par, 
-             "U_Sigma_par"=U_Sigma_par, "m_par"=m_par)
+    # Update cluster locations
+    fullCl <- which(m!=0)
+    res <- foreach(k=fullCl, .packages="NPflow")%dopar%{
+      obs_k <- which(c==k)
+      U_SS_par <- update_SS(z=z[, obs_k], S=hyperG0)
+      NiW <- rNiW(U_SS_par, diagVar)
+      U_mu_par <- NiW[["mu"]]
+      U_Sigma_par <- NiW[["S"]]
+      list("U_SS_par"=U_SS_par, "U_mu_par"=U_mu_par, 
+           "U_Sigma_par"=U_Sigma_par)
     }
     
     U_SS <- lapply(res, FUN="[[", "U_SS_par")
-    names(U_SS) <- unique(c)
+    names(U_SS) <- as.character(fullCl)
     U_mu <- lapply(res, FUN="[[", "U_mu_par")
-    names(U_mu) <- unique(c)
+    names(U_mu) <- as.character(fullCl)
     U_Sigma <- lapply(res, FUN="[[", "U_Sigma_par")
-    names(U_Sigma) <- unique(c)
-    m[unique(c)] <- unlist(lapply(res, FUN="[[", "m_par"))
-    
-    
-    
-    alpha <- log(n)
+    names(U_Sigma) <- as.character(fullCl)
     
     U_SS_list[[i]] <- U_SS
     c_list[[i]] <- c
-    weights_list[[1]] <- numeric(length(m))
-    weights_list[[1]][unique(c)] <- table(c)/length(c)
     
-    logposterior_list[[i]] <- logposterior_DPMG(z=z, mu=U_mu, Sigma=U_Sigma,
-                                                hyper=hyperG0, m=m, 
-                                                c=c, alpha=alpha[i], 
-                                                n=n, a=a, b=b)
+    
+    logposterior_list[[i]]  <- logposterior_DPMG(z=z, mu=U_mu, Sigma=U_Sigma,
+                                                 hyper=hyperG0, m=m, 
+                                                 c=c, alpha=alpha[i], 
+                                                 n=n, a=a, b=b)
     
     if(verbose){    
-        cat(i, "/", N, " samplings:\n", sep="")
-        cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="")
-        cl2print <- unique(c)
-        cat("  ",length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
+      cat(i, "/", N, " samplings:\n", sep="")
+      cat("  logposterior = ", sum(logposterior_list[[i]]) , "\n", sep="")
+      cl2print <- unique(c)
+      cat("  ",length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
     }
     
-    if(doPlot){
-        plot_DPM(z=z, U_mu=U_mu, U_Sigma=U_Sigma, 
-                 m=m, c=c, i=i, alpha=alpha[length(alpha)], U_SS=U_SS, ...)
+    if(doPlot && i/plotevery==floor(i/plotevery)){
+      plot_DPM(z=z, U_mu=U_mu, U_Sigma=U_Sigma, 
+               m=m, c=c, i=i, alpha=alpha[length(alpha)], U_SS=U_SS, ...)
     }
     
-    
-    
-    
-    # MCMC iterations
-    
-    for(i in 2:N){
-        nbClust <- length(unique(c))
-        alpha <- c(alpha,
-                   sample_alpha(alpha_old=alpha[i-1], n=n, 
-                                K=nbClust, a=a, b=b)
-        )
-        slice <- slice_sample_parallel(c=c, m=m, alpha=alpha[i], 
-                                       z=z, hyperG0=hyperG0, 
-                                       U_mu=U_mu, U_Sigma=U_Sigma)
-        m <- slice[["m"]]
-        c <- slice[["c"]]
-        weights_list[[i]] <- slice[["weights"]]
-        
-        
-        # Update cluster locations
-        fullCl <- which(m!=0)
-        res <- foreach(k=fullCl, .packages="NPflow")%dopar%{
-            obs_k <- which(c==k)
-            U_SS_par <- update_SS(z=z[, obs_k], S=hyperG0)
-            NiW <- rNiW(U_SS_par)
-            U_mu_par <- NiW[["mu"]]
-            U_Sigma_par <- NiW[["S"]]
-            list("U_SS_par"=U_SS_par, "U_mu_par"=U_mu_par, 
-                 "U_Sigma_par"=U_Sigma_par)
-        }
-        
-        U_SS <- lapply(res, FUN="[[", "U_SS_par")
-        names(U_SS) <- as.character(fullCl)
-        U_mu <- lapply(res, FUN="[[", "U_mu_par")
-        names(U_mu) <- as.character(fullCl)
-        U_Sigma <- lapply(res, FUN="[[", "U_Sigma_par")
-        names(U_Sigma) <- as.character(fullCl)
-        
-        U_SS_list[[i]] <- U_SS
-        c_list[[i]] <- c
-        
-        
-        logposterior_list[[i]]  <- logposterior_DPMG(z=z, mu=U_mu, Sigma=U_Sigma,
-                                                     hyper=hyperG0, m=m, 
-                                                     c=c, alpha=alpha[i], 
-                                                     n=n, a=a, b=b)
-        
-        if(verbose){    
-            cat(i, "/", N, " samplings:\n", sep="")
-            cat("  logposterior = ", sum(logposterior_list[[i]]) , "\n", sep="")
-            cl2print <- unique(c)
-            cat("  ",length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
-        }
-        
-        if(doPlot && i/plotevery==floor(i/plotevery)){
-            plot_DPM(z=z, U_mu=U_mu, U_Sigma=U_Sigma, 
-                     m=m, c=c, i=i, alpha=alpha[length(alpha)], U_SS=U_SS, ...)
-        }
-        
-    }
-    
-    stopCluster(cl)
-    
-    return(list("clusters" = c, "U_mu" = U_mu, "U_Sigma" = U_Sigma, 
-                "partition" = m, "alpha"=alpha, "U_SS_list"=U_SS_list,
-                "c_list" = c_list, "weights_list"=weights_list, 
-                "logposterior_list"=logposterior_list,
-                "nb_mcmcit"=N,
-                "clust_distrib"="Normal",
-                "hyperG0"=hyperG0))
+  }
+  
+  stopCluster(cl)
+  
+  return(list("clusters" = c, "U_mu" = U_mu, "U_Sigma" = U_Sigma, 
+              "partition" = m, "alpha"=alpha, "U_SS_list"=U_SS_list,
+              "c_list" = c_list, "weights_list"=weights_list, 
+              "logposterior_list"=logposterior_list,
+              "nb_mcmcit"=N,
+              "clust_distrib"="Normal",
+              "hyperG0"=hyperG0))
 }
 
 

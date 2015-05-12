@@ -1,4 +1,4 @@
-slice_sample <- function(c, m, alpha, z, hyperG0, U_mu, U_Sigma){
+slice_sample <- function(c, m, alpha, z, hyperG0, U_mu, U_Sigma, diagVar){
     
     maxCl <- length(m) #maximum number of clusters
     ind <- which(m!=0) # indexes of non empty clusters
@@ -14,7 +14,6 @@ slice_sample <- function(c, m, alpha, z, hyperG0, U_mu, U_Sigma){
     R <- temp_norm[length(temp_norm)] 
     #R is the rest, i.e. the weight for potential new clusters
     
-    
     # Sample the latent u
     u  <- runif(maxCl)*w[c]
     u_star <- min(u)
@@ -22,7 +21,7 @@ slice_sample <- function(c, m, alpha, z, hyperG0, U_mu, U_Sigma){
     # Sample the remaining weights that are needed with stick-breaking
     # i.e. the new clusters
     ind_new <- which(m==0) # potential new clusters
-    if(length(ind_new)>0 & R){
+    if(length(ind_new)>0){
         t <- 0 # the number of new non empty clusters
         while(R>u_star && (t<length(ind_new))){ 
             # sum(w)<1-min(u) <=> R>min(u) car R=1-sum(w)
@@ -36,7 +35,7 @@ slice_sample <- function(c, m, alpha, z, hyperG0, U_mu, U_Sigma){
         
         # Sample the centers and spread of each new cluster from prior
         for (i in 1:t){
-            NiW <- rNiW(hyperG0,diagVar=FALSE)
+            NiW <- rNiW(hyperG0, diagVar)
             U_mu[, ind_new[i]] <- NiW[["mu"]]
             U_Sigma[, , ind_new[i]] <- NiW[["S"]]
         }

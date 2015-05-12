@@ -20,6 +20,10 @@
 #'@param nbclust_init number of clusters at initialisation. 
 #'Default to 30 (or less if there are less than 30 observations).
 #'
+#'@param diagVar logical flag indicating wether the variance of each cluster is 
+#'estimated as a diagonal matrix, or as a full matrix. 
+#'Default is \code{TRUE} (diagonal variance).
+#'
 #'@param verbose logical flag indicating wether partition info is 
 #'written in the console at each MCMC iteration.
 #'
@@ -104,8 +108,8 @@
 #' 
 #' # Gibbs sampler for Dirichlet Process Mixtures
 #' ##############################################
-#' Rprof("Rprof.out")
-#' MCMCsample <- DPMGibbsN(z, hyperG0, a, b, N=2000, doPlot, nbclust_init, plotevery=500)
+#' MCMCsample <- DPMGibbsN(z, hyperG0, a, b, N=2000, doPlot, nbclust_init, 
+#'                         plotevery=200, diagVar=FALSE)
 #' 
 #' s <- summary(MCMCsample, posterior_approx=TRUE, burnin = 1750, thin=2 ,K=4)
 #' F1 <- FmeasureC(pred=s$point_estim$c_est, ref=c)
@@ -199,7 +203,7 @@ DPMGibbsN_SeqPrior <- function (z, prior, hyperG0, N, nbclust_init,
     priormix <- priorG1[["parameters"]][[hyper_num]]
     
     U_SS[[k]] <- update_SS(z=z[, obs_k], S=priormix)
-    NiW <- rNiW(U_SS[[k]],diagVar=FALSE)
+    NiW <- rNiW(U_SS[[k]], diagVar)
     U_mu[, k] <- NiW[["mu"]]
     U_SS[[k]][["mu"]] <- NiW[["mu"]]
     U_Sigma[, , k] <- NiW[["S"]]
@@ -247,7 +251,7 @@ DPMGibbsN_SeqPrior <- function (z, prior, hyperG0, N, nbclust_init,
     
     slice <- sliceSampler_N_SeqPrior(c=c, m=m, alpha=alpha[i], 
                                      z=z, priorG1=priorG1, 
-                                     U_mu=U_mu, U_Sigma=U_Sigma)
+                                     U_mu=U_mu, U_Sigma=U_Sigma, diagVar=diagVar)
     
     m <- slice[["m"]]
     c <- slice[["c"]]
@@ -349,7 +353,7 @@ DPMGibbsN_SeqPrior <- function (z, prior, hyperG0, N, nbclust_init,
       U_SS[[j]] <- update_SS(z=z[, obs_j, drop=FALSE], S=priormix)
       
       
-      NiW <- rNiW(U_SS[[j]],diagVar=FALSE)
+      NiW <- rNiW(U_SS[[j]], diagVar)
       U_mu[, j] <- NiW[["mu"]]
       U_SS[[j]][["mu"]] <- NiW[["mu"]]
       U_Sigma[, , j] <- NiW[["S"]]
@@ -363,7 +367,7 @@ DPMGibbsN_SeqPrior <- function (z, prior, hyperG0, N, nbclust_init,
     U_SS_list[[i]] <- U_SS[which(m!=0)] 
     c_list[[i]] <- c
     
-    logposterior_list[[i]] <- ogposterior_DPMG(z, mu=U_mu, Sigma=U_Sigma, 
+    logposterior_list[[i]] <- logposterior_DPMG(z, mu=U_mu, Sigma=U_Sigma, 
                                                hyper=hyperG0, c=c, m=m, alpha=alpha[i], n=n, a=a, b=b)
     
    
