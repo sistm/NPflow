@@ -115,7 +115,8 @@ prioralpha <- data.frame("alpha"=rgamma(n=5000, shape=a, scale=1/b),
 
 # Gibbs sampler for Dirichlet Process Mixtures
 ##############################################
-MCMCsample <- DPMGibbsN(z, hyperG0, a, b, N=2000, doPlot, nbclust_init, plotevery=500)
+MCMCsample <- DPMGibbsN(z, hyperG0, a, b, N=2000, doPlot, nbclust_init,
+                        plotevery=200, diagVar=FALSE)
 
 s <- summary(MCMCsample, posterior_approx=TRUE, burnin = 1750, thin=2 ,K=4)
 F1 <- FmeasureC(pred=s$point_estim$c_est, ref=c)

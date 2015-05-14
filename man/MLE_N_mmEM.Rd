@@ -48,7 +48,7 @@ for(k in 1001:2000){
 }
 
 
-mlMLE_N_mmEM( U_mu, U_Sigma, hyperG0, K=2)
+MLE_N_mmEM( U_mu, U_Sigma, hyperG0, K=2)
 
 hyperG0[["mu"]]
 hyperG02[["mu"]]
