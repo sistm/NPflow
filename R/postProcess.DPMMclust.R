@@ -40,8 +40,6 @@
 postProcess.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measure", K=10,...){
   
   x_invar <- burn.DPMMclust(x, burnin = burnin, thin=thin)
-  
-  
   #   xi_list <- list()
   #   psi_list <- list()
   #   S_list <- list()
@@ -81,7 +79,6 @@ postProcess.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measur
   
   if(x$clust_distrib=="skewT"){
     
-    
     xi_list <- list()
     psi_list <- list()
     S_list <- list()
@@ -111,12 +108,12 @@ postProcess.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measur
       MAPprior <- x_invar$hyperG0
       #MAPprior$lambda <-10*MAPprior$lambda
       param_post_list <- list()
-      for (j in 1:1){
-        param_post_list[[j]] <- MAP_skewT_mmEM(xi_list, psi_list, S_list, 
-                                               hyperG0 = MAPprior, K=K, verbose=FALSE,...)
+      for (j in 1:10){
+#         param_post_list[[j]] <- MAP_skewT_mmEM(xi_list, psi_list, S_list, 
+#                                                hyperG0 = MAPprior, K=K, verbose=FALSE,...)
+#         
         
-        
-        #         param_post_list[[j]] <-MLE_skewT_mmEM(xi_list, psi_list, S_list, x_invar$hyperG0, K, maxit=100, tol=1E-1, plot=TRUE)
+        param_post_list[[j]] <- MLE_skewT_mmEM(xi_list, psi_list, S_list, x_invar$hyperG0, K, maxit=100, tol=1E-1, plot=TRUE)
         
         cat("EM ", j, "/10 computed", "\n", sep="")
       }
@@ -292,7 +289,7 @@ MLE_skewT_mmEM <- function( xi_list, psi_list, S_list, hyperG0, K, maxit=100, to
     #M step
     N_k <- rowSums(r)
     weights  <- N_k/N
-#     weights <- rep(1/K, K)
+    #     weights <- rep(1/K, K)
     cat("weights:", weights, "\n")
     
     for(k in 1:K){
@@ -942,8 +939,6 @@ MLE_N_mmEM <- function( mu_list, S_list, hyperG0, K, maxit=100, tol=1e-1, plot=T
   
   for(i in 1:maxit){
     
-    
-    cat(i,"\n")
     #E step
     
     r <- mmNiWpdfC(Mu=sapply(mu_list, "["), Sigma=S_list, 
@@ -951,7 +946,6 @@ MLE_N_mmEM <- function( mu_list, S_list, hyperG0, K, maxit=100, tol=1e-1, plot=T
                    U_Kappa0=sapply(U_kappa, "["), 
                    U_Nu0=sapply(U_nu, "["), 
                    U_Sigma0=U_Sigma,Log=TRUE)
-    
     
     logexptrick_const <- apply(X=r, MARGIN=2, FUN=max)
     r_log_const <- apply(X=r, MARGIN=1, FUN=function(rv){rv-logexptrick_const})
@@ -967,10 +961,6 @@ MLE_N_mmEM <- function( mu_list, S_list, hyperG0, K, maxit=100, tol=1e-1, plot=T
     
     for(k in 1:K){
       
-     
-      
-      r_mu<-apply(X=sapply(mu_list, FUN="["), MARGIN=1, FUN=function(x){r[k, ]*x})
-      
       rSinv_list <- mapply(S = S_list, 
                            rik = as.list(r[k, ]), 
                            FUN=function(S, rik){rik*solve(S)}, 
@@ -980,11 +970,11 @@ MLE_N_mmEM <- function( mu_list, S_list, hyperG0, K, maxit=100, tol=1e-1, plot=T
       
       
       U_mu[[k]]<-Reduce('+',lapply(1:N, 
-                              function(i,m) {t(r_mu[[i]])%*%m[[i]]}, 
-                              m=rSinv_list))%*% solve(rSinv_sum) 
+                                   function(i,m) {r[k,i]*mu_list[[i]]%*%m[[i]]}, 
+                                   m=rSinv_list))%*% solve(rSinv_sum) 
       
       
-      mu_m <- lapply(mu_list, function(x){x - U_mu[[k]]})
+      mu_m <- lapply(mu_list, function(x){x - as.vector(U_mu[[k]])})
       
       U_kappa[[k]] <- (N_k[k]*d)/sum(mapply(x = mu_m, rSinv = rSinv_list,
                                             FUN=function(x,rSinv){
@@ -1086,12 +1076,22 @@ MLE_skewT <- function( xi_list, psi_list, S_list, plot=TRUE){
   }
   
   
-  U_xi <- unlist(rowSums(sapply(xi_list, FUN="["))/N)
-  U_psi <- unlist(rowSums(sapply(psi_list, FUN="["))/N)
-  xim <- lapply(xi_list, function(x){x - U_xi})
-  psim <- lapply(psi_list, function(x){x - U_psi})
   Sinv_list <- lapply(S_list, solve)
   Sinv_sum <- Reduce('+', Sinv_list)
+  
+  
+  U_xi_U_psi<-Reduce('+',lapply(1:N, 
+                                function(i,m) {rbind(xi_list[[i]],psi_list[[i]])%*%m[[i]]}, 
+                                m=Sinv_list))%*% solve(Sinv_sum)
+  
+  
+  U_xi<-U_xi_U_psi[1,]
+  U_psi<-U_xi_U_psi[2,]
+  
+  
+  xim <- lapply(xi_list, function(x){x - U_xi})
+  psim <- lapply(psi_list, function(x){x - U_psi})
+  
   U_B <- N*d*solve(matrix(rowSums(mapply(x = xim, p = psim, Si = Sinv_list, FUN=function(x,p,Si){
     v <- rbind(x, p)
     tcrossprod(v%*%Si,v)  
@@ -1115,7 +1115,6 @@ MLE_skewT <- function( xi_list, psi_list, S_list, plot=TRUE){
               "U_Sigma" = U_Sigma))
   
 }
-
 #'MLE for NiW distributed observations
 # 
 #'Maximum likelihood estimation of Normal inverse Wishart distributed observations
