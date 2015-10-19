@@ -1,4 +1,4 @@
-PKG_LIBS = -fopenmp $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) $(SHLIB_OPENMP_CXXFLAGS) \
-$(shell "Rscript" -e "Rcpp:::LdFlags()")
-
+PKG_LIBS = -fopenmp $(SHLIB_OPENMP_CXXFLAGS) \
+			$(BLAS_LIBS) $(FLIBS) $(LAPACK_LIBS)
+			
 PKG_CPPFLAGS = -fopenmp -DNDEBUG
