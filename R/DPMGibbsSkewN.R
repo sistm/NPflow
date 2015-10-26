@@ -388,7 +388,8 @@ DPMGibbsSkewN <- function (z, hyperG0, a, b, N, doPlot=TRUE,
         for (k in 1:n){
             c[k] <- k
             #cat("cluster ", k, ":\n")
-            U_SS[[k]] <- update_SSsn(z=z[, k], S=hyperG0, ltn=ltn[k])
+            U_SS[[k]] <- update_SSsn(z=z[, k], S=hyperG0, ltn=ltn[k], 
+                                     hyperprior = NULL)
             NNiW <- rNNiW(U_SS[[k]], diagVar)
             U_xi[, k] <- NNiW[["xi"]]
             U_SS[[k]][["xi"]] <- NNiW[["xi"]]
@@ -404,7 +405,8 @@ DPMGibbsSkewN <- function (z, hyperG0, a, b, N, doPlot=TRUE,
         for (k in unique(c)){
             obs_k <- which(c==k)
             #cat("cluster ", k, ":\n")
-            U_SS[[k]] <- update_SSsn(z=z[, obs_k], S=hyperG0, ltn=ltn[obs_k])
+            U_SS[[k]] <- update_SSsn(z=z[, obs_k], S=hyperG0, ltn=ltn[obs_k],
+                                     hyperprior = NULL)
             NNiW <- rNNiW(U_SS[[k]], diagVar)
             U_xi[, k] <- NNiW[["xi"]]
             U_SS[[k]][["xi"]] <- NNiW[["xi"]]
@@ -467,7 +469,8 @@ DPMGibbsSkewN <- function (z, hyperG0, a, b, N, doPlot=TRUE,
             for(j in fullCl){
                 obs_j <- which(c==j)
                 #cat("cluster ", j, ":\n")
-                U_SS[[j]] <- update_SSsn(z=z[, obs_j], S=hyperG0,  ltn=ltn[obs_j])
+                U_SS[[j]] <- update_SSsn(z=z[, obs_j], S=hyperG0,  ltn=ltn[obs_j],
+                                         hyperprior = list("Sigma"=U_Sigma[,,j]))
                 NNiW <- rNNiW(U_SS[[j]], diagVar)
                 U_xi[, j] <- NNiW[["xi"]]
                 U_SS[[j]][["xi"]] <- NNiW[["xi"]]

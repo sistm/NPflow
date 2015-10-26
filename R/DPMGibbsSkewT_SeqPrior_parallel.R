@@ -220,7 +220,8 @@ DPMGibbsSkewT_SeqPrior_parallel <- function (Ncpus, type_connec,
         obs_k <- which(c==k)
         hyper_num <- sample(x=1:nbmix_prior, size=1)#, prob=priorG1$weights)
         priormix <- priorG1[["parameters"]][[hyper_num]]
-        U_SS[[k]] <- update_SSst(z=z[, obs_k], S=priormix, ltn=ltn[obs_k], scale=sc[obs_k], df=U_df[k])
+        U_SS[[k]] <- update_SSst(z=z[, obs_k], S=priormix, ltn=ltn[obs_k], 
+                                 scale=sc[obs_k], df=U_df[k], hyperprior = NULL)
         
         NNiW <- rNNiW(U_SS[[k]], diagVar)
         U_xi[, k] <- NNiW[["xi"]]
@@ -308,7 +309,7 @@ DPMGibbsSkewT_SeqPrior_parallel <- function (Ncpus, type_connec,
                                                         S=priorG1[["parameters"]][[l]], 
                                                         ltn=ltn[obs_j], scale=sc[obs_j], 
                                                         df=U_df[j], 
-                                                        hyperprior=NULL 
+                                                        hyperprior = NULL 
                     )
                 }
                 p[,k] <- mmsNiWpdfC(xi=U_xi[,j, drop=FALSE], psi=U_psi[,j, drop=FALSE], Sigma=list(U_Sigma[,,j]), 
@@ -365,7 +366,7 @@ DPMGibbsSkewT_SeqPrior_parallel <- function (Ncpus, type_connec,
                 U_SS[[j]] <- update_SSst(z=z[, obs_j, drop=FALSE], S=priormix, 
                                          ltn=ltn[obs_j], scale=sc[obs_j], 
                                          df=U_df[j], 
-                                         hyperprior = NULL 
+                                         hyperprior = list("Sigma"=U_Sigma[,,j]) 
                 )
                 
                 U_nu[j] <- U_SS[[j]][["nu"]]

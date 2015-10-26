@@ -105,5 +105,6 @@ sliceSampler_SkewN <- function(c, m, alpha, z, hyperG0, U_xi, U_psi,
         ltn[obs_k] <- rtruncnorm(length(obs_k), a=0, b=Inf, mean = a_ik, sd = sqrt(A_k))
     }
     
-    return(list("c"=c, "m"=m_new, "weights"=w, "latentTrunc"=ltn))
+    return(list("c"=c, "m"=m_new, "weights"=w, "latentTrunc"=ltn,
+                "xi"=U_xi, "psi"=U_psi, "Sigma"=U_Sigma))
 }

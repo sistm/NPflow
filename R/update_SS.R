@@ -8,7 +8,7 @@
 #'@export update_SS
 
 
-update_SS <- function(z, S){
+update_SS <- function(z, S, hyperprior=NULL){
   S_up <- S
   mu0 <- S[["mu"]]
   kappa0 <- S[["kappa"]]
@@ -19,22 +19,37 @@ update_SS <- function(z, S){
     zbar <- apply(X=z, MARGIN=1, FUN=mean)
     
     kappa1 <- kappa0 + n
+    
     nu1 <- nu0 + n
+    
     mu1 <- n/(kappa0 + n)*zbar + kappa0/(kappa0 + n)*mu0
-    varz <- (z[,1]-zbar)%*%t(z[,1]-zbar)
+    
+    varz <- tcrossprod(z[,1]-zbar)
     for(j in 2:n){
-      varz <- varz + (z[,j]-zbar)%*%t(z[,j]-zbar)
+      varz <- varz + tcrossprod(z[,j]-zbar)
     }
-    lambda1 <- (lambda0 + kappa0*n/(kappa0 + n)*(zbar - mu0)%*%t(zbar - mu0)
-                + varz)
+    if(!is.null(hyperprior)){
+      #g0 <- ncol(lambda0) + 5
+      g0 <- nu0
+      lambda0 <- wishrnd(n=nu0+g0, Sigma=solve(solve(lambda0)+solve(hyperprior[["Sigma"]])))
+    }
+    lambda1 <- (lambda0 + kappa0*n/(kappa0 + n)*tcrossprod(zbar - mu0) + varz)
     #cat("lambda0 =", lambda0/(nu1-3), "\n")
     #cat("lambda1 =", lambda1/(nu1-3), "\n")
     #cat("varz =", varz/(nu1-3), "\n")
-  } else{
+  }else{
     kappa1 <- kappa0 + 1
+    
     nu1 <- nu0 + 1
+    
     mu1 <- kappa0/(kappa0 + 1)*mu0 + 1/(kappa0 + 1)*z
-    lambda1 <- lambda0 + kappa0/(kappa0 + 1)*(z - mu0)%*%t(z - mu0)   
+    
+    if(!is.null(hyperprior)){
+      #g0 <- ncol(lambda0) + 5
+      g0 <- nu0
+      lambda0 <- wishrnd(n=nu0+g0, Sigma=solve(solve(lambda0)+solve(hyperprior[["Sigma"]])))
+    }
+    lambda1 <- lambda0 + kappa0/(kappa0 + 1)*tcrossprod(z - mu0)
   }
   
   S_up[["mu"]] <- mu1

@@ -145,7 +145,7 @@
 #'
 #'  # Gibbs sampler for Dirichlet Process Mixtures
 #'  ##############################################
-#'  MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=3000,
+#'  MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=1000,
 #'  doPlot, nbclust_init, plotevery=100, gg.add=list(theme_bw()),
 #'  diagVar=FALSE)
 #'  s <- summary(MCMCsample_st, burnin = 2000, thin=4, lossFn = "Binder")
@@ -391,7 +391,7 @@ DPMGibbsSkewT <- function (z, hyperG0, a, b, N, doPlot=TRUE,
                 U_SS[[j]] <- update_SSst(z=z[, obs_j, drop=FALSE], S=hyperG0,
                                          ltn=ltn[obs_j], scale=sc[obs_j],
                                          df=U_df[j],
-                                         hyperprior= list("Sigma"=U_Sigma[,,j])
+                                         hyperprior = list("Sigma"=U_Sigma[,,j])
                                          )
                 U_nu[j] <- U_SS[[j]][["nu"]]
                 NNiW <- rNNiW(U_SS[[j]], diagVar)
