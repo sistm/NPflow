@@ -32,7 +32,7 @@ Rand index (PEAR)
 Chariff Alkhassim
 }
 \references{
-A. Frotsch, K. Ickstadt. Improved Criteria for Clustering Based
+A. Fritsch, K. Ickstadt. Improved Criteria for Clustering Based
 on the Posterior Similarity Matrix, in Bayesian Analysis, Vol.4 : p.367-392
 (2009)
 }

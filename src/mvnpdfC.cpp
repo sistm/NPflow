@@ -54,7 +54,6 @@ double constant = - p*log2pi2;
         colvec x_i = xx.col(i) - m;
         rowvec xRinv = trans(x_i)*Rinv;
         double quadform = sum(xRinv%xRinv);
-        y(i) = exp(-0.5*quadform + logSqrtDetvarcovM + constant);
         if (!Log) {
             y(i) = exp(-0.5*quadform + logSqrtDetvarcovM + constant);
         } else{
@@ -62,7 +61,6 @@ double constant = - p*log2pi2;
         }
     }
     
-
 return y;
 
 }

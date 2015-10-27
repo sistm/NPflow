@@ -805,7 +805,7 @@ MAP_skewT_mmEM_weighted<- function(xi_list, psi_list, S_list, obsweight_list, hy
                            FUN=function(Sinv, rik){rik*Sinv},
                            SIMPLIFY=FALSE)
       rSinv_sum <- Reduce('+', rSinv_list)
-      U_B[[k]] <- 1/(N_k[k]*d + d + 1)*solve(solve(C) + matrix(rowSums(mapply(x = xim,
+      U_B[[k]] <- 1/(N_k[k]*d + d + 1)*(solve(C) + matrix(rowSums(mapply(x = xim,
                                                                               p = psim,
                                                                               rSinv = rSinv_list,
                                                                               FUN=function(x,p,rSinv){
@@ -1045,9 +1045,9 @@ MLE_gamma <- function(g){
 #' ml$U_kappa
 
 
-MLE_N_mmEM <- function( mu_list, S_list, hyperG0, K, maxit=100, tol=1e-1, plot=TRUE){
-  
-  
+
+MLE_N_mmEM <- function(mu_list, S_list, hyperG0, K, maxit=100, tol=1e-1, plot=TRUE){
+
   N <- length(mu_list)
   d <- length(hyperG0[[1]])
   

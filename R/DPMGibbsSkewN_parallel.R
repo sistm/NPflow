@@ -268,7 +268,8 @@ DPMGibbsSkewN_parallel <- function (Ncpus, type_connec,
     if(ncol(z)<nbclust_init){       
         for (k in 1:n){
             c[k] <- k
-            U_SS[[k]] <- update_SSsn(z=z[, k], S=hyperG0, ltn=ltn[k])
+            U_SS[[k]] <- update_SSsn(z=z[, k], S=hyperG0, ltn=ltn[k],
+                                     hyperprior = NULL)
             NNiW <- rNNiW(U_SS[[k]], diagVar)
             U_xi[, k] <- NNiW[["xi"]]
             U_SS[[k]][["xi"]] <- NNiW[["xi"]]
@@ -283,7 +284,8 @@ DPMGibbsSkewN_parallel <- function (Ncpus, type_connec,
         c <- sample(x=1:nbclust_init, size=n, replace=TRUE)
         for (k in unique(c)){
             obs_k <- which(c==k)
-            U_SS[[k]] <- update_SSsn(z=z[, obs_k], S=hyperG0, ltn=ltn[obs_k])
+            U_SS[[k]] <- update_SSsn(z=z[, obs_k], S=hyperG0, ltn=ltn[obs_k],
+                                     hyperprior = NULL)
             NNiW <- rNNiW(U_SS[[k]], diagVar)
             U_xi[, k] <- NNiW[["xi"]]
             U_SS[[k]][["xi"]] <- NNiW[["xi"]]
@@ -352,7 +354,8 @@ DPMGibbsSkewN_parallel <- function (Ncpus, type_connec,
             fullCl <- which(m!=0)
             for(j in fullCl){
                 obs_j <- which(c==j)
-                U_SS[[j]] <- update_SSsn(z=z[, obs_j], S=hyperG0,  ltn=ltn[obs_j])
+                U_SS[[j]] <- update_SSsn(z=z[, obs_j], S=hyperG0,  ltn=ltn[obs_j],
+                                         hyperprior = list("Sigma"=U_Sigma[,,j]))
                 NNiW <- rNNiW(U_SS[[j]], diagVar)
                 U_xi[, j] <- NNiW[["xi"]]
                 U_SS[[j]][["xi"]] <- NNiW[["xi"]]

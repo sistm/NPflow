@@ -8,7 +8,7 @@
 #'@export update_SSsn
 
 
-update_SSsn <- function(z, S, ltn){
+update_SSsn <- function(z, S, ltn, hyperprior=NULL){
     
     b0_xi <- S[["b_xi"]]
     b0_psi <- S[["b_psi"]]

@@ -22,7 +22,7 @@
 #'
 #'@export
 #'
-#'@references A. Frotsch, K. Ickstadt. Improved Criteria for Clustering Based
+#'@references A. Fritsch, K. Ickstadt. Improved Criteria for Clustering Based
 #' on the Posterior Similarity Matrix, in Bayesian Analysis, Vol.4 : p.367-392
 #' (2009)
 #'

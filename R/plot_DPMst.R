@@ -1,12 +1,15 @@
 #' @author Boris Hejblum
 #'
+#'@import ggplot2
+#'@importFrom truncnorm rtruncnorm
+#'@import reshape2
+#'
 #' @export
 
 plot_DPMst <- function(z, c, i="", alpha="?", U_SS,
                        dims2plot=1:nrow(z),
                        ellipses=ifelse(length(dims2plot)<3,TRUE,FALSE),
                        gg.add=list(theme()), nbsim_dens=1000, nice=FALSE){ 
-    library(ellipse)
     library(reshape2)
     mean_sn01 <- (dnorm(0)-dnorm(Inf))/(pnorm(Inf)-pnorm(0))
     
@@ -33,7 +36,6 @@ plot_DPMst <- function(z, c, i="", alpha="?", U_SS,
     alpha2print <- ifelse(is.numeric(alpha), formatC(alpha, digits=2), alpha)
     
     
-    library(ellipse)
     
     if(p>2){
         zDplot <- melt(cbind.data.frame("ID"=as.character(1:n), 

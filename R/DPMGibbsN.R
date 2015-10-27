@@ -211,7 +211,7 @@ DPMGibbsN <- function (z, hyperG0, a, b, N, doPlot=TRUE,
     for (k in 1:n){
       c[k] <- k
       #cat("cluster ", k, ":\n")
-      U_SS[[k]] <- update_SS(z=z[, k, drop=FALSE], S=hyperG0)
+      U_SS[[k]] <- update_SS(z=z[, k, drop=FALSE], S=hyperG0, hyperprior = NULL)
       NiW <- rNiW(U_SS[[k]], diagVar=diagVar)
       
       U_mu[, k] <- NiW[["mu"]]
@@ -285,7 +285,7 @@ DPMGibbsN <- function (z, hyperG0, a, b, N, doPlot=TRUE,
     for(j in fullCl){
       obs_j <- which(c==j)
       #cat("cluster ", j, ":\n")
-      U_SS[[j]] <- update_SS(z=z[, obs_j,drop=FALSE], S=hyperG0)
+      U_SS[[j]] <- update_SS(z=z[, obs_j,drop=FALSE], S=hyperG0, hyperprior = list("Sigma"=U_Sigma[,,j]))
       NiW <- rNiW(U_SS[[j]], diagVar=diagVar)
       
       U_mu[, j] <- NiW[["mu"]]
