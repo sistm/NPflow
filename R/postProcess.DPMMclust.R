@@ -310,7 +310,7 @@ MLE_skewT_mmEM <- function( xi_list, psi_list, S_list, hyperG0, K, maxit=100, to
       U_xi_U_psi<-Reduce('+',lapply(1:N, 
                                     function(i,m) {t(matrix(r_xi_psi[i,],d,d))%*%m[[i]]}, 
                                     m=rSinv_list))%*% solve(rSinv_sum)
-
+      
       
       U_xi[[k]] <- U_xi_U_psi[1,]
       U_psi[[k]]<- U_xi_U_psi[2,]
@@ -643,24 +643,36 @@ MAP_skewT_mmEM<- function(xi_list, psi_list, S_list, hyperG0, K, maxit=100, tol=
     weights  <- (N_k + alpha[k] - 1)/(N + sum(alpha) - K)
     
     for(k in 1:K){
-      xi_m_k_xNk <- colSums(apply(X=sapply(xi_list, FUN="["), MARGIN=1, FUN=function(x){r[k, ]*x}))
-      U_xi[[k]] <- (xi_m_k_xNk + kappa0/N*xi_p)/(N_k[k]  + kappa0/N)
-      psi_m_k_xNk <- colSums(apply(X=sapply(psi_list, FUN="["), MARGIN=1, FUN=function(x){r[k, ]*x}))
-      U_psi[[k]] <- (psi_m_k_xNk + kappa0/N*psi_p)/(N_k[k] + kappa0/N)
       
+      
+      Sinv_list <- mapply(S = S_list,  
+                          FUN=function(S){solve(S)}, 
+                          SIMPLIFY=FALSE)
+      Sinv_sum <- Reduce('+', Sinv_list)
+      rSinv_list <- mapply(S = Sinv_list, 
+                           rik = as.list(r[k, ]), 
+                           FUN=function(S, rik){rik*S}, 
+                           SIMPLIFY=FALSE)
+      rSinv_sum <- Reduce('+', rSinv_list)
+      
+      
+      
+      
+      r_xi<-apply(X=sapply(xi_list, FUN="["), MARGIN=1, FUN=function(x){r[k, ]*x})
+      r_psi<-apply(X=sapply(psi_list, FUN="["), MARGIN=1, FUN=function(x){r[k, ]*x})
+      r_xi_psi<-cbind(r_xi,r_psi)
+      U_xi_U_psi<-((kappa0/N*t(matrix(cbind(xi_p,psi_p),d,d))%*%Sinv_sum)+Reduce('+',lapply(1:N, 
+                                    function(i,m) {t(matrix(r_xi_psi[i,],d,d))%*%m[[i]]}, 
+                                    m=rSinv_list)))%*% solve(kappa0/N*Sinv_sum+rSinv_sum)
+      U_xi[[k]] <- U_xi_U_psi[1,]
+      U_psi[[k]]<- U_xi_U_psi[2,]
+        
       xim <- lapply(xi_list, function(x){x - U_xi[[k]]})
       psim <- lapply(psi_list, function(x){x - U_psi[[k]]})
       xim0 <- U_xi[[k]] - xi_p
       psim0 <- U_xi[[k]] - psi_p
       
-      Sinv_list <- lapply(S_list,solve)
-      Sinv_sum <- Reduce('+', Sinv_list)
-      rSinv_list <- mapply(Sinv = Sinv_list,
-                           rik = as.list(r[k, ]),
-                           FUN=function(Sinv, rik){rik*Sinv},
-                           SIMPLIFY=FALSE)
-      rSinv_sum <- Reduce('+', rSinv_list)
-      U_B[[k]] <- 1/(N_k[k]*d + d + 1)*(solve(C) + matrix(rowSums(mapply(x = xim,  #1/
+      U_B[[k]] <- 1/(N_k[k]*d + d + 1)*(solve(C) + matrix(rowSums(mapply(x = xim,  
                                                                          p = psim,
                                                                          rSinv = rSinv_list,
                                                                          FUN=function(x,p,rSinv){
@@ -806,14 +818,14 @@ MAP_skewT_mmEM_weighted<- function(xi_list, psi_list, S_list, obsweight_list, hy
                            SIMPLIFY=FALSE)
       rSinv_sum <- Reduce('+', rSinv_list)
       U_B[[k]] <- 1/(N_k[k]*d + d + 1)*(solve(C) + matrix(rowSums(mapply(x = xim,
-                                                                              p = psim,
-                                                                              rSinv = rSinv_list,
-                                                                              FUN=function(x,p,rSinv){
-                                                                                v <- rbind(x, p)
-                                                                                v%*%rSinv%*%t(v)
-                                                                              }, SIMPLIFY=TRUE)),
-                                                               nrow=2, byrow=FALSE)
-                                             +kappa0/N*rbind(xim0, psim0)%*%Sinv_sum%*%t(rbind(xim0, psim0))
+                                                                         p = psim,
+                                                                         rSinv = rSinv_list,
+                                                                         FUN=function(x,p,rSinv){
+                                                                           v <- rbind(x, p)
+                                                                           v%*%rSinv%*%t(v)
+                                                                         }, SIMPLIFY=TRUE)),
+                                                          nrow=2, byrow=FALSE)
+                                        +kappa0/N*rbind(xim0, psim0)%*%Sinv_sum%*%t(rbind(xim0, psim0))
       )
       const_nu0_uniroot <- (sum(r[k,]*sapply(S_list, function(S){log(det(S))}))
                             + N_k[k]*log(det(rSinv_sum))
@@ -1047,7 +1059,7 @@ MLE_gamma <- function(g){
 
 
 MLE_N_mmEM <- function(mu_list, S_list, hyperG0, K, maxit=100, tol=1e-1, plot=TRUE){
-
+  
   N <- length(mu_list)
   d <- length(hyperG0[[1]])
   
@@ -1164,7 +1176,7 @@ MLE_N_mmEM <- function(mu_list, S_list, hyperG0, K, maxit=100, tol=1e-1, plot=TR
     }
     
     
-
+    
     loglik[i+1] <- sum(log(colSums(weights%*%mmNiWpdf(mu=sapply(mu_list, "["), Sigma=S_list,
                                                       U_mu0=sapply(U_mu, "["),
                                                       U_kappa0=sapply(U_kappa, "["),
