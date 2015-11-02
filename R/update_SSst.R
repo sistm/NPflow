@@ -43,8 +43,8 @@ update_SSst <- function(z, S, ltn, scale, df, hyperprior=NULL){
     if(n<2){
         temp <- matrix(temp, ncol=nrow(z))
     }
-    b <- (crossprod(temp,X) + cbind(b0_xi/D0_xi, b0_psi/D0_psi))%*%B
-
+    #b <- (crossprod(temp,X) + cbind(b0_xi/D0_xi, b0_psi/D0_psi))%*%B
+    b <- (crossprod(temp,X) + cbind(b0_xi, b0_psi)%*%B0inv)%*%B
 
     b_xi <- b[,1]
     b_psi <- b[,2]
@@ -67,8 +67,8 @@ update_SSst <- function(z, S, ltn, scale, df, hyperprior=NULL){
         g0 <- nu0
         lambda0 <- wishrnd(n=round(nu0+g0), Sigma=solve(solve(lambda0)+solve(hyperprior[["Sigma"]])))
     }
-
-    lambda1 <- lambda0 + (eps2 + tcrossprod(b_xi-b0_xi)/D0_xi + tcrossprod(b_psi-b0_psi)/D0_psi)
+    #lambda1 <- lambda0 + (eps2 + tcrossprod(b_xi-b0_xi)/D0_xi + tcrossprod(b_psi-b0_psi)/D0_psi)
+    lambda1 <- lambda0 + (eps2 + B0inv%*%tcrossprod(cbind((b_xi-b0_xi), (b_psi-b0_psi))))
 
 
     S_up <- list()

@@ -94,6 +94,7 @@
 #' hyperG0[["D_psi"]] <- 100
 #' hyperG0[["nu"]] <- d+1
 #' hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
+#' #hyperG0[["B"]] <- matrix(c(100, 1, 1, 100), ncol=2)
 #'
 #'  # hyperprior on the Scale parameter of DPM
 #'  a <- 0.0001
@@ -145,7 +146,7 @@
 #'
 #'  # Gibbs sampler for Dirichlet Process Mixtures
 #'  ##############################################
-#'  MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=1000,
+#'  MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=3000,
 #'  doPlot, nbclust_init, plotevery=100, gg.add=list(theme_bw()),
 #'  diagVar=FALSE)
 #'  s <- summary(MCMCsample_st, burnin = 2000, thin=4, lossFn = "Binder")
