@@ -33,6 +33,8 @@
 #'
 #'@export 
 #'
+#'@importFrom pheatmap pheatmap
+#'
 #'@importFrom gplots heatmap.2
 #'
 #'@importFrom fastcluster hclust
@@ -180,7 +182,7 @@ plot.summaryDPMMclust <- function(s, hm=FALSE, nbsim_densities=5000, gg.add=list
     tree <- fastcluster::hclust(dist(s$point_estim$similarity, method = "euclidean"), 
                                 method = "complete")
     ord_index <- tree$order
-    pheatmap(s$point_estim$similarity[ord_index, ord_index], scale="none", border_color=NA,
+    pheatmap::pheatmap(s$point_estim$similarity[ord_index, ord_index], scale="none", border_color=NA,
              color=colorRampPalette(c("#F7FBFF", "#DEEBF7", "#C6DBEF", 
                                       #"#9ECAE1", "#FEB24C", 
                                       "#FD8D3C", "#BD0026", "#800026"))(200), 
