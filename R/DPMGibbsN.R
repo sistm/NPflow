@@ -258,7 +258,7 @@ DPMGibbsN <- function (z, hyperG0, a, b, N, doPlot=TRUE,
   
   if(doPlot){
     plot_DPM(z=z, U_mu=U_mu, U_Sigma=U_Sigma, 
-             m=m, c=c, i=i, alpha=alpha[[i]], U_SS=U_SS, ...)
+             c=c, i=i, alpha=alpha[[i]], U_SS=U_SS, ...)
   }else{
     cl2print <- unique(c)
     cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
@@ -313,7 +313,7 @@ DPMGibbsN <- function (z, hyperG0, a, b, N, doPlot=TRUE,
     }
     
     if(doPlot && i/plotevery==floor(i/plotevery)){
-      plot_DPM(z=z, U_mu=U_mu, U_Sigma=U_Sigma, m=m, c=c, i=i,
+      plot_DPM(z=z, U_mu=U_mu, U_Sigma=U_Sigma, c=c, i=i,
                alpha=alpha[i], U_SS=U_SS, ...)
     }else{
       cl2print <- unique(c)

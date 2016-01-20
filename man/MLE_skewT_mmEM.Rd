@@ -18,7 +18,7 @@ hyperG0$b_psi <- c(0, 0)
 hyperG0$kappa <- 0.001
 hyperG0$D_xi <- 100
 hyperG0$D_psi <- 100
-hyperG0$nu <- 20
+hyperG0$nu <- 3
 hyperG0$lambda <- diag(c(0.25,0.35))
 
 xi_list <- list()
