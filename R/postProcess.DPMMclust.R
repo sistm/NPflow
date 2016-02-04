@@ -41,47 +41,29 @@ postProcess.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measur
   
   x_invar <- burn.DPMMclust(x, burnin = burnin, thin=thin)
   
+  EM_init_nb_max <- 10
+  elem <- which(lapply(x_invar$U_SS_list,FUN=length)==K)
+  len <- length(elem)
+  EM_init <- list()
+  if(len>=EM_init_nb_max){
+    EM_init_nb <- EM_init_nb_max
+    randind <- elem[sample(1:len,EM_init_nb,replace=FALSE)]
+    for (el in 1:EM_init_nb){
+      EM_init[[el]] <- x_invar$U_SS_list[[randind[el]]]
+    }
+  }
+  else{
+    EM_init_nb <- len
+    cpt <- 1
+    for (el in elem){
+      EM_init[[cpt]] <- x_invar$U_SS_list[[el]]
+      cpt <- cpt+1
+    }
+  }
   
-  #   xi_list <- list()
-  #   psi_list <- list()
-  #   S_list <- list()
-  #   w_list <- list()
-  #
-  #   #m_final <- list()
-  #   #S_final <- list()
-  #
-  #   for(i in 1:length(x_invar$U_SS_list)){
-  #     xi_list <- c(xi_list, sapply(x_invar$U_SS_list[[i]], "[", "xi"))
-  #     psi_list <- c(psi_list, sapply(x_invar$U_SS_list[[i]], "[", "psi"))
-  #
-  #     S_list <- c(S_list, sapply(x_invar$U_SS_list[[i]], "[", "S"))
-  #
-  #     if(is.null(x_invar$U_SS_list[[1]][["weights"]])){
-  #       #for compatibility with older DPMclust objects
-  #       w_list <- c(w_list, x_invar$weights_list[[i]][unique(x_invar$mcmc_partitions[[i]])])
-  #     }else{
-  #       w_list <- c(w_list,sapply(x_invar$U_SS_list[[i]], "[", "weights"))
-  #     }
-  
-  
-  #m_final <- c(m_final,
-  #             mapply(FUN=function(v1,v2){c(v1, v2)}, v1=xi_list,
-  #                    v2=psi_list, SIMPLIFY = FALSE)
-  #)
-  #B_list <- sapply(x_invar$U_SS_list[[i]], "[", "B")
-  #S_final <- c(S_final,
-  #             mapply(FUN=function(M1,M2){M1%x%M2}, M1=B_list, M2=S_list, SIMPLIFY = FALSE)
-  #)
-  
-  #   }
-  
-  #     if(x$clust_distrib!="skewT"){
-  #         stop("clust_distrib is not skewT\n other distrib not implemented yet")
-  #     }
   
   if(x$clust_distrib=="skewT"){
-    
-    
+     
     xi_list <- list()
     psi_list <- list()
     S_list <- list()
@@ -111,10 +93,14 @@ postProcess.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measur
       MAPprior <- x_invar$hyperG0
       #MAPprior$lambda <-10*MAPprior$lambda
       param_post_list <- list()
-      for (j in 1:10){
-        param_post_list[[j]] <- MAP_skewT_mmEM(xi_list, psi_list, S_list,
-                                               hyperG0 = MAPprior, K=K, verbose=FALSE,...)
-        cat("EM ", j, "/10 computed", "\n", sep="")
+      
+      chr_str <- paste(paste("/",as.character(EM_init_nb),sep=""),"computed",sep=" ")
+      for (j in 1:EM_init_nb){
+        param_post_list[[j]] <- MAP_skewT_mmEM(xi_list, psi_list, S_list, 
+                                               hyperG0 = MAPprior, K=K, 
+                                               init=EM_init[[j]],verbose=FALSE,...)
+        
+        cat("EM ", j,chr_str, "\n", sep="")
       }
       param_post <- param_post_list[[which.max(sapply(lapply(param_post_list, "[[", "loglik"), FUN=max))]]
       
@@ -164,7 +150,7 @@ postProcess.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measur
     }
     
     param_post_list <- list()
-    for (j in 1:10){
+    for (j in 1:EM_init_nb){
       
       param_post_list[[j]]<-MLE_N_mmEM(mu_list, S_list, x_invar$hyperG0, K, maxit=100, tol=1E-1, plot=TRUE)
       cat("EM ", j, "/10 computed", "\n", sep="")
@@ -237,11 +223,11 @@ postProcess.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measur
 #'mle <- MLE_skewT_mmEM(xi_list, psi_list, S_list, hyperG0, K=2)
 #'mle
 #'
-MLE_skewT_mmEM <- function( xi_list, psi_list, S_list, hyperG0, K, maxit=100, tol=1E-1, plot=TRUE){
+MLE_skewT_mmEM <- function( xi_list, psi_list, S_list, hyperG0, K, init=NULL,maxit=100, tol=1E-1, plot=TRUE,verbose=TRUE){
   
   
   N <- length(xi_list)
-  d <- length(hyperG0[[1]])
+  d <- length(xi_list[[1]])
   
   if(length(psi_list) != N | length(S_list) != N){
     stop("Number of MCMC iterations not matching")
@@ -255,23 +241,52 @@ MLE_skewT_mmEM <- function( xi_list, psi_list, S_list, hyperG0, K, maxit=100, to
   
   
   #initialisation
-  weights <- rep(1/K, K)
-  for(k in 1:K){
-    #sampling the cluster parameters
-    NNiW <- rNNiW(hyperG0, diagVar=FALSE)
-    U_xi[[k]] <- NNiW[["xi"]]
-    U_psi[[k]] <- NNiW[["psi"]]
-    U_Sigma[[k]] <- NNiW[["S"]]
-    U_B[[k]] <- diag(100, 2)
-    U_df[[k]] <- d+1
+  if(is.null(init)){
+    for(k in 1:K){
+      #sampling the cluster parameters
+      NNiW <- rNNiW(hyperG0, diagVar=FALSE)
+      U_xi[[k]] <- NNiW[["xi"]]
+      U_psi[[k]] <- NNiW[["psi"]]
+      U_Sigma[[k]] <- NNiW[["S"]]
+      U_B[[k]] <- diag(100, 2)
+      U_df[[k]] <- d+1
+    }
+  }
+  else{
+    for(k in 1:K){
+      #cluster parameters
+      U_xi[[k]] <- init[[k]]$b_xi
+      U_psi[[k]] <- init[[k]]$b_psi
+      U_Sigma[[k]] <-  init[[k]]$lambda
+      U_B[[k]] <- init[[k]]$B
+      U_df[[k]] <- init[[k]]$nu
+    }
   }
   
+  weights <- rep(1/K, K)
   loglik <- numeric(maxit+1)
   loglik[1] <- sum(log(colSums(weights%*%mmsNiWpdfC(xi = sapply(xi_list, "["), psi = sapply(psi_list, "["), Sigma = S_list,
                                                     U_xi0 = sapply(U_xi, "["), U_psi0 = sapply(U_psi, "["), U_B0 =U_B,
                                                     U_Sigma0 = U_Sigma, U_df0 = sapply(U_df, "["), Log=FALSE))))
+  
+  
+  
   #Q <- numeric(maxit+1)
   #Q[1] <- -Inf
+  
+  
+  r <- mmsNiWpdfC(xi = sapply(xi_list, "["), psi = sapply(psi_list, "["), Sigma = S_list,
+                  U_xi0 = sapply(U_xi, "["), U_psi0 = sapply(U_psi, "["), U_B0 =U_B,
+                  U_Sigma0 = U_Sigma, U_df0 = sapply(U_df, "["))
+  
+  logexptrick_const <- apply(X=r, MARGIN=2, FUN=max)
+  r_log_const <- apply(X=r, MARGIN=1, FUN=function(rv){rv-logexptrick_const})
+  rw_const <- apply(X=exp(r_log_const), MARGIN=1, FUN=function(rv){rv*weights})
+  r <- t(apply(X=rw_const, MARGIN=1, FUN=function(rv){rv/colSums(rw_const)}))
+  N_k<-rowSums(r)
+  
+  
+  
   
   for(i in 1:maxit){
     
@@ -290,9 +305,11 @@ MLE_skewT_mmEM <- function( xi_list, psi_list, S_list, hyperG0, K, maxit=100, to
     #M step
     N_k <- rowSums(r)
     weights  <- N_k/N
-    cat("weights:", weights, "\n")
+    #     cat("weights:", weights, "\n")
+    
     
     for(k in 1:K){
+      
       rSinv_list <- mapply(S = S_list, 
                            rik = as.list(r[k, ]), 
                            FUN=function(S, rik){rik*solve(S)}, 
@@ -317,15 +334,23 @@ MLE_skewT_mmEM <- function( xi_list, psi_list, S_list, hyperG0, K, maxit=100, to
       xim <- lapply(xi_list, function(x){x - U_xi[[k]]})
       psim <- lapply(psi_list, function(x){x - U_psi[[k]]})
       
+      #       U_B[[k]] <- 1/(N_k[k]*d)*(matrix(rowSums(mapply(x = xim,
+      #                                                       p = psim,
+      #                                                       rSinv = rSinv_list,
+      #                                                       FUN=function(x,p,rSinv){
+      #                                                         v <- rbind(x, p)
+      #                                                         v%*%rSinv%*%t(v)
+      #                                                       }, SIMPLIFY=TRUE)),
+      #                                        nrow=2, byrow=FALSE))
       
-      U_B[[k]] <- 1/(N_k[k]*d)*(matrix(rowSums(mapply(x = xim,
-                                                      p = psim,
-                                                      rSinv = rSinv_list,
-                                                      FUN=function(x,p,rSinv){
-                                                        v <- rbind(x, p)
-                                                        v%*%rSinv%*%t(v)
-                                                      }, SIMPLIFY=TRUE)),
-                                       nrow=2, byrow=FALSE))
+      U_B[[k]] <- 1/(N_k[k]*d)*(diag(diag((matrix(rowSums(mapply(x = xim,
+                                                                 p = psim,
+                                                                 rSinv = rSinv_list,
+                                                                 FUN=function(x,p,rSinv){
+                                                                   v <- rbind(x, p)
+                                                                   v%*%rSinv%*%t(v)
+                                                                 }, SIMPLIFY=TRUE)),
+                                                  nrow=2, byrow=FALSE)))))
       
       
       
@@ -348,8 +373,13 @@ MLE_skewT_mmEM <- function( xi_list, psi_list, S_list, hyperG0, K, maxit=100, to
                                                         U_Sigma0 = U_Sigma, U_df0 = sapply(U_df, "["), Log=FALSE))))
     
     
-    cat("it ", i, ": loglik = ", loglik[i+1],"\n\n", sep="")
+    #     cat("it ", i, ": loglik = ", loglik[i+1],"\n\n", sep="")
     if(abs(loglik[i+1]-loglik[i])<tol){break}
+    if(verbose){
+      cat("it ", i, ": loglik = ", loglik[i+1],"\n", sep="")
+      cat("weights:", weights, "\n\n")
+    }
+    
     if(plot){
       plot(y=loglik[2:(i+1)], x=c(1:i),
            ylab="Log-likelihood", xlab="Iteration", type="b", col="blue", pch=16)
@@ -574,12 +604,12 @@ MAP_skewT_mmEM_vague <- function(xi_list, psi_list, S_list, hyperG0, K, maxit=10
 
 #'@rdname MAP_skewT_mmEM
 #'@export
-MAP_skewT_mmEM<- function(xi_list, psi_list, S_list, hyperG0, K, maxit=100, tol=1E-1, plot=TRUE, verbose=TRUE){
+MAP_skewT_mmEM<- function(xi_list, psi_list, S_list, hyperG0,init=NULL, K, maxit=100, tol=1E-1, plot=TRUE, verbose=TRUE){
   
   
   
   N <- length(xi_list)
-  d <- length(hyperG0[[1]])
+  d <- length(xi_list[[1]])
   
   if(length(psi_list) != N | length(S_list) != N){
     stop("Number of MCMC iterations not matching")
@@ -593,7 +623,7 @@ MAP_skewT_mmEM<- function(xi_list, psi_list, S_list, hyperG0, K, maxit=100, tol=
   
   
   #priors
-  alpha <- rep(1, K) #parameters of a Dirichlet prior on the cluster weights
+  #   alpha <- rep(1, K) #parameters of a Dirichlet prior on the cluster weights
   xi_p <- apply(sapply(xi_list, "["), MARGIN=1, FUN=mean)
   psi_p <- apply(sapply(psi_list, "["), MARGIN=1, FUN=mean)
   kappa0 <- 0.01
@@ -606,16 +636,35 @@ MAP_skewT_mmEM<- function(xi_list, psi_list, S_list, hyperG0, K, maxit=100, tol=
   
   
   #initialisation
-  weights <- rep(1/K, K)
-  for(k in 1:K){
-    #sampling the cluster parameters
-    NNiW <- rNNiW(hyperG0, diagVar=FALSE)
-    U_xi[[k]] <- NNiW[["xi"]]
-    U_psi[[k]] <- NNiW[["psi"]]
-    U_Sigma[[k]] <- NNiW[["S"]]
-    U_B[[k]] <- diag(100, 2)
-    U_df[[k]] <- d+1
+  
+  
+  if(is.null(init)){
+    for(k in 1:K){
+      #sampling the cluster parameters
+      NNiW <- rNNiW(hyperG0, diagVar=FALSE)
+      U_xi[[k]] <- NNiW[["xi"]]
+      U_psi[[k]] <- NNiW[["psi"]]
+      U_Sigma[[k]] <- NNiW[["S"]]
+      U_B[[k]] <- diag(100, 2)
+      U_df[[k]] <- d+1
+    }
   }
+  else{
+    for(k in 1:K){
+      #cluster parameters
+      U_xi[[k]] <- init[[k]]$b_xi
+      U_psi[[k]] <- init[[k]]$b_psi
+      U_Sigma[[k]] <- init[[k]]$lambda
+      U_B[[k]] <- init[[k]]$B
+      U_df[[k]] <- init[[k]]$nu
+    }
+  }
+  
+  
+  K<-K
+  #priors
+  alpha <- rep(1, K) #parameters of a Dirichlet prior on the cluster weights
+  weights <- rep(1/K, K)
   
   loglik <- numeric(maxit+1)
   loglik[1] <- sum(log(colSums(weights%*%mmsNiWpdfC(xi = sapply(xi_list, "["), psi = sapply(psi_list, "["), Sigma = S_list,
@@ -654,25 +703,29 @@ MAP_skewT_mmEM<- function(xi_list, psi_list, S_list, hyperG0, K, maxit=100, tol=
                            FUN=function(S, rik){rik*S}, 
                            SIMPLIFY=FALSE)
       rSinv_sum <- Reduce('+', rSinv_list)
-      
-      
-      
-      
       r_xi<-apply(X=sapply(xi_list, FUN="["), MARGIN=1, FUN=function(x){r[k, ]*x})
       r_psi<-apply(X=sapply(psi_list, FUN="["), MARGIN=1, FUN=function(x){r[k, ]*x})
       r_xi_psi<-cbind(r_xi,r_psi)
       U_xi_U_psi<-((kappa0/N*t(matrix(cbind(xi_p,psi_p),d,d))%*%Sinv_sum)+Reduce('+',lapply(1:N, 
-                                    function(i,m) {t(matrix(r_xi_psi[i,],d,d))%*%m[[i]]}, 
-                                    m=rSinv_list)))%*% solve(kappa0/N*Sinv_sum+rSinv_sum)
+                                                                                            function(i,m) {t(matrix(r_xi_psi[i,],d,d))%*%m[[i]]}, 
+                                                                                            m=rSinv_list)))%*% solve(kappa0/N*Sinv_sum+rSinv_sum)
+      
       U_xi[[k]] <- U_xi_U_psi[1,]
       U_psi[[k]]<- U_xi_U_psi[2,]
-        
+      
       xim <- lapply(xi_list, function(x){x - U_xi[[k]]})
       psim <- lapply(psi_list, function(x){x - U_psi[[k]]})
       xim0 <- U_xi[[k]] - xi_p
       psim0 <- U_xi[[k]] - psi_p
       
-      U_B[[k]] <- 1/(N_k[k]*d + d + 1)*(solve(C) + matrix(rowSums(mapply(x = xim,  
+      Sinv_list <- lapply(S_list,solve)
+      Sinv_sum <- Reduce('+', Sinv_list)
+      rSinv_list <- mapply(Sinv = Sinv_list,
+                           rik = as.list(r[k, ]),
+                           FUN=function(Sinv, rik){rik*Sinv},
+                           SIMPLIFY=FALSE)
+      rSinv_sum <- Reduce('+', rSinv_list)
+      U_B[[k]] <- 1/(N_k[k]*d + d + 1)*(solve(C) + matrix(rowSums(mapply(x = xim,  #1/
                                                                          p = psim,
                                                                          rSinv = rSinv_list,
                                                                          FUN=function(x,p,rSinv){
@@ -685,6 +738,7 @@ MAP_skewT_mmEM<- function(xi_list, psi_list, S_list, hyperG0, K, maxit=100, tol=
       const_nu0_uniroot <- (sum(r[k,]*sapply(S_list, function(S){log(det(S))}))
                             + N_k[k]*log(det(rSinv_sum))
                             + 2)
+      
       U_df[[k]] <- try(uniroot(function(nu0){(N_k[k]*digamma_mv(x=nu0/2, p=d)
                                               - N_k[k]*d*log(N_k[k]*nu0/2)
                                               + const_nu0_uniroot
@@ -704,7 +758,7 @@ MAP_skewT_mmEM<- function(xi_list, psi_list, S_list, hyperG0, K, maxit=100, tol=
     
     
     if(is.na(loglik[i+1]) | is.nan(loglik[i+1]) | is.infinite(loglik[i+1])){
-      browser()
+      #       browser()
       temp_logliks[which(is.infinite(temp_logliks))] <- min(temp_logliks[-which(is.infinite(temp_logliks))])
       loglik[i+1] <- sum(temp_logliks)
     }
@@ -817,15 +871,15 @@ MAP_skewT_mmEM_weighted<- function(xi_list, psi_list, S_list, obsweight_list, hy
                            FUN=function(Sinv, rik){rik*Sinv},
                            SIMPLIFY=FALSE)
       rSinv_sum <- Reduce('+', rSinv_list)
-      U_B[[k]] <- 1/(N_k[k]*d + d + 1)*(solve(C) + matrix(rowSums(mapply(x = xim,
-                                                                         p = psim,
-                                                                         rSinv = rSinv_list,
-                                                                         FUN=function(x,p,rSinv){
-                                                                           v <- rbind(x, p)
-                                                                           v%*%rSinv%*%t(v)
-                                                                         }, SIMPLIFY=TRUE)),
-                                                          nrow=2, byrow=FALSE)
-                                        +kappa0/N*rbind(xim0, psim0)%*%Sinv_sum%*%t(rbind(xim0, psim0))
+      U_B[[k]] <- 1/(N_k[k]*d + d + 1)*solve(solve(C) + matrix(rowSums(mapply(x = xim,
+                                                                              p = psim,
+                                                                              rSinv = rSinv_list,
+                                                                              FUN=function(x,p,rSinv){
+                                                                                v <- rbind(x, p)
+                                                                                v%*%rSinv%*%t(v)
+                                                                              }, SIMPLIFY=TRUE)),
+                                                               nrow=2, byrow=FALSE)
+                                             +kappa0/N*rbind(xim0, psim0)%*%Sinv_sum%*%t(rbind(xim0, psim0))
       )
       const_nu0_uniroot <- (sum(r[k,]*sapply(S_list, function(S){log(det(S))}))
                             + N_k[k]*log(det(rSinv_sum))
@@ -983,8 +1037,8 @@ MLE_gamma <- function(g){
     a_mle <- 0.0001
     b_mle <- 0.0001
     warning("Unable to estimate Gamma hyperpriors properly
-                 (this can happen when only a few clusters are fitted).
-                 => Non informative values are returned instead")
+            (this can happen when only a few clusters are fitted).
+            => Non informative values are returned instead")
   }else{
     b_mle <- mean(g)/a_mle
   }
@@ -1057,8 +1111,8 @@ MLE_gamma <- function(g){
 #' ml$U_kappa
 
 
-
-MLE_N_mmEM <- function(mu_list, S_list, hyperG0, K, maxit=100, tol=1e-1, plot=TRUE){
+MLE_N_mmEM <- function( mu_list, S_list, hyperG0, K, maxit=100, tol=1e-1, plot=TRUE){
+  
   
   N <- length(mu_list)
   d <- length(hyperG0[[1]])
@@ -1207,7 +1261,3 @@ MLE_N_mmEM <- function(mu_list, S_list, hyperG0, K, maxit=100, tol=1e-1, plot=TR
               "weights"=weights))
   
 }
-
-
-
-

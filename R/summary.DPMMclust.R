@@ -42,7 +42,7 @@
 #'@seealso \link{similarityMat}
 #'
 
-summary.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measure", K=10,
+summary.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measure",
                               posterior_approx=FALSE, tol=2, maxit=50,dist="Normal",lambda=0,a=1,b=1){
   
   x_invar <- burn.DPMMclust(x, burnin = burnin, thin=thin, dist=dist)
@@ -63,7 +63,7 @@ summary.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measure", 
                                         logposterior = sapply(x_invar$logposterior_list, sum))
   }else{
     stop("Specified loss function not available.\n 
-             Specify either 'F-measure' or 'Binder' for the lossFn argument.")
+         Specify either 'F-measure' or 'Binder' for the lossFn argument.")
   }
   
   index_estim <- point_estim$opt_ind
@@ -76,7 +76,7 @@ summary.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measure", 
   #index_estim <- NA
   #loss <- NA
   #Posterior approximation
-  
+  K<-length(unique(point_estim$c_est))
   if(posterior_approx){
     if(K>1){
       param_post <- postProcess.DPMMclust(x_invar, plot=FALSE, tol=tol, K=K, maxit=maxit)
@@ -97,7 +97,7 @@ summary.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measure", 
   class(s) <- "summaryDPMMclust"
   
   invisible(s)
-}
+  }
 
 
 #' Methods for a summary of a 'DPMMclust' object
@@ -183,12 +183,12 @@ plot.summaryDPMMclust <- function(s, hm=FALSE, nbsim_densities=5000, gg.add=list
                                 method = "complete")
     ord_index <- tree$order
     pheatmap::pheatmap(s$point_estim$similarity[ord_index, ord_index], scale="none", border_color=NA,
-             color=colorRampPalette(c("#F7FBFF", "#DEEBF7", "#C6DBEF", 
-                                      #"#9ECAE1", "#FEB24C", 
-                                      "#FD8D3C", "#BD0026", "#800026"))(200), 
-             show_rownames=FALSE, show_colnames=FALSE, 
-             cluster_rows=FALSE, cluster_cols =TRUE, 
-             main="Posterior similarity matrix")
+                       color=colorRampPalette(c("#F7FBFF", "#DEEBF7", "#C6DBEF", 
+                                                #"#9ECAE1", "#FEB24C", 
+                                                "#FD8D3C", "#BD0026", "#800026"))(200), 
+                       show_rownames=FALSE, show_colnames=FALSE, 
+                       cluster_rows=FALSE, cluster_cols =TRUE, 
+                       main="Posterior similarity matrix")
     cat("DONE! Wait for plot rendering...\n")
   }
 }
