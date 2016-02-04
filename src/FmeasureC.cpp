@@ -103,23 +103,23 @@ double FmeasureC_no0(NumericVector pred, NumericVector ref){
     K = sort(K);
     vec C = unique(ref);
     C = sort(C);
-    int m = K.size();
+    int p = K.size();
     int n = C.size();
     vec C_no0 = C.subvec(1, n-1);
     int n_no0 = n-1;
     
-        mat M = mat(n_no0, m);
-        mat Pr = mat(n_no0, m);
-        mat Re = mat(n_no0, m);
-        mat Fmat = mat(n_no0, m);
+        mat M = mat(n_no0, p);
+        mat Pr = mat(n_no0, p);
+        mat Re = mat(n_no0, p);
+        mat Fmat = mat(n_no0, p);
         
         vec C_card = vec(n_no0);
-        vec K_card = vec(m);
+        vec K_card = vec(p);
         
         for(int i=0; i<n_no0; i++){
             C_card(i) = sum(ref == C_no0(i));
-            for(int j=0; j<m; j++){
-                K_card(j) = sum(pred == K(j));
+            for(int j=0; j<p; j++){
+                K_card(j) = sum((pred == K(j)) & (ref !=C(0)));
                 M(i,j) = sum((ref==C_no0(i)) & (pred==K(j)));
                 Pr(i,j) = M(i,j)/K_card(j);
                 Re(i,j) = M(i,j)/C_card(i);
@@ -140,7 +140,6 @@ double FmeasureC_no0(NumericVector pred, NumericVector ref){
             Fsum(i) = Ffinal(i)*C_card(i)/C_card_sum;
         }
         double Ftotal = sum(Fsum);
-
     
     return Ftotal;
 }
