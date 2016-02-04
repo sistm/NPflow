@@ -8,7 +8,7 @@ using the Armadillo library}
 Fmeasure_costC_arma(c)
 }
 \arguments{
-\item{c}{list of MCMC partitions}
+\item{c}{matrix where each column is one MCMC partition}
 }
 \description{
 C++ implementation of cost computation with Fmeasure as loss function

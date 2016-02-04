@@ -64,8 +64,8 @@ Fmeasure_costC_arma_par <- function(c, ncores = 1L) {
 
 #' C++ implementation of the F-measure computation
 #' 
-#'@param pred
-#'@param ref
+#'@param pred vector of a predicted partition
+#'@param ref vector of a reference partition
 #'
 #'@export
 #'
@@ -86,10 +86,37 @@ FmeasureC <- function(pred, ref) {
     .Call('NPflow_FmeasureC', PACKAGE = 'NPflow', pred, ref)
 }
 
+#' C++ implementation of the F-measure computation without the ref classe 0
+#' 
+#' Aghaeepour in FlowCAP 1 ignore the reference class labeled "0"
+#' 
+#' 
+#'@param pred vector of a predicted partition
+#'@param ref vector of a reference partition
+#'
+#'@export
+#'
+#'@examples
+#'c <- list(c(1,1,2,3,2,3), c(1,1,1,2,3,3),c(2,2,1,1,1,1))
+#'similarityMatC(sapply(c, "["))
+#'
+#'c2 <- list()
+#'for(i in 1:100){
+#'     c2 <- c(c2, list(rmultinom(n=1, size=3000, prob=rexp(n=3000))))
+#'}
+#'library(microbenchmark)
+#'f <- function(){c3 <-sapply(c2, "[")
+#'             similarityMatC(c3)}
+#'microbenchmark(f(), time=1L)
+#'
+FmeasureC_no0 <- function(pred, ref) {
+    .Call('NPflow_FmeasureC_no0', PACKAGE = 'NPflow', pred, ref)
+}
+
 #' C++ implementation of cost computation with Fmeasure as loss function
 #' 
 #'
-#'@param c list of MCMC partitions
+#'@param c matrix where each column is one MCMC partition
 #'
 #'@export
 #'
@@ -116,7 +143,7 @@ Fmeasure_costC <- function(c) {
 #' using the Armadillo library
 #' 
 #'
-#'@param c list of MCMC partitions
+#'@param c matrix where each column is one MCMC partition
 #'
 #'@export
 Fmeasure_costC_arma <- function(c) {
