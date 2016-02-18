@@ -134,6 +134,7 @@
 
 DPMGibbsSkewT_SeqPrior_parallel <- function (Ncpus, type_connec,
                                              z, prior, hyperG0, N, nbclust_init,
+                                             add.vagueprior = TRUE, weightnoninf=NULL,
                                              doPlot=TRUE, plotevery=1, 
                                              diagVar=TRUE, verbose=TRUE,
                                              monitorfile="defaultmonitor.txt",
@@ -196,14 +197,22 @@ DPMGibbsSkewT_SeqPrior_parallel <- function (Ncpus, type_connec,
     nonnullpriors_ind <- which(priorG1$weights!=0)
     priorG1$weights <- priorG1$weights[nonnullpriors_ind]
     priorG1$parameters <- priorG1$parameters[nonnullpriors_ind]
-    nbmix_prior <- length(priorG1[["weights"]])+1
-    priorG1[["parameters"]][[nbmix_prior]] <- hyperG0
-    priorG1[["parameters"]][[nbmix_prior]][["B"]] <- diag(c(priorG1[["parameters"]][[nbmix_prior]][["D_xi"]],
-                                                            priorG1[["parameters"]][[nbmix_prior]][["D_psi"]])
-    )
-    priorG1$weights <- c(priorG1$weights, 1/length(priorG1$weights))
-    priorG1$weights <- priorG1$weights/sum(priorG1$weights)
-    
+    nbmix_prior <- length(priorG1[["weights"]])
+    if(add.vagueprior){
+      nbmix_prior <- nbmix_prior + 1
+      priorG1[["parameters"]][[nbmix_prior]] <- hyperG0
+      priorG1[["parameters"]][[nbmix_prior]][["B"]] <- diag(c(priorG1[["parameters"]][[nbmix_prior]][["D_xi"]],
+                                                              priorG1[["parameters"]][[nbmix_prior]][["D_psi"]])
+      )
+      if(is.null(weightnoninf)){
+        priorG1$weights <- c(priorG1$weights, 1/length(priorG1$weights))
+        priorG1$weights <- priorG1$weights/sum(priorG1$weights)
+      }else{
+        #TODO
+        priorG1$weights <- c(rep((1-weightnoninf)/(nbmix_prior-1), (nbmix_prior-1)), weightnoninf)
+      }
+    }
+
     a <- prior$alpha_param$shape
     b <- prior$alpha_param$rate
     
