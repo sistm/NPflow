@@ -63,7 +63,7 @@ postProcess.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measur
   
   
   if(x$clust_distrib=="skewT"){
-     
+    
     xi_list <- list()
     psi_list <- list()
     S_list <- list()
@@ -775,7 +775,7 @@ MAP_skewT_mmEM<- function(xi_list, psi_list, S_list, hyperG0,init=NULL, K, maxit
     
     if(abs(loglik[i+1]-loglik[i])<tol){break}
   }
-  
+  U_B <- lapply(U_B,function(i)(diag(diag(i))))
   return(list("r"=r,
               "loglik" = loglik[1:(i+1)],
               "U_xi" = U_xi,
