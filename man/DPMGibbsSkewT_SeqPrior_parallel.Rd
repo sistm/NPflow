@@ -5,8 +5,9 @@
 \title{Slice Sampling of Dirichlet Process Mixture of skew  Students's t-distibutions}
 \usage{
 DPMGibbsSkewT_SeqPrior_parallel(Ncpus, type_connec, z, prior, hyperG0, N,
-  nbclust_init, doPlot = TRUE, plotevery = 1, diagVar = TRUE,
-  verbose = TRUE, monitorfile = "defaultmonitor.txt", ...)
+  nbclust_init, add.vagueprior = TRUE, weightnoninf = NULL, doPlot = TRUE,
+  plotevery = 1, diagVar = TRUE, verbose = TRUE,
+  monitorfile = "defaultmonitor.txt", ...)
 }
 \arguments{
 \item{z}{data matrix \code{d x n} with \code{d} dimensions in rows 

@@ -9,15 +9,15 @@ DPMGibbsN(z, hyperG0, a, b, N, doPlot = TRUE, nbclust_init = 30,
   plotevery = 1, diagVar = TRUE, verbose = TRUE, ...)
 }
 \arguments{
-\item{z}{data matrix \code{d x n} with \code{d} dimensions in rows
+\item{z}{data matrix \code{d x n} with \code{d} dimensions in rows 
 and \code{n} observations in columns.}
 
 \item{hyperG0}{prior mixing distribution.}
 
-\item{a}{shape hyperparameter of the Gamma prior
+\item{a}{shape hyperparameter of the Gamma prior 
 on the parameter of the Dirichlet Process.}
 
-\item{b}{scale hyperparameter of the Gamma prior
+\item{b}{scale hyperparameter of the Gamma prior 
 on the parameter of the Dirichlet Process.}
 
 \item{N}{number of MCMC iterations.}
@@ -25,14 +25,14 @@ on the parameter of the Dirichlet Process.}
 \item{doPlot}{logical flag indicating wether to plot MCMC iteration or not.
 Default to \code{TRUE}.}
 
-\item{nbclust_init}{number of clusters at initialisation.
+\item{nbclust_init}{number of clusters at initialisation. 
 Default to 30 (or less if there are less than 30 observations).}
 
-\item{diagVar}{logical flag indicating wether the variance of each cluster is
-estimated as a diagonal matrix, or as a full matrix.
+\item{diagVar}{logical flag indicating wether the variance of each cluster is 
+estimated as a diagonal matrix, or as a full matrix. 
 Default is \code{TRUE} (diagonal variance).}
 
-\item{verbose}{logical flag indicating wether partition info is
+\item{verbose}{logical flag indicating wether partition info is 
 written in the console at each MCMC iteration.}
 }
 \description{
@@ -65,7 +65,7 @@ for(k in 1:n){
  z[,k] <- m[, c[k]] + sdev[, , c[k]]\%*\%matrix(rnorm(2, mean = 0, sd = 1), nrow=2, ncol=1)
  #cat(k, "/", n, " observations simulated\\n", sep="")
 }
-
+ 
  d<-2
  # Set parameters of G0
  hyperG0 <- list()
@@ -73,80 +73,78 @@ for(k in 1:n){
  hyperG0[["kappa"]] <- 0.001
  hyperG0[["nu"]] <- d+2
  hyperG0[["lambda"]] <- diag(d)/10
-
+ 
  # hyperprior on the Scale parameter of DPM
  a <- 0.0001
  b <- 0.0001
-
+ 
  # Number of iterations
  N <- 30
-
+ 
  # do some plots
- doPlot <- TRUE
+ doPlot <- TRUE 
  nbclust_init <- 30
-
-
-
+ 
+ 
+ 
  ## Data
  ########
- p <- (ggplot(data.frame("X"=z[1,], "Y"=z[2,]), aes(x=X, y=Y))
+ p <- (ggplot(data.frame("X"=z[1,], "Y"=z[2,]), aes(x=X, y=Y)) 
        + geom_point()
        + ggtitle("Toy example Data"))
  p
-
-
+ 
+ 
  ## alpha priors plots
  #####################
- prioralpha <- data.frame("alpha"=rgamma(n=5000, shape=a, scale=1/b),
-                         "distribution" =factor(rep("prior",5000),
+ prioralpha <- data.frame("alpha"=rgamma(n=5000, shape=a, scale=1/b), 
+                         "distribution" =factor(rep("prior",5000), 
                          levels=c("prior", "posterior")))
  p <- (ggplot(prioralpha, aes(x=alpha))
        + geom_histogram(aes(y=..density..),
                         colour="black", fill="white")
        + geom_density(alpha=.2, fill="red")
-       + ggtitle(paste("Prior distribution on alpha: Gamma(", a,
+       + ggtitle(paste("Prior distribution on alpha: Gamma(", a, 
                  ",", b, ")\\n", sep=""))
       )
  p
-
-
-
+ 
+ 
+ 
  # Gibbs sampler for Dirichlet Process Mixtures
  ##############################################
  MCMCsample <- DPMGibbsN(z, hyperG0, a, b, N=500, doPlot, nbclust_init, plotevery=50, diagVar=FALSE)
-
+                 
  plot_ConvDPM(MCMCsample, from=2)
-
+ 
  s <- summary(MCMCsample, burnin = 10, thin=2, posterior_approx=FALSE, K=0,dist="Normal",
  lossFn = "MBinderN",lambda=0,a=1,b=1)
-
+ 
  F <- FmeasureC(pred=s$point_estim$c_est, ref=c)
- F <- Flimited(10, pred=s$point_estim$c_est, ref=c)
-
-
-
+ 
+ 
  # k-means
-
+ 
  plot(x=z[1,], y=z[2,], col=kmeans(t(z), centers=4)$cluster,
       xlab = "d = 1", ylab= "d = 2", main="k-means with K=4 clusters")
-
+      
  KM <- kmeans(t(z), centers=4)
- dataKM <- data.frame("X"=z[1,], "Y"=z[2,],
+ dataKM <- data.frame("X"=z[1,], "Y"=z[2,], 
                     "Cluster"=as.character(KM$cluster))
- dataCenters <- data.frame("X"=KM$centers[,1],
-                           "Y"=KM$centers[,2],
+ dataCenters <- data.frame("X"=KM$centers[,1], 
+                           "Y"=KM$centers[,2], 
                            "Cluster"=rownames(KM$centers))
-
- p <- (ggplot(dataKM)
+ 
+ p <- (ggplot(dataKM) 
        + geom_point(aes(x=X, y=Y, col=Cluster))
-       + geom_point(aes(x=X, y=Y, fill=Cluster, order=Cluster),
+       + geom_point(aes(x=X, y=Y, fill=Cluster, order=Cluster), 
                     data=dataCenters, shape=22, size=5)
        + scale_colour_discrete(name="Cluster")
        + ggtitle("K-means with K=4 clusters\\n"))
  p
-
- postalpha <- data.frame("alpha"=MCMCsample$alpha[50:500],
-                         "distribution" = factor(rep("posterior",500-49),
+ 
+ postalpha <- data.frame("alpha"=MCMCsample$alpha[50:500], 
+                         "distribution" = factor(rep("posterior",500-49), 
                          levels=c("prior", "posterior")))
  p <- (ggplot(postalpha, aes(x=alpha))
        + geom_histogram(aes(y=..density..), binwidth=.1,
@@ -154,15 +152,15 @@ for(k in 1:n){
        + geom_density(alpha=.2, fill="blue")
        + ggtitle("Posterior distribution of alpha\\n")
        + geom_vline(aes(xintercept=mean(alpha, na.rm=T)),   # Ignore NA values for mean
-                    color="red", linetype="dashed", size=1)  # Overlay with transparent density plot
+                    color="red", linetype="dashed", size=1)  # Overlay with transparent density plot            
      )
  p
-
+ 
  p <- (ggplot(drop=FALSE, alpha=.6)
-       + geom_density(aes(x=alpha, fill=distribution),
+       + geom_density(aes(x=alpha, fill=distribution), 
                       color=NA, alpha=.6,
                       data=prioralpha)
-       + geom_density(aes(x=alpha, fill=distribution),
+       + geom_density(aes(x=alpha, fill=distribution), 
                       color=NA, alpha=.6,
                       data=postalpha)
        + ggtitle("Prior and posterior distributions of alpha\\n")

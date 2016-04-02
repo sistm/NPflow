@@ -154,9 +154,9 @@ hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
 
  # Gibbs sampler for Dirichlet Process Mixtures
  ##############################################
- l <- lineprof(MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=100,
+ MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=3000,
  doPlot, nbclust_init, plotevery=100, gg.add=list(theme_bw()),
- diagVar=FALSE))
+ diagVar=FALSE)
  s <- summary(MCMCsample_st, burnin = 2000, thin=4, lossFn = "Binder")
  print(s)
  plot(s, hm=T) #pdf(height=8.5, width=10.5) #png(height=700, width=720)
