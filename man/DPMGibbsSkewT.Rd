@@ -102,6 +102,7 @@ hyperG0[["D_xi"]] <- 100
 hyperG0[["D_psi"]] <- 100
 hyperG0[["nu"]] <- d+1
 hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
+#hyperG0[["B"]] <- matrix(c(100, 1, 1, 100), ncol=2)
 
  # hyperprior on the Scale parameter of DPM
  a <- 0.0001
