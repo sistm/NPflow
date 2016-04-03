@@ -1,7 +1,19 @@
-#' Return updated sufficient statistics S of Normal Wishart distribution
-#' with new data matrix z
+#' Return updated sufficient statistics S for skew t-distribution
+#' with data matrix z
 #'
 #' For internal use only.
+#'
+#'@param z data matrix
+#'
+#'@param S previous sufficient statistics
+#'
+#'@param ltn random effects
+#'
+#'@param scale
+#'
+#'@param df skew t degrees of freedom
+#'
+#'@param hyperprior Default is \code{NULL}
 #'
 #'@keywords internal
 #'
