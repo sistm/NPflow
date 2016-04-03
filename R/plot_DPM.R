@@ -1,17 +1,17 @@
-#' @author Boris Hejblum
+#'Plot of a Dirichlet process mixture of gaussian distribution partition
+#'
+#'
+#'@author Boris Hejblum
 #'
 #'@import ellipse
 #'@import reshape2
 #'
-#' @export
+#'@export
 
 plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
                      dims2plot=1:nrow(z),
                      ellipses=ifelse(length(dims2plot)<3,TRUE,FALSE),
                      gg.add=list(theme())){
-
-  requireNamespace("ellipse", quietly=TRUE)
-  requireNamespace("reshape2", quietly=TRUE)
 
 
   z <- z[dims2plot,]
@@ -44,9 +44,9 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
     rownames(U_mu2plot) <- rownames(z)
     U_Sigma2plot <- U_Sigma[, , fullCl]
   }
-  U_SS2plot <- U_SS#[fullCl]
+  U_SS2plot <- U_SS
   zClusters <- factor(c, levels=as.character(fullCl), ordered=TRUE)
-  #levels(zClusters) <- as.character(1:length(levels(zClusters)))
+
   if(is.null(names(U_SS2plot))){
     if(length(U_SS2plot)>length(fullCl)){
       U_SS2plot <- U_SS2plot[fullCl]
@@ -59,8 +59,8 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
 
   if(p>2){
     zDplot <- reshape2::melt(cbind.data.frame("ID"=as.character(1:n),
-                                    t(z),
-                                    "Cluster"=zClusters
+                                              t(z),
+                                              "Cluster"=zClusters
     ),
     id.vars=c("ID", "Cluster"),
     variable.name = "dimensionX",
@@ -81,9 +81,9 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
     }
 
     UDplot <- reshape2::melt(cbind.data.frame(t(U_mu2plot),
-                                    "Cluster"=factor(as.character(fullCl),
-                                                     levels=as.character(fullCl),
-                                                     ordered=TRUE)
+                                              "Cluster"=factor(as.character(fullCl),
+                                                               levels=as.character(fullCl),
+                                                               ordered=TRUE)
     ),
     id.vars=c("Cluster"),
     variable.name = "dimensionX",
@@ -102,24 +102,6 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
       UDplotfull <- rbind.data.frame(
         UDplotfull, UDplottemp)
     }
-
-    #         ellipse95 <- data.frame()
-    #         for(dx in 1:p){
-    #             for(dy in 1:p){
-    #                 for(g in 1:length(fullCl)){
-    #                     glabel <- levels(zClusters)[g]
-    #                     U_corr2plot_g <- cov2cor(U_Sigma2plot[c(dx,dy),c(dx,dy),g])
-    #                     ellipse95 <- rbind(ellipse95,
-    #                                cbind(as.data.frame(ellipse(U_corr2plot_g,
-    #                                                            scale=sqrt(diag(U_Sigma2plot[c(dx,dy),c(dx,dy),g])),
-    #                                                            centre=U_mu2plot[c(dx,dy),g])),
-    #                                      Cluster=as.character(glabel),
-    #                                      dimensionX=as.character(dx),
-    #                                      dimensionY=as.character(dy)
-    #                                ))
-    #                 }
-    #             }
-    #         }
 
     p <- (ggplot(zDplotfull)
           + facet_grid(dimensionY~dimensionX, scales="free")
@@ -156,7 +138,6 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
                                                   ordered=TRUE)
       )
     }
-
 
     p <- (ggplot(z2plot)
 
@@ -221,18 +202,21 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
                                  ))
         }
       }
+      colnames(ellipse95_obs)[1:2] <- c("x", "y")
 
-      #
+      ellipses95_data <- rbind.data.frame(cbind.data.frame(ellipse95_obs, "type"="observed"),
+                               cbind.data.frame(ellipse95, "type"="sampled"),
+                               cbind.data.frame(ellipse95_esp, "type"="expected"))
+
       p <- (p
-            + geom_polygon(aes_string(x="x", y="y", fill="Cluster", colour="Cluster", order="Cluster", linetype="2"),
-                           data=ellipse95, size=0.5, colour="black", alpha=.15)
-            + geom_polygon(aes_string(x="x", y="y", fill="Cluster", colour="Cluster", order="Cluster", linetype="3"),
-                           data=ellipse95_esp, size=0.5, colour="black", alpha=.15)
-            + geom_polygon(aes_string(x="D1", y="D2", fill="Cluster", colour="Cluster", order="Cluster", linetype="1"),
-                           data=ellipse95_obs, size=0.25, colour="black", alpha=.15)
+            + geom_polygon(aes_string(x="x", y="y", fill="Cluster", colour="Cluster", order="Cluster", linetype="type"),
+                           data=ellipses95_data, alpha=.15)
             + scale_linetype_manual(values=c(1,2,3),
                                     labels=c("observed", "sampled", "expected"),
                                     name="Variances")
+            + guides(alpha="none",
+                     linetype=guide_legend(override.aes = list(colour="black")),
+                     fill=guide_legend(override.aes = list(alpha=1)))
       )
     }
     #         #empirical mean of the clusters
@@ -248,7 +232,7 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
     #         )
   }
   for (a in gg.add) {
-    p <- p + a
+    p <- p + theme_bw() + a
   }
   print(p)
 }
