@@ -110,7 +110,7 @@ DPMGibbsN_parallel <- function (Ncpus, type_connec,
     requireNamespace("doParallel", quietly=TRUE)
 
     # declare the cores
-    cl <- paralell::makeCluster(Ncpus, type = type_connec)
+    cl <- parallel::makeCluster(Ncpus, type = type_connec)
     doParallel::registerDoParallel(cl)
 
   p <- nrow(z)
