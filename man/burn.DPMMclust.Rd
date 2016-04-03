@@ -2,20 +2,17 @@
 % Please edit documentation in R/burn.DPMM.R
 \name{burn.DPMMclust}
 \alias{burn.DPMMclust}
-\title{Burning mcmc iterations from a Dirichlet Process Mixture Model}
+\title{Burning MCMC iterations from a Dirichlet Process Mixture Model.}
 \usage{
-burn.DPMMclust(x, burnin = 0, thin = 1, dist = "Normal")
+burn.DPMMclust(x, burnin = 0, thin = 1)
 }
 \arguments{
 \item{x}{a \code{DPMMclust} object.}
 
 \item{burnin}{the number of MCMC iterations to burn (default is \code{0}).}
 
-\item{thin}{the spacing at which MCMC iterations are kept. 
+\item{thin}{the spacing at which MCMC iterations are kept.
 Default is \code{1}, i.e. no thining.}
-
-\item{gs}{optionnal vector of length \code{n} containing the gold standard 
-partition of the \code{n} observations to compare to the point estimate.}
 
 \item{...}{further arguments passed to or from other methods.}
 }
@@ -23,12 +20,12 @@ partition of the \code{n} observations to compare to the point estimate.}
 a \code{DPMMclust} object minus the burnt iterations
 }
 \description{
-Burning mcmc iterations from a Dirichlet Process Mixture Model
+Utility function for burning MCMC iteration from a \code{DPMMclust} object.
 }
 \author{
 Boris Hejblum
 }
 \seealso{
-\link{summary.DPMMclust}
+\code{\link{summary.DPMMclust}}
 }
 
