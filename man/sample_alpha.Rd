@@ -2,15 +2,11 @@
 % Please edit documentation in R/sample_alpha.R
 \name{sample_alpha}
 \alias{sample_alpha}
-\title{Sampler for the concentration parameter of a Dirichlet process
- 
-A Gamma prior is used}
+\title{Sampler for the concentration parameter of a Dirichlet process}
 \usage{
 sample_alpha(alpha_old, n, K, a, b)
 }
 \description{
-Sampler for the concentration parameter of a Dirichlet process
- 
 A Gamma prior is used
 }
 \examples{
@@ -38,28 +34,30 @@ expK <- sum(alphaMMSE/(alphaMMSE+0:(n-1)))
 round(expK)
 
 
- prioralpha <- data.frame("alpha"=rgamma(n=5000, a,1/b), 
-                         "distribution" =factor(rep("prior",5000), 
+ prioralpha <- data.frame("alpha"=rgamma(n=5000, a,1/b),
+                         "distribution" =factor(rep("prior",5000),
                          levels=c("prior", "posterior")))
  p <- (ggplot(prioralpha, aes(x=alpha))
        + geom_histogram(aes(y=..density..),
                         colour="black", fill="white")
        + geom_density(alpha=.2, fill="red")
-       + ggtitle(paste("Prior distribution on alpha: Gamma(", a, 
+       + ggtitle(paste("Prior distribution on alpha: Gamma(", a,
                  ",", b, ")\\n", sep=""))
       )
  p
 
-postalpha.df <- data.frame("alpha"=postalphas, 
-                         "distribution" = factor(rep("posterior",length(postalphas)), 
+postalpha.df <- data.frame("alpha"=postalphas,
+                         "distribution" = factor(rep("posterior",length(postalphas)),
                          levels=c("prior", "posterior")))
  p <- (ggplot(postalpha.df, aes(x=alpha))
        + geom_histogram(aes(y=..density..), binwidth=.1,
                         colour="black", fill="white")
        + geom_density(alpha=.2, fill="blue")
        + ggtitle("Posterior distribution of alpha\\n")
-       + geom_vline(aes(xintercept=mean(alpha, na.rm=T)),   # Ignore NA values for mean
-                    color="red", linetype="dashed", size=1)  # Overlay with transparent density plot            
+       # Ignore NA values for mean
+       # Overlay with transparent density plot
+       + geom_vline(aes(xintercept=mean(alpha, na.rm=T)),
+                    color="red", linetype="dashed", size=1)
      )
  p
 
@@ -70,6 +68,10 @@ postalpha.df <- data.frame("alpha"=postalphas,
 
 }
 \references{
-West, M. (1992). Hyperparameter estimation in Dirichlet process mixture models. Technical Report, Duke University.
+M West, Hyperparameter estimation in Dirichlet process mixture models, T
+echnical Report, Duke University, 1992.
+
+MD Escobar, M West, Bayesian Density Estimation and Inference Using Mixtures
+\emph{Journal of the American Statistical Association}, 90(430):577-588, 1995.
 }
 

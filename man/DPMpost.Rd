@@ -203,7 +203,8 @@ hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
        + geom_point(aes(x=X, y=Y, col=Cluster))
        + geom_point(aes(x=X, y=Y, fill=Cluster, order=Cluster),
                     data=dataCenters, shape=22, size=5)
-       + scale_colour_discrete(name="Cluster", guide=guide_legend(override.aes=list(size=6, shape=22)))
+       + scale_colour_discrete(name="Cluster",
+                               guide=guide_legend(override.aes=list(size=6, shape=22)))
        + ggtitle("K-means with K=4 clusters\\n")
        + theme_bw()
  )
@@ -221,8 +222,10 @@ hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
                         colour="black", fill="white")
        + geom_density(alpha=.2, fill="blue")
        + ggtitle("Posterior distribution of alpha\\n")
-       + geom_vline(aes(xintercept=mean(alpha, na.rm=T)),   # Ignore NA values for mean
-                    color="red", linetype="dashed", size=1)  # Overlay with transparent density plot
+       # Ignore NA values for mean
+       # Overlay with transparent density plot
+       + geom_vline(aes(xintercept=mean(alpha, na.rm=T)),
+                    color="red", linetype="dashed", size=1)
      )
  p
 
@@ -231,8 +234,10 @@ hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
                         colour="black", fill="white")
        + geom_density(alpha=.2, fill="blue")
        + ggtitle("Posterior distribution of K\\n")
-       + geom_vline(aes(xintercept=mean(K, na.rm=T)),   # Ignore NA values for mean
-                    color="red", linetype="dashed", size=1)  # Overlay with transparent density plot
+       # Ignore NA values for mean
+       # Overlay with transparent density plot
+       + geom_vline(aes(xintercept=mean(K, na.rm=T)),
+                    color="red", linetype="dashed", size=1)
        #+ scale_x_continuous(breaks=c(0:6)*2, minor_breaks=c(0:6)*2+1)
        + scale_x_continuous(breaks=c(1:12))
      )
@@ -256,8 +261,10 @@ hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
        + geom_histogram(aes(y=..density..),
                         colour="black", fill="grey45", binwidth=1)
        + ggtitle("Posterior distribution of K\\n")
-       + geom_vline(aes(xintercept=mean(K, na.rm=T)),   # Ignore NA values for mean
-                    color="red", linetype="dashed", size=1)  # Overlay with transparent density plot
+       # Ignore NA values for mean
+       # Overlay with transparent density plot
+       + geom_vline(aes(xintercept=mean(K, na.rm=T)),
+                    color="red", linetype="dashed", size=1)
        + theme_bw()
        + scale_x_continuous(breaks=c(3:11))
        + xlim(3,11)

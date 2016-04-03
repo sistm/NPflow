@@ -2,10 +2,18 @@
 % Please edit documentation in R/update_SSsn.R
 \name{update_SSsn}
 \alias{update_SSsn}
-\title{Return updated sufficient statistics S of Normal Wishart distribution
-with new data matrix z}
+\title{Return updated sufficient statistics S with new data matrix z}
 \usage{
 update_SSsn(z, S, ltn, hyperprior = NULL)
+}
+\arguments{
+\item{z}{data matrix}
+
+\item{S}{previous sufficient statistics}
+
+\item{ltn}{random effects}
+
+\item{hyperprior}{Default is \code{NULL}}
 }
 \description{
 For internal use only.

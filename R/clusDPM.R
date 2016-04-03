@@ -4,20 +4,15 @@
 #'
 #'@param data
 #'
-#'@param distribution
+#'@param distrib
 #'
-#'@seealso DPM_GibbsSampler_SkewN
-#'@seealso cluster_est_binder
+#'@seealso \code{\link{DPMpost}}
+#'@seealso \code{\link{cluster_est_binder}}
 #'
 #'@export
 #'
-clusDPM <- function(data,
-                      distibution=c("Normal", "skewNormal", "skewStudent")
+clusDPM <- function(data, distib=c("gaussian", "skewnorm", "skewt")
 ){
-    if(distribution=="skewStudent"){
-        stop("Skew-Student distribution is not implemented yet\n")
-    }
-    
-    res <- list(data, )
+    res <- list(data)
     class(res) <- "NPlow"
 }

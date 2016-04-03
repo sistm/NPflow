@@ -6,17 +6,17 @@
 \alias{print.summaryDPMMclust,}
 \title{Methods for a summary of a 'DPMMclust' object}
 \usage{
-\method{print}{summaryDPMMclust}(s, ...)
+\method{print}{summaryDPMMclust}(x, ...)
 
-\method{plot}{summaryDPMMclust}(s, hm = FALSE, nbsim_densities = 5000,
+\method{plot}{summaryDPMMclust}(x, hm = FALSE, nbsim_densities = 5000,
   gg.add = list(theme_bw()), ...)
 }
 \arguments{
-\item{s}{a \code{summaryDPMMclust} object}
+\item{x}{a \code{summaryDPMMclust} object}
 
 \item{...}{further arguments passed to or from other methods}
 
-\item{hm}{logical flag to plot the heatmap of the similarity matrix. 
+\item{hm}{logical flag to plot the heatmap of the similarity matrix.
 Default is \code{FALSE}.}
 
 \item{nbsim_densities}{the number of simulated observations to be used

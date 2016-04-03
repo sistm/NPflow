@@ -4,19 +4,19 @@
 \alias{clusDPM}
 \title{Unsupervised clustering though Dirichlet Process Mixture models}
 \usage{
-clusDPM(data, distibution = c("Normal", "skewNormal", "skewStudent"))
+clusDPM(data, distib = c("gaussian", "skewnorm", "skewt"))
 }
 \arguments{
 \item{data}{}
 
-\item{distribution}{}
+\item{distrib}{}
 }
 \description{
 Wrapping function for mcmc sampling and partition estimation.
 }
 \seealso{
-DPM_GibbsSampler_SkewN
+\code{\link{DPMpost}}
 
-cluster_est_binder
+\code{\link{cluster_est_binder}}
 }
 

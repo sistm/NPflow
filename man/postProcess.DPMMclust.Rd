@@ -47,6 +47,6 @@ coincidence loss function (Binder), or 1-Fmeasure (F-measure).
 Boris Hejblum
 }
 \seealso{
-\link{similarityMat, summary.DPMMclust}
+\code{\link{similarityMat}} \code{\link{summary.DPMMclust}}
 }
 

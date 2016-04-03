@@ -2,10 +2,23 @@
 % Please edit documentation in R/update_SSst.R
 \name{update_SSst}
 \alias{update_SSst}
-\title{Return updated sufficient statistics S of Normal Wishart distribution
-with new data matrix z}
+\title{Return updated sufficient statistics S for skew t-distribution
+with data matrix z}
 \usage{
 update_SSst(z, S, ltn, scale, df, hyperprior = NULL)
+}
+\arguments{
+\item{z}{data matrix}
+
+\item{S}{previous sufficient statistics}
+
+\item{ltn}{random effects}
+
+\item{scale}{}
+
+\item{df}{skew t degrees of freedom}
+
+\item{hyperprior}{Default is \code{NULL}}
 }
 \description{
 For internal use only.

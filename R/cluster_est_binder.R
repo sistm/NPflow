@@ -1,21 +1,23 @@
-#'Gets a point estimate of the partition using Binder loss function
+#'Point estimate of the partition for the Binder loss function
 #'
-#'@param c a list of vector of length \code{n}. \code{c[[j]][i]} is 
-#'the cluster allocation of observation \code{i=1...n} at iteration 
+#'Get a point estimate of the partition using the Binder loss function.
+#'
+#'@param c a list of vector of length \code{n}. \code{c[[j]][i]} is
+#'the cluster allocation of observation \code{i=1...n} at iteration
 #'\code{j=1...N}.
 #'
-#'@param logposterior vector of logposterior correponding to each 
+#'@param logposterior vector of logposterior correponding to each
 #'partition from \code{c} used to break ties when minimizing the cost function
 #'
-#'@return a \code{list}: 
+#'@return a \code{list}:
 #'  \itemize{
 #'      \item{\code{c_est}:}{ a vector of length \code{n}. Point estimate of the partition}
-#'      \item{\code{cost}:}{ a vector of length \code{N}. \code{cost[j]} is the cost 
+#'      \item{\code{cost}:}{ a vector of length \code{N}. \code{cost[j]} is the cost
 #'      associated to partition \code{c[[j]]}}
-#'      \item{\code{similarity}:}{  matrix of size \code{n x n}. Similarity matrix 
+#'      \item{\code{similarity}:}{  matrix of size \code{n x n}. Similarity matrix
 #'      (see \link{similarityMat})}
-#'      \item{\code{opt_ind}:}{ the index of the optimal partition 
-#'      among the MCMC iterations.}  
+#'      \item{\code{opt_ind}:}{ the index of the optimal partition
+#'      among the MCMC iterations.}
 #'  }
 #'
 #'
@@ -23,14 +25,13 @@
 #'
 #'@export
 #'
-#'@references F. Caron, Y.W. Teh, T.B. Murphy. Bayesian nonparametric Plackett-Luce 
-#' models for the analysis of preferences for college degree programmes. 
-#' To appear in Annals of Applied Statistics, 2014.
-#' http://arxiv.org/abs/1211.5037
-#' 
-#' D. B. Dahl. Model-Based Clustering for Expression Data via a 
-#' Dirichlet Process Mixture Model, in Bayesian Inference for 
-#' Gene Expression and Proteomics, K.-A. Do, P. Muller, M. Vannucci 
+#'@references F Caron, YW Teh, TB Murphy, Bayesian nonparametric Plackett-Luce
+#'models for the analysis of preferences for college degree programmes,
+#'\emph{Annals of Applied Statistics}, 8(2):1145-1181, 2014.
+#'
+#' DB Dahl, Model-Based Clustering for Expression Data via a
+#' Dirichlet Process Mixture Model, \emph{Bayesian Inference for
+#' Gene Expression and Proteomics}, K-A Do, P Muller, M Vannucci
 #' (Eds.), Cambridge University Press, 2006.
 #'
 #'@seealso \link{similarityMat}
@@ -38,10 +39,10 @@
 
 cluster_est_binder <- function(c, logposterior){
     #    n <- length(c[[1]])
-    
+
     #    N <- length(c)
-    
-    
+
+
     #     #Non vectorized piece of code for reference
     #         cost <- numeric(N)
     #         similarity <- matrix(ncol=n, nrow=n)
@@ -55,19 +56,19 @@ cluster_est_binder <- function(c, logposterior){
     #             }
     #         }
     #         cost <- 2*cost
-    
+
     #    #Fully vectorized code uses too much live memory :-(
     #     vclust2mcoclust <- function(v){
     #         m <- sapply(v, FUN=function(x){v==x})
     #         return(m)
     #     }
     #     list_mcoclust <- lapply(c, vclust2mcoclust)
-    #     
+    #
     #     similarity <- Reduce('+', list_mcoclust)/N
     #     list_cost <- lapply(list_mcoclust, function(m){abs(m-similarity)})
     #     cost <- unlist(lapply(list_cost, sum))
-    
-    #     #Best R implementation 
+
+    #     #Best R implementation
     #         cost <- numeric(N)
     #         vclust2mcoclust <- function(v){
     #             m <- sapply(v, FUN=function(x){v==x})
@@ -84,21 +85,21 @@ cluster_est_binder <- function(c, logposterior){
     #         for (i in 1:N){
     #             cost[i] <- sum(abs(vclust2mcoclust(c[[i]])-similarity))
     #         }
-    #         
+    #
     cat("Estimating posterior similarity matrix...\n(this may take some time, complexity in O(n^2))\n")
     cmat <- sapply(c, "[")
     tempC <- similarityMatC(cmat)
     cat("DONE!\n")
-    
+
     similarity <- tempC$similarity
     cost <- tempC$cost
-    
-    
+
+
     opt_ind <- which(cost==min(cost)) #not use which.min because we want the last MCMC iteration in case of ties
     if(length(opt_ind)>1){
         opt_ind <- opt_ind[which.max(logposterior[opt_ind])]
     }
     c_est <- c[[opt_ind]]
-    
+
     return(list("c_est"=c_est, "cost"=cost, "similarity"=similarity, "opt_ind"=opt_ind))
 }

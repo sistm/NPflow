@@ -9,7 +9,7 @@ wishrnd(n, Sigma)
 \arguments{
 \item{n}{degrees of freedom}
 
-\item{Sigma}{scale parameter}
+\item{Sigma}{scale parameter (matrix)}
 }
 \description{
 For internal use only.

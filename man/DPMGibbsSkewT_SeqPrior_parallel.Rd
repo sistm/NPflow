@@ -5,47 +5,48 @@
 \title{Slice Sampling of Dirichlet Process Mixture of skew  Students's t-distibutions}
 \usage{
 DPMGibbsSkewT_SeqPrior_parallel(Ncpus, type_connec, z, prior, hyperG0, N,
-  nbclust_init, doPlot = TRUE, plotevery = 1, diagVar = TRUE,
-  verbose = TRUE, monitorfile = "defaultmonitor.txt", ...)
+  nbclust_init, add.vagueprior = TRUE, weightnoninf = NULL,
+  doPlot = FALSE, plotevery = 1, diagVar = TRUE, verbose = TRUE,
+  monitorfile = "defaultmonitor.txt", ...)
 }
 \arguments{
-\item{z}{data matrix \code{d x n} with \code{d} dimensions in rows 
+\item{z}{data matrix \code{d x n} with \code{d} dimensions in rows
 and \code{n} observations in columns.}
 
 \item{hyperG0}{prior mixing distribution.}
 
 \item{N}{number of MCMC iterations.}
 
-\item{nbclust_init}{number of clusters at initialisation. 
+\item{nbclust_init}{number of clusters at initialisation.
 Default to 30 (or less if there are less than 30 observations).}
 
 \item{doPlot}{logical flag indicating wether to plot MCMC iteration or not.
 Default to \code{TRUE}.}
 
-\item{diagVar}{logical flag indicating wether the variance of each cluster is 
-estimated as a diagonal matrix, or as a full matrix. 
+\item{diagVar}{logical flag indicating wether the variance of each cluster is
+estimated as a diagonal matrix, or as a full matrix.
 Default is \code{TRUE} (diagonal variance).}
 
-\item{verbose}{logical flag indicating wether partition info is 
+\item{verbose}{logical flag indicating wether partition info is
 written in the console at each MCMC iteration.}
 
-\item{a}{shape hyperparameter of the Gamma prior 
+\item{a}{shape hyperparameter of the Gamma prior
 on the parameter of the Dirichlet Process.}
 
-\item{b}{scale hyperparameter of the Gamma prior 
+\item{b}{scale hyperparameter of the Gamma prior
 on the parameter of the Dirichlet Process.}
 }
 \value{
-a object of class \code{DPMclust} with the following attributes: 
+a object of class \code{DPMclust} with the following attributes:
  \itemize{
      \item{\code{mcmc_partitions}:}{a list of length \code{N}. Each
-      element \code{mcmc_partitions[n]} is a vector of length 
+      element \code{mcmc_partitions[n]} is a vector of length
       \code{n} giving the partition of the \code{n} observations.}
-     \item{\code{alpha}:}{ a vector of length \code{N}. \code{cost[j]} is the cost 
+     \item{\code{alpha}:}{ a vector of length \code{N}. \code{cost[j]} is the cost
 associated to partition \code{c[[j]]}}
      \item{\code{weights_list}:}{}
      \item{\code{logposterior_list}:}{}
-     \item{\code{data}:}{the data matrix \code{d x n} with \code{d} dimensions in rows 
+     \item{\code{data}:}{the data matrix \code{d x n} with \code{d} dimensions in rows
 and \code{n} observations in columns.}
      \item{\code{nb_mcmcit}:}{the number of MCMC itertations}
  }
@@ -81,17 +82,18 @@ sdev[, ,2] <- matrix(nrow=d, ncol=d, c(0.1, 0, 0, 0.3))
 sdev[, ,3] <- matrix(nrow=d, ncol=d, c(0.3, 0.15, 0.15, 0.3))
 sdev[, ,4] <- .3*diag(2)
 
- 
+
 c <- rep(0,n)
 w <- rep(1,n)
 z <- matrix(0, nrow=d, ncol=n)
 for(k in 1:n){
  c[k] = which(rmultinom(n=1, size=1, prob=p)!=0)
  w[k] <- rgamma(1, shape=nu[c[k]]/2, rate=nu[c[k]]/2)
- z[,k] <- xi[, c[k]] + psi[, c[k]]*rtruncnorm(n=1, a=0, b=Inf, mean=0, sd=1/sqrt(w[k])) + (sdev[, , c[k]]/sqrt(w[k]))\%*\%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
+ z[,k] <- xi[, c[k]] + psi[, c[k]]*rtruncnorm(n=1, a=0, b=Inf, mean=0, sd=1/sqrt(w[k])) +
+                (sdev[, , c[k]]/sqrt(w[k]))\%*\%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
  cat(k, "/", n, " observations simulated\\n", sep="")
 }
- 
+
 # Set parameters of G0
 hyperG0 <- list()
 hyperG0[["b_xi"]] <- rowMeans(z)
@@ -101,45 +103,46 @@ hyperG0[["D_xi"]] <- 100
 hyperG0[["D_psi"]] <- 100
 hyperG0[["nu"]] <- d+1
 hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
- 
+
  # hyperprior on the Scale parameter of DPM
  a <- 0.0001
  b <- 0.0001
- 
+
  # do some plots
  nbclust_init <- 30
- 
+
  ## Plot Data
- q <- (ggplot(data.frame("X"=z[1,], "Y"=z[2,]), aes(x=X, y=Y)) 
+ q <- (ggplot(data.frame("X"=z[1,], "Y"=z[2,]), aes(x=X, y=Y))
        + geom_point()
        + ggtitle("Simple example in 2d data")
        +xlab("D1")
        +ylab("D2")
        +theme_bw())
  q
- 
- MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=3000, 
+
+ MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=3000,
                                 doPlot=TRUE, plotevery=250,
                                 nbclust_init, diagVar=FALSE)
  s <- summary(MCMCsample_st, burnin = 2000, thin=5, posterior_approx=TRUE)
  F <- FmeasureC(pred=s$point_estim$c_est, ref=c)
- 
+
 for(k in 1:n){
  c[k] = which(rmultinom(n=1, size=1, prob=p)!=0)
  w[k] <- rgamma(1, shape=nu[c[k]]/2, rate=nu[c[k]]/2)
- z[,k] <- xi[, c[k]] + psi[, c[k]]*rtruncnorm(n=1, a=0, b=Inf, mean=0, sd=1/sqrt(w[k])) + (sdev[, , c[k]]/sqrt(w[k]))\%*\%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
+ z[,k] <- xi[, c[k]] + psi[, c[k]]*rtruncnorm(n=1, a=0, b=Inf, mean=0, sd=1/sqrt(w[k])) +
+                (sdev[, , c[k]]/sqrt(w[k]))\%*\%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
  cat(k, "/", n, " observations simulated\\n", sep="")
 }
- MCMCsample_st2 <- DPMGibbsSkewT_SeqPrior_parallel(Ncpus=2, type_connec="SOCK", 
-                                                   z, prior=s$param_posterior, 
-                                                   hyperG0, N=3000, 
+ MCMCsample_st2 <- DPMGibbsSkewT_SeqPrior_parallel(Ncpus=2, type_connec="SOCK",
+                                                   z, prior=s$param_posterior,
+                                                   hyperG0, N=3000,
                                                    doPlot=TRUE, plotevery=100,
                                                    nbclust_init, diagVar=FALSE, verbose=FALSE)
 s2 <- summary(MCMCsample_st2, burnin = 2000, thin=5)
 F2 <- FmeasureC(pred=s2$point_estim$c_est, ref=c)
- 
- 
- 
+
+
+
 }
 \author{
 Boris Hejblum

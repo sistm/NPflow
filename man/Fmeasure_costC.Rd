@@ -2,30 +2,28 @@
 % Please edit documentation in R/RcppExports.R
 \name{Fmeasure_costC}
 \alias{Fmeasure_costC}
-\title{C++ implementation of cost computation with Fmeasure as loss function}
+\title{Multiple cost computations with Fmeasure as the loss function}
 \usage{
 Fmeasure_costC(c)
 }
 \arguments{
-\item{c}{matrix where each column is one MCMC partition}
+\item{c}{a matrix where each column is one MCMC partition}
 }
 \description{
-C++ implementation of cost computation with Fmeasure as loss function
+C++ implementation of multiple cost computations with Fmeasure as the loss
+function using the Armadillo library
 }
 \examples{
 c <- list(c(1,1,2,3,2,3), c(1,1,1,2,3,3),c(2,2,1,1,1,1))
 Fmeasure_costC(sapply(c, "["))
 
+\dontrun{
 c2 <- list()
-for(i in 1:500){
-    c2 <- c(c2, list(rmultinom(n=1, size=10000, prob=rexp(n=10000))))
+for(i in 1:100){
+    c2 <- c(c2, list(rmultinom(n=1, size=2000, prob=rexp(n=2000))))
 }
-library(microbenchmark)
-f <- function(){c3 <-sapply(c2, "[")
-            Fmeasure_costC(c3)}
-fa <- function(){c3 <-sapply(c2, "[")
-            Fmeasure_costC_arma(c3)}
-microbenchmark(f(), fa(), times=10L)
+Fmeasure_costC(sapply(c2, "["))
+}
 
 }
 

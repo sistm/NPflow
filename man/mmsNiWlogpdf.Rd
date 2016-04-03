@@ -2,7 +2,7 @@
 % Please edit documentation in R/mmsNiWlogpdf.R
 \name{mmsNiWlogpdf}
 \alias{mmsNiWlogpdf}
-\title{structured Normal inverse Wishart (sNiW) probability density function for multiple inputs}
+\title{Probability density function of multiple structured Normal inverse Wishart}
 \usage{
 mmsNiWlogpdf(U_xi, U_psi, U_Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_df0)
 }
@@ -24,7 +24,8 @@ mmsNiWlogpdf(U_xi, U_psi, U_Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_df0)
 \item{U_df0}{a list of length K of degrees of freedom parameters for sNiW, each of dimension p x p}
 }
 \description{
-structured Normal inverse Wishart (sNiW) probability density function for multiple inputs
+Probability density function of structured Normal inverse Wishart (sNiW)
+for multiple inputs, on the log scale.
 }
 \examples{
 hyperG0 <- list()
@@ -46,7 +47,8 @@ for(k in 1:1000){
  S_list[[k]] <- NNiW[["S"]]
 }
 mmsNiWlogpdf(U_xi=xi_list, U_psi=psi_list, U_Sigma=S_list,
-            U_xi0=list(hyperG0$b_xi), U_psi0=list(hyperG0$b_psi) , U_B0=list(diag(c(hyperG0$D_xi, hyperG0$D_psi))) , 
+            U_xi0=list(hyperG0$b_xi), U_psi0=list(hyperG0$b_psi) ,
+            U_B0=list(diag(c(hyperG0$D_xi, hyperG0$D_psi))) ,
             U_Sigma0=list(hyperG0$lambda), U_df0=list(hyperG0$nu))
 
 
@@ -67,9 +69,10 @@ for(k in 1:1000){
  psi_list[[k]] <- NNiW[["psi"]]
  S_list[[k]] <- NNiW[["S"]]
 }
-            
+
 mmsNiWlogpdf(U_xi=xi_list, U_psi=psi_list, U_Sigma=S_list,
-            U_xi0=list(hyperG0$b_xi), U_psi0=list(hyperG0$b_psi) , U_B0=list(diag(c(hyperG0$D_xi, hyperG0$D_psi))) , 
+            U_xi0=list(hyperG0$b_xi), U_psi0=list(hyperG0$b_psi) ,
+            U_B0=list(diag(c(hyperG0$D_xi, hyperG0$D_psi))) ,
             U_Sigma0=list(hyperG0$lambda), U_df0=list(hyperG0$nu))
 
 }

@@ -1,55 +1,62 @@
-#'Gets a point estimate of the partition using a modified Binder loss function
-#'The loss function takes in account distance between mixture components using
-#'the  Bhattacharyya distance. Note that components need to be Gaussian.
+#'Point estimate of the partition using a modified Binder loss function
 #'
-#'@param c a list of vector of length \code{n}. \code{c[[j]][i]} is 
-#'the cluster allocation of observation \code{i=1...n} at iteration 
+#'Get a point estimate of the partition using a modified Binder loss function
+#'for Gaussian components
+#'
+#'@details
+#'Note that he current implementation only allows Gaussian components.
+#'
+#'The modified Binder loss function takes into account the distance between
+#'mixture components using #'the  Bhattacharyya distance.
+#'
+#'@param c a list of vector of length \code{n}. \code{c[[j]][i]} is
+#'the cluster allocation of observation \code{i=1...n} at iteration
 #'\code{j=1...N}.
-#'
 #'
 #'@param Mu is a list of length \code{n} composed of \code{p x l} matrices.
 #'Where \code{l} is the maximum number of components per partition.
 #'
-#'@param Sigma is list of length \code{n} composed of arrays containing a maximum of 
+#'@param Sigma is list of length \code{n} composed of arrays containing a maximum of
 #'\code{l} \code{p x p} covariance matrices.
 #'
 #'@param lambda is a nonnegative tunning parameter allowing further control over the distance
-#'function. 
+#'function. Default is 0.
 #'
-#'@param  \code{a} and \code{b} are nonnegative constants seen as the unit cost for each
-#'kind of pairwise misclassification.
+#'@param  a nonnegative constant seen as the unit cost for pairwise misclassification. Default is 1.
 #'
-#'@param logposterior vector of logposterior correponding to each 
+#'@param  b nonnegative constant seen as the unit cost for the other kind of pairwise misclassification.
+#'Default is 1.
+#'
+#'@param logposterior vector of logposterior correponding to each
 #'partition from \code{c} used to break ties when minimizing the cost function
 #'
-#'@return a \code{list}: 
+#'@return a \code{list}:
 #'  \itemize{
 #'      \item{\code{c_est}:}{ a vector of length \code{n}. Point estimate of the partition}
-#'      \item{\code{cost}:}{ a vector of length \code{N}. \code{cost[j]} is the cost 
+#'      \item{\code{cost}:}{ a vector of length \code{N}. \code{cost[j]} is the cost
 #'      associated to partition \code{c[[j]]}}
-#'      \item{\code{similarity}:}{  matrix of size \code{n x n}. Similarity matrix 
+#'      \item{\code{similarity}:}{  matrix of size \code{n x n}. Similarity matrix
 #'      (see \link{similarityMat})}
-#'      \item{\code{opt_ind}:}{ the index of the optimal partition 
-#'      among the MCMC iterations.}  
+#'      \item{\code{opt_ind}:}{ the index of the optimal partition
+#'      among the MCMC iterations.}
 #'  }
 #'
 #'
-#'@author François Caron, Chariff Alkhassim, Boris Hejblum
+#'@author Francois Caron, Chariff Alkhassim, Boris Hejblum
+#'
+#'
+#'@references JW Lau, PJ Green, Bayesian Model-Based Clustering Procedures,
+#'\emph{Journal of Computational and Graphical Statistics}, 16(3):526-558, 2007.
+#'
+#'DA Binder, Bayesian cluster analysis, \emph{Biometrika} 65(1):31-38, 1978.
+#'
+#'@seealso \code{\link{similarityMat}}
 #'
 #'@export
-#'
-#'@references J.W.Lau and P.J.Green. Bayesian Model-Based Clustering Procedures.
-#' Journal of Computational and Graphical Statistics, Volume 16, Number 3, 
-#' Pages 526-558, 2007.
-#' 
-#'D.A.Binder. Bayesian cluster analysis. Biometrika Vol. 65, No. 1, pp. 31-38, 1978
-#'
-#'@seealso \link{similarityMat}
-#'
 
-cluster_est_MBinderN<-function(c,Mu,Sigma,lambda,a=1,b=1,logposterior){
+cluster_est_Mbinder_norm <- function(c, Mu, Sigma, lambda = 0, a = 1, b = a, logposterior){
   # Computes a weighted Bhattacharyya distance between two Gaussians.
-  Bhattacharyya<-function(Mu,Sigma,lambda,c){     
+  Bhattacharyya <- function(Mu,Sigma,lambda,c){
     theta_grid <- NULL
     uni<-unique(c)
     theta_mat<-matrix(0,max(uni),max(uni))
@@ -77,22 +84,22 @@ cluster_est_MBinderN<-function(c,Mu,Sigma,lambda,a=1,b=1,logposterior){
   }
 
   len_c<-length(c)
-  
+
   NuMat_res<-0
   for (i in 1:len_c){
     NuMat_res<-NuMat_res+
-      NuMatParC(c[[i]],Bhattacharyya(Mu[[i]],Sigma[[i]],lambda,c[[i]]))$NuMatParC
+      NuMatParC(c[[i]], Bhattacharyya(Mu[[i]],Sigma[[i]],lambda,c[[i]]))$NuMatParC
   }
   NuMat_res<-NuMat_res/len_c
   similarityMat_res<-similarityMat2C(sapply(c, "["))$similarity
-  
+
   cost<-numeric(len_c)
   for (i in 1:len_c){
-    hatc_i_equals_hatc_j<-vclust2mcoclustC(c[[i]])$Coclust 
-    hatc_i_equals_hatc_j[lower.tri(hatc_i_equals_hatc_j,diag=TRUE)] <- NA 
+    hatc_i_equals_hatc_j<-vclust2mcoclustC(c[[i]])$Coclust
+    hatc_i_equals_hatc_j[lower.tri(hatc_i_equals_hatc_j,diag=TRUE)] <- NA
     cost[i]<-sum((b*NuMat_res-a*similarityMat_res)[which(hatc_i_equals_hatc_j==1,arr.ind=TRUE)],na.rm=TRUE)
   }
-  opt_ind<-which(cost==min(cost))      
+  opt_ind<-which(cost==min(cost))
   if(length(opt_ind)>1){   # in case of ties
     opt_ind <- opt_ind[which.max(logposterior[opt_ind])]
   }
@@ -100,13 +107,13 @@ cluster_est_MBinderN<-function(c,Mu,Sigma,lambda,a=1,b=1,logposterior){
   return(list("opt_ind"=opt_ind,"c_est"=c_est,"cost"=cost))
 }
 
-# Below is a R Code which doesn't call any C function
+# Below is an implementation in R which doesn't call any C function
 
-# 
+#
 # cluster_est_MBinderN<-function(c,Mu,Sigma,lambda,a=1,b=1,logposterior)
 # {
 #   Bhattacharyya<-function(Mu,Sigma,coefs,lambda,c)
-#   {   
+#   {
 #     theta_grid <- NULL
 #     uni<-unique(c)
 #     for (i in uni)
@@ -132,11 +139,11 @@ cluster_est_MBinderN<-function(c,Mu,Sigma,lambda,a=1,b=1,logposterior){
 #     }
 #     theta_dist<-cbind(theta_grid,d)
 #     dist_coef<-numeric(nrow(coefs))
-#     
+#
 #     # Heavy part of the algorithm . Indeed, each coeficients of the complementary
 #     # of a given partition must be assigned its distance weight
 #
-#     rowmatch <- function(A,B) { 
+#     rowmatch <- function(A,B) {
 #       f <- function(...) paste(..., sep=":")
 #       a <- do.call("f", as.data.frame(A))
 #       b <- do.call("f", as.data.frame(B))
@@ -147,7 +154,7 @@ cluster_est_MBinderN<-function(c,Mu,Sigma,lambda,a=1,b=1,logposterior){
 #                             1,FUN=sort)))
 #     return(theta_dist[index,3])
 #   }
-#   
+#
 #   NuMat <- function(c,mu,Sigma,lambda){
 #     vclust2mcoclust2 <-function(v,mu,Sigma,lambda){
 #       co_clust_dif<-(sapply(v, FUN=function(x){x!=v}))*1
@@ -160,9 +167,9 @@ cluster_est_MBinderN<-function(c,Mu,Sigma,lambda,a=1,b=1,logposterior){
 #     {
 #       temp<-temp+vclust2mcoclust2(c[[i]],mu[[i]],Sigma[[i]],lambda)
 #     }
-#     return(temp/length(c)) 
+#     return(temp/length(c))
 #   }
-#   
+#
 #   cost<-numeric(length(c))
 #   NuMat_res<-NuMat(c,Mu,Sigma,lambda)
 #   similarityMat_res<-similarityMat(c)
@@ -174,12 +181,12 @@ cluster_est_MBinderN<-function(c,Mu,Sigma,lambda,a=1,b=1,logposterior){
 #   }
 #   for (i in 1:length(c))
 #   {
-#     hatc_i_equals_hatc_j<-vclust2mcoclust(c[[i]]) 
+#     hatc_i_equals_hatc_j<-vclust2mcoclust(c[[i]])
 #     hatc_i_equals_hatc_j[lower.tri(hatc_i_equals_hatc_j,diag=TRUE)] <- NA
 #     cost[i]<-sum((b*NuMat_res-a*similarityMat_res)[which(hatc_i_equals_hatc_j==1,arr.ind=TRUE)],na.rm=TRUE)
 #   }
-#   
-#   opt_ind<-which(cost==min(cost))      
+#
+#   opt_ind<-which(cost==min(cost))
 #   if(length(opt_ind)>1){   # in case of ties
 #     opt_ind <- opt_ind[which.max(logposterior[opt_ind])]
 #   }

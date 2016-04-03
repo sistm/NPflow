@@ -2,45 +2,44 @@
 % Please edit documentation in R/cluster_est_binder.R
 \name{cluster_est_binder}
 \alias{cluster_est_binder}
-\title{Gets a point estimate of the partition using Binder loss function}
+\title{Point estimate of the partition for the Binder loss function}
 \usage{
 cluster_est_binder(c, logposterior)
 }
 \arguments{
-\item{c}{a list of vector of length \code{n}. \code{c[[j]][i]} is 
-the cluster allocation of observation \code{i=1...n} at iteration 
+\item{c}{a list of vector of length \code{n}. \code{c[[j]][i]} is
+the cluster allocation of observation \code{i=1...n} at iteration
 \code{j=1...N}.}
 
-\item{logposterior}{vector of logposterior correponding to each 
+\item{logposterior}{vector of logposterior correponding to each
 partition from \code{c} used to break ties when minimizing the cost function}
 }
 \value{
-a \code{list}: 
+a \code{list}:
  \itemize{
      \item{\code{c_est}:}{ a vector of length \code{n}. Point estimate of the partition}
-     \item{\code{cost}:}{ a vector of length \code{N}. \code{cost[j]} is the cost 
+     \item{\code{cost}:}{ a vector of length \code{N}. \code{cost[j]} is the cost
      associated to partition \code{c[[j]]}}
-     \item{\code{similarity}:}{  matrix of size \code{n x n}. Similarity matrix 
+     \item{\code{similarity}:}{  matrix of size \code{n x n}. Similarity matrix
      (see \link{similarityMat})}
-     \item{\code{opt_ind}:}{ the index of the optimal partition 
-     among the MCMC iterations.}  
+     \item{\code{opt_ind}:}{ the index of the optimal partition
+     among the MCMC iterations.}
  }
 }
 \description{
-Gets a point estimate of the partition using Binder loss function
+Get a point estimate of the partition using the Binder loss function.
 }
 \author{
 Francois Caron, Boris Hejblum
 }
 \references{
-F. Caron, Y.W. Teh, T.B. Murphy. Bayesian nonparametric Plackett-Luce 
-models for the analysis of preferences for college degree programmes. 
-To appear in Annals of Applied Statistics, 2014.
-http://arxiv.org/abs/1211.5037
+F Caron, YW Teh, TB Murphy, Bayesian nonparametric Plackett-Luce
+models for the analysis of preferences for college degree programmes,
+\emph{Annals of Applied Statistics}, 8(2):1145-1181, 2014.
 
-D. B. Dahl. Model-Based Clustering for Expression Data via a 
-Dirichlet Process Mixture Model, in Bayesian Inference for 
-Gene Expression and Proteomics, K.-A. Do, P. Muller, M. Vannucci 
+DB Dahl, Model-Based Clustering for Expression Data via a
+Dirichlet Process Mixture Model, \emph{Bayesian Inference for
+Gene Expression and Proteomics}, K-A Do, P Muller, M Vannucci
 (Eds.), Cambridge University Press, 2006.
 }
 \seealso{

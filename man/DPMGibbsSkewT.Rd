@@ -89,7 +89,8 @@ z <- matrix(0, nrow=d, ncol=n)
 for(k in 1:n){
  c[k] = which(rmultinom(n=1, size=1, prob=p)!=0)
  w[k] <- rgamma(1, shape=nu[c[k]]/2, rate=nu[c[k]]/2)
- z[,k] <- xi[, c[k]] + psi[, c[k]]*rtruncnorm(n=1, a=0, b=Inf, mean=0, sd=1/sqrt(w[k])) + (sdev[, , c[k]]/sqrt(w[k]))\%*\%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
+ z[,k] <- xi[, c[k]] + psi[, c[k]]*rtruncnorm(n=1, a=0, b=Inf, mean=0, sd=1/sqrt(w[k])) +
+                (sdev[, , c[k]]/sqrt(w[k]))\%*\%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
  cat(k, "/", n, " observations simulated\\n", sep="")
 }
 
@@ -153,9 +154,9 @@ hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
 
  # Gibbs sampler for Dirichlet Process Mixtures
  ##############################################
- l <- lineprof(MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=100,
+ MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=1000,
  doPlot, nbclust_init, plotevery=100, gg.add=list(theme_bw()),
- diagVar=FALSE))
+ diagVar=FALSE)
  s <- summary(MCMCsample_st, burnin = 2000, thin=4, lossFn = "Binder")
  print(s)
  plot(s, hm=T) #pdf(height=8.5, width=10.5) #png(height=700, width=720)
@@ -200,7 +201,8 @@ hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
        + geom_point(aes(x=X, y=Y, col=Cluster))
        + geom_point(aes(x=X, y=Y, fill=Cluster, order=Cluster),
                     data=dataCenters, shape=22, size=5)
-       + scale_colour_discrete(name="Cluster", guide=guide_legend(override.aes=list(size=6, shape=22)))
+       + scale_colour_discrete(name="Cluster", guide=guide_legend(override.aes=list(size=6,
+                                                                                    shape=22)))
        + ggtitle("K-means with K=4 clusters\\n")
        + theme_bw()
  )
@@ -218,8 +220,10 @@ hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
                         colour="black", fill="white")
        + geom_density(alpha=.2, fill="blue")
        + ggtitle("Posterior distribution of alpha\\n")
-       + geom_vline(aes(xintercept=mean(alpha, na.rm=T)),   # Ignore NA values for mean
-                    color="red", linetype="dashed", size=1)  # Overlay with transparent density plot
+       # Ignore NA values for mean
+       # Overlay with transparent density plot
+       + geom_vline(aes(xintercept=mean(alpha, na.rm=T)),
+                    color="red", linetype="dashed", size=1)
      )
  p
 
@@ -228,8 +232,10 @@ hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
                         colour="black", fill="white")
        + geom_density(alpha=.2, fill="blue")
        + ggtitle("Posterior distribution of K\\n")
-       + geom_vline(aes(xintercept=mean(K, na.rm=T)),   # Ignore NA values for mean
-                    color="red", linetype="dashed", size=1)  # Overlay with transparent density plot
+       # Ignore NA values for mean
+       # Overlay with transparent density plot
+       + geom_vline(aes(xintercept=mean(K, na.rm=T)),
+                    color="red", linetype="dashed", size=1)
        #+ scale_x_continuous(breaks=c(0:6)*2, minor_breaks=c(0:6)*2+1)
        + scale_x_continuous(breaks=c(1:12))
      )
@@ -253,8 +259,10 @@ hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
        + geom_histogram(aes(y=..density..),
                         colour="black", fill="grey45", binwidth=1)
        + ggtitle("Posterior distribution of K\\n")
-       + geom_vline(aes(xintercept=mean(K, na.rm=T)),   # Ignore NA values for mean
-                    color="red", linetype="dashed", size=1)  # Overlay with transparent density plot
+       # Ignore NA values for mean
+       # Overlay with transparent density plot
+       + geom_vline(aes(xintercept=mean(K, na.rm=T)),
+                    color="red", linetype="dashed", size=1)
        + theme_bw()
        + scale_x_continuous(breaks=c(3:11))
        + xlim(3,11)

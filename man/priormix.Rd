@@ -9,7 +9,7 @@ priormix(sDPMclust, nu0add = 5)
 \arguments{
 \item{sDPMclust}{an object of class \code{summary.DPMMclust}}
 
-\item{nu0add}{an additionnal value integer added to hyperprior parameter nu 
+\item{nu0add}{an additionnal value integer added to hyperprior parameter nu
 (increase to avoid non positive definite matrix sampling)}
 }
 \description{
@@ -42,17 +42,18 @@ sdev[, ,2] <- matrix(nrow=d, ncol=d, c(0.1, 0, 0, 0.3))
 sdev[, ,3] <- matrix(nrow=d, ncol=d, c(0.3, 0.15, 0.15, 0.3))
 sdev[, ,4] <- .3*diag(2)
 
- 
+
 c <- rep(0,n)
 w <- rep(1,n)
 z <- matrix(0, nrow=d, ncol=n)
 for(k in 1:n){
  c[k] = which(rmultinom(n=1, size=1, prob=p)!=0)
  w[k] <- rgamma(1, shape=nu[c[k]]/2, rate=nu[c[k]]/2)
- z[,k] <- xi[, c[k]] + psi[, c[k]]*rtruncnorm(n=1, a=0, b=Inf, mean=0, sd=1/sqrt(w[k])) + (sdev[, , c[k]]/sqrt(w[k]))\%*\%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
+ z[,k] <- xi[, c[k]] + psi[, c[k]]*rtruncnorm(n=1, a=0, b=Inf, mean=0, sd=1/sqrt(w[k])) +
+                (sdev[, , c[k]]/sqrt(w[k]))\%*\%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
  cat(k, "/", n, " observations simulated\\n", sep="")
 }
- 
+
 # Set parameters of G0
 hyperG0 <- list()
 hyperG0[["b_xi"]] <- rowMeans(z)
@@ -62,20 +63,23 @@ hyperG0[["D_xi"]] <- 100
 hyperG0[["D_psi"]] <- 100
 hyperG0[["nu"]] <- d+1
 hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
- 
+
  # hyperprior on the Scale parameter of DPM
  a <- 0.0001
  b <- 0.0001
- 
+
  # do some plots
  nbclust_init <- 30
- 
- MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=3000, doPlot=FALSE, nbclust_init, diagVar=FALSE)
+
+ MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=3000, doPlot=FALSE,
+                                nbclust_init, diagVar=FALSE)
  s <- summary(MCMCsample_st, burnin = 2500, thin=2)
  pmix <- priormix(s)
- MCMCsample_st_EB <- DPMGibbsSkewT_EB_parallel(Ncpus=2, type_connec ="SOCK", z, hyperG0=pmix, a=a, b=b, 
- N=500, diagVar=FALSE, doPlot=T, plotevery=100, gg.add=list(theme_bw()), verbose=TRUE)
-  
+ MCMCsample_st_EB <- DPMGibbsSkewT_EB_parallel(Ncpus=2, type_connec ="SOCK", z,
+                                               hyperG0=pmix, a=a, b=b, N=500, diagVar=FALSE,
+                                               doPlot=T, plotevery=100,
+                                               gg.add=list(theme_bw()), verbose=TRUE)
+
 }
 \seealso{
 summary.DPMMclust

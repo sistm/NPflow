@@ -7,24 +7,24 @@
 evalClustLoss(c, gs, lossFn = "F-measure", a = 1, b = 1)
 }
 \arguments{
-\item{c}{vector of length \code{n} containing the estimated partition 
+\item{c}{vector of length \code{n} containing the estimated partition
 of the  \code{n} observations.}
 
-\item{gs}{vector of length \code{n} containing the  gold standard 
+\item{gs}{vector of length \code{n} containing the  gold standard
 partition of the  \code{n} observations.}
 
 \item{lossFn}{character string specifying the loss function to be used.
 Either "F-measure" or "Binder" (see Details). Default is "F-measure".}
 
-\item{a}{only relevant if \code{lossFn} is "Binder". Penalty for wrong 
+\item{a}{only relevant if \code{lossFn} is "Binder". Penalty for wrong
 coclustering in \code{c} compared to code{gs}. Defaults is 1.}
 
-\item{b}{only relevant if \code{lossFn} is "Binder". Penalty for missed 
+\item{b}{only relevant if \code{lossFn} is "Binder". Penalty for missed
 coclustering in \code{c} compared to code{gs}. Defaults is 1.}
 }
 \value{
-the cost of the point estimate \code{c} in regard of the 
-gold standard \code{gs}.
+the cost of the point estimate \code{c} in regard of the
+gold standard \code{gs} for a given loss function.
 }
 \description{
 Evaluate the loss of a point estimate of the partition compared to a gold standard according to a given loss function
@@ -37,16 +37,16 @@ coincidence loss function (Binder), or 1-Fmeasure (F-measure).
 Boris Hejblum
 }
 \references{
-J.W. Lau & P.J. Green. Bayesian Model-Based Clustering 
-Procedures, Journal of Computational and Graphical Statistics, 
+J.W. Lau & P.J. Green. Bayesian Model-Based Clustering
+Procedures, Journal of Computational and Graphical Statistics,
 16(3): 526-558, 2007.
 
-D. B. Dahl. Model-Based Clustering for Expression Data via a 
-Dirichlet Process Mixture Model, in Bayesian Inference for 
-Gene Expression and Proteomics, K.-A. Do, P. Muller, M. Vannucci 
+D. B. Dahl. Model-Based Clustering for Expression Data via a
+Dirichlet Process Mixture Model, in Bayesian Inference for
+Gene Expression and Proteomics, K.-A. Do, P. Muller, M. Vannucci
 (Eds.), Cambridge University Press, 2006.
 }
 \seealso{
-\link{similarityMat}, \link{clust_est_Binder}
+\code{\link{similarityMat}}, \code{\link{clust_est_binder}}
 }
 

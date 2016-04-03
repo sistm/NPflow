@@ -2,10 +2,16 @@
 % Please edit documentation in R/update_SS.R
 \name{update_SS}
 \alias{update_SS}
-\title{Return updated sufficient statistics S of Normal Wishart distribution
-with new data matrix z}
+\title{Return updated sufficient statistics S with new data matrix z}
 \usage{
 update_SS(z, S, hyperprior = NULL)
+}
+\arguments{
+\item{z}{data matrix}
+
+\item{S}{previous sufficient statistics}
+
+\item{hyperprior}{Default is \code{NULL}}
 }
 \description{
 For internal use only.

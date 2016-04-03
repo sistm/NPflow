@@ -4,28 +4,29 @@
 \alias{summary.DPMMclust}
 \title{Summarizing Dirichlet Process Mixture Models}
 \usage{
-\method{summary}{DPMMclust}(x, burnin = 0, thin = 1, gs = NULL,
-  lossFn = "F-measure", K = 10, posterior_approx = FALSE, tol = 2,
-  maxit = 50, dist = "Normal", lambda = 0, a = 1, b = 1)
+\method{summary}{DPMMclust}(object, burnin = 0, thin = 1, gs = NULL,
+  lossFn = "F-measure", posterior_approx = FALSE, ...)
 }
 \arguments{
-\item{x}{a \code{DPMMclust} object.}
+\item{object}{a \code{DPMMclust} object.}
 
 \item{burnin}{integer giving the number of MCMC iterations to burn (defaults is half)}
 
-\item{thin}{integer giving the spacing at which MCMC iterations are kept. 
+\item{thin}{integer giving the spacing at which MCMC iterations are kept.
 Default is \code{1}, i.e. no thining.}
 
-\item{gs}{optionnal vector of length \code{n} containing the gold standard 
+\item{gs}{optionnal vector of length \code{n} containing the gold standard
 partition of the \code{n} observations to compare to the point estimate}
 
 \item{lossFn}{character string specifying the loss function to be used.
 Either "F-measure" or "Binder" (see Details). Default is "F-measure".}
 
+\item{posterior_approx}{}
+
 \item{...}{further arguments passed to or from other methods}
 }
 \value{
-a \code{list}: 
+a \code{list}:
  \itemize{
      \item{\code{burnin}:}{an integer passing along the \code{burnin} argument}
      \item{\code{thin}:}{an integer passing along the \code{thin} argument}
@@ -36,7 +37,7 @@ a \code{list}:
  }
 }
 \description{
-Summarizing Dirichlet Process Mixture Models
+Summary methods for \code{DPMMclust} objects.
 }
 \details{
 The cost of a point estimate partition is calculated using either a pairwise

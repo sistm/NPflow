@@ -6,18 +6,19 @@
 with a prior on alpha}
 \usage{
 DPMGibbsN_parallel(Ncpus, type_connec, z, hyperG0, a, b, N, doPlot = TRUE,
-  nbclust_init = 30, plotevery = 1, diagVar = TRUE, verbose = TRUE, ...)
+  nbclust_init = 30, plotevery = 1, diagVar = TRUE, verbose = TRUE,
+  monitorfile = "", ...)
 }
 \arguments{
-\item{z}{data matrix \code{d x n} with \code{d} dimensions in rows 
+\item{z}{data matrix \code{d x n} with \code{d} dimensions in rows
 and \code{n} observations in columns.}
 
 \item{hyperG0}{prior mixing distribution.}
 
-\item{a}{shape hyperparameter of the Gamma prior 
+\item{a}{shape hyperparameter of the Gamma prior
 on the parameter of the Dirichlet Process.}
 
-\item{b}{scale hyperparameter of the Gamma prior 
+\item{b}{scale hyperparameter of the Gamma prior
 on the parameter of the Dirichlet Process.}
 
 \item{N}{number of MCMC iterations.}
@@ -25,15 +26,19 @@ on the parameter of the Dirichlet Process.}
 \item{doPlot}{logical flag indicating wether to plot MCMC iteration or not.
 Default to \code{TRUE}.}
 
-\item{nbclust_init}{number of clusters at initialisation. 
+\item{nbclust_init}{number of clusters at initialisation.
 Default to 30 (or less if there are less than 30 observations).}
 
-\item{diagVar}{logical flag indicating wether the variance of each cluster is 
-estimated as a diagonal matrix, or as a full matrix. 
+\item{diagVar}{logical flag indicating wether the variance of each cluster is
+estimated as a diagonal matrix, or as a full matrix.
 Default is \code{TRUE} (diagonal variance).}
 
-\item{verbose}{logical flag indicating wether partition info is 
+\item{verbose}{logical flag indicating wether partition info is
 written in the console at each MCMC iteration.}
+
+\item{monitorfile}{a writable \link{connections} or a character string naming a file to write into,
+to monitor the progress of the analysis.
+Default is \code{""} which is no monitoring.  See Details.}
 }
 \description{
 Slice Sampling of the Dirichlet Process Mixture Model
@@ -58,14 +63,15 @@ m <- matrix(nrow=d, ncol=nclust, runif(d*nclust)*8)
 p <- runif(nclust)
 p <- p/sum(p)
 
-# Covariance matrix of the clusters 
+# Covariance matrix of the clusters
 sdev <- array(dim=c(d, d, nclust))
 for (j in 1:nclust){
     sdev[, ,j] <- matrix(NA, nrow=d, ncol=d)
     diag(sdev[, ,j]) <- abs(rnorm(n=d, mean=0.3, sd=0.1))
     sdev[, ,j][lower.tri(sdev[, ,j], diag = FALSE)] <- rnorm(n=d*(d-1)/2,
     mean=0, sd=0.05)
-    sdev[, ,j][upper.tri(sdev[, ,j], diag = FALSE)] <- sdev[, ,j][lower.tri(sdev[, ,j], diag = FALSE)]
+    sdev[, ,j][upper.tri(sdev[, ,j], diag = FALSE)] <- (sdev[, ,j][
+                                                        lower.tri(sdev[, ,j], diag = FALSE)])
 }
 c <- rep(0,n)
 z <- matrix(0, nrow=d, ncol=n)
@@ -97,7 +103,7 @@ nbclust_init <- 30
 MCMCsample <- gibbsDPMsliceprior(z, hyperG0, a, b, N, doPlot=F, nbclust_init=30)
 
 plot_DPM(z=z, U_mu=MCMCsample$U_mu, U_Sigma=MCMCsample$U_Sigma,
-         m=MCMCsample$partition, c=MCMCsample$clusters, 
+         m=MCMCsample$partition, c=MCMCsample$clusters,
          i=N, alpha=MCMCsample$alpha[[1000]], U_SS=MCMCsample$U_SS_list[[1000]],
          ellipses=T,
          dims2plot=c(1,2))

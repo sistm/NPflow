@@ -7,13 +7,25 @@
 Flimited(n_small_clst, pred, ref)
 }
 \arguments{
-\item{n_small_clst}{the size of the}
+\item{n_small_clst}{an integer for limit size of the small cluster}
 
-\item{partition_ref}{}
+\item{pred}{vector of a predicted partition}
 
-\item{partition_est}{}
+\item{ref}{vector of a reference partition}
 }
 \description{
-A limited version of F-measure for
+A limited version of F-measure that only takes into accout small clusters
+}
+\examples{
+pred <- c(rep(1, 5),rep(2, 8),rep(3,10))
+ref <- c(rep(1, 5),rep(c(2,3), 4),rep(c(3,2),5))
+FmeasureC(pred, ref)
+Flimited(6, pred, ref)
+
+}
+\references{
+BP Hejblum, C Alkhassim, F Caron, R Thiebaut, Sequential Dirichlet
+Process Mixtures of Multivariate Skew t-distributions for Model-based Clustering
+of Flow Cytometry Data, submitted 2016
 }
 
