@@ -9,20 +9,20 @@
 plot_DPMst <- function(z, c, i="", alpha="?", U_SS,
                        dims2plot=1:nrow(z),
                        ellipses=ifelse(length(dims2plot)<3,TRUE,FALSE),
-                       gg.add=list(theme()), nbsim_dens=1000, nice=FALSE){ 
-    library(reshape2)
+                       gg.add=list(theme()), nbsim_dens=1000, nice=FALSE){
+    requireNamespace("reshape2", quietly=TRUE)
     mean_sn01 <- (dnorm(0)-dnorm(Inf))/(pnorm(Inf)-pnorm(0))
-    
+
     z <- z[dims2plot,]
-    
-    
+
+
     n <- ncol(z)
     p <- nrow(z)
     m <- numeric(n) # number of observations in each cluster
     m[unique(c)] <- table(c)[as.character(unique(c))]
-    
+
     fullCl <- which(m!=0)
-    
+
     U_xi2plot=sapply(U_SS, "[[", "xi")
     U_psi2plot=sapply(U_SS, "[[", "psi")
     U_Sigma2plot=lapply(U_SS, "[[", "S")
@@ -31,25 +31,25 @@ plot_DPMst <- function(z, c, i="", alpha="?", U_SS,
     U_mu2plot <- U_xi2plot + U_psi2plot*mean_sn01
     rownames(U_mu2plot) <- rownames(z)
     zClusters <- factor(c, levels=as.character(fullCl), ordered=TRUE)
-    
+
     expK <- ifelse(is.numeric(alpha), round(alpha*(digamma(alpha+n)-digamma(alpha))), NA)
     alpha2print <- ifelse(is.numeric(alpha), formatC(alpha, digits=2), alpha)
-    
-    
-    
+
+
+
     if(p>2){
-        zDplot <- melt(cbind.data.frame("ID"=as.character(1:n), 
+        zDplot <- melt(cbind.data.frame("ID"=as.character(1:n),
                                         t(z),
                                         "Cluster"=zClusters
         ),
-        id.vars=c("ID", "Cluster"), 
+        id.vars=c("ID", "Cluster"),
         variable.name = "dimensionX",
         value.name="X"
         )
-        zDplotfull <- zDplot 
+        zDplotfull <- zDplot
         zDplotfull$Y <- zDplot$X
         zDplotfull$dimensionY <- zDplot$dimensionX
-        
+
         lev <- as.character(1:length(levels(zDplot$dimensionX)))
         for(l in 2:length(lev)){
             move <- which(as.numeric(zDplot$dimensionX)<l)
@@ -59,20 +59,20 @@ plot_DPMst <- function(z, c, i="", alpha="?", U_SS,
             zDplotfull <- rbind.data.frame(
                 zDplotfull, zDplottemp)
         }
-        
+
         UDplot <- melt(cbind.data.frame(t(U_mu2plot),
-                                        "Cluster"=factor(as.character(fullCl), 
-                                                         levels=as.character(fullCl), 
+                                        "Cluster"=factor(as.character(fullCl),
+                                                         levels=as.character(fullCl),
                                                          ordered=TRUE)
         ),
-        id.vars=c("Cluster"), 
+        id.vars=c("Cluster"),
         variable.name = "dimensionX",
         value.name="X"
         )
-        UDplotfull <- UDplot 
+        UDplotfull <- UDplot
         UDplotfull$Y <- UDplotfull$X
         UDplotfull$dimensionY <- UDplotfull$dimensionX
-        
+
         lev <- levels(UDplotfull$dimensionX)
         for(l in 2:length(lev)){
             move <- which(as.numeric(UDplotfull$dimensionX)<l)
@@ -82,17 +82,17 @@ plot_DPMst <- function(z, c, i="", alpha="?", U_SS,
             UDplotfull <- rbind.data.frame(
                 UDplotfull, UDplottemp)
         }
-        
-        p <- (ggplot(zDplotfull) 
+
+        p <- (ggplot(zDplotfull)
               + facet_grid(dimensionY~dimensionX, scales="free")
-              + geom_point(aes(x=X, y=Y, colour=Cluster, order=Cluster), 
+              + geom_point(aes_string(x="X", y="Y", colour="Cluster", order="Cluster"),
                            data=zDplotfull, alpha=1, size=2/(0.3*log(n)))
-              #               + geom_polygon(aes(x=x, y=y, fill=Cluster, colour=Cluster, order=Cluster), 
+              #               + geom_polygon(aes_string(x="X", y="Y", fill="Cluster", colour="Cluster", order="Cluster"),
               #                              data=ellipse95, size=0.5, linetype=2, colour="black", alpha=.3)
-              + geom_point(aes(x=X, y=Y, fill=Cluster, order=Cluster),
+              + geom_point(aes_string(x="X", y="Y", colour="Cluster", order="Cluster"),
                            data=UDplotfull, shape=22, size=5/(0.3*log(n)))
               + ggtitle(paste(n, " obs.",
-                              "\niteration ", i, " : ", 
+                              "\niteration ", i, " : ",
                               length(fullCl)," clusters",
                               "\nexpected number of clusters: ", expK,
                               " (alpha = ", alpha2print, ")",
@@ -102,30 +102,30 @@ plot_DPMst <- function(z, c, i="", alpha="?", U_SS,
         z2plot <- cbind.data.frame("D1"=z[1,],"D2"=z[2,],"Cluster"=zClusters)
         U2plot <- cbind.data.frame("D1"=U_mu2plot[1,],
                                    "D2"=U_mu2plot[2,],
-                                   "Cluster"=factor(as.character(fullCl), 
-                                                    levels=as.character(fullCl), 
+                                   "Cluster"=factor(as.character(fullCl),
+                                                    levels=as.character(fullCl),
                                                     ordered=TRUE)
-        )  
+        )
         xi2plot <- cbind.data.frame("D1"=U_xi2plot[1,],
                                     "D2"=U_xi2plot[2,],
-                                    "Cluster"=factor(as.character(fullCl), 
-                                                     levels=as.character(fullCl), 
+                                    "Cluster"=factor(as.character(fullCl),
+                                                     levels=as.character(fullCl),
                                                      ordered=TRUE)
         )
-        
+
         if(!nice){
-            p <- (ggplot(z2plot) 
-                  + geom_point(aes(x=D1, y=D2, colour=Cluster, order=Cluster, fill=Cluster), alpha=0.7, 
+            p <- (ggplot(z2plot)
+                  + geom_point(aes_string(x="D1", y="D2", colour="Cluster", order="Cluster", fill="Cluster"), alpha=0.7,
                                data=z2plot, size=3)
                   + scale_alpha_continuous(guide=FALSE)
                   + scale_fill_discrete(guide=FALSE)
                   + scale_colour_discrete(guide=guide_legend(override.aes = list(size = 6, alpha=1)))
-                  + geom_point(aes(x=D1, y=D2, fill=Cluster, order=Cluster, shape="22"),
+                  + geom_point(aes_string(x="D1", y="D2", fill="Cluster", order="Cluster", shape="22"),
                                data=U2plot, size=5)
-                  + geom_point(aes(x=D1, y=D2, fill=Cluster, order=Cluster, shape="23"),
+                  + geom_point(aes_string(x="D1", y="D2", fill="Cluster", order="Cluster", shape="23"),
                                data=xi2plot, size=5)
                   + ggtitle(paste(n, " obs.",
-                                  "\niteration ", i, " : ", 
+                                  "\niteration ", i, " : ",
                                   length(fullCl)," clusters",
                                   "\nexpected number of clusters: ", expK,
                                   " (alpha = ", alpha2print, ")",
@@ -136,20 +136,20 @@ plot_DPMst <- function(z, c, i="", alpha="?", U_SS,
                                           D2=tapply(X=z2plot[,2], INDEX=z2plot$Cluster, FUN=mean)
             )
             zmean2plot <- cbind.data.frame(zmean2plot, Cluster=rownames(zmean2plot))
-            p <- (p + geom_point(aes(x=D1, y=D2, fill=Cluster, order=Cluster, shape="24"), 
+            p <- (p + geom_point(aes_string(x="D1", y="D2", fill="Cluster", order="Cluster", shape="24"),
                                  data=zmean2plot, size=5)
-                  + scale_shape_manual(values=c(24,22,23), 
-                                       labels=c("observed mean", "sampled mean", "xi param"), 
+                  + scale_shape_manual(values=c(24,22,23),
+                                       labels=c("observed mean", "sampled mean", "xi param"),
                                        name="", limits=c(24,22,23))
             )
         }else{
-            p <- (ggplot(z2plot) 
-                  + geom_point(aes(x=D1, y=D2, colour=Cluster, order=Cluster, shape=Cluster, fill=Cluster), alpha=0.65, 
+            p <- (ggplot(z2plot)
+                  + geom_point(aes_string(x="D1", y="D2", colour="Cluster", order="Cluster", shape="Cluster", fill="Cluster"), alpha=0.65,
                                data=z2plot, size=2)
                   + scale_alpha_continuous(guide=FALSE)
             )
         }
-        
+
         if(ellipses){
             simuDens <- NULL
             for(g in 1:length(fullCl)){
@@ -162,14 +162,14 @@ plot_DPMst <- function(z, c, i="", alpha="?", U_SS,
                 #for(i in 1:nbsim_dens){
                 #    eps[i,] <- matrix(rnorm(2), ncol=2)%*%chol(U_Sigma2plot[[g]]/w[i])
                 #}
-                simuDenstemp <- data.frame("D1"=U_xi2plot[1,g]+U_psi2plot[1,g]*ltnz+eps[,1], 
-                                           "D2"=U_xi2plot[2,g]+U_psi2plot[2,g]*ltnz+eps[,2], 
+                simuDenstemp <- data.frame("D1"=U_xi2plot[1,g]+U_psi2plot[1,g]*ltnz+eps[,1],
+                                           "D2"=U_xi2plot[2,g]+U_psi2plot[2,g]*ltnz+eps[,2],
                                            "Cluster"=rep(glabel, nbsim_dens))
                 simuDens <- rbind.data.frame(simuDens, simuDenstemp)
             }
-            
-            p <- (p 
-                  + stat_density2d(data=simuDens, aes(x=D1,y=D2, colour=Cluster, linetype="1"))
+
+            p <- (p
+                  + stat_density2d(data=simuDens, aes_string(x="D1", y="D2", colour="Cluster", linetype="1"))
                   + scale_linetype_manual(values=c(1),
                                           labels=c("simulations derived\n from sampled parameters"),
                                           name="Density contour", limits=c(1))
@@ -189,11 +189,11 @@ plot_DPMst <- function(z, c, i="", alpha="?", U_SS,
                   + scale_colour_discrete(guide=guide_legend(override.aes = list(size = 4, alpha=0.8, linetype=0)))
             )
         }
-        
+
     }
     for (a in gg.add) {
         p <- p + a
     }
-    
+
     print(p)
 }
