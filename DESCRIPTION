@@ -24,6 +24,8 @@ Imports:
     pheatmap,
     ellipse
 Suggests:
+    foreach,
+    parallel,
     doParallel
 Description: This package implements a Dirichlet process mixture of normal, skew-normal or skew t
     distributions modeling oriented towards flow-cytometry data preprocessing application.
