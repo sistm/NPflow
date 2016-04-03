@@ -1,6 +1,6 @@
 #'@keywords internal
 
-slice_sample_parallel <- function(c, m, alpha, z, hyperG0, U_mu, U_Sigma, diagVar){
+sliceSampler_N_parallel <- function(Ncpus, c, m, alpha, z, hyperG0, U_mu, U_Sigma, diagVar, parallel_index){
 
     maxCl <- length(m) #maximum number of clusters
     ind <- which(m!=0) #indexes of non empty clusters
@@ -61,7 +61,7 @@ slice_sample_parallel <- function(c, m, alpha, z, hyperG0, U_mu, U_Sigma, diagVa
 
         c <- foreach::"%dopar%"(foreach::foreach(i=1:Ncpus, .combine='c'),
                                 {
-            l <- mmvnpdfC(x=z[, parallel_index[[i]]], mean=U_xi_full, varcovM=U_Sigma_full, Log = FALSE)
+            l <- mmvnpdfC(x=z[, parallel_index[[i]]], mean=U_mu_full, varcovM=U_Sigma_full, Log = FALSE)
             u_mat <- t(sapply(w[fullCl_ind], function(x){as.numeric(u[parallel_index[[i]]] < x)}))
             prob_mat <- u_mat * l
 

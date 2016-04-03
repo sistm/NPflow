@@ -118,6 +118,23 @@ DPMGibbsN_parallel <- function (Ncpus, type_connec,
   U_mu <- matrix(0, nrow=p, ncol=n)
   U_Sigma = array(0, dim=c(p, p, n))
 
+  par_ind <- list()
+  temp_ind <- 0
+  if(Ncpus>1){
+    nb_simult <- floor(n%/%(Ncpus))
+    for(i in 1:(Ncpus-1)){
+      par_ind[[i]] <- temp_ind + 1:nb_simult
+      temp_ind <- temp_ind + nb_simult
+    }
+    par_ind[[Ncpus]] <- (temp_ind+1):n
+  }
+  else{
+    cat("Only 1 core specified\n=> non-parallel version of the algorithm would be more efficient",
+        file=monitorfile, append = TRUE)
+    nb_simult <- n
+    par_ind[[Ncpus]] <- (temp_ind+1):n
+  }
+
   # U_SS is a list where each U_SS[[k]] contains the sufficient
   # statistics associated to cluster k
   U_SS <- list()
@@ -207,9 +224,10 @@ DPMGibbsN_parallel <- function (Ncpus, type_connec,
                sample_alpha(alpha_old=alpha[i-1], n=n,
                             K=nbClust, a=a, b=b)
     )
-    slice <- slice_sample_parallel(c=c, m=m, alpha=alpha[i],
-                                   z=z, hyperG0=hyperG0,
-                                   U_mu=U_mu, U_Sigma=U_Sigma, diagVar=diagVar)
+    slice <- sliceSampler_N_parallel(Ncpus=Ncpus, c=c, m=m, alpha=alpha[i],
+                                     z=z, hyperG0=hyperG0,
+                                     U_mu=U_mu, U_Sigma=U_Sigma, diagVar=diagVar,
+                                     parallel_index=par_ind)
     m <- slice[["m"]]
     c <- slice[["c"]]
     weights_list[[i]] <- slice[["weights"]]
