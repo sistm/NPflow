@@ -34,7 +34,7 @@
 #' Gene Expression and Proteomics}, K-A Do, P Muller, M Vannucci
 #' (Eds.), Cambridge University Press, 2006.
 #'
-#'@seealso \link{similarityMat}
+#'@seealso \code{\link{similarityMat}}
 #'
 
 cluster_est_binder <- function(c, logposterior){
