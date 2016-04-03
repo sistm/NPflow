@@ -47,6 +47,6 @@ Gene Expression and Proteomics, K.-A. Do, P. Muller, M. Vannucci
 (Eds.), Cambridge University Press, 2006.
 }
 \seealso{
-\code{\link{similarityMat}}, \code{\link{clust_est_binder}}
+\code{\link{similarityMat}}, \code{\link{cluster_est_binder}}
 }
 
