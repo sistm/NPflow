@@ -149,6 +149,7 @@ DPMGibbsN_parallel <- function (Ncpus, type_connec,
     c <- sample(x=1:nbclust_init, size=n, replace=TRUE)
   }
 
+  k <- NULL # This is just to prevent R CMD check to issue a NOTE reanding "no visible binding for global variable 'k'". It is extremely ANNOYING !
   res <- foreach::"%dopar%"(foreach::foreach(k=unique(c), .packages="NPflow"),
                             {
     obs_k <- which(c==k)
