@@ -1,3 +1,4 @@
+#'@keywords internal
 logposterior_DPMST <- function(z, xi, psi, Sigma, df, B, hyper, c, m, alpha, n, a, b, diagVar){
 
     res <- NA
@@ -12,9 +13,9 @@ logposterior_DPMST <- function(z, xi, psi, Sigma, df, B, hyper, c, m, alpha, n, 
             log_prior_NNiW <-  sum(log(dNNiW(xi, psi, B, Sigma, hyperprior=hyper, log=TRUE)))
         }else{
             betas <- diag(Sigma)
-            beta0 <- diag(hyperG0$lambda)
+            beta0 <- diag(hyper$lambda)
             log_prior_NNiW <- sum(dgamma(x=betas,
-                                         shape=hyperG0$nu,
+                                         shape=hyper$nu,
                                          rate=1/beta0, log=TRUE))
         }
     }
@@ -35,7 +36,7 @@ logposterior_DPMST <- function(z, xi, psi, Sigma, df, B, hyper, c, m, alpha, n, 
       U_xi_full <- matrix(U_xi_full, nrow=1)
       U_psi_full <- matrix(U_psi_full, nrow=1)
     }
-    log_lik <- mvstlikC_par(x=z, c=c, clustval=indfull,
+    log_lik <- mvstlikC(x=z, c=c, clustval=indfull,
                         xi=U_xi_full, psi=U_psi_full, sigma=U_Sigma_full, df=U_df_full,
                         loglik=TRUE)
     log_vrais <- log_lik$total
@@ -48,8 +49,8 @@ logposterior_DPMST <- function(z, xi, psi, Sigma, df, B, hyper, c, m, alpha, n, 
                                      hyperprior=hyper, log=TRUE))
     }else{
         betas <- lapply(U_Sigma_full, diag)
-        beta0 <- diag(hyperG0$lambda)
-        S <- lapply(betas, function(b){sum(dgamma(x=b,shape=hyperG0$nu,
+        beta0 <- diag(hyper$lambda)
+        S <- lapply(betas, function(b){sum(dgamma(x=b,shape=hyper$nu,
                         rate=1/beta0, log=TRUE))})
         log_prior_NNiW <- sum(unlist(S))
     }
