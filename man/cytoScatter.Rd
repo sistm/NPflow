@@ -8,15 +8,24 @@ cytoScatter(cytomatrix, dims2plot = c(1, 2), scale_log = FALSE,
   xlim = NULL, ylim = NULL, gg.add = list(theme()))
 }
 \arguments{
-\item{cytomatrix}{}
+\item{cytomatrix}{a \code{p x n} data matrix, of \code{n} cell observations measured over \code{p}
+markers.}
 
-\item{dims2plot}{}
+\item{dims2plot}{a vector of length at least 2, indicating of the dimensions to be plotted.
+Default is \code{c(1, 2)}.}
 
-\item{scale_log}{}
+\item{scale_log}{a logical Flag indicating wether the data should be plotted on the log scale.
+Default is \code{FALSE}.}
 
-\item{xlim}{}
+\item{xlim}{a vector of length 2 to specify the x-axis limits. Only used if \code{dims2plot} is
+of length 2Default is the data range.}
 
-\item{ylim}{}
+\item{ylim}{a vector of length 2 to specify the y-axis limits. Only used if \code{dims2plot} is
+of length 2. Default is the data range.}
+
+\item{gg.add}{A list of instructions to add to the ggplot2 instruction.  See \code{\link[ggplot2]{+.gg}}.
+Default is \code{list(theme())}, which adds nothing.
+to the plot.}
 }
 \description{
 Scatterplot of flow cytometry data

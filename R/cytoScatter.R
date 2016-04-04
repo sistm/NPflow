@@ -1,14 +1,24 @@
 #'Scatterplot of flow cytometry data
 #'
-#'@param cytomatrix
+#'@param cytomatrix a \code{p x n} data matrix, of \code{n} cell observations measured over \code{p}
+#'markers.
 #'
-#'@param dims2plot
+#'@param dims2plot a vector of length at least 2, indicating of the dimensions to be plotted.
+#'Default is \code{c(1, 2)}.
 #'
-#'@param scale_log
+#'@param scale_log a logical Flag indicating wether the data should be plotted on the log scale.
+#'Default is \code{FALSE}.
 #'
-#'@param xlim
+#'@param xlim a vector of length 2 to specify the x-axis limits. Only used if \code{dims2plot} is
+#'of length 2Default is the data range.
 #'
-#'@param ylim
+#'@param ylim a vector of length 2 to specify the y-axis limits. Only used if \code{dims2plot} is
+#'of length 2. Default is the data range.
+#'
+#'@param gg.add
+#'A list of instructions to add to the ggplot2 instruction.  See \code{\link[ggplot2]{+.gg}}.
+#'Default is \code{list(theme())}, which adds nothing.
+#'to the plot.
 #'
 #'@examples
 #'
@@ -44,6 +54,8 @@ cytoScatter <- function(cytomatrix, dims2plot=c(1,2),
                       scale_log=FALSE, xlim=NULL, ylim=NULL, gg.add=list(theme())){
 
     n <- ncol(cytomatrix)
+    stopifnot(length(dims2plot)>1)
+    stopifnot(is.matrix(z))
 
     if(length(dims2plot)!=2){
         cytomatrix <- cytomatrix[dims2plot,]
@@ -97,7 +109,7 @@ cytoScatter <- function(cytomatrix, dims2plot=c(1,2),
                !is.null(colnames(data2plot)[dims2plot[2]])){
             xname <- colnames(data2plot)[dims2plot[1]]
             yname <- colnames(data2plot)[dims2plot[2]]
-            p <- ggplot(data2plot, aes_string(x="xname", y="yname"))
+            p <- ggplot(data2plot, aes_string(x=xname, y=yname))
         }else{
             colnames(data2plot) <- c("X", "Y")
             p <- ggplot(data2plot, aes_string(x="X", y="Y"))
