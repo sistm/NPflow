@@ -21,7 +21,8 @@ partition of the \code{n} observations to compare to the point estimate}
 \item{lossFn}{character string specifying the loss function to be used.
 Either "F-measure" or "Binder" (see Details). Default is "F-measure".}
 
-\item{posterior_approx}{}
+\item{posterior_approx}{logical flag wether a parametric approximation of the posterior should be
+computed. Default is \code{FALSE}}
 
 \item{...}{further arguments passed to or from other methods}
 }

@@ -4,23 +4,35 @@
 \alias{DPMGibbsN_SeqPrior}
 \title{Slice Sampling of Dirichlet Process Mixture of Gaussian distibutions}
 \usage{
-DPMGibbsN_SeqPrior(z, prior, hyperG0, N, nbclust_init, add.vagueprior = TRUE,
-  weightnoninf = NULL, doPlot = TRUE, plotevery = 1, diagVar = TRUE,
-  verbose = TRUE, ...)
+DPMGibbsN_SeqPrior(z, prior_inform, hyperG0, N, nbclust_init,
+  add.vagueprior = TRUE, weightnoninfo = NULL, doPlot = TRUE,
+  plotevery = 1, diagVar = TRUE, verbose = TRUE, ...)
 }
 \arguments{
 \item{z}{data matrix \code{d x n} with \code{d} dimensions in rows
 and \code{n} observations in columns.}
 
-\item{hyperG0}{prior mixing distribution.}
+\item{prior_inform}{an informative prior such a the approximation computed by \code{summary.DPMMclust}.}
+
+\item{hyperG0}{a non informative prior component for the mixing distribution.
+Only used if \code{add.vagueprior} is \code{TRUE}.}
 
 \item{N}{number of MCMC iterations.}
 
 \item{nbclust_init}{number of clusters at initialisation.
 Default to 30 (or less if there are less than 30 observations).}
 
+\item{add.vagueprior}{logical flag indicating wether a non informative component should
+be added to the informative prior. Default is \code{TRUE}.}
+
+\item{weightnoninfo}{a real between 0 and 1 giving the weights of the non informative component
+in the prior.}
+
 \item{doPlot}{logical flag indicating wether to plot MCMC iteration or not.
 Default to \code{TRUE}.}
+
+\item{plotevery}{an integer indicating the interval between plotted iterations when \code{doPlot}
+is \code{TRUE}.}
 
 \item{diagVar}{logical flag indicating wether the variance of each cluster is
 estimated as a diagonal matrix, or as a full matrix.
@@ -29,11 +41,8 @@ Default is \code{TRUE} (diagonal variance).}
 \item{verbose}{logical flag indicating wether partition info is
 written in the console at each MCMC iteration.}
 
-\item{a}{shape hyperparameter of the Gamma prior
-on the parameter of the Dirichlet Process.}
-
-\item{b}{scale hyperparameter of the Gamma prior
-on the parameter of the Dirichlet Process.}
+\item{...}{additional arguments to be passed to \code{\link{plot_DPM}}.
+Only used if \code{doPlot} is \code{TRUE}.}
 }
 \value{
 a object of class \code{DPMclust} with the following attributes:
@@ -59,7 +68,7 @@ Slice Sampling of Dirichlet Process Mixture of Gaussian distibutions
 rm(list=ls())
 library(ggplot2)
 #Number of data
-n <- 2000
+n <- 1500
 # Sample data
 #m <- matrix(nrow=2, ncol=4, c(-1, 1, 1.5, 2, 2, -2, 0.5, -2))
 m <- matrix(nrow=2, ncol=4, c(-.8, .7, .5, .7, .5, -.7, -.5, -.7))
@@ -107,35 +116,32 @@ p <- (ggplot(data.frame("X"=z[1,], "Y"=z[2,]), aes(x=X, y=Y))
 p
 
 
-## alpha priors plots
-#####################
-prioralpha <- data.frame("alpha"=rgamma(n=5000, shape=a, scale=1/b),
-                         "distribution" =factor(rep("prior",5000),
-                                                levels=c("prior", "posterior")))
-
 
 # Gibbs sampler for Dirichlet Process Mixtures
 ##############################################
-MCMCsample <- DPMGibbsN(z, hyperG0, a, b, N=2000, doPlot, nbclust_init,
+MCMCsample <- DPMGibbsN(z, hyperG0, a, b, N=1500, doPlot, nbclust_init,
                         plotevery=200, diagVar=FALSE)
 
-s <- summary(MCMCsample, posterior_approx=TRUE, burnin = 1750, thin=2 ,K=4)
+s <- summary(MCMCsample, posterior_approx=TRUE, burnin = 1000, thin=5)
 F1 <- FmeasureC(pred=s$point_estim$c_est, ref=c)
 F1
 
 
-MCMCsample2 <- DPMGibbsN_SeqPrior(z, prior=s$param_posterior,
-                                  hyperG0, N=2000,
-                                  add.vagueprior = FALSE,
-                                  doPlot=TRUE, plotevery=200,
-                                  nbclust_init, diagVar=FALSE)
+MCMCsample2 <- DPMGibbsN_SeqPrior(z, prior_inform=s$param_posterior,
+                                  hyperG0, N=1500,
+                                  add.vagueprior = TRUE,
+                                  doPlot=TRUE, plotevery=100,
+                                  nbclust_init=nbclust_init, diagVar=FALSE)
 
 
-s2 <- summary(MCMCsample2, burnin = 1750, thin=2)
+s2 <- summary(MCMCsample2, burnin = 500, thin=5)
 F2 <- FmeasureC(pred=s2$point_estim$c_est, ref=c)
 F2
 }
 \author{
 Boris Hejblum, Alkhassim Chariff
+}
+\seealso{
+\code{postProcess.DPMMclust}
 }
 

@@ -4,6 +4,12 @@
 #'write into, in the case of a new file that does not exist yet, such a new
 #'file will be created. A line is written at each MCMC iteration.
 #'
+#'@param Ncpus the number of processors available
+#'
+#'@param type_connec The type of connection between the processors. Supported
+#'cluster types are \code{"SOCK"}, \code{"PVM"}, \code{"MPI"}, and
+#'\code{"NWS"}. See also \code{\link[parallel:makeCluster]{makeCluster}}.
+#'
 #'@param z data matrix \code{d x n} with \code{d} dimensions in rows
 #'and \code{n} observations in columns.
 #'
@@ -20,6 +26,9 @@
 #'@param doPlot logical flag indicating wether to plot MCMC iteration or not.
 #'Default to \code{TRUE}.
 #'
+#'@param plotevery an integer indicating the interval between plotted iterations when \code{doPlot}
+#'is \code{TRUE}.
+#'
 #'@param nbclust_init number of clusters at initialisation.
 #'Default to 30 (or less if there are less than 30 observations).
 #'
@@ -34,6 +43,9 @@
 #'a writable \link{connections} or a character string naming a file to write into,
 #'to monitor the progress of the analysis.
 #'Default is \code{""} which is no monitoring.  See Details.
+#'
+#'@param ... additional arguments to be passed to \code{\link{plot_DPM}}.
+#'Only used if \code{doPlot} is \code{TRUE}.
 #'
 #'@return a object of class \code{DPMclust} with the following attributes:
 #'  \itemize{
@@ -140,16 +152,17 @@
 #'  # Gibbs sampler for Dirichlet Process Mixtures
 #'  ##############################################
 #'  #MCMCsample_sn_par <- DPM_GibbsSampler_SkewN_parallel(Ncpus=8, type_connec="SOCK", z, hyperG0,
-#'                      a, b, N=10000, doPlot, nbclust_init, plotevery=50, gg.add=list(theme_bw()))
+#'  #                   a, b, N=10000, doPlot, nbclust_init, plotevery=50, gg.add=list(theme_bw()))
 #'  MCMCsample_sn_par <- DPMGibbsSkewN_parallel(Ncpus=2, type_connec="SOCK", z, hyperG0,
 #'                      a, b, N=2000, doPlot, nbclust_init, plotevery=50, gg.add=list(theme_bw()))
 #'  plot_ConvDPM(MCMCsample_sn, from=2)
 #'
-#'  library(shiny)
-#'  library(lineprof)
-#'  l <- lineprof(MCMCsample_sn_parPROF <- DPM_GibbsSampler_SkewN_parallel(Ncpus=4,
+#'  #library(lineprof)
+#'  #l <- lineprof(
+#'  MCMCsample_sn_parPROF <- DPM_GibbsSampler_SkewN_parallel(Ncpus=4,
 #'   type_connec="SOCK", z, hyperG0, a, b, N=10, doPlot=F, nbclust_init=20, gg.add=list(theme_bw()))
-#'
+#'  #)
+#'  #shine(l)
 #'  hyperG0[["mu"]] <- rep(0,d)
 #'  MCMCsample_n <- gibbsDPMsliceprior(z, hyperG0, a, b, N=100, doPlot, nbclust_init, plotevery=5)
 #'  plot_ConvDPM(MCMCsample_n, from=2)

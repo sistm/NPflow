@@ -77,7 +77,7 @@ hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
  pmix <- priormix(s)
  MCMCsample_st_EB <- DPMGibbsSkewT_EB_parallel(Ncpus=2, type_connec ="SOCK", z,
                                                hyperG0=pmix, a=a, b=b, N=500, diagVar=FALSE,
-                                               doPlot=T, plotevery=100,
+                                               doPlot=TRUE, plotevery=100,
                                                gg.add=list(theme_bw()), verbose=TRUE)
 
 }

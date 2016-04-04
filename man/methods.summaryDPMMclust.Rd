@@ -21,6 +21,9 @@ Default is \code{FALSE}.}
 
 \item{nbsim_densities}{the number of simulated observations to be used
 to plot the density lines of the clusters in the point estimate partition plot}
+
+\item{gg.add}{a list of instructions to add to the ggplot2 instruction.
+See \code{\link[ggplot2]{+.gg}}. Default is \code{list(theme())}, which adds nothing to the plot.}
 }
 \description{
 Methods for a summary of a 'DPMMclust' object

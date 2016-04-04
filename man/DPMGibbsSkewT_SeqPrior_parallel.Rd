@@ -4,14 +4,22 @@
 \alias{DPMGibbsSkewT_SeqPrior_parallel}
 \title{Slice Sampling of Dirichlet Process Mixture of skew  Students's t-distibutions}
 \usage{
-DPMGibbsSkewT_SeqPrior_parallel(Ncpus, type_connec, z, prior, hyperG0, N,
-  nbclust_init, add.vagueprior = TRUE, weightnoninf = NULL,
+DPMGibbsSkewT_SeqPrior_parallel(Ncpus, type_connec, z, prior_inform, hyperG0, N,
+  nbclust_init, add.vagueprior = TRUE, weightnoninfo = NULL,
   doPlot = FALSE, plotevery = 1, diagVar = TRUE, verbose = TRUE,
   monitorfile = "defaultmonitor.txt", ...)
 }
 \arguments{
+\item{Ncpus}{the number of processors available}
+
+\item{type_connec}{The type of connection between the processors. Supported
+cluster types are \code{"SOCK"}, \code{"PVM"}, \code{"MPI"}, and
+\code{"NWS"}. See also \code{\link[parallel:makeCluster]{makeCluster}}.}
+
 \item{z}{data matrix \code{d x n} with \code{d} dimensions in rows
 and \code{n} observations in columns.}
+
+\item{prior_inform}{an informative prior such a the approximation computed by \code{summary.DPMMclust}.}
 
 \item{hyperG0}{prior mixing distribution.}
 
@@ -20,8 +28,17 @@ and \code{n} observations in columns.}
 \item{nbclust_init}{number of clusters at initialisation.
 Default to 30 (or less if there are less than 30 observations).}
 
+\item{add.vagueprior}{logical flag indicating wether a non informative component should
+be added to the informative prior. Default is \code{TRUE}.}
+
+\item{weightnoninfo}{a real between 0 and 1 giving the weights of the non informative component
+in the prior.}
+
 \item{doPlot}{logical flag indicating wether to plot MCMC iteration or not.
 Default to \code{TRUE}.}
+
+\item{plotevery}{an integer indicating the interval between plotted iterations when \code{doPlot}
+is \code{TRUE}.}
 
 \item{diagVar}{logical flag indicating wether the variance of each cluster is
 estimated as a diagonal matrix, or as a full matrix.
@@ -30,11 +47,12 @@ Default is \code{TRUE} (diagonal variance).}
 \item{verbose}{logical flag indicating wether partition info is
 written in the console at each MCMC iteration.}
 
-\item{a}{shape hyperparameter of the Gamma prior
-on the parameter of the Dirichlet Process.}
+\item{monitorfile}{a writable \link{connections} or a character string naming a file to write into,
+to monitor the progress of the analysis.
+Default is \code{""} which is no monitoring. See Details.}
 
-\item{b}{scale hyperparameter of the Gamma prior
-on the parameter of the Dirichlet Process.}
+\item{...}{additional arguments to be passed to \code{\link{plot_DPM}}.
+Only used if \code{doPlot} is \code{TRUE}.}
 }
 \value{
 a object of class \code{DPMclust} with the following attributes:
@@ -134,7 +152,7 @@ for(k in 1:n){
  cat(k, "/", n, " observations simulated\\n", sep="")
 }
  MCMCsample_st2 <- DPMGibbsSkewT_SeqPrior_parallel(Ncpus=2, type_connec="SOCK",
-                                                   z, prior=s$param_posterior,
+                                                   z, prior_inform=s$param_posterior,
                                                    hyperG0, N=3000,
                                                    doPlot=TRUE, plotevery=100,
                                                    nbclust_init, diagVar=FALSE, verbose=FALSE)

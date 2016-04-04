@@ -27,12 +27,18 @@ Default to \code{TRUE}.}
 \item{nbclust_init}{number of clusters at initialisation.
 Default to 30 (or less if there are less than 30 observations).}
 
+\item{plotevery}{an integer indicating the interval between plotted iterations when \code{doPlot}
+is \code{TRUE}.}
+
 \item{diagVar}{logical flag indicating wether the variance of each cluster is
 estimated as a diagonal matrix, or as a full matrix.
 Default is \code{TRUE} (diagonal variance).}
 
 \item{verbose}{logical flag indicating wether partition info is
 written in the console at each MCMC iteration.}
+
+\item{...}{additional arguments to be passed to \code{\link{plot_DPMst}}.
+Only used if \code{doPlot} is \code{TRUE}.}
 }
 \value{
 a object of class \code{DPMclust} with the following attributes:
@@ -159,7 +165,7 @@ hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
  diagVar=FALSE)
  s <- summary(MCMCsample_st, burnin = 2000, thin=4, lossFn = "Binder")
  print(s)
- plot(s, hm=T) #pdf(height=8.5, width=10.5) #png(height=700, width=720)
+ plot(s, hm=TRUE) #pdf(height=8.5, width=10.5) #png(height=700, width=720)
  plot_ConvDPM(MCMCsample_st, from=2)
  cluster_est_binder(MCMCsample_sn$c_list[50:500])
  A <- sapply(MCMCsample_st$logposterior_list, sum)
@@ -168,12 +174,13 @@ hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
  MCMCsample_st_2$logposterior_list <- MCMCsample_st_2$logposterior_list[-lrmv]
  plot_ConvDPM(MCMCsample_st_2)
 
- library(shiny)
- library(lineprof)
- l <- lineprof(MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=2000,
- doPlot, nbclust_init, plotevery=100, gg.add=list(theme_bw()),
- diagVar=FALSE))
- shine(l)
+ #library(lineprof)
+ #l <- lineprof(
+ MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=2000,
+                                doPlot, nbclust_init, plotevery=100, gg.add=list(theme_bw()),
+                                diagVar=FALSE)
+ #)
+ #shine(l)
 
  hyperG0[["mu"]] <- rep(0,d)
  MCMCsample_n <- gibbsDPMsliceprior(z, hyperG0, a, b, N=500, doPlot, nbclust_init, plotevery=50)
@@ -222,7 +229,7 @@ hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
        + ggtitle("Posterior distribution of alpha\\n")
        # Ignore NA values for mean
        # Overlay with transparent density plot
-       + geom_vline(aes(xintercept=mean(alpha, na.rm=T)),
+       + geom_vline(aes(xintercept=mean(alpha, na.rm=TRUE)),
                     color="red", linetype="dashed", size=1)
      )
  p
@@ -234,7 +241,7 @@ hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
        + ggtitle("Posterior distribution of K\\n")
        # Ignore NA values for mean
        # Overlay with transparent density plot
-       + geom_vline(aes(xintercept=mean(K, na.rm=T)),
+       + geom_vline(aes(xintercept=mean(K, na.rm=TRUE)),
                     color="red", linetype="dashed", size=1)
        #+ scale_x_continuous(breaks=c(0:6)*2, minor_breaks=c(0:6)*2+1)
        + scale_x_continuous(breaks=c(1:12))
@@ -261,7 +268,7 @@ hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
        + ggtitle("Posterior distribution of K\\n")
        # Ignore NA values for mean
        # Overlay with transparent density plot
-       + geom_vline(aes(xintercept=mean(K, na.rm=T)),
+       + geom_vline(aes(xintercept=mean(K, na.rm=TRUE)),
                     color="red", linetype="dashed", size=1)
        + theme_bw()
        + scale_x_continuous(breaks=c(3:11))

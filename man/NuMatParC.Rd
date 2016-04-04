@@ -7,9 +7,9 @@
 NuMatParC(c, d)
 }
 \arguments{
-\item{\code{c}}{is an MCMC partitions of length \code{n}.}
+\item{c}{an MCMC partitions of length \code{n}.}
 
-\item{\code{d}}{is a symmetric \code{n x n} matrix containing distances
+\item{d}{a symmetric \code{n x n} matrix containing distances
 between each group distributions.}
 }
 \description{

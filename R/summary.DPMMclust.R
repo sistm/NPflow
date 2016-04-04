@@ -15,7 +15,8 @@
 #'@param gs optionnal vector of length \code{n} containing the gold standard
 #'partition of the \code{n} observations to compare to the point estimate
 #'
-#'@param posterior_approx
+#'@param posterior_approx logical flag wether a parametric approximation of the posterior should be
+#'computed. Default is \code{FALSE}
 #'
 #'@param ... further arguments passed to or from other methods
 #'
@@ -61,9 +62,9 @@ summary.DPMMclust <- function(object, burnin=0, thin=1, gs=NULL, lossFn="F-measu
                                       logposterior = sapply(x_invar$logposterior_list, sum))
   }else if(lossFn == "MBinderN"){
     if (x_invar$clust_distrib!="gaussian"){stop("Clusters distribution must be Gaussian")}
-    point_estim <- cluster_est_MBinderN(x_invar$mcmc_partitions,x_invar$listU_mu,
-                                        x_invar$listU_Sigma,
-                                        logposterior = sapply(x_invar$logposterior_list, sum), ...)
+    point_estim <- cluster_est_Mbinder_norm(x_invar$mcmc_partitions,x_invar$listU_mu,
+                                            x_invar$listU_Sigma,
+                                            logposterior = sapply(x_invar$logposterior_list, sum), ...)
   }else{
     stop("Specified loss function not available.\n
          Specify either 'F-measure' or 'Binder' for the lossFn argument.")
@@ -100,7 +101,7 @@ summary.DPMMclust <- function(object, burnin=0, thin=1, gs=NULL, lossFn="F-measu
   class(s) <- "summaryDPMMclust"
 
   invisible(s)
-  }
+}
 
 
 #' Methods for a summary of a 'DPMMclust' object
@@ -131,6 +132,8 @@ print.summaryDPMMclust <- function(x,...){
 
 }
 
+#'@param gg.add a list of instructions to add to the ggplot2 instruction.
+#'See \code{\link[ggplot2]{+.gg}}. Default is \code{list(theme())}, which adds nothing to the plot.
 #'@export
 #'@rdname methods.summaryDPMMclust
 plot.summaryDPMMclust <- function(x, hm=FALSE, nbsim_densities=5000, gg.add=list(theme_bw()),...){

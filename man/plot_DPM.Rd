@@ -8,6 +8,31 @@ plot_DPM(z, U_mu = NULL, U_Sigma = NULL, m, c, i, alpha = "?",
   U_SS = NULL, dims2plot = 1:nrow(z), ellipses = ifelse(length(dims2plot)
   < 3, TRUE, FALSE), gg.add = list(theme()))
 }
+\arguments{
+\item{z}{data matrix \code{d x n} with \code{d} dimensions in rows
+and \code{n} observations in columns.}
+
+\item{U_mu}{}
+
+\item{U_Sigma}{}
+
+\item{m}{}
+
+\item{c}{}
+
+\item{i}{}
+
+\item{alpha}{}
+
+\item{U_SS}{}
+
+\item{dims2plot}{}
+
+\item{ellipses}{}
+
+\item{gg.add}{a list of instructions to add to the ggplot2 instruction.
+See \code{\link[ggplot2]{+.gg}}. Default is \code{list(theme())}, which adds nothing to the plot.}
+}
 \description{
 Plot of a Dirichlet process mixture of gaussian distribution partition
 }

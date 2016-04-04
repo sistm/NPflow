@@ -3,15 +3,6 @@ using namespace Rcpp;
 using namespace arma;
 
 // [[Rcpp::depends(RcppArmadillo)]]
-
-//' C++ implementation of multivariate log gamma function
-//'
-//'@param x strictly positive real number
-//'@param p integer
-//'
-//'@export
-//'
-// [[Rcpp::export]]
 double lgamma_mv2C(double x,
                   double p){
 

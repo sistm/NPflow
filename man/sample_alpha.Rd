@@ -6,8 +6,26 @@
 \usage{
 sample_alpha(alpha_old, n, K, a, b)
 }
+\arguments{
+\item{alpha_old}{the current value of alpha}
+
+\item{n}{the number of data points}
+
+\item{K}{current number of cluster}
+
+\item{a}{shape hyperparameter of the Gamma prior
+on the concentration parameter of the Dirichlet Process.}
+
+\item{b}{scale hyperparameter of the Gamma prior
+on the concentration parameter of the Dirichlet Process.}
+}
 \description{
-A Gamma prior is used
+Sampler udating the concentration parameter of a Dirichlet process given
+the number of observations and a Gamma(\code{a}, \code{b}) prior, following the augmentation
+strategy of West, and of Escobar and West.
+}
+\details{
+A Gamma prior is used.
 }
 \examples{
 #Test with a fixed K
@@ -68,8 +86,8 @@ postalpha.df <- data.frame("alpha"=postalphas,
 
 }
 \references{
-M West, Hyperparameter estimation in Dirichlet process mixture models, T
-echnical Report, Duke University, 1992.
+M West, Hyperparameter estimation in Dirichlet process mixture models,
+Technical Report, Duke University, 1992.
 
 MD Escobar, M West, Bayesian Density Estimation and Inference Using Mixtures
 \emph{Journal of the American Statistical Association}, 90(430):577-588, 1995.

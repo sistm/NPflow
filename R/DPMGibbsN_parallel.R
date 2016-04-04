@@ -1,6 +1,12 @@
 #'Slice Sampling of the Dirichlet Process Mixture Model
 #'with a prior on alpha
 #'
+#'@param Ncpus the number of processors available
+#'
+#'@param type_connec The type of connection between the processors. Supported
+#'cluster types are \code{"SOCK"}, \code{"PVM"}, \code{"MPI"}, and
+#'\code{"NWS"}. See also \code{\link[parallel:makeCluster]{makeCluster}}.
+#'
 #'@param z data matrix \code{d x n} with \code{d} dimensions in rows
 #'and \code{n} observations in columns.
 #'
@@ -17,6 +23,9 @@
 #'@param doPlot logical flag indicating wether to plot MCMC iteration or not.
 #'Default to \code{TRUE}.
 #'
+#'@param plotevery an integer indicating the interval between plotted iterations when \code{doPlot}
+#'is \code{TRUE}.
+#'
 #'@param nbclust_init number of clusters at initialisation.
 #'Default to 30 (or less if there are less than 30 observations).
 #'
@@ -26,6 +35,14 @@
 #'
 #'@param verbose logical flag indicating wether partition info is
 #'written in the console at each MCMC iteration.
+#'
+#'@param monitorfile
+#'a writable \link{connections} or a character string naming a file to write into,
+#'to monitor the progress of the analysis.
+#'Default is \code{""} which is no monitoring.  See Details.
+#'
+#'@param ... additional arguments to be passed to \code{\link{plot_DPM}}.
+#'Only used if \code{doPlot} is \code{TRUE}.
 #'
 #'@author Boris Hejblum
 #'
@@ -92,14 +109,14 @@
 #' plot_DPM(z=z, U_mu=MCMCsample$U_mu, U_Sigma=MCMCsample$U_Sigma,
 #'          m=MCMCsample$partition, c=MCMCsample$clusters,
 #'          i=N, alpha=MCMCsample$alpha[[1000]], U_SS=MCMCsample$U_SS_list[[1000]],
-#'          ellipses=T,
+#'          ellipses=TRUE,
 #'          dims2plot=c(1,2))
 #'
 #'
 DPMGibbsN_parallel <- function (Ncpus, type_connec,
                                 z, hyperG0, a, b, N, doPlot=TRUE,
                                 nbclust_init=30, plotevery=1,
-                                diagVar=TRUE, verbose=TRUE,
+                                diagVar=TRUE, verbose=TRUE, monitorfile="",
                                 ...){
 
   dpmclus <- NULL

@@ -9,6 +9,12 @@ DPMGibbsSkewT_parallel(Ncpus, type_connec, z, hyperG0, a, b, N,
   verbose = FALSE, monitorfile = "", ...)
 }
 \arguments{
+\item{Ncpus}{the number of processors available}
+
+\item{type_connec}{The type of connection between the processors. Supported
+cluster types are \code{"SOCK"}, \code{"PVM"}, \code{"MPI"}, and
+\code{"NWS"}. See also \code{\link[parallel:makeCluster]{makeCluster}}.}
+
 \item{z}{data matrix \code{d x n} with \code{d} dimensions in rows
 and \code{n} observations in columns.}
 
@@ -28,6 +34,9 @@ Default to \code{TRUE}.}
 \item{nbclust_init}{number of clusters at initialisation.
 Default to 30 (or less if there are less than 30 observations).}
 
+\item{plotevery}{an integer indicating the interval between plotted iterations when \code{doPlot}
+is \code{TRUE}.}
+
 \item{diagVar}{logical flag indicating wether the variance of each cluster is
 estimated as a diagonal matrix, or as a full matrix.
 Default is \code{TRUE} (diagonal variance).}
@@ -37,7 +46,10 @@ written in the console at each MCMC iteration.}
 
 \item{monitorfile}{a writable \link{connections} or a character string naming a file to write into,
 to monitor the progress of the analysis.
-Default is \code{""} which is no monitoring.  See Details.}
+Default is \code{""} which is no monitoring. See Details.}
+
+\item{...}{additional arguments to be passed to \code{\link{plot_DPMsn}}.
+Only used if \code{doPlot} is \code{TRUE}.}
 }
 \value{
 a object of class \code{DPMclust} with the following attributes:
@@ -87,7 +99,9 @@ c <- rep(0,n)
 z <- matrix(0, nrow=d, ncol=n)
 for(k in 1:n){
  c[k] = which(rmultinom(n=1, size=1, prob=p)!=0)
- z[,k] <- xi[, c[k]] + psi[, c[k]]*abs(rnorm(1)) + sdev[, , c[k]]\%*\%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
+ z[,k] <- (xi[, c[k]]
+          + psi[, c[k]]*abs(rnorm(1))
+          + sdev[, , c[k]]\%*\%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1))
  cat(k, "/", n, " observations simulated\\n", sep="")
 }
 
@@ -160,9 +174,11 @@ hyperG0[["lambda"]] <- diag(d)
  plot_ConvDPM(MCMCsample_st, from=2)
  cluster_est_binder(MCMCsample_sn$c_list[50:500])
 
- library(shiny)
- library(lineprof)
- l <- lineprof(MCMCsample_sn <- DPMGibbsSkewN(z, hyperG0, a, b, N=5, doPlot=FALSE, nbclust_init))
+ #library(lineprof)
+ #l <- lineprof(
+ MCMCsample_sn <- DPMGibbsSkewN(z, hyperG0, a, b, N=5, doPlot=FALSE, nbclust_init)
+ #)
+ #shine(l)
 
  hyperG0[["mu"]] <- rep(0,d)
  MCMCsample_n <- gibbsDPMsliceprior(z, hyperG0, a, b, N=500, doPlot, nbclust_init, plotevery=50)

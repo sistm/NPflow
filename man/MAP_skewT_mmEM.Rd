@@ -13,10 +13,31 @@ MAP_skewT_mmEM(xi_list, psi_list, S_list, hyperG0, init = NULL, K,
   maxit = 100, tol = 0.1, plot = TRUE, verbose = TRUE)
 
 MAP_skewT_mmEM_weighted(xi_list, psi_list, S_list, obsweight_list, hyperG0, K,
-  maxit = 100, tol = 0.1, plot = TRUE)
+  maxit = 100, tol = 0.1, doPlot = TRUE)
+}
+\arguments{
+\item{xi_list}{}
+
+\item{psi_list}{}
+
+\item{S_list}{}
+
+\item{hyperG0}{}
+
+\item{K}{integer giving the number of mixture components.}
+
+\item{maxit}{integer giving the maximum number of iteration for the EM algorithm. Default is 100.}
+
+\item{tol}{real number giving the tolerance for the stopping of the EM algorithm.
+Default is \code{0.1}.}
+
+\item{obsweight_list}{}
+
+\item{doPlot}{a logical flag indicating wether the algorithm progresison should be plotted.
+Default is \code{TRUE}.}
 }
 \description{
-Maximum likelihood estimation of mixture of
+Maximum A Posteriori (MAP) estimation of mixture of
 Normal inverse Wishart distributed observations with an EM algorithm
 }
 \examples{
@@ -71,7 +92,6 @@ for(k in 1001:2000){
 
 }
 
-library(lineprof)
 map <- MLE_skewT_mmEM(xi_list, psi_list, S_list, hyperG0, K=2, tol=0.1)
 map
 

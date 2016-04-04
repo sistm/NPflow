@@ -13,8 +13,8 @@ vclust2mcoclustC(c)
 C++ implementation
 }
 \examples{
-c <- c(1,1,2,3,2,3))
-vclust2mcoclustC(c)
+cc <- c(1,1,2,3,2,3)
+vclust2mcoclustC(cc)
 
 
 }

@@ -1,23 +1,34 @@
 #'Slice Sampling of Dirichlet Process Mixture of skew  Students's t-distibutions
 #'
+#'@param Ncpus the number of processors available
+#'
+#'@param type_connec The type of connection between the processors. Supported
+#'cluster types are \code{"SOCK"}, \code{"PVM"}, \code{"MPI"}, and
+#'\code{"NWS"}. See also \code{\link[parallel:makeCluster]{makeCluster}}.
+#'
 #'@param z data matrix \code{d x n} with \code{d} dimensions in rows
 #'and \code{n} observations in columns.
 #'
+#'@param prior_inform an informative prior such a the approximation computed by \code{summary.DPMMclust}.
+#'
 #'@param hyperG0 prior mixing distribution.
-#'
-#'@param a shape hyperparameter of the Gamma prior
-#'on the parameter of the Dirichlet Process.
-#'
-#'@param b scale hyperparameter of the Gamma prior
-#'on the parameter of the Dirichlet Process.
 #'
 #'@param N number of MCMC iterations.
 #'
 #'@param doPlot logical flag indicating wether to plot MCMC iteration or not.
 #'Default to \code{TRUE}.
 #'
+#'@param plotevery an integer indicating the interval between plotted iterations when \code{doPlot}
+#'is \code{TRUE}.
+#'
 #'@param nbclust_init number of clusters at initialisation.
 #'Default to 30 (or less if there are less than 30 observations).
+#'
+#'@param add.vagueprior logical flag indicating wether a non informative component should
+#' be added to the informative prior. Default is \code{TRUE}.
+#'
+#'@param weightnoninfo a real between 0 and 1 giving the weights of the non informative component
+#'in the prior.
 #'
 #'@param diagVar logical flag indicating wether the variance of each cluster is
 #'estimated as a diagonal matrix, or as a full matrix.
@@ -25,6 +36,14 @@
 #'
 #'@param verbose logical flag indicating wether partition info is
 #'written in the console at each MCMC iteration.
+#'
+#'@param monitorfile
+#'a writable \link{connections} or a character string naming a file to write into,
+#'to monitor the progress of the analysis.
+#'Default is \code{""} which is no monitoring. See Details.
+#'
+#'@param ... additional arguments to be passed to \code{\link{plot_DPM}}.
+#'Only used if \code{doPlot} is \code{TRUE}.
 #'
 #'@return a object of class \code{DPMclust} with the following attributes:
 #'  \itemize{
@@ -79,7 +98,8 @@
 #' for(k in 1:n){
 #'  c[k] = which(rmultinom(n=1, size=1, prob=p)!=0)
 #'  w[k] <- rgamma(1, shape=nu[c[k]]/2, rate=nu[c[k]]/2)
-#'  z[,k] <- xi[, c[k]] + psi[, c[k]]*rtruncnorm(n=1, a=0, b=Inf, mean=0, sd=1/sqrt(w[k])) + (sdev[, , c[k]]/sqrt(w[k]))%*%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
+#'  z[,k] <- xi[, c[k]] + psi[, c[k]]*rtruncnorm(n=1, a=0, b=Inf, mean=0, sd=1/sqrt(w[k])) +
+#'                 (sdev[, , c[k]]/sqrt(w[k]))%*%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
 #'  cat(k, "/", n, " observations simulated\n", sep="")
 #' }
 #'
@@ -118,11 +138,12 @@
 #' for(k in 1:n){
 #'  c[k] = which(rmultinom(n=1, size=1, prob=p)!=0)
 #'  w[k] <- rgamma(1, shape=nu[c[k]]/2, rate=nu[c[k]]/2)
-#'  z[,k] <- xi[, c[k]] + psi[, c[k]]*rtruncnorm(n=1, a=0, b=Inf, mean=0, sd=1/sqrt(w[k])) + (sdev[, , c[k]]/sqrt(w[k]))%*%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
+#'  z[,k] <- xi[, c[k]] + psi[, c[k]]*rtruncnorm(n=1, a=0, b=Inf, mean=0, sd=1/sqrt(w[k])) +
+#'                 (sdev[, , c[k]]/sqrt(w[k]))%*%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
 #'  cat(k, "/", n, " observations simulated\n", sep="")
 #' }
 #'  MCMCsample_st2 <- DPMGibbsSkewT_SeqPrior_parallel(Ncpus=2, type_connec="SOCK",
-#'                                                    z, prior=s$param_posterior,
+#'                                                    z, prior_inform=s$param_posterior,
 #'                                                    hyperG0, N=3000,
 #'                                                    doPlot=TRUE, plotevery=100,
 #'                                                    nbclust_init, diagVar=FALSE, verbose=FALSE)
@@ -133,8 +154,8 @@
 #'
 
 DPMGibbsSkewT_SeqPrior_parallel <- function (Ncpus, type_connec,
-                                             z, prior, hyperG0, N, nbclust_init,
-                                             add.vagueprior = TRUE, weightnoninf=NULL,
+                                             z, prior_inform, hyperG0, N, nbclust_init,
+                                             add.vagueprior = TRUE, weightnoninfo=NULL,
                                              doPlot=FALSE, plotevery=1,
                                              diagVar=TRUE, verbose=TRUE,
                                              monitorfile="defaultmonitor.txt",
@@ -200,7 +221,7 @@ DPMGibbsSkewT_SeqPrior_parallel <- function (Ncpus, type_connec,
     ltn <- rtruncnorm(n, a=0, b=Inf, mean=0, sd=1) # latent truncated normal
     sc <- rep(1,n)
 
-    priorG1 <- prior
+    priorG1 <- prior_inform
     nonnullpriors_ind <- which(priorG1$weights!=0)
     priorG1$weights <- priorG1$weights[nonnullpriors_ind]
     priorG1$parameters <- priorG1$parameters[nonnullpriors_ind]
@@ -211,17 +232,17 @@ DPMGibbsSkewT_SeqPrior_parallel <- function (Ncpus, type_connec,
       priorG1[["parameters"]][[nbmix_prior]][["B"]] <- diag(c(priorG1[["parameters"]][[nbmix_prior]][["D_xi"]],
                                                               priorG1[["parameters"]][[nbmix_prior]][["D_psi"]])
       )
-      if(is.null(weightnoninf)){
+      if(is.null(weightnoninfo)){
         priorG1$weights <- c(priorG1$weights, 1/length(priorG1$weights))
         priorG1$weights <- priorG1$weights/sum(priorG1$weights)
       }else{
         #TODO
-        priorG1$weights <- c(rep((1-weightnoninf)/(nbmix_prior-1), (nbmix_prior-1)), weightnoninf)
+        priorG1$weights <- c(rep((1-weightnoninfo)/(nbmix_prior-1), (nbmix_prior-1)), weightnoninfo)
       }
     }
 
-    a <- prior$alpha_param$shape
-    b <- prior$alpha_param$rate
+    a <- prior_inform$alpha_param$shape
+    b <- prior_inform$alpha_param$rate
 
     # Initialisation----
     # each observation is assigned to a different cluster

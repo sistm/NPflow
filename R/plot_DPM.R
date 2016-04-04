@@ -1,5 +1,29 @@
 #'Plot of a Dirichlet process mixture of gaussian distribution partition
 #'
+#'@param z data matrix \code{d x n} with \code{d} dimensions in rows
+#'and \code{n} observations in columns.
+#'
+#'@param U_mu
+#'
+#'@param U_Sigma
+#'
+#'@param m
+#'
+#'@param c
+#'
+#'@param i
+#'
+#'@param alpha
+#'
+#'@param U_SS
+#'
+#'@param dims2plot
+#'
+#'@param ellipses
+#'
+#'@param gg.add a list of instructions to add to the ggplot2 instruction.
+#'See \code{\link[ggplot2]{+.gg}}. Default is \code{list(theme())}, which adds nothing to the plot.
+#'
 #'
 #'@author Boris Hejblum
 #'

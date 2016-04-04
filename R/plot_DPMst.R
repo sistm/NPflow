@@ -1,8 +1,20 @@
-#' @author Boris Hejblum
+#'Plot of a Dirichlet process mixture of skew t-distribution partition
+#'
+#'@param gg.add
+#'A list of instructions to add to the ggplot2 instruction.  See \code{\link[ggplot2]{+.gg}}.
+#'Default is \code{list(theme())}, which adds nothing.
+#'to the plot.
+#'
+#'@param nbsim_dens
+#'
+#'@param nice
+#'
+#'
+#'@author Boris Hejblum
 #'
 #'@import ggplot2
-#'@importFrom truncnorm rtruncnorm
 #'@import reshape2
+#'@importFrom truncnorm rtruncnorm
 #'
 #' @export
 
@@ -10,7 +22,7 @@ plot_DPMst <- function(z, c, i="", alpha="?", U_SS,
                        dims2plot=1:nrow(z),
                        ellipses=ifelse(length(dims2plot)<3,TRUE,FALSE),
                        gg.add=list(theme()), nbsim_dens=1000, nice=FALSE){
-    requireNamespace("reshape2", quietly=TRUE)
+
     mean_sn01 <- (dnorm(0)-dnorm(Inf))/(pnorm(Inf)-pnorm(0))
 
     z <- z[dims2plot,]

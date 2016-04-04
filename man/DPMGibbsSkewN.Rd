@@ -27,11 +27,17 @@ Default to \code{TRUE}.}
 \item{nbclust_init}{number of clusters at initialisation.
 Default to 30 (or less if there are less than 30 observations).}
 
+\item{plotevery}{an integer indicating the interval between plotted iterations when \code{doPlot}
+is \code{TRUE}.}
+
 \item{diagVar}{logical flag indicating wether the variance of a cluster is a diagonal matrice.
 Default is \code{FALSE} (full matrix).}
 
 \item{verbose}{logical flag indicating wether partition info is
 written in the console at each MCMC iteration.}
+
+\item{...}{additional arguments to be passed to \code{\link{plot_DPMsn}}.
+Only used if \code{doPlot} is \code{TRUE}.}
 }
 \value{
 a object of class \code{DPMclust} with the following attributes:
@@ -159,10 +165,12 @@ hyperG0[["lambda"]] <- diag(d)
  plot_ConvDPM(MCMCsample_sn, from=2)
  cluster_est_binder(MCMCsample_sn$c_list[50:500])
 
- library(shiny)
- library(lineprof)
- l <- lineprof(MCMCsample_sn <- DPMGibbsSkewN(z, hyperG0, a, b, N=5,
-                                              doPlot=FALSE, nbclust_init))
+ #library(lineprof)
+ #l <- lineprof(
+ MCMCsample_sn <- DPMGibbsSkewN(z, hyperG0, a, b, N=5,
+                                doPlot=FALSE, nbclust_init)
+ #)
+ #shine(l)
 
  hyperG0[["mu"]] <- rep(0,d)
  MCMCsample_n <- gibbsDPMsliceprior(z, hyperG0, a, b, N=500, doPlot, nbclust_init, plotevery=50)

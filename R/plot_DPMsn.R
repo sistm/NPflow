@@ -1,13 +1,22 @@
-#' @author Boris Hejblum
+#'Plot of a Dirichlet process mixture of skew normal distribution partition
 #'
-#' @export
+#'@param gg.add
+#'A list of instructions to add to the ggplot2 instruction.  See \code{\link[ggplot2]{+.gg}}.
+#'Default is \code{list(theme())}, which adds nothing.
+#'to the plot.
+#'
+#'@author Boris Hejblum
+#'
+#'@import ellipse
+#'@import reshape2
+#'
+#'@export
 
 plot_DPMsn <- function(z, c, i="", alpha="?", U_SS,
                        dims2plot=1:nrow(z),
                        ellipses=ifelse(length(dims2plot)<3,TRUE,FALSE),
                        gg.add=list(theme()), nbsim_dens=1000){
-    requireNamespace("ellipse", quietly=TRUE)
-    requireNamespace("reshape2", quietly=TRUE)
+
     mean_sn01 <- (dnorm(0)-dnorm(Inf))/(pnorm(Inf)-pnorm(0))
 
     z <- z[dims2plot,]

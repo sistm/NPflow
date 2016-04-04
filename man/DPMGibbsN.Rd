@@ -15,10 +15,10 @@ and \code{n} observations in columns.}
 \item{hyperG0}{prior mixing distribution.}
 
 \item{a}{shape hyperparameter of the Gamma prior
-on the parameter of the Dirichlet Process.}
+on the concentration parameter of the Dirichlet Process.}
 
 \item{b}{scale hyperparameter of the Gamma prior
-on the parameter of the Dirichlet Process.}
+on the concentration parameter of the Dirichlet Process.}
 
 \item{N}{number of MCMC iterations.}
 
@@ -28,12 +28,18 @@ Default to \code{TRUE}.}
 \item{nbclust_init}{number of clusters at initialisation.
 Default to 30 (or less if there are less than 30 observations).}
 
+\item{plotevery}{an integer indicating the interval between plotted iterations when \code{doPlot}
+is \code{TRUE}.}
+
 \item{diagVar}{logical flag indicating wether the variance of each cluster is
 estimated as a diagonal matrix, or as a full matrix.
 Default is \code{TRUE} (diagonal variance).}
 
 \item{verbose}{logical flag indicating wether partition info is
 written in the console at each MCMC iteration.}
+
+\item{...}{additional arguments to be passed to \code{\link{plot_DPM}}.
+Only used if \code{doPlot} is \code{TRUE}.}
 }
 \description{
 Slice Sampling of the Dirichlet Process Mixture Model
@@ -102,10 +108,11 @@ for(k in 1:n){
                          levels=c("prior", "posterior")))
  p <- (ggplot(prioralpha, aes(x=alpha))
        + geom_histogram(aes(y=..density..),
-                        colour="black", fill="white")
-       + geom_density(alpha=.2, fill="red")
+                        colour="black", fill="white", bins=30)
+       + geom_density(alpha=.6, fill="red", color=NA)
        + ggtitle(paste("Prior distribution on alpha: Gamma(", a,
                  ",", b, ")\\n", sep=""))
+       + theme_bw()
       )
  p
 
@@ -117,8 +124,8 @@ for(k in 1:n){
 
  plot_ConvDPM(MCMCsample, from=2)
 
- s <- summary(MCMCsample, burnin = 10, thin=2, posterior_approx=FALSE, K=0,dist="Normal",
- lossFn = "MBinderN",lambda=0,a=1,b=1)
+ s <- summary(MCMCsample, burnin = 10, thin=2, posterior_approx=FALSE,
+ lossFn = "MBinderN")
 
  F <- FmeasureC(pred=s$point_estim$c_est, ref=c)
 
@@ -153,7 +160,7 @@ for(k in 1:n){
        + ggtitle("Posterior distribution of alpha\\n")
        # Ignore NA values for mean
        # Overlay with transparent density plot
-       + geom_vline(aes(xintercept=mean(alpha, na.rm=T)),
+       + geom_vline(aes(xintercept=mean(alpha, na.rm=TRUE)),
                     color="red", linetype="dashed", size=1)
      )
  p
@@ -162,11 +169,14 @@ for(k in 1:n){
        + geom_density(aes(x=alpha, fill=distribution),
                       color=NA, alpha=.6,
                       data=prioralpha)
-       + geom_density(aes(x=alpha, fill=distribution),
-                      color=NA, alpha=.6,
-                      data=postalpha)
+       #+ geom_density(aes(x=alpha, fill=distribution),
+       #               color=NA, alpha=.6,
+       #               data=postalpha)
        + ggtitle("Prior and posterior distributions of alpha\\n")
        + scale_fill_discrete(drop=FALSE)
+       + theme_bw()
+       +xlim(0,10)
+       +ylim(0, 1.3)
      )
  p
 

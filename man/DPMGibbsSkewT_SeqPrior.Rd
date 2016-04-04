@@ -4,13 +4,15 @@
 \alias{DPMGibbsSkewT_SeqPrior}
 \title{Slice Sampling of Dirichlet Process Mixture of skew  Students's t-distibutions}
 \usage{
-DPMGibbsSkewT_SeqPrior(z, prior, hyperG0, N, nbclust_init,
-  add.vagueprior = TRUE, weightnoninf = NULL, doPlot = TRUE,
+DPMGibbsSkewT_SeqPrior(z, prior_inform, hyperG0, N, nbclust_init,
+  add.vagueprior = TRUE, weightnoninfo = NULL, doPlot = TRUE,
   plotevery = 1, diagVar = TRUE, verbose = TRUE, ...)
 }
 \arguments{
 \item{z}{data matrix \code{d x n} with \code{d} dimensions in rows
 and \code{n} observations in columns.}
+
+\item{prior_inform}{an informative prior such a the approximation computed by \code{summary.DPMMclust}.}
 
 \item{hyperG0}{prior mixing distribution.}
 
@@ -19,8 +21,17 @@ and \code{n} observations in columns.}
 \item{nbclust_init}{number of clusters at initialisation.
 Default to 30 (or less if there are less than 30 observations).}
 
+\item{add.vagueprior}{logical flag indicating wether a non informative component should
+be added to the informative prior. Default is \code{TRUE}.}
+
+\item{weightnoninfo}{a real between 0 and 1 giving the weights of the non informative component
+in the prior.}
+
 \item{doPlot}{logical flag indicating wether to plot MCMC iteration or not.
 Default to \code{TRUE}.}
+
+\item{plotevery}{an integer indicating the interval between plotted iterations when \code{doPlot}
+is \code{TRUE}.}
 
 \item{diagVar}{logical flag indicating wether the variance of each cluster is
 estimated as a diagonal matrix, or as a full matrix.
@@ -29,11 +40,8 @@ Default is \code{TRUE} (diagonal variance).}
 \item{verbose}{logical flag indicating wether partition info is
 written in the console at each MCMC iteration.}
 
-\item{a}{shape hyperparameter of the Gamma prior
-on the parameter of the Dirichlet Process.}
-
-\item{b}{scale hyperparameter of the Gamma prior
-on the parameter of the Dirichlet Process.}
+\item{...}{additional arguments to be passed to \code{\link{plot_DPM}}.
+Only used if \code{doPlot} is \code{TRUE}.}
 }
 \value{
 a object of class \code{DPMclust} with the following attributes:
@@ -138,7 +146,7 @@ s2 <- summary(MCMCsample_st2, burnin = 1500, thin=5)
 F2 <- FmeasureC(pred=s2$point_estim$c_est, ref=c)
 
 MCMCsample_st2_par <- DPMGibbsSkewT_SeqPrior_parallel(Ncpus= 2, type_connec="SOCK",
-                                                      z, prior=s$param_posterior,
+                                                      z, prior_inform=s$param_posterior,
                                                       hyperG0, N=2000,
                                                       doPlot=TRUE, plotevery=50,
                                                       nbclust_init, diagVar=FALSE)

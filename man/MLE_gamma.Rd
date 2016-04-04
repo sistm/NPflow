@@ -6,6 +6,9 @@
 \usage{
 MLE_gamma(g)
 }
+\arguments{
+\item{g}{a list of Gamma distributed observation.}
+}
 \description{
 Maximum likelihood estimation of Gamma distributed observations
 distribution parameters
