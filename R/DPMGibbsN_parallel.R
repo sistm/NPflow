@@ -104,13 +104,6 @@
 #'
 #'
 #' nbclust_init <- 30
-#' MCMCsample <- gibbsDPMsliceprior(z, hyperG0, a, b, N, doPlot=F, nbclust_init=30)
-#'
-#' plot_DPM(z=z, U_mu=MCMCsample$U_mu, U_Sigma=MCMCsample$U_Sigma,
-#'          m=MCMCsample$partition, c=MCMCsample$clusters,
-#'          i=N, alpha=MCMCsample$alpha[[1000]], U_SS=MCMCsample$U_SS_list[[1000]],
-#'          ellipses=TRUE,
-#'          dims2plot=c(1,2))
 #'
 #'
 DPMGibbsN_parallel <- function (Ncpus, type_connec,
