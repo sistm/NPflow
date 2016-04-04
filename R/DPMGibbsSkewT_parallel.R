@@ -40,7 +40,7 @@
 #'to monitor the progress of the analysis.
 #'Default is \code{""} which is no monitoring. See Details.
 #'
-#'@param ... additional arguments to be passed to \code{\link{plot_DPMsn}}.
+#'@param ... additional arguments to be passed to \code{\link{plot_DPMst}}.
 #'Only used if \code{doPlot} is \code{TRUE}.
 #'
 #'@return a object of class \code{DPMclust} with the following attributes:

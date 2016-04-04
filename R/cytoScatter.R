@@ -55,7 +55,7 @@ cytoScatter <- function(cytomatrix, dims2plot=c(1,2),
 
     n <- ncol(cytomatrix)
     stopifnot(length(dims2plot)>1)
-    stopifnot(is.matrix(z))
+    stopifnot(is.matrix(cytomatrix))
 
     if(length(dims2plot)!=2){
         cytomatrix <- cytomatrix[dims2plot,]

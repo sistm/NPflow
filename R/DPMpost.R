@@ -29,6 +29,7 @@
 #'@param verbose logical flag indicating wether partition info is
 #'written in the console at each MCMC iteration.
 #'
+#'
 #'@return a object of class \code{DPMclust} with the following attributes:
 #'  \itemize{
 #'      \item{\code{mcmc_partitions}:}{ a list of length \code{N}. Each
@@ -357,7 +358,7 @@ DPMpost <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
                                                hyper=hyperG0, c=c, m=m, alpha=alpha[i], n=n, a=a, b=b, diagVar)
 
   if(doPlot){
-    plot_DPMst(z=z, c=c, i=i, alpha=alpha[i], U_SS=U_SS_list[[i]], ellipses=TRUE, ...)
+    plot_DPMst(z=z, c=c, i=i, alpha=alpha[i], U_SS=U_SS_list[[i]], ellipses=TRUE)
   }
   if(verbose){
     cat(i, "/", N, " samplings:\n", sep="")
@@ -439,7 +440,7 @@ DPMpost <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
                                                    hyper=hyperG0, c=c, m=m, alpha=alpha[i], n=n, a=a, b=b, diagVar)
 
       if(doPlot && i/plotevery==floor(i/plotevery)){
-        plot_DPMst(z=z, c=c, i=i, alpha=alpha[i], U_SS=U_SS_list[[i]], ellipses=TRUE, ...)
+        plot_DPMst(z=z, c=c, i=i, alpha=alpha[i], U_SS=U_SS_list[[i]], ellipses=TRUE)
       }
       if(verbose){
         cat(i, "/", N, " samplings:\n", sep="")

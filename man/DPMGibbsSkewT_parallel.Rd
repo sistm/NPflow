@@ -48,7 +48,7 @@ written in the console at each MCMC iteration.}
 to monitor the progress of the analysis.
 Default is \code{""} which is no monitoring. See Details.}
 
-\item{...}{additional arguments to be passed to \code{\link{plot_DPMsn}}.
+\item{...}{additional arguments to be passed to \code{\link{plot_DPMst}}.
 Only used if \code{doPlot} is \code{TRUE}.}
 }
 \value{
