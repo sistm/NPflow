@@ -3,23 +3,32 @@
 #'@param z data matrix \code{d x n} with \code{d} dimensions in rows
 #'and \code{n} observations in columns.
 #'
-#'@param U_mu
+#'@param U_mu either a list or a matrix containing the current estimates of mean vectors 
+#'of length \code{d} for each cluster. Default is \code{NULL} in which case
+#'\code{U_SS} has to be provided.
 #'
-#'@param U_Sigma
+#'@param U_Sigma either a list or an array containing the \code{d x d} current estimates 
+#'for covariance matrix of each cluster. Default is \code{NULL} in which case
+#'\code{U_SS} has to be provided.
 #'
-#'@param m
+#'@param m vector of length \code{n} containing the number of observations currently assigned to 
+#'each clusters.
 #'
-#'@param c
+#'@param c allocation vector of length \code{n} indicating which observation belongs to which 
+#'clusters.
 #'
-#'@param i
+#'@param i current MCMC iteration number.
 #'
-#'@param alpha
+#'@param alpha current value of the DP concentration parameter.
 #'
-#'@param U_SS
+#'@param U_SS a list containing \code{"mu"} and \code{"S"}. Default is \code{NULL} in which case
+#'\code{U_mu} and \code{U_Sigma} have to be provided.
 #'
-#'@param dims2plot
+#'@param dims2plot index vector, subset of \code{1:d} indicating which dimensions should be drawn.
+#'Default is all of them.
 #'
-#'@param ellipses
+#'@param ellipses a logical flag indicating whethe ellipses should be drawn around clusters. Default
+#'is \code{TRUE} if only 2 dimensions are plotted, \code{FALSE} otherwise.
 #'
 #'@param gg.add a list of instructions to add to the ggplot2 instruction.
 #'See \code{\link[ggplot2]{+.gg}}. Default is \code{list(theme())}, which adds nothing to the plot.
