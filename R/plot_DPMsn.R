@@ -29,7 +29,6 @@ plot_DPMsn <- function(z, c, i="", alpha="?", U_SS,
 
     fullCl <- which(m!=0)
 
-
     U_xi2plot=sapply(U_SS, "[[", "xi")
     U_psi2plot=sapply(U_SS, "[[", "psi")
     U_Sigma2plot=lapply(U_SS, "[[", "S")
@@ -138,9 +137,9 @@ plot_DPMsn <- function(z, c, i="", alpha="?", U_SS,
 
               + geom_point(aes_string(x="D1", y="D2", colour="Cluster", order="Cluster"),
                            data=z2plot)
-              + geom_point(aes_string(x="D1", y="D2", fill="Cluster", order="Cluster", shape="22"),
+              + geom_point(aes_string(x="D1", y="D2", fill="Cluster", order="Cluster"), shape=22,
                            data=U2plot, size=5)
-              + geom_point(aes_string(x="D1", y="D2", fill="Cluster", order="Cluster", shape="23"),
+              + geom_point(aes_string(x="D1", y="D2", fill="Cluster", order="Cluster"), shape=23,
                            data=xi2plot, size=5)
               + ggtitle(paste(n, " obs.",
                               "\niteration ", i, " : ",
@@ -160,11 +159,13 @@ plot_DPMsn <- function(z, c, i="", alpha="?", U_SS,
                                       D2=tapply(X=z2plot[,2], INDEX=z2plot$Cluster, FUN=mean)
         )
         zmean2plot <- cbind.data.frame(zmean2plot, Cluster=rownames(zmean2plot))
-        p <- (p + geom_point(aes_string(x="D1", y="D2", fill="Cluster", order="Cluster", shape="24"),
+        zmean2plot$Center="observed mean"
+        p <- (p + geom_point(aes_string(x="D1", y="D2", fill="Cluster", order="Cluster", shape="Center"),
                              data=zmean2plot, size=5)
               + scale_shape_manual(values=c(24,22,23),
                                    labels=c("observed mean", "sampled mean", "xi param"),
-                                   name="", limits=c(24,22,23))
+                                   name="Center", limits=c(24,22,23))
+              + guides(shape=guide_legend(override.aes = list(fill="grey45")))
         )
         if(ellipses){
             simuDens <- NULL
@@ -178,17 +179,21 @@ plot_DPMsn <- function(z, c, i="", alpha="?", U_SS,
                                            "Cluster"=rep(glabel, nbsim_dens))
                 simuDens <- rbind.data.frame(simuDens, simuDenstemp)
             }
+            simuDens$Type <- "DensContour"
 
             p <- (p
-                  + geom_density2d(data=simuDens, aes_string(x="D1", y="D2", colour="Cluster", linetype="1"))
+                  + geom_density2d(data=simuDens, aes_string(x="D1", y="D2", colour="Cluster", linetype="Type"))
                   + scale_linetype_manual(values=c(1),
-                                          labels=c("simulations derived\n from sampled xi & psi"),
-                                          name="Density contour", limits=c(1))
+                                          labels=c("simulations derived\n from sampled xi and psi"),
+                                          name="Density contour")
+                  + guides(linetype=guide_legend(override.aes = list(color="black")))
             )
         }
     }
+
     for (a in gg.add) {
         p <- p + a
     }
+
     print(p)
 }
