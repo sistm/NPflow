@@ -9,6 +9,12 @@ Fmeasure_costC(c)
 \arguments{
 \item{c}{a matrix where each column is one MCMC partition}
 }
+\value{
+a list with the following elements:
+\itemize{
+ \item{Fmeas}{TODO}
+}
+}
 \description{
 C++ implementation of multiple cost computations with Fmeasure as the loss
 function using the Armadillo library
