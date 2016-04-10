@@ -113,6 +113,7 @@
 #'
 #' # Gibbs sampler for Dirichlet Process Mixtures
 #' ##############################################
+#' \dontrun{
 #' MCMCsample <- DPMGibbsN(z, hyperG0, a, b, N=1500, doPlot, nbclust_init,
 #'                         plotevery=200, diagVar=FALSE)
 #'
@@ -131,6 +132,7 @@
 #' s2 <- summary(MCMCsample2, burnin = 500, thin=5)
 #' F2 <- FmeasureC(pred=s2$point_estim$c_est, ref=c)
 #' F2
+#' }
 
 
 DPMGibbsN_SeqPrior <- function (z, prior_inform, hyperG0, N, nbclust_init,

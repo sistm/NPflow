@@ -52,7 +52,7 @@
 #'      + theme_bw()
 #'      + xlim(-15,100)
 #'      + theme(legend.position="bottom")
-#'      + scale_fill_manual(values=scales::alpha(c("#F8766D", "#00B0F6"),c(0.2,0.45)),
+#'      + scale_fill_manual(values=alpha(c("#F8766D", "#00B0F6"),c(0.2,0.45)),
 #'                          name =" ",
 #'                          labels=c("Y~SN(0,1,10)      ", "Y~ST(0,1,10,1.5)")
 #'      )

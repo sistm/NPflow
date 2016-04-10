@@ -1,38 +1,36 @@
-#'Slice Sampling of the Dirichlet Process Mixture Model
-#'with a prior on alpha
+#'Slice Sampling of the Dirichlet Process Mixture Model with a prior on alpha
 #'
 #'
-#'@param z data matrix \code{d x n} with \code{d} dimensions in rows
-#'and \code{n} observations in columns.
+#'@param z data matrix \code{d x n} with \code{d} dimensions in rows and \code{n} observations in
+#'  columns.
 #'
 #'@param hyperG0 prior mixing distribution.
 #'
-#'@param a shape hyperparameter of the Gamma prior
-#'on the concentration parameter of the Dirichlet Process.
+#'@param a shape hyperparameter of the Gamma prior on the concentration parameter of the Dirichlet
+#'  Process.
 #'
-#'@param b scale hyperparameter of the Gamma prior
-#'on the concentration parameter of the Dirichlet Process.
+#'@param b scale hyperparameter of the Gamma prior on the concentration parameter of the Dirichlet
+#'  Process.
 #'
 #'@param N number of MCMC iterations.
 #'
-#'@param doPlot logical flag indicating wether to plot MCMC iteration or not.
-#'Default to \code{TRUE}.
+#'@param doPlot logical flag indicating wether to plot MCMC iteration or not. Default to
+#'  \code{TRUE}.
 #'
 #'@param plotevery an integer indicating the interval between plotted iterations when \code{doPlot}
-#'is \code{TRUE}.
+#'  is \code{TRUE}.
 #'
-#'@param nbclust_init number of clusters at initialisation.
-#'Default to 30 (or less if there are less than 30 observations).
+#'@param nbclust_init number of clusters at initialisation. Default to 30 (or less if there are less
+#'  than 30 observations).
 #'
-#'@param diagVar logical flag indicating wether the variance of each cluster is
-#'estimated as a diagonal matrix, or as a full matrix.
-#'Default is \code{TRUE} (diagonal variance).
+#'@param diagVar logical flag indicating wether the variance of each cluster is estimated as a
+#'  diagonal matrix, or as a full matrix. Default is \code{TRUE} (diagonal variance).
 #'
-#'@param verbose logical flag indicating wether partition info is
-#'written in the console at each MCMC iteration.
+#'@param verbose logical flag indicating wether partition info is written in the console at each
+#'  MCMC iteration.
 #'
-#'@param ... additional arguments to be passed to \code{\link{plot_DPM}}.
-#'Only used if \code{doPlot} is \code{TRUE}.
+#'@param ... additional arguments to be passed to \code{\link{plot_DPM}}. Only used if \code{doPlot}
+#'  is \code{TRUE}.
 #'
 #'@author Boris Hejblum
 #'
@@ -113,17 +111,19 @@
 #'
 #'  # Gibbs sampler for Dirichlet Process Mixtures
 #'  ##############################################
+#'  dontrun{
 #'  MCMCsample <- DPMGibbsN(z, hyperG0, a, b, N=500, doPlot, nbclust_init, plotevery=50, diagVar=FALSE)
 #'
 #'  plot_ConvDPM(MCMCsample, from=2)
 #'
-#'  s <- summary(MCMCsample, burnin = 10, thin=2, posterior_approx=FALSE,
+#'  s <- summary(MCMCsample, burnin = 200, thin=2, posterior_approx=FALSE,
 #'  lossFn = "MBinderN")
 #'
 #'  F <- FmeasureC(pred=s$point_estim$c_est, ref=c)
+#'}
 #'
-#'
-#'  # k-means
+#'# k-means comparison
+#'####################
 #'
 #'  plot(x=z[1,], y=z[2,], col=kmeans(t(z), centers=4)$cluster,
 #'       xlab = "d = 1", ylab= "d = 2", main="k-means with K=4 clusters")
