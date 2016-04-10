@@ -210,7 +210,7 @@
 #'        + geom_histogram(aes(y=..density..),
 #'                         colour="black", fill="white")
 #'        + geom_density(alpha=.2, fill="blue")
-#'        + ggtitle("Posterior distribution of K\n")
+#'        + ggtitle("Posterior distribution of predicted K\n")
 #'        # Ignore NA values for mean
 #'        # Overlay with transparent density plot
 #'        + geom_vline(aes(xintercept=mean(K, na.rm=T)),

@@ -148,8 +148,10 @@
 #'  # Gibbs sampler for Dirichlet Process Mixtures
 #'  ##############################################
 #'  \dontrun{
-#'  MCMCsample_sn_par <- DPMGibbsSkewN_parallel(Ncpus=parallel::detectCores()-1, type_connec="SOCK", z, hyperG0,
-#'                      a, b, N=5000, doPlot, nbclust_init, plotevery=25, gg.add=list(theme_bw()))
+#'  MCMCsample_sn_par <- DPMGibbsSkewN_parallel(Ncpus=parallel::detectCores()-1,
+#'                                              type_connec="SOCK", z, hyperG0,
+#'                                              a, b, N=5000, doPlot, nbclust_init,
+#'                                              plotevery=25, gg.add=list(theme_bw()))
 #'  plot_ConvDPM(MCMCsample_sn_par, from=2)
 #'
 #'  postalpha <- data.frame("alpha"=MCMCsample_sn_par$alpha[50:500],

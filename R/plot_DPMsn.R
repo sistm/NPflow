@@ -175,7 +175,7 @@ plot_DPMsn <- function(z, c, i="", alpha="?", U_SS,
             p <- (p
                   + geom_density2d(data=simuDens, aes_string(x="D1", y="D2", colour="Cluster", linetype="Type"))
                   + scale_linetype_manual(values=c(1),
-                                          labels=c("simulations derived\n from sampled xi and psi"),
+                                          labels=c("simulations derived\n from sampled parameters"),
                                           name="Density contour")
                   + guides(linetype=guide_legend(override.aes = list(color="black")),
                            colour=guide_legend(override.aes = list(linetype=0, size=6)))

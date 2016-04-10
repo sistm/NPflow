@@ -117,7 +117,7 @@ for(k in 1:n){
 
  # Gibbs sampler for Dirichlet Process Mixtures
  ##############################################
- dontrun{
+\dontrun{
  MCMCsample <- DPMGibbsN(z, hyperG0, a, b, N=500, doPlot, nbclust_init, plotevery=50, diagVar=FALSE)
 
  plot_ConvDPM(MCMCsample, from=2)
@@ -126,28 +126,6 @@ for(k in 1:n){
  lossFn = "MBinderN")
 
  F <- FmeasureC(pred=s$point_estim$c_est, ref=c)
-}
-
-# k-means comparison
-####################
-
- plot(x=z[1,], y=z[2,], col=kmeans(t(z), centers=4)$cluster,
-      xlab = "d = 1", ylab= "d = 2", main="k-means with K=4 clusters")
-
- KM <- kmeans(t(z), centers=4)
- dataKM <- data.frame("X"=z[1,], "Y"=z[2,],
-                    "Cluster"=as.character(KM$cluster))
- dataCenters <- data.frame("X"=KM$centers[,1],
-                           "Y"=KM$centers[,2],
-                           "Cluster"=rownames(KM$centers))
-
- p <- (ggplot(dataKM)
-       + geom_point(aes(x=X, y=Y, col=Cluster))
-       + geom_point(aes(x=X, y=Y, fill=Cluster, order=Cluster),
-                    data=dataCenters, shape=22, size=5)
-       + scale_colour_discrete(name="Cluster")
-       + ggtitle("K-means with K=4 clusters\\n"))
- p
 
  postalpha <- data.frame("alpha"=MCMCsample$alpha[50:500],
                          "distribution" = factor(rep("posterior",500-49),
@@ -179,6 +157,28 @@ for(k in 1:n){
      )
  p
 
+}
+
+# k-means comparison
+####################
+
+ plot(x=z[1,], y=z[2,], col=kmeans(t(z), centers=4)$cluster,
+      xlab = "d = 1", ylab= "d = 2", main="k-means with K=4 clusters")
+
+ KM <- kmeans(t(z), centers=4)
+ dataKM <- data.frame("X"=z[1,], "Y"=z[2,],
+                    "Cluster"=as.character(KM$cluster))
+ dataCenters <- data.frame("X"=KM$centers[,1],
+                           "Y"=KM$centers[,2],
+                           "Cluster"=rownames(KM$centers))
+
+ p <- (ggplot(dataKM)
+       + geom_point(aes(x=X, y=Y, col=Cluster))
+       + geom_point(aes(x=X, y=Y, fill=Cluster, order=Cluster),
+                    data=dataCenters, shape=22, size=5)
+       + scale_colour_discrete(name="Cluster")
+       + ggtitle("K-means with K=4 clusters\\n"))
+ p
 
 
 
