@@ -75,12 +75,8 @@ file will be created. A line is written at each MCMC iteration.
 rm(list=ls())
 library(ggplot2)
 #Number of data
-n <- 10000
-#n <- 2000
-set.seed(101)
+n <- 2000
 set.seed(1234)
-#set.seed(4321)
-
 
 d <- 4
 ncl <- 5
@@ -157,47 +153,12 @@ hyperG0[["lambda"]] <- diag(d)/10
 
  # Gibbs sampler for Dirichlet Process Mixtures
  ##############################################
- #MCMCsample_sn_par <- DPM_GibbsSampler_SkewN_parallel(Ncpus=8, type_connec="SOCK", z, hyperG0,
- #                   a, b, N=10000, doPlot, nbclust_init, plotevery=50, gg.add=list(theme_bw()))
- MCMCsample_sn_par <- DPMGibbsSkewN_parallel(Ncpus=2, type_connec="SOCK", z, hyperG0,
-                     a, b, N=2000, doPlot, nbclust_init, plotevery=50, gg.add=list(theme_bw()))
- plot_ConvDPM(MCMCsample_sn, from=2)
+ \dontrun{
+ MCMCsample_sn_par <- DPMGibbsSkewN_parallel(Ncpus=parallel::detectCores()-1, type_connec="SOCK", z, hyperG0,
+                     a, b, N=5000, doPlot, nbclust_init, plotevery=25, gg.add=list(theme_bw()))
+ plot_ConvDPM(MCMCsample_sn_par, from=2)
 
- #library(lineprof)
- #l <- lineprof(
- MCMCsample_sn_parPROF <- DPM_GibbsSampler_SkewN_parallel(Ncpus=4,
-  type_connec="SOCK", z, hyperG0, a, b, N=10, doPlot=F, nbclust_init=20, gg.add=list(theme_bw()))
- #)
- #shine(l)
- hyperG0[["mu"]] <- rep(0,d)
- MCMCsample_n <- gibbsDPMsliceprior(z, hyperG0, a, b, N=100, doPlot, nbclust_init, plotevery=5)
- plot_ConvDPM(MCMCsample_n, from=2)
-
-
-
-
-
- # k-means
-
- plot(x=z[1,], y=z[2,], col=kmeans(t(z), centers=4)$cluster,
-      xlab = "d = 1", ylab= "d = 2", main="k-means with K=4 clusters")
-
- KM <- kmeans(t(z), centers=4)
- dataKM <- data.frame("X"=z[1,], "Y"=z[2,],
-                    "Cluster"=as.character(KM$cluster))
- dataCenters <- data.frame("X"=KM$centers[,1],
-                           "Y"=KM$centers[,2],
-                           "Cluster"=rownames(KM$centers))
-
- p <- (ggplot(dataKM)
-       + geom_point(aes(x=X, y=Y, col=Cluster))
-       + geom_point(aes(x=X, y=Y, fill=Cluster, order=Cluster),
-                    data=dataCenters, shape=22, size=5)
-       + scale_colour_discrete(name="Cluster")
-       + ggtitle("K-means with K=4 clusters\\n"))
- p
-
- postalpha <- data.frame("alpha"=MCMCsample$alpha[50:500],
+ postalpha <- data.frame("alpha"=MCMCsample_sn_par$alpha[50:500],
                          "distribution" = factor(rep("posterior",500-49),
                          levels=c("prior", "posterior")))
  p <- (ggplot(postalpha, aes(x=alpha))
@@ -223,7 +184,28 @@ hyperG0[["lambda"]] <- diag(d)/10
        + scale_fill_discrete(drop=FALSE)
      )
  p
+}
 
+# k-means
+#########
+
+ plot(x=z[1,], y=z[2,], col=kmeans(t(z), centers=4)$cluster,
+      xlab = "d = 1", ylab= "d = 2", main="k-means with K=4 clusters")
+
+ KM <- kmeans(t(z), centers=4)
+ dataKM <- data.frame("X"=z[1,], "Y"=z[2,],
+                    "Cluster"=as.character(KM$cluster))
+ dataCenters <- data.frame("X"=KM$centers[,1],
+                           "Y"=KM$centers[,2],
+                           "Cluster"=rownames(KM$centers))
+
+ p <- (ggplot(dataKM)
+       + geom_point(aes(x=X, y=Y, col=Cluster))
+       + geom_point(aes(x=X, y=Y, fill=Cluster, order=Cluster),
+                    data=dataCenters, shape=22, size=5)
+       + scale_colour_discrete(name="Cluster")
+       + ggtitle("K-means with K=4 clusters\\n"))
+ p
 
 
 

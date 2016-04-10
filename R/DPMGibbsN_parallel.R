@@ -50,9 +50,6 @@
 #'
 #'@examples
 #'
-#'
-#'
-#'
 #' # Scaling up: ----
 #' rm(list=ls())
 #' #Number of data
@@ -120,7 +117,7 @@ DPMGibbsN_parallel <- function (Ncpus, type_connec,
     requireNamespace("doParallel", quietly=TRUE)
 
     # declare the cores
-    cl <- parallel::makeCluster(Ncpus, type = type_connec)
+    cl <- parallel::makeCluster(Ncpus, type = type_connec, outfile=monitorfile)
     doParallel::registerDoParallel(cl)
 
   p <- nrow(z)

@@ -158,7 +158,7 @@ DPMGibbsSkewT_SeqPrior_parallel <- function (Ncpus, type_connec,
                                              add.vagueprior = TRUE, weightnoninfo=NULL,
                                              doPlot=FALSE, plotevery=1,
                                              diagVar=TRUE, verbose=TRUE,
-                                             monitorfile="defaultmonitor.txt",
+                                             monitorfile="",
                                              ...){
 
   dpmclus <- NULL
@@ -171,7 +171,7 @@ DPMGibbsSkewT_SeqPrior_parallel <- function (Ncpus, type_connec,
 
     requireNamespace("doParallel", quietly=TRUE)
     # declare the cores
-    cl <- parallel::makeCluster(Ncpus, type = type_connec)
+    cl <- parallel::makeCluster(Ncpus, type = type_connec, outfile=monitorfile)
     doParallel::registerDoParallel(cl)
 
 

@@ -171,7 +171,8 @@ hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
  plot_ConvDPM(MCMCsample_st_2)
 
  #library(lineprof)
- #l <- lineprof(MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=2000,
+ #l <- lineprof(
+ MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=2000,
                 doPlot, nbclust_init, plotevery=100, gg.add=list(theme_bw()),
                 diagVar=FALSE)
  #)

@@ -7,7 +7,7 @@
 DPMGibbsSkewT_SeqPrior_parallel(Ncpus, type_connec, z, prior_inform, hyperG0, N,
   nbclust_init, add.vagueprior = TRUE, weightnoninfo = NULL,
   doPlot = FALSE, plotevery = 1, diagVar = TRUE, verbose = TRUE,
-  monitorfile = "defaultmonitor.txt", ...)
+  monitorfile = "", ...)
 }
 \arguments{
 \item{Ncpus}{the number of processors available}
