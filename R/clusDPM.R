@@ -15,4 +15,6 @@ clusDPM <- function(data, distib=c("gaussian", "skewnorm", "skewt")
 ){
     res <- list(data)
     class(res) <- "NPlow"
+
+    #check hyperG0
 }

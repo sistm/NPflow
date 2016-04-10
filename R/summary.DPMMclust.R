@@ -106,7 +106,7 @@ summary.DPMMclust <- function(object, burnin=0, thin=1, gs=NULL, lossFn="F-measu
 
 #' Methods for a summary of a 'DPMMclust' object
 #'@rdname methods.summaryDPMMclust
-#'@aliases print.summaryDPMMclust, plot.summaryDPMMclust
+#'@aliases summaryDPMMclust print.summaryDPMMclust plot.summaryDPMMclust
 #'@param x a \code{summaryDPMMclust} object
 #'@param hm logical flag to plot the heatmap of the similarity matrix.
 #'Default is \code{FALSE}.
@@ -132,16 +132,18 @@ print.summaryDPMMclust <- function(x,...){
 
 }
 
+
+#'@rdname methods.summaryDPMMclust
 #'@param gg.add a list of instructions to add to the ggplot2 instruction.
 #'See \code{\link[ggplot2]{+.gg}}. Default is \code{list(theme())}, which adds nothing to the plot.
 #'@export
-#'@rdname methods.summaryDPMMclust
 plot.summaryDPMMclust <- function(x, hm=FALSE, nbsim_densities=5000, gg.add=list(theme_bw()),...){
-  if(length(x$logposterior_list[[1]])>1){
-    plot_ConvDPM(x, shift=x$burnin)
-  }
-  ind <- x$index_estim
 
+  if(length(x$logposterior_list[[1]])>1){
+    plot_ConvDPM(x, shift=x$burnin, thin=x$thin)
+  }
+
+  ind <- x$index_estim
 
   cat("Plotting point estimate (may take a few sec)... ")
   if(x$clust_distrib=="gaussian"){

@@ -5,7 +5,13 @@
 \title{Convergence diagnostic plots}
 \usage{
 plot_ConvDPM(MCMCsample, from = 1,
-  to = length(MCMCsample$logposterior_list), shift = 0, ...)
+  to = length(MCMCsample$logposterior_list), shift = 0, thin = 1, ...)
+}
+\arguments{
+\item{thin}{integer giving the spacing at which MCMC iterations are kept.
+Default is \code{1}, i.e. no thining.}
+
+\item{...}{further arguments passed to or from other methods}
 }
 \description{
 Convergence diagnostic plots

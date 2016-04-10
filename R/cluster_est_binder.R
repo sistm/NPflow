@@ -29,10 +29,10 @@
 #'models for the analysis of preferences for college degree programmes,
 #'\emph{Annals of Applied Statistics}, 8(2):1145-1181, 2014.
 #'
-#' DB Dahl, Model-Based Clustering for Expression Data via a
-#' Dirichlet Process Mixture Model, \emph{Bayesian Inference for
-#' Gene Expression and Proteomics}, K-A Do, P Muller, M Vannucci
-#' (Eds.), Cambridge University Press, 2006.
+#'DB Dahl, Model-Based Clustering for Expression Data via a
+#'Dirichlet Process Mixture Model, \emph{Bayesian Inference for
+#'Gene Expression and Proteomics}, K-A Do, P Muller, M Vannucci
+#'(Eds.), Cambridge University Press, 2006.
 #'
 #'@seealso \code{\link{similarityMat}}
 #'

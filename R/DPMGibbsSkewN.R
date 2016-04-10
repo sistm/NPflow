@@ -52,11 +52,11 @@
 #'@examples
 #' rm(list=ls())
 #' library(ggplot2)
+#' library(NPflow)
 #'
 #' #Number of data
-#' n <- 2000
+#' n <- 1000
 #' set.seed(123)
-#' #set.seed(1234)
 #'
 #' d <- 2
 #' ncl <- 4
@@ -142,31 +142,20 @@
 #'  p
 #'
 #'
-#'
+#'\dontrun{
 #'  # Gibbs sampler for Dirichlet Process Mixtures
 #'  ##############################################
 #'
-#'  MCMCsample_sn <- DPMGibbsSkewN(z, hyperG0, a, b, N=2000,
+#'  MCMCsample_sn <- DPMGibbsSkewN(z, hyperG0, a, b, N=2500,
 #'  doPlot, nbclust_init, plotevery=100, gg.add=list(theme_bw()),
 #'  diagVar=FALSE)
 #'
-#'  s <- summary(MCMCsample_sn, burnin = 4500)
-#'  #save(MCMCsample_sn, s, file="MCMCsimuSkewN_correc.RData")
+#'  s <- summary(MCMCsample_sn, burnin = 2000, thin=10)
+#'  #cluster_est_binder(MCMCsample_sn$mcmc_partitions[1000:1500])
 #'  print(s)
 #'  plot(s)
-#'  plot_ConvDPM(MCMCsample_sn, from=2)
-#'  cluster_est_binder(MCMCsample_sn$c_list[50:500])
+#'  #plot_ConvDPM(MCMCsample_sn, from=2)
 #'
-#'  #library(lineprof)
-#'  #l <- lineprof(
-#'  MCMCsample_sn <- DPMGibbsSkewN(z, hyperG0, a, b, N=5,
-#'                                 doPlot=FALSE, nbclust_init)
-#'  #)
-#'  #shine(l)
-#'
-#'  hyperG0[["mu"]] <- rep(0,d)
-#'  MCMCsample_n <- gibbsDPMsliceprior(z, hyperG0, a, b, N=500, doPlot, nbclust_init, plotevery=50)
-#'  plot_ConvDPM(MCMCsample_n, from=2)
 #'
 #'
 #'
@@ -185,6 +174,7 @@
 #'  dataCenters <- data.frame("X"=KM$centers[,1],
 #'                            "Y"=KM$centers[,2],
 #'                            "Cluster"=c("2", "4", "1", "3"))
+#'
 #'
 #'  p <- (ggplot(dataKM)
 #'        + geom_point(aes(x=X, y=Y, col=Cluster))
@@ -325,8 +315,8 @@
 #'#Simple toy example
 #'###################
 #'
-#' n <- 2000
-#' set.seed(1234)
+#' n <- 500
+#' set.seed(12345)
 #'
 #'
 #' d <- 2
@@ -344,6 +334,15 @@
 #' sdev[, ,3] <- matrix(nrow=d, ncol=d, c(0.3, 0.15, 0.15, 0.3))
 #' sdev[, ,4] <- .3*diag(2)
 #'
+#'#' # Set parameters of G0
+#' hyperG0 <- list()
+#' hyperG0[["b_xi"]] <- rep(0,d)
+#' hyperG0[["b_psi"]] <- rep(0,d)
+#' hyperG0[["kappa"]] <- 0.0001
+#' hyperG0[["D_xi"]] <- 100
+#' hyperG0[["D_psi"]] <- 100
+#' hyperG0[["nu"]] <- d + 1
+#' hyperG0[["lambda"]] <- diag(d)
 #'
 #'
 #' c <- rep(0,n)
@@ -355,12 +354,13 @@
 #'  cat(k, "/", n, " observations simulated\n", sep="")
 #' }
 #'
-#'  MCMCsample_sn_sep <- DPMGibbsSkewN(z, hyperG0, a, b, N=5000,
-#'  doPlot, nbclust_init, plotevery=250, gg.add=list(theme_bw()),
+#'  MCMCsample_sn_sep <- DPMGibbsSkewN(z, hyperG0, a, b, N=600,
+#'  doPlot, nbclust_init, plotevery=100, gg.add=list(theme_bw()),
 #'  diagVar=TRUE)
-#'  s <- summary(MCMCsample_sn, burnin = 4500)
-#'  save(MCMCsample_sn_sep, s, file="MCMCsimuSkewNsep_correc.RData")
 #'
+#'  s <- summary(MCMCsample_sn, burnin = 400)
+#'
+#'}
 #'
 DPMGibbsSkewN <- function (z, hyperG0, a, b, N, doPlot=TRUE,
                            nbclust_init=30, plotevery=1,
@@ -485,7 +485,8 @@ DPMGibbsSkewN <- function (z, hyperG0, a, b, N, doPlot=TRUE,
       for(j in fullCl){
         obs_j <- which(c==j)
         #cat("cluster ", j, ":\n")
-        U_SS[[j]] <- update_SSsn(z=z[, obs_j], S=hyperG0,  ltn=ltn[obs_j],
+        U_SS[[j]] <- update_SSsn(z=z[, obs_j, drop=FALSE], S=hyperG0,
+                                 ltn=ltn[obs_j],
                                  hyperprior = list("Sigma"=U_Sigma[,,j]))
         NNiW <- rNNiW(U_SS[[j]], diagVar)
         U_xi[, j] <- NNiW[["xi"]]

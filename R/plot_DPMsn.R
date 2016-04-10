@@ -21,7 +21,6 @@ plot_DPMsn <- function(z, c, i="", alpha="?", U_SS,
 
     z <- z[dims2plot,]
 
-
     n <- ncol(z)
     p <- nrow(z)
     m <- numeric(n) # number of observations in each cluster
@@ -133,14 +132,13 @@ plot_DPMsn <- function(z, c, i="", alpha="?", U_SS,
                                                      levels=as.character(fullCl),
                                                      ordered=TRUE)
         )
+        U2plot$Center="sampled mean"
+        xi2plot$Center="xi param"
+
         p <- (ggplot(z2plot)
 
               + geom_point(aes_string(x="D1", y="D2", colour="Cluster", order="Cluster"),
                            data=z2plot)
-              + geom_point(aes_string(x="D1", y="D2", fill="Cluster", order="Cluster"), shape=22,
-                           data=U2plot, size=5)
-              + geom_point(aes_string(x="D1", y="D2", fill="Cluster", order="Cluster"), shape=23,
-                           data=xi2plot, size=5)
               + ggtitle(paste(n, " obs.",
                               "\niteration ", i, " : ",
                               length(fullCl)," clusters",
@@ -152,7 +150,6 @@ plot_DPMsn <- function(z, c, i="", alpha="?", U_SS,
 
         )
 
-
         #empirical mean of the clusters
 
         zmean2plot<- cbind.data.frame(D1=tapply(X=z2plot[,1], INDEX=z2plot$Cluster, FUN=mean),
@@ -160,13 +157,7 @@ plot_DPMsn <- function(z, c, i="", alpha="?", U_SS,
         )
         zmean2plot <- cbind.data.frame(zmean2plot, Cluster=rownames(zmean2plot))
         zmean2plot$Center="observed mean"
-        p <- (p + geom_point(aes_string(x="D1", y="D2", fill="Cluster", order="Cluster", shape="Center"),
-                             data=zmean2plot, size=5)
-              + scale_shape_manual(values=c(24,22,23),
-                                   labels=c("observed mean", "sampled mean", "xi param"),
-                                   name="Center", limits=c(24,22,23))
-              + guides(shape=guide_legend(override.aes = list(fill="grey45")))
-        )
+
         if(ellipses){
             simuDens <- NULL
             for(g in 1:length(fullCl)){
@@ -186,9 +177,24 @@ plot_DPMsn <- function(z, c, i="", alpha="?", U_SS,
                   + scale_linetype_manual(values=c(1),
                                           labels=c("simulations derived\n from sampled xi and psi"),
                                           name="Density contour")
-                  + guides(linetype=guide_legend(override.aes = list(color="black")))
+                  + guides(linetype=guide_legend(override.aes = list(color="black")),
+                           colour=guide_legend(override.aes = list(linetype=0, size=6)))
             )
         }
+
+
+        p <- (p + geom_point(aes_string(x="D1", y="D2", fill="Cluster", order="Cluster", shape="Center"),
+                             data=zmean2plot, size=5)
+              + geom_point(aes_string(x="D1", y="D2", fill="Cluster", order="Cluster", shape="Center"),
+                           data=U2plot, size=5)
+              + geom_point(aes_string(x="D1", y="D2", fill="Cluster", order="Cluster", shape="Center"),
+                           data=xi2plot, size=5)
+              + scale_shape_manual(values=c(24,22,23),
+                                   breaks=c("observed mean", "sampled mean", "xi param"),
+                                   labels=c("observed mean", "sampled mean", "xi param"),
+                                   name="Center")
+              + guides(shape=guide_legend(override.aes = list(fill="grey45")))
+        )
     }
 
     for (a in gg.add) {

@@ -51,8 +51,11 @@ update_SSsn <- function(z, S, ltn, hyperprior=NULL){
     #conjugate hyperprior on lambda: whishart distribution
     if(!is.null(hyperprior)){
         #g0 <- ncol(lambda0) + 5
-        g0 <- nu0
-        lambda0 <- wishrnd(n=nu0+g0, Sigma=solve(solve(lambda0)+solve(hyperprior[["Sigma"]])))
+        sigma_inv <- try(solve(hyperprior[["Sigma"]]), silent = TRUE)
+        if(!inherits(sigma_inv, "try-error")){
+         g0 <- nu0
+         lambda0 <- wishrnd(n=nu0+g0, Sigma=solve(solve(lambda0) + sigma_inv))
+        }
     }
 
     lambda1 <- lambda0 + (eps2 + tcrossprod(b_xi-b0_xi)/D0_xi + tcrossprod(b_psi-b0_psi)/D0_psi)

@@ -7,14 +7,14 @@ logposterior_DPMSN <- function(z, xi, psi, Sigma, B, hyper, c, m, alpha, n, a, b
     K <- length(indfull)
     if(!is.list(xi)){
         if(is.null(dim(xi))){
-            log_vrais <- sum(log(mvsnpdf(x = z, xi = xi, sigma = Sigma, psi = psi)))
+            log_vrais <- sum(mvsnpdf(x = z, xi = xi, sigma = Sigma, psi = psi, Log=TRUE))
             if(!diagVar){
-                log_prior_NNiW <-  sum(log(dNNiW(xi, psi, B, Sigma, hyperprior=hyper, log=TRUE)))
+                log_prior_NNiW <-  sum(dNNiW(xi, psi, B, Sigma, hyperprior=hyper, log=TRUE))
             }else{
                 log_prior_NNiW <-  0
             }
-        } else{
-            log_vrais <- sum(log(mvsnpdf(x = z, xi = xi[, c], sigma = Sigma[, , c], psi = psi[, c])))
+        }else{
+            log_vrais <- sum(mvsnpdf(x = z, xi = xi[, c], sigma = Sigma[, , c], psi = psi[, c], Log=TRUE))
 
             if(!diagVar){
                 log_prior_NNiW <-  sum(dNNiW(xi[,indfull], psi[,indfull], B[,,indfull], Sigma[,,indfull], hyperprior=hyper, log=TRUE))

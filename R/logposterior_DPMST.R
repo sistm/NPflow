@@ -8,9 +8,9 @@ logposterior_DPMST <- function(z, xi, psi, Sigma, df, B, hyper, c, m, alpha, n, 
     K <- length(indfull)
 
     if(!is.list(xi) && is.null(dim(xi))){
-        log_vrais <- sum(log(mvstpdf(x = z, xi = xi, sigma = Sigma, psi = psi, df=df)))
+        log_vrais <- sum(mvstpdf(x = z, xi = xi, sigma = Sigma, psi = psi, df=df, Log=TRUE))
         if(!diagVar){
-            log_prior_NNiW <-  sum(log(dNNiW(xi, psi, B, Sigma, hyperprior=hyper, log=TRUE)))
+            log_prior_NNiW <-  sum(dNNiW(xi, psi, B, Sigma, hyperprior=hyper, log=TRUE))
         }else{
             betas <- diag(Sigma)
             beta0 <- diag(hyper$lambda)

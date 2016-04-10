@@ -3,7 +3,7 @@
 \name{print.summaryDPMMclust}
 \alias{plot.summaryDPMMclust}
 \alias{print.summaryDPMMclust}
-\alias{print.summaryDPMMclust,}
+\alias{summaryDPMMclust}
 \title{Methods for a summary of a 'DPMMclust' object}
 \usage{
 \method{print}{summaryDPMMclust}(x, ...)
