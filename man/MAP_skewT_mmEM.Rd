@@ -92,8 +92,8 @@ for(k in 1001:2000){
 
 }
 
-map <- MLE_skewT_mmEM(xi_list, psi_list, S_list, hyperG0, K=2, tol=0.1)
-map
+mle <- MLE_skewT_mmEM(xi_list, psi_list, S_list, hyperG0, K=2, tol=0.1)
+mle
 
 }
 

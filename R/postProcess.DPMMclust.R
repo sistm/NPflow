@@ -458,8 +458,8 @@ MLE_skewT_mmEM <- function( xi_list, psi_list, S_list, hyperG0, K, init=NULL,max
 #'
 #'}
 #'
-#'map <- MLE_skewT_mmEM(xi_list, psi_list, S_list, hyperG0, K=2, tol=0.1)
-#'map
+#'mle <- MLE_skewT_mmEM(xi_list, psi_list, S_list, hyperG0, K=2, tol=0.1)
+#'mle
 #'
 MAP_skewT_mmEM_vague <- function(xi_list, psi_list, S_list,
                                  hyperG0, K, maxit=100, tol=1E-1, plot=TRUE){
@@ -1117,23 +1117,23 @@ MLE_gamma <- function(g){
 #' }
 #'
 #'
-#' MLE_N_mmEM( U_mu, U_Sigma, hyperG0, K=2)
+#' mle <- MLE_N_mmEM( U_mu, U_Sigma, hyperG0, K=2)
 #'
 #' hyperG0[["mu"]]
 #' hyperG02[["mu"]]
-#' ml$U_mu
+#' mle$U_mu
 #'
 #' hyperG0[["lambda"]]
 #' hyperG02[["lambda"]]
-#' ml$U_lambda
+#' mle$U_lambda
 #'
 #' hyperG0[["nu"]]
 #' hyperG02[["nu"]]
-#' ml$U_nu
+#' mle$U_nu
 #'
 #' hyperG0[["kappa"]]
 #' hyperG02[["kappa"]]
-#' ml$U_kappa
+#' mle$U_kappa
 
 
 MLE_N_mmEM <- function( mu_list, S_list, hyperG0, K, maxit=100, tol=1e-1, plot=TRUE){

@@ -48,22 +48,22 @@ for(k in 1001:2000){
 }
 
 
-MLE_N_mmEM( U_mu, U_Sigma, hyperG0, K=2)
+mle <- MLE_N_mmEM( U_mu, U_Sigma, hyperG0, K=2)
 
 hyperG0[["mu"]]
 hyperG02[["mu"]]
-ml$U_mu
+mle$U_mu
 
 hyperG0[["lambda"]]
 hyperG02[["lambda"]]
-ml$U_lambda
+mle$U_lambda
 
 hyperG0[["nu"]]
 hyperG02[["nu"]]
-ml$U_nu
+mle$U_nu
 
 hyperG0[["kappa"]]
 hyperG02[["kappa"]]
-ml$U_kappa
+mle$U_kappa
 }
 
