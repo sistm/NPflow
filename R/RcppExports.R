@@ -450,7 +450,7 @@ similarityMat_nocostC <- function(cc) {
 #'for(i in 1:10){
 #'     c2 <- c(c2, list(rmultinom(n=1, size=200, prob=rexp(n=200))))
 #'}
-#'similarityMatC()
+#'similarityMatC(sapply(c2, "["))
 #'
 similarityMatC <- function(cc) {
     .Call('NPflow_similarityMatC', PACKAGE = 'NPflow', cc)

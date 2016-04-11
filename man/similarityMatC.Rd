@@ -20,7 +20,7 @@ c2 <- list()
 for(i in 1:10){
     c2 <- c(c2, list(rmultinom(n=1, size=200, prob=rexp(n=200))))
 }
-similarityMatC()
+similarityMatC(sapply(c2, "["))
 
 }
 
