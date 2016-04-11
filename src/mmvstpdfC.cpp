@@ -21,14 +21,14 @@ using namespace arma;
 //'@export
 //'@examples
 //'
-//'mmvstpdfC(x = matrix(c(3.399890,-5.936962), ncol=1), xi=matrix(c(0.2528859,-2.4234067), ncol=1),
+//'mmvstpdfC(x = matrix(c(3.399890,-5.936962), ncol=1), xi=matrix(c(0.2528859,-2.4234067)),
 //'psi=matrix(c(11.20536,-12.51052), ncol=1),
-//'sigma=list(matrix(c(0.2134011, -0.2382573, -0.2382573, 0.2660086), ncol=2)),
+//'sigma=list(matrix(c(0.2134011, -0.0382573, -0.0382573, 0.2660086), ncol=2)),
 //'df=c(7.784106)
 //')
-//'mvstpdf(x = matrix(c(3.399890,-5.936962), ncol=1), xi=matrix(c(0.2528859,-2.4234067), ncol=1),
-//'psi=matrix(c(11.20536,-12.51052), ncol=1),
-//'sigma=list(matrix(c(0.2134011, -0.2382573, -0.2382573, 0.2660086), ncol=2)),
+//'mvstpdf(x = matrix(c(3.399890,-5.936962), ncol=1), xi=c(0.2528859,-2.4234067),
+//'psi=c(11.20536,-12.51052),
+//'sigma=matrix(c(0.2134011, -0.0382573, -0.0382573, 0.2660086), ncol=2),
 //'df=c(7.784106)
 //')
 //'

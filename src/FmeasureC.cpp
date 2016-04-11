@@ -81,14 +81,15 @@ double FmeasureC(NumericVector pred, NumericVector ref){
 //'c <- list(c(1,1,2,3,2,3), c(1,1,1,2,3,3),c(2,2,1,1,1,1))
 //'similarityMatC(sapply(c, "["))
 //'
+//'
+//'\dontrun{
 //'c2 <- list()
-//'for(i in 1:100){
+//'for(i in 1:10){
 //'     c2 <- c(c2, list(rmultinom(n=1, size=3000, prob=rexp(n=3000))))
 //'}
-//'library(microbenchmark)
-//'f <- function(){c3 <-sapply(c2, "[")
-//'             similarityMatC(c3)}
-//'microbenchmark(f(), time=1L)
+//'c3 <-sapply(c2, "[")
+//'similarityMatC(c3)
+//'}
 //'
 // [[Rcpp::export]]
 double FmeasureC_no0(NumericVector pred, NumericVector ref){

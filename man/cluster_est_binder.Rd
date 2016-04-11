@@ -43,6 +43,6 @@ Gene Expression and Proteomics}, K-A Do, P Muller, M Vannucci
 (Eds.), Cambridge University Press, 2006.
 }
 \seealso{
-\code{\link{similarityMat}}
+\code{\link{similarityMat}} \code{\link{similarityMatC}}
 }
 

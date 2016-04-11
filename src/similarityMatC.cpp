@@ -5,7 +5,7 @@ using namespace arma;
 // [[Rcpp::depends(RcppArmadillo)]]
 
 //' C++ implementation
-//' 
+//'
 //'
 //'@param c list of MCMC partitions
 //'
@@ -16,24 +16,20 @@ using namespace arma;
 //'similarityMatC(sapply(c, "["))
 //'
 //'c2 <- list()
-//'for(i in 1:100){
-//'     c2 <- c(c2, list(rmultinom(n=1, size=3000, prob=rexp(n=3000))))
+//'for(i in 1:10){
+//'     c2 <- c(c2, list(rmultinom(n=1, size=200, prob=rexp(n=200))))
 //'}
-//'library(microbenchmark)
-//'f <- function(){c3 <-sapply(c2, "[")
-//'             similarityMatC(c3)}
-//'microbenchmark(f(), time=1L)
+//'similarityMatC()
 //'
 // [[Rcpp::export]]
-List similarityMatC(NumericMatrix c){
-    
-    mat cc = as<mat>(c);
+List similarityMatC(arma::mat cc){
+
     int N = cc.n_cols;
     int n = cc.n_rows;
-    
+
     NumericVector cost = NumericVector(N);
     mat similarity = mat(n, n, fill::eye);
-    
+
     for(int i=0; i<n-1; i++){
         for(int j=i+1; j<n; j++){
             similarity(i,j) = sum(cc.row(i) == cc.row(j));

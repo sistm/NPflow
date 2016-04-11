@@ -2,15 +2,15 @@
 % Please edit documentation in R/RcppExports.R
 \name{sampleClassC_bis}
 \alias{sampleClassC_bis}
-\title{C++ implementation of the multinomial sampling from a matrix 
-of column vectors each containing the sampling probabilities 
+\title{C++ implementation of the multinomial sampling from a matrix
+of column vectors each containing the sampling probabilities
 for their respective draw}
 \usage{
 sampleClassC_bis(probMat)
 }
 \description{
-C++ implementation of the multinomial sampling from a matrix 
-of column vectors each containing the sampling probabilities 
+C++ implementation of the multinomial sampling from a matrix
+of column vectors each containing the sampling probabilities
 for their respective draw
 }
 \details{

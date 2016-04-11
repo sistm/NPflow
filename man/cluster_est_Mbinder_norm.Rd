@@ -61,6 +61,7 @@ JW Lau, PJ Green, Bayesian Model-Based Clustering Procedures,
 DA Binder, Bayesian cluster analysis, \emph{Biometrika} 65(1):31-38, 1978.
 }
 \seealso{
-\code{\link{similarityMat}}
+\code{\link{similarityMat}} \code{\link{similarityMatC}}
+\code{\link{similarityMatC_nocost}}
 }
 

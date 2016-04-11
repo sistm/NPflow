@@ -1,19 +1,19 @@
 #'multivariate Student's t-distribution probability density function
 #'
 #'
-#'@param x p x n data matrix with n the number of observations and 
+#'@param x p x n data matrix with n the number of observations and
 #'p the number of dimensions
 #'
-#'@param mean mean vector or list of mean vectors (either a vector, 
+#'@param mean mean vector or list of mean vectors (either a vector,
 #'a matrix or a list)
 #'
-#'@param varcovM variance-covariance matrix or list of variance-covariance 
+#'@param varcovM variance-covariance matrix or list of variance-covariance
 #'matrices (either a matrix or a list)
 #'
 #'@param df a numeric vector or a list of the degrees of freedom
 #'(either a vector or a list)
 #'
-#'@param logical flag for returning the log of the probability density 
+#'@param logical flag for returning the log of the probability density
 #'function. Defaults is \code{TRUE}.
 #'
 #'@export
@@ -24,7 +24,7 @@
 #'
 #'mvtpdf(x=matrix(1.96), mean=0, varcovM=diag(1), df=10)
 #'
-#'mvtpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1), 
+#'mvtpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1),
 #'       mean=c(0, 0), varcovM=diag(2), df=10
 #')
 #'
@@ -34,8 +34,8 @@ mvtpdf <- function(x, mean, varcovM, df, Log=TRUE){
     }
     n <- ncol(x)
     p <- nrow(x)
-    
-    
+
+
     if(!is.list(mean)){
         if(is.null(mean)){
             stop("mean is empty")
@@ -47,11 +47,11 @@ mvtpdf <- function(x, mean, varcovM, df, Log=TRUE){
             stop("wrong input for mean")
         }
     }else{
-        
+
         x0 <- lapply(mean, function(v){x - v})
-        
+
     }
-    
+
     if(is.null(varcovM)){
         stop("varcovM is empty")
     }
@@ -64,21 +64,19 @@ mvtpdf <- function(x, mean, varcovM, df, Log=TRUE){
         if(nrow(varcovM)!=p){
             stop("varcovM is of the wrong size")
         }
-        
+
         if(is.vector(x0)){
             x0 <- matrix(x0, ncol=1)
         }
-        
-       
-        
-        
+
+
         Rinv = backsolve(chol(varcovM),x=diag(p))
         xRinv <- matrix(apply(X=x0, MARGIN=2, FUN=crossprod, y=Rinv))
         logSqrtDetvarcovM <- sum(log(diag(Rinv)))
         a <- lgamma((df + p)/2)-lgamma(df/2)-p/2*log(df*pi)
         quadform <- apply(X=xRinv, MARGIN=2, FUN=crossprod)
         y <- (-(df+p)/2)*log(1+quadform/df)+a+logSqrtDetvarcovM
-        
+
 #         dMvn <- function(X,mu,Sigma) {
 #             k <- ncol(X)
 #             rooti <- backsolve(chol(Sigma),diag(k))
@@ -89,17 +87,17 @@ mvtpdf <- function(x, mean, varcovM, df, Log=TRUE){
         if(!is.list(varcovM)){
             varcovM <- apply(X=varcovM, MARGIN=3, FUN=list)
             varcovM <- lapply(varcovM, FUN='[[', 1)
-        }    
+        }
         if(!is.list(x0)){
             x0 <- apply(X=x0, MARGIN=2, FUN=list)
             x0 <- lapply(x0, FUN='[[', 1)
-        }    
+        }
         if(!is.list(df)){
             df <- lapply(df, FUN='[')
         }
-        
+
         likelihood <- function(x0, varcovM, df){
-            p <- length(x0)            
+            p <- length(x0)
             Rinv = backsolve(chol(varcovM),x=diag(p))
             xRinv <- x0 %*% Rinv
             logSqrtDetvarcovM <- sum(log(diag(Rinv)))
@@ -108,8 +106,8 @@ mvtpdf <- function(x, mean, varcovM, df, Log=TRUE){
             y <- (-(df+p)/2)*log(1+quadform/df)+a+logSqrtDetvarcovM
         }
         y <-mapply(FUN=likelihood, x0, varcovM, df)
-        
-        
+
+
      }else{
         R <- lapply(varcovM, FUN=chol)
         Rinv <- lapply(X=R, FUN=backsolve, x=diag(p))
@@ -118,13 +116,13 @@ mvtpdf <- function(x, mean, varcovM, df, Log=TRUE){
         a <- lapply(df, FUN=function(x){lgamma((x + p)/2)-lgamma(x/2)-p/2*log(x*pi)})
         quadform <- lapply(X=xRinv, FUN=function(x){apply(X=x, MARGIN=2, FUN=crossprod)})
         y <- mapply(FUN=function(u,v,w,z){(-(u+p)/2)*log(1+v/u)+w+z},
-                    u=df, v=quadform, w=a, z=logSqrtDetvarcovM)  
+                    u=df, v=quadform, w=a, z=logSqrtDetvarcovM)
     }
-    
+
     if(!Log){
         y <- exp(y)
     }
 
     return(y)
-    
+
 }

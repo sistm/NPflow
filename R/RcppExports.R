@@ -33,14 +33,15 @@ FmeasureC <- function(pred, ref) {
 #'c <- list(c(1,1,2,3,2,3), c(1,1,1,2,3,3),c(2,2,1,1,1,1))
 #'similarityMatC(sapply(c, "["))
 #'
+#'
+#'\dontrun{
 #'c2 <- list()
-#'for(i in 1:100){
+#'for(i in 1:10){
 #'     c2 <- c(c2, list(rmultinom(n=1, size=3000, prob=rexp(n=3000))))
 #'}
-#'library(microbenchmark)
-#'f <- function(){c3 <-sapply(c2, "[")
-#'             similarityMatC(c3)}
-#'microbenchmark(f(), time=1L)
+#'c3 <-sapply(c2, "[")
+#'similarityMatC(c3)
+#'}
 #'
 FmeasureC_no0 <- function(pred, ref) {
     .Call('NPflow_FmeasureC_no0', PACKAGE = 'NPflow', pred, ref)
@@ -224,14 +225,14 @@ mmvsnpdfC <- function(x, xi, psi, sigma, Log = TRUE) {
 #'@export
 #'@examples
 #'
-#'mmvstpdfC(x = matrix(c(3.399890,-5.936962), ncol=1), xi=matrix(c(0.2528859,-2.4234067), ncol=1),
+#'mmvstpdfC(x = matrix(c(3.399890,-5.936962), ncol=1), xi=matrix(c(0.2528859,-2.4234067)),
 #'psi=matrix(c(11.20536,-12.51052), ncol=1),
-#'sigma=list(matrix(c(0.2134011, -0.2382573, -0.2382573, 0.2660086), ncol=2)),
+#'sigma=list(matrix(c(0.2134011, -0.0382573, -0.0382573, 0.2660086), ncol=2)),
 #'df=c(7.784106)
 #')
-#'mvstpdf(x = matrix(c(3.399890,-5.936962), ncol=1), xi=matrix(c(0.2528859,-2.4234067), ncol=1),
-#'psi=matrix(c(11.20536,-12.51052), ncol=1),
-#'sigma=list(matrix(c(0.2134011, -0.2382573, -0.2382573, 0.2660086), ncol=2)),
+#'mvstpdf(x = matrix(c(3.399890,-5.936962), ncol=1), xi=c(0.2528859,-2.4234067),
+#'psi=c(11.20536,-12.51052),
+#'sigma=matrix(c(0.2134011, -0.0382573, -0.0382573, 0.2660086), ncol=2),
 #'df=c(7.784106)
 #')
 #'
@@ -273,14 +274,14 @@ mmvstpdfC <- function(x, xi, psi, sigma, df, Log = TRUE) {
 
 #' C++ implementation of multivariate Normal probability density function for multiple inputs
 #'
-#'@param x data matrix of dimension p x n, p being the dimension of the 
-#'data and n the number of data points 
-#'@param mean mean vectors matrix of dimension p x K, K being the number of 
+#'@param x data matrix of dimension p x n, p being the dimension of the
+#'data and n the number of data points
+#'@param mean mean vectors matrix of dimension p x K, K being the number of
 #'distributions for which the density probability has to be ealuated
-#'@param varcovM list of length K of variance-covariance matrices, 
+#'@param varcovM list of length K of variance-covariance matrices,
 #'each of dimensions p x p
 #'@param df vector of length K of degree of freedom parameters
-#'@param logical flag for returning the log of the probability density 
+#'@param logical flag for returning the log of the probability density
 #'function. Defaults is \code{TRUE}.
 #'@return matrix of densities of dimension K x n
 #'@export
@@ -288,6 +289,7 @@ mmvstpdfC <- function(x, xi, psi, sigma, df, Log = TRUE) {
 #'mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE)
 #'mvtpdf(x=matrix(1.96), mean=0, varcovM=diag(1), df=10000000, Log=FALSE)
 #'mmvtpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1)), df=10000000, Log=FALSE)
+#'
 #'mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1))
 #'mvtpdf(x=matrix(1.96), mean=0, varcovM=diag(1), df=10000000)
 #'mmvtpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1)), df=10000000)
@@ -297,9 +299,9 @@ mmvstpdfC <- function(x, xi, psi, sigma, df, Log = TRUE) {
 #'
 #'
 #'library(microbenchmark)
-#'microbenchmark(mvtpdf(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE),
-#'               #mvpdfC(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE),
-#'               mmvtpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1)), Log=FALSE),
+#'microbenchmark(mvtpdf(x=matrix(1.96), mean=0, varcovM=diag(1), df=1, Log=FALSE),
+#'               mmvtpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1)),
+#'                        df=c(1), Log=FALSE),
 #'               times=10000L)
 #'
 mmvtpdfC <- function(x, mean, varcovM, df, Log = TRUE) {
@@ -382,12 +384,12 @@ NuMatParC <- function(c, d) {
     .Call('NPflow_NuMatParC', PACKAGE = 'NPflow', c, d)
 }
 
-#' C++ implementation of the multinomial sampling from a matrix 
-#' of column vectors each containing the sampling probabilities 
-#' for their respective draw
-#' 
-#' @details Slower than sampleClassC
-#' 
+#'C++ implementation of the multinomial sampling from a matrix
+#'of column vectors each containing the sampling probabilities
+#'for their respective draw
+#'
+#'@details Slower than sampleClassC
+#'
 #'@param probMat
 #'@keywords internal
 #'
@@ -411,7 +413,7 @@ sampleClassC <- function(probMat) {
 }
 
 #' C++ implementation
-#' 
+#'
 #'
 #'@param c list of MCMC partitions
 #'
@@ -419,23 +421,23 @@ sampleClassC <- function(probMat) {
 #'
 #'@examples
 #'c <- list(c(1,1,2,3,2,3), c(1,1,1,2,3,3),c(2,2,1,1,1,1))
-#'similarityMat2C(sapply(c, "["))
+#'similarityMat_nocostC(sapply(c, "["))
 #'
 #'c2 <- list()
-#'for(i in 1:100){
-#'     c2 <- c(c2, list(rmultinom(n=1, size=3000, prob=rexp(n=3000))))
+#'for(i in 1:10){
+#'     c2 <- c(c2, list(rmultinom(n=1, size=1000, prob=rexp(n=1000))))
 #'}
-#'library(microbenchmark)
-#'f <- function(){c3 <-sapply(c2, "[")
-#'             similarityMat2C(c3)}
-#'microbenchmark(f(), time=1L)
 #'
-similarityMat2C <- function(c) {
-    .Call('NPflow_similarityMat2C', PACKAGE = 'NPflow', c)
+#'c3 <- sapply(c2, "[")
+#'library(microbenchmark)
+#'microbenchmark(similarityMat(c3), similarityMat_nocostC(c3), times=10L)
+#'
+similarityMat_nocostC <- function(cc) {
+    .Call('NPflow_similarityMat_nocostC', PACKAGE = 'NPflow', cc)
 }
 
 #' C++ implementation
-#' 
+#'
 #'
 #'@param c list of MCMC partitions
 #'
@@ -446,16 +448,13 @@ similarityMat2C <- function(c) {
 #'similarityMatC(sapply(c, "["))
 #'
 #'c2 <- list()
-#'for(i in 1:100){
-#'     c2 <- c(c2, list(rmultinom(n=1, size=3000, prob=rexp(n=3000))))
+#'for(i in 1:10){
+#'     c2 <- c(c2, list(rmultinom(n=1, size=200, prob=rexp(n=200))))
 #'}
-#'library(microbenchmark)
-#'f <- function(){c3 <-sapply(c2, "[")
-#'             similarityMatC(c3)}
-#'microbenchmark(f(), time=1L)
+#'similarityMatC()
 #'
-similarityMatC <- function(c) {
-    .Call('NPflow_similarityMatC', PACKAGE = 'NPflow', c)
+similarityMatC <- function(cc) {
+    .Call('NPflow_similarityMatC', PACKAGE = 'NPflow', cc)
 }
 
 #' C++ implementation of residual trace computation step used when sampling the scale

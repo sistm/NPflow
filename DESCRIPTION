@@ -26,7 +26,8 @@ Imports:
 Suggests:
     foreach,
     parallel,
-    doParallel
+    doParallel,
+    microbenchmark
 Description: This package implements a Dirichlet process mixture of normal, skew-normal or skew t
     distributions modeling oriented towards flow-cytometry data preprocessing application.
 License: LGPL-3 | file LICENSE

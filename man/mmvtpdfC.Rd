@@ -7,18 +7,18 @@
 mmvtpdfC(x, mean, varcovM, df, Log = TRUE)
 }
 \arguments{
-\item{x}{data matrix of dimension p x n, p being the dimension of the 
+\item{x}{data matrix of dimension p x n, p being the dimension of the
 data and n the number of data points}
 
-\item{mean}{mean vectors matrix of dimension p x K, K being the number of 
+\item{mean}{mean vectors matrix of dimension p x K, K being the number of
 distributions for which the density probability has to be ealuated}
 
-\item{varcovM}{list of length K of variance-covariance matrices, 
+\item{varcovM}{list of length K of variance-covariance matrices,
 each of dimensions p x p}
 
 \item{df}{vector of length K of degree of freedom parameters}
 
-\item{logical}{flag for returning the log of the probability density 
+\item{logical}{flag for returning the log of the probability density
 function. Defaults is \code{TRUE}.}
 }
 \value{
@@ -31,6 +31,7 @@ C++ implementation of multivariate Normal probability density function for multi
 mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE)
 mvtpdf(x=matrix(1.96), mean=0, varcovM=diag(1), df=10000000, Log=FALSE)
 mmvtpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1)), df=10000000, Log=FALSE)
+
 mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1))
 mvtpdf(x=matrix(1.96), mean=0, varcovM=diag(1), df=10000000)
 mmvtpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1)), df=10000000)
@@ -40,9 +41,9 @@ mmvtpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1)), df=10)
 
 
 library(microbenchmark)
-microbenchmark(mvtpdf(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE),
-              #mvpdfC(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE),
-              mmvtpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1)), Log=FALSE),
+microbenchmark(mvtpdf(x=matrix(1.96), mean=0, varcovM=diag(1), df=1, Log=FALSE),
+              mmvtpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1)),
+                       df=c(1), Log=FALSE),
               times=10000L)
 
 }

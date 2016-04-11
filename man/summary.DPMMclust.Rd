@@ -48,6 +48,6 @@ coincidence loss function (Binder), or 1-Fmeasure (F-measure).
 Boris Hejblum
 }
 \seealso{
-\link{similarityMat}
+\code{\link{similarityMat}} \code{\link{similarityMatC}}
 }
 

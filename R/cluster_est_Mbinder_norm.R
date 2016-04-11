@@ -50,7 +50,8 @@
 #'
 #'DA Binder, Bayesian cluster analysis, \emph{Biometrika} 65(1):31-38, 1978.
 #'
-#'@seealso \code{\link{similarityMat}}
+#'@seealso \code{\link{similarityMat}} \code{\link{similarityMatC}}
+#'\code{\link{similarityMatC_nocost}}
 #'
 #'@export
 
@@ -91,7 +92,7 @@ cluster_est_Mbinder_norm <- function(c, Mu, Sigma, lambda = 0, a = 1, b = a, log
       NuMatParC(c[[i]], Bhattacharyya(Mu[[i]],Sigma[[i]],lambda,c[[i]]))$NuMatParC
   }
   NuMat_res<-NuMat_res/len_c
-  similarityMat_res<-similarityMat2C(sapply(c, "["))$similarity
+  similarityMat_res<-similarityMat_nocostC(sapply(c, "["))$similarity
 
   cost<-numeric(len_c)
   for (i in 1:len_c){

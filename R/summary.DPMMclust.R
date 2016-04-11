@@ -43,7 +43,7 @@
 #'
 #'@importFrom fastcluster hclust
 #'
-#'@seealso \link{similarityMat}
+#'@seealso \code{\link{similarityMat}} \code{\link{similarityMatC}}
 #'
 
 summary.DPMMclust <- function(object, burnin=0, thin=1, gs=NULL, lossFn="F-measure",

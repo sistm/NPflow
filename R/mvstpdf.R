@@ -69,7 +69,7 @@ mvstpdf <- function(x, xi, sigma, psi, df, Log=TRUE){
 
 
     if(is.matrix(sigma)){
-        #recovering original paremters
+        #recovering original parameters
         omega <- sigma + tcrossprod(psi)
         omegaInv <- solve(omega)
         smallomega <- diag(sqrt(diag(omega)))
@@ -97,7 +97,6 @@ mvstpdf <- function(x, xi, sigma, psi, df, Log=TRUE){
             psi <- apply(X=psi, MARGIN=2, FUN=list)
             psi <- lapply(psi, FUN='[[', 1)
         }
-
         omega <- mapply(FUN=function(s,ps){s + tcrossprod(ps)},
                         s=sigma, ps=psi, SIMPLIFY=FALSE)
         omegaInv <- lapply(X=omega, FUN=solve)
