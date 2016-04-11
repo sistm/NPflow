@@ -74,12 +74,10 @@ Slice Sampling of Dirichlet Process Mixture of skew  Students's t-distibutions
 }
 \examples{
 rm(list=ls())
-library(ggplot2)
 
 #Number of data
 n <- 2000
 set.seed(123)
-#set.seed(4321)
 
 
 d <- 2
@@ -109,7 +107,7 @@ for(k in 1:n){
  w[k] <- rgamma(1, shape=nu[c[k]]/2, rate=nu[c[k]]/2)
  z[,k] <- xi[, c[k]] + psi[, c[k]]*rtruncnorm(n=1, a=0, b=Inf, mean=0, sd=1/sqrt(w[k])) +
                 (sdev[, , c[k]]/sqrt(w[k]))\%*\%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
- cat(k, "/", n, " observations simulated\\n", sep="")
+ #cat(k, "/", n, " observations simulated\\n", sep="")
 }
 
 # Set parameters of G0
@@ -138,13 +136,14 @@ hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
        +theme_bw())
  q
 
- MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=3000,
+\dontrun{
+ MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=2000,
                                 doPlot=TRUE, plotevery=250,
                                 nbclust_init,
                                 gg.add=list(theme_bw(),
                                  guides(shape=guide_legend(override.aes = list(fill="grey45")))),
                                 diagVar=FALSE)
- s <- summary(MCMCsample_st, burnin = 2000, thin=5, posterior_approx=TRUE)
+ s <- summary(MCMCsample_st, burnin = 1500, thin=5, posterior_approx=TRUE)
  F <- FmeasureC(pred=s$point_estim$c_est, ref=c)
 
 for(k in 1:n){
@@ -152,18 +151,18 @@ for(k in 1:n){
  w[k] <- rgamma(1, shape=nu[c[k]]/2, rate=nu[c[k]]/2)
  z[,k] <- xi[, c[k]] + psi[, c[k]]*rtruncnorm(n=1, a=0, b=Inf, mean=0, sd=1/sqrt(w[k])) +
                 (sdev[, , c[k]]/sqrt(w[k]))\%*\%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
- cat(k, "/", n, " observations simulated\\n", sep="")
+ #cat(k, "/", n, " observations simulated\\n", sep="")
 }
- MCMCsample_st2 <- DPMGibbsSkewT_SeqPrior_parallel(Ncpus=2, type_connec="SOCK",
-                                                   z, prior_inform=s$param_posterior,
-                                                   hyperG0, N=3000,
-                                                   doPlot=TRUE, plotevery=100,
-                                                   nbclust_init, diagVar=FALSE, verbose=FALSE,
-                                                   gg.add=list(theme_bw(),
+MCMCsample_st2 <- DPMGibbsSkewT_SeqPrior_parallel(Ncpus=2, type_connec="SOCK",
+                                                  z, prior_inform=s$param_posterior,
+                                                  hyperG0, N=3000,
+                                                  doPlot=TRUE, plotevery=100,
+                                                  nbclust_init, diagVar=FALSE, verbose=FALSE,
+                                                  gg.add=list(theme_bw(),
                                  guides(shape=guide_legend(override.aes = list(fill="grey45")))))
 s2 <- summary(MCMCsample_st2, burnin = 2000, thin=5)
 F2 <- FmeasureC(pred=s2$point_estim$c_est, ref=c)
-
+}
 
 
 }

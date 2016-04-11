@@ -94,7 +94,7 @@
 #'  z[,k] <- (xi[, c[k]]
 #'           + psi[, c[k]]*abs(rnorm(1))
 #'           + sdev[, , c[k]]%*%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1))
-#'  cat(k, "/", n, " observations simulated\n", sep="")
+#'  #cat(k, "/", n, " observations simulated\n", sep="")
 #' }
 #'
 #' # Set parameters of G0
@@ -154,32 +154,19 @@
 #'  p
 #'
 #'
-#'
+#'\dontrun{
 #'  # Gibbs sampler for Dirichlet Process Mixtures
 #'  ##############################################
 #'  MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=2000,
-#'                                 doPlot, nbclust_init, plotevery=50, gg.add=list(theme_bw(),
+#'                                 doPlot, nbclust_init, plotevery=100, gg.add=list(theme_bw(),
 #'                                  guides(shape=guide_legend(override.aes = list(fill="grey45")))),
 #'                                 diagVar=FALSE)
 #'  s <- summary(MCMCsample_st, burnin = 350)
 #'  print(s)
 #'  plot(s)
 #'  plot_ConvDPM(MCMCsample_st, from=2)
-#'  cluster_est_binder(MCMCsample_sn$c_list[50:500])
-#'
-#'  #library(lineprof)
-#'  #l <- lineprof(
-#'  MCMCsample_sn <- DPMGibbsSkewN(z, hyperG0, a, b, N=5, doPlot=FALSE, nbclust_init)
-#'  #)
-#'  #shine(l)
-#'
-#'  hyperG0[["mu"]] <- rep(0,d)
-#'  MCMCsample_n <- gibbsDPMsliceprior(z, hyperG0, a, b, N=500, doPlot, nbclust_init, plotevery=50)
-#'  plot_ConvDPM(MCMCsample_n, from=2)
-#'
-#'
-#'
-#'
+#'  cluster_est_binder(MCMCsample_st$mcmc_partitions[1500:2000])
+#'}
 #'
 #'
 #'
