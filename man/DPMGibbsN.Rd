@@ -44,7 +44,6 @@ Slice Sampling of the Dirichlet Process Mixture Model with a prior on alpha
 }
 \examples{
 rm(list=ls())
-library(ggplot2)
 #Number of data
 n <- 500
 #n <- 2000
@@ -92,6 +91,7 @@ for(k in 1:n){
 
  ## Data
  ########
+ library(ggplot2)
  p <- (ggplot(data.frame("X"=z[1,], "Y"=z[2,]), aes(x=X, y=Y))
        + geom_point()
        + ggtitle("Toy example Data"))

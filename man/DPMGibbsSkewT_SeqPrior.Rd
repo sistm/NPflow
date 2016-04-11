@@ -63,12 +63,10 @@ Slice Sampling of Dirichlet Process Mixture of skew  Students's t-distibutions
 }
 \examples{
 rm(list=ls())
-library(ggplot2)
 
 #Number of data
 n <- 2000
 set.seed(123)
-#set.seed(4321)
 
 
 d <- 2
@@ -117,6 +115,7 @@ hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
  nbclust_init <- 30
 
  ## Plot Data
+ library(ggplot2)
  q <- (ggplot(data.frame("X"=z[1,], "Y"=z[2,]), aes(x=X, y=Y))
        + geom_point()
        + ggtitle("Simple example in 2d data")

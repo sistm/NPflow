@@ -53,12 +53,9 @@
 #'
 #'@examples
 #' rm(list=ls())
-#' library(ggplot2)
-#' library(truncnorm)
 #'
 #' #Number of data
 #' n <- 2000
-#' set.seed(123)
 #' set.seed(4321)
 #'
 #'
@@ -66,6 +63,7 @@
 #' ncl <- 4
 #'
 #' # Sample data
+#' library(truncnorm)
 #'
 #' sdev <- array(dim=c(d,d,ncl))
 #'
@@ -114,6 +112,7 @@
 #'
 #'  ## Data
 #'  ########
+#'  library(ggplot2)
 #'  p <- (ggplot(data.frame("X"=z[1,], "Y"=z[2,]), aes(x=X, y=Y))
 #'        + geom_point()
 #'        #+ ggtitle("Simple example in 2d data")

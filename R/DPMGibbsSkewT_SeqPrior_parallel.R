@@ -119,6 +119,7 @@
 #'  nbclust_init <- 30
 #'
 #'  ## Plot Data
+#'  library(ggplot2)
 #'  q <- (ggplot(data.frame("X"=z[1,], "Y"=z[2,]), aes(x=X, y=Y))
 #'        + geom_point()
 #'        + ggtitle("Simple example in 2d data")
