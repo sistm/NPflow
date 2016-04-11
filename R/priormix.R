@@ -11,7 +11,6 @@
 #'
 #'@examples
 #' rm(list=ls())
-#' library(ggplot2)
 #'
 #' #Number of data
 #' n <- 2000
@@ -45,7 +44,7 @@
 #'  w[k] <- rgamma(1, shape=nu[c[k]]/2, rate=nu[c[k]]/2)
 #'  z[,k] <- xi[, c[k]] + psi[, c[k]]*rtruncnorm(n=1, a=0, b=Inf, mean=0, sd=1/sqrt(w[k])) +
 #'                 (sdev[, , c[k]]/sqrt(w[k]))%*%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
-#'  cat(k, "/", n, " observations simulated\n", sep="")
+#'  #cat(k, "/", n, " observations simulated\n", sep="")
 #' }
 #'
 #' # Set parameters of G0
@@ -62,17 +61,14 @@
 #'  a <- 0.0001
 #'  b <- 0.0001
 #'
-#'  # do some plots
 #'  nbclust_init <- 30
 #'
-#'  MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=3000, doPlot=FALSE,
+#'\dontrun{
+#'  MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=2000, doPlot=FALSE,
 #'                                 nbclust_init, diagVar=FALSE)
-#'  s <- summary(MCMCsample_st, burnin = 2500, thin=2)
+#'  s <- summary(MCMCsample_st, burnin = 1500, thin=5, posterior_approx=TRUE)
 #'  pmix <- priormix(s)
-#'  MCMCsample_st_EB <- DPMGibbsSkewT_EB_parallel(Ncpus=2, type_connec ="SOCK", z,
-#'                                                hyperG0=pmix, a=a, b=b, N=500, diagVar=FALSE,
-#'                                                doPlot=TRUE, plotevery=100,
-#'                                                gg.add=list(theme_bw()), verbose=TRUE)
+#'  }
 #'
 
 priormix <- function(sDPMclust, nu0add=5){
