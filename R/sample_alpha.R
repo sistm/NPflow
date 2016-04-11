@@ -75,7 +75,7 @@
 #'        + ggtitle("Posterior distribution of alpha\n")
 #'        # Ignore NA values for mean
 #'        # Overlay with transparent density plot
-#'        + geom_vline(aes(xintercept=mean(alpha, na.rm=T)),
+#'        + geom_vline(aes(xintercept=mean(alpha, na.rm=TRUE)),
 #'                     color="red", linetype="dashed", size=1)
 #'      )
 #'  p
