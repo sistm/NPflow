@@ -7,7 +7,7 @@ using namespace arma;
 //' C++ implementation
 //'
 //'
-//'@param c list of MCMC partitions
+//'@param cc a matrix whose columns each represents a ()MCMC) partition
 //'
 //'@export
 //'

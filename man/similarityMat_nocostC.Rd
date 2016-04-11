@@ -7,7 +7,7 @@
 similarityMat_nocostC(cc)
 }
 \arguments{
-\item{c}{list of MCMC partitions}
+\item{cc}{a matrix whose columns each represents a ()MCMC) partition}
 }
 \description{
 C++ implementation
