@@ -179,7 +179,7 @@ plot_DPMsn <- function(z, c, i="", alpha="?", U_SS,
                                           labels=c("simulations derived\n from sampled parameters"),
                                           name="Density contour")
                   + guides(linetype=guide_legend(override.aes = list(color="black")),
-                           colour=guide_legend(override.aes = list(linetype=0, size=6)))
+                           colour=guide_legend(override.aes = list(linetype=0, size=6, alpha=1, shape=15)))
             )
         }
 
