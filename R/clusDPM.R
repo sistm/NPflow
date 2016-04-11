@@ -6,12 +6,14 @@
 #'
 #'@param distrib
 #'
+#'@param ncores
+#'
 #'@seealso \code{\link{DPMpost}}
 #'@seealso \code{\link{cluster_est_binder}}
 #'
 #'@export
 #'
-clusDPM <- function(data, distib=c("gaussian", "skewnorm", "skewt")
+clusDPM <- function(data, distrib=c("gaussian", "skewnorm", "skewt"), ncores=1
 ){
     res <- list(data)
     class(res) <- "NPlow"

@@ -4,12 +4,14 @@
 \alias{clusDPM}
 \title{Unsupervised clustering though Dirichlet Process Mixture models}
 \usage{
-clusDPM(data, distib = c("gaussian", "skewnorm", "skewt"))
+clusDPM(data, distrib = c("gaussian", "skewnorm", "skewt"), ncores = 1)
 }
 \arguments{
 \item{data}{}
 
 \item{distrib}{}
+
+\item{ncores}{}
 }
 \description{
 Wrapping function for mcmc sampling and partition estimation.

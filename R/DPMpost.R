@@ -87,7 +87,7 @@
 #'  w[k] <- rgamma(1, shape=nu[c[k]]/2, rate=nu[c[k]]/2)
 #'  z[,k] <- xi[, c[k]] + psi[, c[k]]*rtruncnorm(n=1, a=0, b=Inf, mean=0, sd=1/sqrt(w[k])) +
 #'                (sdev[, , c[k]]/sqrt(w[k]))%*%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
-#'  cat(k, "/", n, " observations simulated\n", sep="")
+#'  #cat(k, "/", n, " observations simulated\n", sep="")
 #' }
 #'
 #' # Set parameters of G0
@@ -112,6 +112,7 @@
 #'
 #'  ## Data
 #'  ########
+#'  library(ggplot2)
 #'  p <- (ggplot(data.frame("X"=z[1,], "Y"=z[2,]), aes(x=X, y=Y))
 #'        + geom_point()
 #'        #+ ggtitle("Simple example in 2d data")
@@ -148,126 +149,8 @@
 #'
 #'
 #'
-#'  # Gibbs sampler for Dirichlet Process Mixtures
-#'  ##############################################
-#'  MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=1000,
-#'  doPlot, nbclust_init, plotevery=100, gg.add=list(theme_bw()),
-#'  diagVar=FALSE)
-#'  s <- summary(MCMCsample_st, burnin = 2000, thin=4, lossFn = "Binder")
-#'  print(s)
-#'  plot(s, hm=TRUE) #pdf(height=8.5, width=10.5) #png(height=700, width=720)
-#'  plot_ConvDPM(MCMCsample_st, from=2)
-#'  cluster_est_binder(MCMCsample_sn$c_list[50:500])
-#'  A <- sapply(MCMCsample_st$logposterior_list, sum)
-#'  lrmv <- which(A<(-15000))
-#'  MCMCsample_st_2 <- MCMCsample_st
-#'  MCMCsample_st_2$logposterior_list <- MCMCsample_st_2$logposterior_list[-lrmv]
-#'  plot_ConvDPM(MCMCsample_st_2)
-#'
-#'  #library(lineprof)
-#'  #l <- lineprof(
-#'  MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=2000,
-#'                 doPlot, nbclust_init, plotevery=100, gg.add=list(theme_bw()),
-#'                 diagVar=FALSE)
-#'  #)
-#'  #shine(l)
-#'
-#'  hyperG0[["mu"]] <- rep(0,d)
-#'  MCMCsample_n <- gibbsDPMsliceprior(z, hyperG0, a, b, N=500, doPlot, nbclust_init, plotevery=50)
-#'  plot_ConvDPM(MCMCsample_n, from=2)
 #'
 #'
-#'
-#'
-#'
-#'  # k-means
-#'
-#'  plot(x=z[1,], y=z[2,], col=kmeans(t(z), centers=4)$cluster,
-#'       xlab = "d = 1", ylab= "d = 2", main="k-means with K=4 clusters")
-#'
-#'  KM <- kmeans(t(z), centers=4)
-#'  KMclust <- factor(KM$cluster)
-#'  levels(KMclust) <- c("2", "4", "1", "3")
-#'  dataKM <- data.frame("X"=z[1,], "Y"=z[2,],
-#'                     "Cluster"=as.character(KMclust))
-#'  dataCenters <- data.frame("X"=KM$centers[,1],
-#'                            "Y"=KM$centers[,2],
-#'                            "Cluster"=c("2", "4", "1", "3"))
-#'
-#'  p <- (ggplot(dataKM)
-#'        + geom_point(aes(x=X, y=Y, col=Cluster))
-#'        + geom_point(aes(x=X, y=Y, fill=Cluster, order=Cluster),
-#'                     data=dataCenters, shape=22, size=5)
-#'        + scale_colour_discrete(name="Cluster",
-#'                                guide=guide_legend(override.aes=list(size=6, shape=22)))
-#'        + ggtitle("K-means with K=4 clusters\n")
-#'        + theme_bw()
-#'  )
-#'  p
-#'
-#'  postalpha <- data.frame("alpha"=s$alpha,
-#'                          "distribution" = factor(rep("posterior",length(s$alpha)),
-#'                          levels=c("prior", "posterior")))
-#'
-#'  postK <- data.frame("K"=sapply(lapply(postalpha$alpha, "["),
-#'                                 function(x){sum(x/(x+0:(n-1)))}))
-#'
-#'  p <- (ggplot(postalpha, aes(x=alpha))
-#'        + geom_histogram(aes(y=..density..), binwidth=.1,
-#'                         colour="black", fill="white")
-#'        + geom_density(alpha=.2, fill="blue")
-#'        + ggtitle("Posterior distribution of alpha\n")
-#'        # Ignore NA values for mean
-#'        # Overlay with transparent density plot
-#'        + geom_vline(aes(xintercept=mean(alpha, na.rm=TRUE)),
-#'                     color="red", linetype="dashed", size=1)
-#'      )
-#'  p
-#'
-#'  p <- (ggplot(postK, aes(x=K))
-#'        + geom_histogram(aes(y=..density..),
-#'                         colour="black", fill="white")
-#'        + geom_density(alpha=.2, fill="blue")
-#'        + ggtitle("Posterior distribution of K\n")
-#'        # Ignore NA values for mean
-#'        # Overlay with transparent density plot
-#'        + geom_vline(aes(xintercept=mean(K, na.rm=TRUE)),
-#'                     color="red", linetype="dashed", size=1)
-#'        #+ scale_x_continuous(breaks=c(0:6)*2, minor_breaks=c(0:6)*2+1)
-#'        + scale_x_continuous(breaks=c(1:12))
-#'      )
-#'  p
-#'
-#'  p <- (ggplot(drop=FALSE, alpha=.6)
-#'        + geom_density(aes(x=alpha, fill=distribution),
-#'                       color=NA, alpha=.6,
-#'                       data=postalpha)
-#'        + geom_density(aes(x=alpha, fill=distribution),
-#'                       color=NA, alpha=.6,
-#'                       data=prioralpha)
-#'        + ggtitle("Prior and posterior distributions of alpha\n")
-#'        + scale_fill_discrete(drop=FALSE)
-#'        + theme_bw()
-#'      )
-#'  p
-#'
-#'  postK <- data.frame("K"=sapply(lapply(s$mcmc_partitions, unique), length))
-#'  (ggplot(postK, aes(x=K))
-#'        + geom_histogram(aes(y=..density..),
-#'                         colour="black", fill="grey45", binwidth=1)
-#'        + ggtitle("Posterior distribution of K\n")
-#'        # Ignore NA values for mean
-#'        # Overlay with transparent density plot
-#'        + geom_vline(aes(xintercept=mean(K, na.rm=TRUE)),
-#'                     color="red", linetype="dashed", size=1)
-#'        + theme_bw()
-#'        + scale_x_continuous(breaks=c(3:11))
-#'        + xlim(3,11)
-#'      )
-#'
-#'
-#'
-
 #'
 DPMpost <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
                      nbclust_init=30, plotevery=1,
