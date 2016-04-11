@@ -260,6 +260,10 @@ DPMGibbsSkewT <- function (z, hyperG0, a, b, N, doPlot=TRUE,
                            diagVar=TRUE, verbose=TRUE,
                            ...){
 
+    if(nbclust_init > ncol(z)){
+      stop("'nbclust_init' is larger than the number of observations")
+    }
+
     if(doPlot){requireNamespace("ggplot2", quietly = TRUE)}
 
     p <- dim(z)[1]
