@@ -50,6 +50,8 @@ nu <- 1.5
 W <- rgamma(n=N, shape=nu/2, rate=nu/2)
 Yst=Ysn/sqrt(W)
 
+library(reshape2)
+library(ggplot2)
 data2plot <- melt(cbind.data.frame(Ysn, Yst))
 #pdf(file="ExSNST.pdf", height=5, width=4)
 p <- (ggplot(data=data2plot)
