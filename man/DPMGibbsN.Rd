@@ -118,7 +118,10 @@ for(k in 1:n){
  # Gibbs sampler for Dirichlet Process Mixtures
  ##############################################
 \dontrun{
- MCMCsample <- DPMGibbsN(z, hyperG0, a, b, N=500, doPlot, nbclust_init, plotevery=50, diagVar=FALSE)
+ MCMCsample <- DPMGibbsN(z, hyperG0, a, b, N=500, doPlot, nbclust_init, plotevery=50,
+                         gg.add=list(theme_bw(),
+                                 guides(shape=guide_legend(override.aes = list(fill="grey45")))),
+                         diagVar=FALSE)
 
  plot_ConvDPM(MCMCsample, from=2)
 

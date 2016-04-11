@@ -2,7 +2,7 @@
 % Please edit documentation in R/DPMGibbsSkewN.R
 \name{DPMGibbsSkewN}
 \alias{DPMGibbsSkewN}
-\title{Slice Sampling of Dirichlet Process Mixture of skew Normals}
+\title{Slice Sampling of Dirichlet Process Mixture of skew normal ditributions}
 \usage{
 DPMGibbsSkewN(z, hyperG0, a, b, N, doPlot = TRUE, nbclust_init = 30,
   plotevery = 1, diagVar = TRUE, verbose = TRUE, ...)
@@ -55,7 +55,7 @@ and \code{n} observations in columns.}
  }
 }
 \description{
-Slice Sampling of Dirichlet Process Mixture of skew Normals
+Slice Sampling of Dirichlet Process Mixture of skew normal ditributions
 }
 \examples{
 rm(list=ls())
@@ -155,8 +155,10 @@ hyperG0[["lambda"]] <- diag(d)
  ##############################################
 
  MCMCsample_sn <- DPMGibbsSkewN(z, hyperG0, a, b, N=2500,
- doPlot, nbclust_init, plotevery=100, gg.add=list(theme_bw()),
- diagVar=FALSE)
+                                doPlot, nbclust_init, plotevery=100,
+                                gg.add=list(theme_bw(),
+                                 guides(shape=guide_legend(override.aes = list(fill="grey45")))),
+                               diagVar=FALSE)
 
  s <- summary(MCMCsample_sn, burnin = 2000, thin=10)
  #cluster_est_binder(MCMCsample_sn$mcmc_partitions[1000:1500])
@@ -363,8 +365,10 @@ for(k in 1:n){
 }
 
  MCMCsample_sn_sep <- DPMGibbsSkewN(z, hyperG0, a, b, N=600,
- doPlot, nbclust_init, plotevery=100, gg.add=list(theme_bw()),
- diagVar=TRUE)
+                                    doPlot, nbclust_init, plotevery=100,
+                                    gg.add=list(theme_bw(),
+                               guides(shape=guide_legend(override.aes = list(fill="grey45")))),
+                                    diagVar=TRUE)
 
  s <- summary(MCMCsample_sn, burnin = 400)
 

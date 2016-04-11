@@ -151,7 +151,8 @@
 #'  MCMCsample_sn_par <- DPMGibbsSkewN_parallel(Ncpus=parallel::detectCores()-1,
 #'                                              type_connec="SOCK", z, hyperG0,
 #'                                              a, b, N=5000, doPlot, nbclust_init,
-#'                                              plotevery=25, gg.add=list(theme_bw()))
+#'                                              plotevery=25, gg.add=list(theme_bw(),
+#'                                 guides(shape=guide_legend(override.aes = list(fill="grey45")))))
 #'  plot_ConvDPM(MCMCsample_sn_par, from=2)
 #'
 #'  postalpha <- data.frame("alpha"=MCMCsample_sn_par$alpha[50:500],

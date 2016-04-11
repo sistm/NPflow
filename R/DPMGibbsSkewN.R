@@ -1,4 +1,4 @@
-#'Slice Sampling of Dirichlet Process Mixture of skew Normals
+#'Slice Sampling of Dirichlet Process Mixture of skew normal ditributions
 #'
 #'@param z data matrix \code{d x n} with \code{d} dimensions in rows
 #'and \code{n} observations in columns.
@@ -147,8 +147,10 @@
 #'  ##############################################
 #'
 #'  MCMCsample_sn <- DPMGibbsSkewN(z, hyperG0, a, b, N=2500,
-#'  doPlot, nbclust_init, plotevery=100, gg.add=list(theme_bw()),
-#'  diagVar=FALSE)
+#'                                 doPlot, nbclust_init, plotevery=100,
+#'                                 gg.add=list(theme_bw(),
+#'                                  guides(shape=guide_legend(override.aes = list(fill="grey45")))),
+#'                                diagVar=FALSE)
 #'
 #'  s <- summary(MCMCsample_sn, burnin = 2000, thin=10)
 #'  #cluster_est_binder(MCMCsample_sn$mcmc_partitions[1000:1500])
@@ -355,8 +357,10 @@
 #' }
 #'
 #'  MCMCsample_sn_sep <- DPMGibbsSkewN(z, hyperG0, a, b, N=600,
-#'  doPlot, nbclust_init, plotevery=100, gg.add=list(theme_bw()),
-#'  diagVar=TRUE)
+#'                                     doPlot, nbclust_init, plotevery=100,
+#'                                     gg.add=list(theme_bw(),
+#'                                guides(shape=guide_legend(override.aes = list(fill="grey45")))),
+#'                                     diagVar=TRUE)
 #'
 #'  s <- summary(MCMCsample_sn, burnin = 400)
 #'

@@ -140,7 +140,10 @@ hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
 
  MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=3000,
                                 doPlot=TRUE, plotevery=250,
-                                nbclust_init, diagVar=FALSE)
+                                nbclust_init,
+                                gg.add=list(theme_bw(),
+                                 guides(shape=guide_legend(override.aes = list(fill="grey45")))),
+                                diagVar=FALSE)
  s <- summary(MCMCsample_st, burnin = 2000, thin=5, posterior_approx=TRUE)
  F <- FmeasureC(pred=s$point_estim$c_est, ref=c)
 
@@ -155,7 +158,9 @@ for(k in 1:n){
                                                    z, prior_inform=s$param_posterior,
                                                    hyperG0, N=3000,
                                                    doPlot=TRUE, plotevery=100,
-                                                   nbclust_init, diagVar=FALSE, verbose=FALSE)
+                                                   nbclust_init, diagVar=FALSE, verbose=FALSE,
+                                                   gg.add=list(theme_bw(),
+                                 guides(shape=guide_legend(override.aes = list(fill="grey45")))))
 s2 <- summary(MCMCsample_st2, burnin = 2000, thin=5)
 F2 <- FmeasureC(pred=s2$point_estim$c_est, ref=c)
 

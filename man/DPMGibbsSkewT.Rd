@@ -2,7 +2,7 @@
 % Please edit documentation in R/DPMGibbsSkewT.R
 \name{DPMGibbsSkewT}
 \alias{DPMGibbsSkewT}
-\title{Slice Sampling of Dirichlet Process Mixture of skew  Students's t-distibutions}
+\title{Slice Sampling of Dirichlet Process Mixture of skew Students's t-distibutions}
 \usage{
 DPMGibbsSkewT(z, hyperG0, a, b, N, doPlot = TRUE, nbclust_init = 30,
   plotevery = 1, diagVar = TRUE, verbose = TRUE, ...)
@@ -57,7 +57,7 @@ and \code{n} observations in columns.}
  }
 }
 \description{
-Slice Sampling of Dirichlet Process Mixture of skew  Students's t-distibutions
+Slice Sampling of Dirichlet Process Mixture of skew Students's t-distibutions
 }
 \examples{
 rm(list=ls())
@@ -162,8 +162,10 @@ hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
  # Gibbs sampler for Dirichlet Process Mixtures
  ##############################################
  MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=1000,
- doPlot, nbclust_init, plotevery=100, gg.add=list(theme_bw()),
- diagVar=FALSE)
+                                doPlot, nbclust_init, plotevery=100,
+                                gg.add=list(theme_bw(),
+                                 guides(shape=guide_legend(override.aes = list(fill="grey45")))),
+                               diagVar=FALSE)
  s <- summary(MCMCsample_st, burnin = 900, thin=2, lossFn = "Binder")
  print(s)
  plot(s, hm=TRUE) #pdf(height=8.5, width=10.5) #png(height=700, width=720)

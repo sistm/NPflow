@@ -1,4 +1,4 @@
-#'Slice Sampling of Dirichlet Process Mixture of skew  Students's t-distibutions
+#'Slice Sampling of Dirichlet Process Mixture of skew Students's t-distibutions
 #'
 #'@param z data matrix \code{d x n} with \code{d} dimensions in rows
 #'and \code{n} observations in columns.
@@ -154,8 +154,10 @@
 #'  # Gibbs sampler for Dirichlet Process Mixtures
 #'  ##############################################
 #'  MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=1000,
-#'  doPlot, nbclust_init, plotevery=100, gg.add=list(theme_bw()),
-#'  diagVar=FALSE)
+#'                                 doPlot, nbclust_init, plotevery=100,
+#'                                 gg.add=list(theme_bw(),
+#'                                  guides(shape=guide_legend(override.aes = list(fill="grey45")))),
+#'                                diagVar=FALSE)
 #'  s <- summary(MCMCsample_st, burnin = 900, thin=2, lossFn = "Binder")
 #'  print(s)
 #'  plot(s, hm=TRUE) #pdf(height=8.5, width=10.5) #png(height=700, width=720)

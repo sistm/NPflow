@@ -129,7 +129,7 @@ plot_DPMst <- function(z, c, i="", alpha="?", U_SS,
         if(!nice){
             p <- (ggplot(z2plot)
                   + geom_point(aes_string(x="D1", y="D2", colour="Cluster", order="Cluster", fill="Cluster"), alpha=0.7,
-                               data=z2plot, size=3)
+                               data=z2plot, size=2/(0.3*log(n)))
                   + scale_alpha_continuous(guide=FALSE)
                   + scale_fill_discrete(guide=FALSE)
                   + scale_colour_discrete(guide=guide_legend(override.aes = list(size = 6, alpha=1)))
@@ -147,18 +147,6 @@ plot_DPMst <- function(z, c, i="", alpha="?", U_SS,
             zmean2plot <- cbind.data.frame(zmean2plot, Cluster=rownames(zmean2plot))
             zmean2plot$Center="observed mean"
 
-            p <- (p + geom_point(aes_string(x="D1", y="D2", fill="Cluster", order="Cluster", shape="Center"),
-                                 data=zmean2plot, size=5)
-                  + geom_point(aes_string(x="D1", y="D2", fill="Cluster", order="Cluster", shape="Center"),
-                               data=U2plot, size=5)
-                  + geom_point(aes_string(x="D1", y="D2", fill="Cluster", order="Cluster", shape="Center"),
-                               data=xi2plot, size=5)
-                  + scale_shape_manual(values=c(24,22,23),
-                                       breaks=c("observed mean", "sampled mean", "xi param"),
-                                       labels=c("observed mean", "sampled mean", "xi param"),
-                                       name="Center")
-                  + guides(shape=guide_legend(override.aes = list(fill="grey45")))
-            )
         }else{
             p <- (ggplot(z2plot)
                   + geom_point(aes_string(x="D1", y="D2", colour="Cluster", order="Cluster", shape="Cluster", fill="Cluster"), alpha=0.65,
@@ -168,33 +156,33 @@ plot_DPMst <- function(z, c, i="", alpha="?", U_SS,
         }
 
         if(ellipses){
-            simuDens <- NULL
-            for(g in 1:length(fullCl)){
-                glabel <- levels(zClusters)[g]
-                #gind <- as.numeric(glabel)
-                w <- rgamma(n=nbsim_dens, shape=U_nu2plot[[g]]/2, rate=U_nu2plot[[g]]/2)
-                ltnz <- rtruncnorm(n=nbsim_dens, a=0, sd=1/sqrt(w))
-                eps <- t(sapply(w, function(a){matrix(rnorm(2), ncol=2)%*%chol(U_Sigma2plot[[g]]/a)}))
-                #eps <- matrix(NA, nrow=nbsim_dens, ncol=2)
-                #for(i in 1:nbsim_dens){
-                #    eps[i,] <- matrix(rnorm(2), ncol=2)%*%chol(U_Sigma2plot[[g]]/w[i])
-                #}
-                simuDenstemp <- data.frame("D1"=U_xi2plot[1,g]+U_psi2plot[1,g]*ltnz+eps[,1],
-                                           "D2"=U_xi2plot[2,g]+U_psi2plot[2,g]*ltnz+eps[,2],
-                                           "Cluster"=rep(glabel, nbsim_dens))
-                simuDens <- rbind.data.frame(simuDens, simuDenstemp)
-            }
-            simuDens$Type <- "DensContour"
-
-            p <- (p
-                  + stat_density2d(data=simuDens, aes_string(x="D1", y="D2", colour="Cluster", linetype="Type"))
-                  + scale_linetype_manual(values=c(1),
-                                          labels=c("simulations derived\n from sampled parameters"),
-                                          name="Density contour")
-                  + guides(linetype=guide_legend(override.aes = list(color="black")),
-                           colour=guide_legend(override.aes = list(linetype=0, size=6)))
-            )
+          simuDens <- NULL
+          for(g in 1:length(fullCl)){
+            glabel <- levels(zClusters)[g]
+            #gind <- as.numeric(glabel)
+            w <- rgamma(n=nbsim_dens, shape=U_nu2plot[[g]]/2, rate=U_nu2plot[[g]]/2)
+            ltnz <- rtruncnorm(n=nbsim_dens, a=0, sd=1/sqrt(w))
+            eps <- t(sapply(w, function(a){matrix(rnorm(2), ncol=2)%*%chol(U_Sigma2plot[[g]]/a)}))
+            #eps <- matrix(NA, nrow=nbsim_dens, ncol=2)
+            #for(i in 1:nbsim_dens){
+            #    eps[i,] <- matrix(rnorm(2), ncol=2)%*%chol(U_Sigma2plot[[g]]/w[i])
+            #}
+            simuDenstemp <- data.frame("D1"=U_xi2plot[1,g]+U_psi2plot[1,g]*ltnz+eps[,1],
+                                       "D2"=U_xi2plot[2,g]+U_psi2plot[2,g]*ltnz+eps[,2],
+                                       "Cluster"=rep(glabel, nbsim_dens))
+            simuDens <- rbind.data.frame(simuDens, simuDenstemp)
+          }
+          simuDens$Type <- "DensContour"
+          p <- (p
+                + stat_density2d(data=simuDens, aes_string(x="D1", y="D2", colour="Cluster", linetype="Type"))
+                + scale_linetype_manual(values=c(1),
+                                        labels=c("simulations derived\n from sampled parameters"),
+                                        name="Density contour")
+                + guides(linetype=guide_legend(override.aes = list(color="black")),
+                         colour=guide_legend(override.aes = list(linetype=0, size=6)))
+          )
         }
+
         if(nice){
             if(length(unique(z2plot$Cluster)<5)){
                 p <- (p
@@ -208,9 +196,21 @@ plot_DPMst <- function(z, c, i="", alpha="?", U_SS,
             p <- (p
                   + scale_colour_discrete(guide=guide_legend(override.aes = list(size = 4, alpha=0.8, linetype=0)))
             )
+        }else{
+          p <- (p + geom_point(aes_string(x="D1", y="D2", fill="Cluster", order="Cluster", shape="Center"),
+                               data=zmean2plot, size=5)
+                + geom_point(aes_string(x="D1", y="D2", fill="Cluster", order="Cluster", shape="Center"),
+                             data=U2plot, size=5)
+                + geom_point(aes_string(x="D1", y="D2", fill="Cluster", order="Cluster", shape="Center"),
+                             data=xi2plot, size=5)
+                + scale_shape_manual(values=c(24,22,23),
+                                     breaks=c("observed mean", "sampled mean", "xi param"),
+                                     labels=c("observed mean", "sampled mean", "xi param"),
+                                     name="Center")
+          )
         }
-
     }
+
     for (a in gg.add) {
         p <- p + a
     }

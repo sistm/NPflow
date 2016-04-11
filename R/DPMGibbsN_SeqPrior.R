@@ -114,8 +114,10 @@
 #' # Gibbs sampler for Dirichlet Process Mixtures
 #' ##############################################
 #' \dontrun{
-#' MCMCsample <- DPMGibbsN(z, hyperG0, a, b, N=1500, doPlot, nbclust_init,
-#'                         plotevery=200, diagVar=FALSE)
+#' MCMCsample <- DPMGibbsN(z, hyperG0, a, b, N=1500, doPlot, nbclust_init, plotevery=200,
+#'                         gg.add=list(theme_bw(),
+#'                                  guides(shape=guide_legend(override.aes = list(fill="grey45")))),
+#'                         diagVar=FALSE)
 #'
 #' s <- summary(MCMCsample, posterior_approx=TRUE, burnin = 1000, thin=5)
 #' F1 <- FmeasureC(pred=s$point_estim$c_est, ref=c)
@@ -126,7 +128,10 @@
 #'                                   hyperG0, N=1500,
 #'                                   add.vagueprior = TRUE,
 #'                                   doPlot=TRUE, plotevery=100,
-#'                                   nbclust_init=nbclust_init, diagVar=FALSE)
+#'                                   nbclust_init=nbclust_init,
+#'                                   gg.add=list(theme_bw(),
+#'                                  guides(shape=guide_legend(override.aes = list(fill="grey45")))),
+#'                                   diagVar=FALSE)
 #'
 #'
 #' s2 <- summary(MCMCsample2, burnin = 500, thin=5)

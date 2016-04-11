@@ -106,7 +106,7 @@ plot_DPMsn <- function(z, c, i="", alpha="?", U_SS,
         p <- (ggplot(zDplotfull)
               + facet_grid(dimensionY~dimensionX, scales="free")
               + geom_point(aes_string(x="X", y="Y", colour="Cluster", order="Cluster"),
-                           data=zDplotfull, alpha=1, size=2/(0.3*log(n)))
+                           data=zDplotfull, alpha=0.7, size=2/(0.3*log(n)))
               #               + geom_polygon(aes_string(x="X", y="Y", fill="Cluster", colour="Cluster", order="Cluster"),
               #                              data=ellipse95, size=0.5, linetype=2, colour="black", alpha=.3)
               + geom_point(aes_string(x="X", y="Y", fill="Cluster", order="Cluster"),
@@ -138,7 +138,7 @@ plot_DPMsn <- function(z, c, i="", alpha="?", U_SS,
         p <- (ggplot(z2plot)
 
               + geom_point(aes_string(x="D1", y="D2", colour="Cluster", order="Cluster"),
-                           data=z2plot)
+                           data=z2plot, size=2/(0.3*log(n)), alpha=0.7)
               + ggtitle(paste(n, " obs.",
                               "\niteration ", i, " : ",
                               length(fullCl)," clusters",
@@ -173,7 +173,8 @@ plot_DPMsn <- function(z, c, i="", alpha="?", U_SS,
             simuDens$Type <- "DensContour"
 
             p <- (p
-                  + geom_density2d(data=simuDens, aes_string(x="D1", y="D2", colour="Cluster", linetype="Type"))
+                  + geom_density2d(data=simuDens, aes_string(x="D1", y="D2", fill="Cluster",
+                                                             colour="Cluster", linetype="Type"))
                   + scale_linetype_manual(values=c(1),
                                           labels=c("simulations derived\n from sampled parameters"),
                                           name="Density contour")
@@ -193,7 +194,6 @@ plot_DPMsn <- function(z, c, i="", alpha="?", U_SS,
                                    breaks=c("observed mean", "sampled mean", "xi param"),
                                    labels=c("observed mean", "sampled mean", "xi param"),
                                    name="Center")
-              + guides(shape=guide_legend(override.aes = list(fill="grey45")))
         )
     }
 
