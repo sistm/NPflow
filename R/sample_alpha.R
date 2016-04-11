@@ -54,6 +54,8 @@
 #'  prioralpha <- data.frame("alpha"=rgamma(n=5000, a,1/b),
 #'                          "distribution" =factor(rep("prior",5000),
 #'                          levels=c("prior", "posterior")))
+#'
+#'  library(ggplot2)
 #'  p <- (ggplot(prioralpha, aes(x=alpha))
 #'        + geom_histogram(aes(y=..density..),
 #'                         colour="black", fill="white")
