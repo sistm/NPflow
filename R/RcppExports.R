@@ -144,7 +144,7 @@ mmsNiWpdfC <- function(xi, psi, Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_df0, Log
 #'microbenchmark(mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE),
 #'               mvnpdfC(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE),
 #'               mmvnpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1)), Log=FALSE),
-#'               times=10000L)
+#'               times=1000L)
 #'microbenchmark(mvnpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1), mean=c(0, 0),
 #'                      varcovM=diag(2), Log=FALSE),
 #'               mvnpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1), mean=c(0, 0),
@@ -152,14 +152,14 @@ mmsNiWpdfC <- function(xi, psi, Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_df0, Log
 #'               mmvnpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1),
 #'                        mean=matrix(c(0, 0), nrow=2, ncol=1),
 #'                        varcovM=list(diag(2)), Log=FALSE),
-#'               times=10000L)
+#'               times=1000L)
 #'microbenchmark(mvnpdf(x=matrix(c(rep(1.96,2),rep(0,2)), nrow=2, ncol=2),
 #'                      mean=list(c(0,0),c(-1,-1), c(1.5,1.5)),
 #'                      varcovM=list(diag(2),10*diag(2), 20*diag(2)), Log=FALSE),
 #'               mmvnpdfC(matrix(c(rep(1.96,2),rep(0,2)), nrow=2, ncol=2),
 #'                      mean=matrix(c(0,0,-1,-1, 1.5,1.5), nrow=2, ncol=3),
 #'                      varcovM=list(diag(2),10*diag(2), 20*diag(2)), Log=FALSE),
-#'               times=10000L)
+#'               times=1000L)
 #'
 mmvnpdfC <- function(x, mean, varcovM, Log = TRUE) {
     .Call('NPflow_mmvnpdfC', PACKAGE = 'NPflow', x, mean, varcovM, Log)
@@ -192,7 +192,7 @@ mmvnpdfC <- function(x, mean, varcovM, Log = TRUE) {
 #'                       sigma=diag(2), Log=FALSE),
 #'               mmvsnpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1), xi=matrix(c(0, 0)),
 #'                         psi=matrix(c(1, 1),ncol=1), sigma=list(diag(2)), Log=FALSE),
-#'               times=10000L
+#'               times=1000L
 #'              )
 #'microbenchmark(mvsnpdf(x=matrix(c(rep(1.96,2),rep(0,2)), nrow=2, ncol=2),
 #'                      xi=list(c(0,0),c(-1,-1), c(1.5,1.5)),
@@ -202,8 +202,7 @@ mmvnpdfC <- function(x, mean, varcovM, Log = TRUE) {
 #'                      xi=matrix(c(0,0,-1,-1, 1.5,1.5), nrow=2, ncol=3),
 #'                      psi=matrix(c(0.1,0.1,-0.1,-1, 0.5,-1.5), nrow=2, ncol=3),
 #'                      sigma=list(diag(2),10*diag(2), 20*diag(2)), Log=FALSE),
-#'               times=10000L)
-#'
+#'               times=1000L)
 mmvsnpdfC <- function(x, xi, psi, sigma, Log = TRUE) {
     .Call('NPflow_mmvsnpdfC', PACKAGE = 'NPflow', x, xi, psi, sigma, Log)
 }
