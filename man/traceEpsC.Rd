@@ -6,6 +6,14 @@
 \usage{
 traceEpsC(eps, sigma)
 }
+\arguments{
+\item{eps}{a numeric matrix where each column contains the centered and unskewed observations}
+
+\item{sigma}{a numeric covariance matrix}
+}
+\value{
+the computed trace
+}
 \description{
 C++ implementation of residual trace computation step used when sampling the scale
 }

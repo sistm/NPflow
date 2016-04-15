@@ -383,26 +383,16 @@ NuMatParC <- function(c, d) {
     .Call('NPflow_NuMatParC', PACKAGE = 'NPflow', c, d)
 }
 
-#'C++ implementation of the multinomial sampling from a matrix
-#'of column vectors each containing the sampling probabilities
-#'for their respective draw
-#'
-#'@details Slower than sampleClassC
-#'
-#'@param probMat
-#'@keywords internal
-#'
-#'@export
-#'
-sampleClassC_bis <- function(probMat) {
-    .Call('NPflow_sampleClassC_bis', PACKAGE = 'NPflow', probMat)
-}
-
 #' C++ implementation of the multinomial sampling from a matrix 
-#' of column vectors each containing the sampling probabilities 
+#' of column vectors, each containing the sampling probabilities 
 #' for their respective draw
 #' 
-#'@param probMat
+#'@param probMat a numeric matrix of dim \code{k x n} of containing column vectors of sampling 
+#'probabilities for each class \code{k}.
+#'
+#'@return a vector of integer of length \code{n} containing the multinomial draws for each 
+#'observation, i.e. the class allocation.
+#'
 #'@keywords internal
 #'
 #'@export
@@ -457,8 +447,12 @@ similarityMatC <- function(cc) {
 }
 
 #' C++ implementation of residual trace computation step used when sampling the scale
-#' 
-#'@param eps
+#'
+#'@param eps a numeric matrix where each column contains the centered and unskewed observations
+#'@param sigma a numeric covariance matrix
+#'
+#'@return the computed trace
+#'
 #'@keywords internal
 #'
 #'@export

@@ -16,13 +16,16 @@ MAP_skewT_mmEM_weighted(xi_list, psi_list, S_list, obsweight_list, hyperG0, K,
   maxit = 100, tol = 0.1, doPlot = TRUE)
 }
 \arguments{
-\item{xi_list}{}
+\item{xi_list}{a list of length \code{n}, each element is a vector of size \code{d} 
+containing the argument \code{xi} of the corresponding allocated cluster.}
 
-\item{psi_list}{}
+\item{psi_list}{a list of length \code{n}, each element is a vector of size \code{d} 
+containing the argument \code{psi} of the corresponding allocated cluster.}
 
-\item{S_list}{}
+\item{S_list}{a list of length \code{n}, each element is a matrix of size \code{d x d} 
+containing the argument \code{S} of the corresponding allocated cluster.}
 
-\item{hyperG0}{}
+\item{hyperG0}{prior mixing distribution.}
 
 \item{K}{integer giving the number of mixture components.}
 
@@ -31,7 +34,8 @@ MAP_skewT_mmEM_weighted(xi_list, psi_list, S_list, obsweight_list, hyperG0, K,
 \item{tol}{real number giving the tolerance for the stopping of the EM algorithm.
 Default is \code{0.1}.}
 
-\item{obsweight_list}{}
+\item{obsweight_list}{a list of length \code{n} where each element is a vector of weights for
+each sampled cluster at each MCMC iterations.}
 
 \item{doPlot}{a logical flag indicating wether the algorithm progresison should be plotted.
 Default is \code{TRUE}.}

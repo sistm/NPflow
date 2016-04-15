@@ -12,7 +12,7 @@
 #'Either "F-measure" or "Binder" (see Details). Default is "F-measure".
 #'
 #'@param gs optionnal vector of length \code{n} containing the gold standard
-#'partition of the \code{n} observations to compare to the point estimate
+#'partition of the \code{n} observations to compare to the point estimate.
 #'
 #'@param ... further arguments passed to or from other methods
 #'
@@ -602,15 +602,16 @@ MAP_skewT_mmEM_vague <- function(xi_list, psi_list, S_list,
 #'Maximum A Posteriori (MAP) estimation of mixture of
 #'Normal inverse Wishart distributed observations with an EM algorithm
 #'
-#'@param xi_list
+#'@param xi_list a list of length \code{n}, each element is a vector of size \code{d} 
+#'containing the argument \code{xi} of the corresponding allocated cluster.
 #'
-#'@param psi_list
+#'@param psi_list a list of length \code{n}, each element is a vector of size \code{d} 
+#'containing the argument \code{psi} of the corresponding allocated cluster.
 #'
-#'@param S_list
+#'@param S_list a list of length \code{n}, each element is a matrix of size \code{d x d} 
+#'containing the argument \code{S} of the corresponding allocated cluster.
 #'
-#'@param obsweight_list
-#'
-#'@param hyperG0
+#'@param hyperG0 prior mixing distribution.
 #'
 #'@param K integer giving the number of mixture components.
 #'
@@ -625,7 +626,7 @@ MAP_skewT_mmEM_vague <- function(xi_list, psi_list, S_list,
 #'@rdname MAP_skewT_mmEM
 #'
 #'@export
-MAP_skewT_mmEM<- function(xi_list, psi_list, S_list, hyperG0,init=NULL, K, maxit=100, tol=1E-1, plot=TRUE, verbose=TRUE){
+MAP_skewT_mmEM<- function(xi_list, psi_list, S_list, hyperG0, init=NULL, K, maxit=100, tol=1E-1, plot=TRUE, verbose=TRUE){
 
 
 
@@ -810,6 +811,9 @@ MAP_skewT_mmEM<- function(xi_list, psi_list, S_list, hyperG0,init=NULL, K, maxit
 
 
 #'@rdname MAP_skewT_mmEM
+#'
+#'@param obsweight_list a list of length \code{n} where each element is a vector of weights for
+#'each sampled cluster at each MCMC iterations.
 #'
 #'@export
 MAP_skewT_mmEM_weighted<- function(xi_list, psi_list, S_list, obsweight_list,

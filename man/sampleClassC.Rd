@@ -3,14 +3,22 @@
 \name{sampleClassC}
 \alias{sampleClassC}
 \title{C++ implementation of the multinomial sampling from a matrix 
-of column vectors each containing the sampling probabilities 
+of column vectors, each containing the sampling probabilities 
 for their respective draw}
 \usage{
 sampleClassC(probMat)
 }
+\arguments{
+\item{probMat}{a numeric matrix of dim \code{k x n} of containing column vectors of sampling 
+probabilities for each class \code{k}.}
+}
+\value{
+a vector of integer of length \code{n} containing the multinomial draws for each 
+observation, i.e. the class allocation.
+}
 \description{
 C++ implementation of the multinomial sampling from a matrix 
-of column vectors each containing the sampling probabilities 
+of column vectors, each containing the sampling probabilities 
 for their respective draw
 }
 \keyword{internal}

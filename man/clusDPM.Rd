@@ -7,11 +7,15 @@
 clusDPM(data, distrib = c("gaussian", "skewnorm", "skewt"), ncores = 1)
 }
 \arguments{
-\item{data}{}
+\item{data}{a matrix data of dimension \code{n x p}.}
 
-\item{distrib}{}
+\item{distrib}{the distribution used for the clustering. Current possibilities are
+\code{"gaussian"}, \code{"skewnorm"} and \code{"skewt"}.}
 
-\item{ncores}{}
+\item{ncores}{number of cores to use.}
+}
+\value{
+an object of class \code{NPflow}. TODO
 }
 \description{
 Wrapping function for mcmc sampling and partition estimation.

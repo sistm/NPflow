@@ -9,9 +9,27 @@ plot_DPMsn(z, c, i = "", alpha = "?", U_SS, dims2plot = 1:nrow(z),
   gg.add = list(theme()), nbsim_dens = 1000)
 }
 \arguments{
-\item{gg.add}{A list of instructions to add to the ggplot2 instruction.  See \code{\link[ggplot2]{+.gg}}.
-Default is \code{list(theme())}, which adds nothing.
-to the plot.}
+\item{z}{data matrix \code{d x n} with \code{d} dimensions in rows
+and \code{n} observations in columns.}
+
+\item{c}{allocation vector of length \code{n} indicating which observation belongs to which 
+clusters.}
+
+\item{i}{current MCMC iteration number.}
+
+\item{U_SS}{a list containing \code{"xi"}, \code{"psi"}, \code{"S"}, and \code{"df"}.}
+
+\item{dims2plot}{index vector, subset of \code{1:d} indicating which dimensions should be drawn.
+Default is all of them.}
+
+\item{ellipses}{a logical flag indicating whethe ellipses should be drawn around clusters. Default
+is \code{TRUE} if only 2 dimensions are plotted, \code{FALSE} otherwise.}
+
+\item{gg.add}{A list of instructions to add to the ggplot2 instruction. See \code{\link[ggplot2]{+.gg}}.
+Default is \code{list(theme())}, which adds nothing to the plot.}
+
+\item{nbsim_dens}{number of simulated points used for computing clusters density contours in 2D 
+plots. Default is \code{1000} points.}
 }
 \description{
 Plot of a Dirichlet process mixture of skew normal distribution partition
