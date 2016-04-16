@@ -3,6 +3,3 @@
   library.dynam.unload("NPflow", libpath)
 }
 
-.onLoad <- function (libpath) {
-  library.dynam("NPflow", libpath)
-}
