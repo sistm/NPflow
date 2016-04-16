@@ -13,7 +13,7 @@ const double log2pi2 = log(2.0 * M_PI)/2;
 //'distributions for which the density probability has to be ealuated
 //'@param varcovM list of length K of variance-covariance matrices,
 //'each of dimensions p x p
-//'@param logical flag for returning the log of the probability density
+//'@param Log logical flag for returning the log of the probability density
 //'function. Defaults is \code{TRUE}
 //'@return matrix of densities of dimension K x n
 //'@export

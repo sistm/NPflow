@@ -88,7 +88,7 @@ Fmeasure_costC <- function(c) {
 #'@param varcovM list of length K of variance-covariance matrices,
 #'each of dimensions p x p
 #'@param U_Nu0 vector of length K of degree of freedom parameters
-#'@param logical flag for returning the log of the probability density
+#'@param Log logical flag for returning the log of the probability density
 #'function. Defaults is \code{TRUE}.
 #'@return matrix of densities of dimension K x n
 #'@export
@@ -99,7 +99,7 @@ mmNiWpdfC <- function(Mu, Sigma, U_Mu0, U_Kappa0, U_Nu0, U_Sigma0, Log = TRUE) {
 }
 
 #' C++ implementation of multivariate log gamma function
-#' 
+#'
 #'@param x strictly positive real number
 #'@param p integer
 #'
@@ -111,16 +111,16 @@ lgamma_mvC <- function(x, p) {
 
 #' C++ implementation of multivariate structured Normal inverse Wishart probability density function for multiple inputs
 #'
-#'@param x data matrix of dimension p x n, p being the dimension of the 
-#'data and n the number of data points 
-#'@param xi mean vectors matrix of dimension p x K, K being the number of 
+#'@param x data matrix of dimension p x n, p being the dimension of the
+#'data and n the number of data points
+#'@param xi mean vectors matrix of dimension p x K, K being the number of
 #'distributions for which the density probability has to be ealuated
-#'@param psi skew parameter vectors matrix of dimension p x K, K being the number of 
+#'@param psi skew parameter vectors matrix of dimension p x K, K being the number of
 #'distributions for which the density probability has to be ealuated
-#'@param varcovM list of length K of variance-covariance matrices, 
+#'@param Sigma list of length K of variance-covariance matrices,
 #'each of dimensions p x p
 #'@param df vector of length K of degree of freedom parameters
-#'@param logical flag for returning the log of the probability density 
+#'@param Log logical flag for returning the log of the probability density
 #'function. Defaults is \code{TRUE}.
 #'@return matrix of densities of dimension K x n
 #'@export
@@ -138,7 +138,7 @@ mmsNiWpdfC <- function(xi, psi, Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_df0, Log
 #'distributions for which the density probability has to be ealuated
 #'@param varcovM list of length K of variance-covariance matrices,
 #'each of dimensions p x p
-#'@param logical flag for returning the log of the probability density
+#'@param Log logical flag for returning the log of the probability density
 #'function. Defaults is \code{TRUE}
 #'@return matrix of densities of dimension K x n
 #'@export
@@ -177,9 +177,9 @@ mmvnpdfC <- function(x, mean, varcovM, Log = TRUE) {
 #'distributions for which the density probability has to be ealuated
 #'@param psi skew parameter vectors matrix of dimension p x K, K being the number of
 #'distributions for which the density probability has to be ealuated
-#'@param varcovM list of length K of variance-covariance matrices,
+#'@param sigma list of length K of variance-covariance matrices,
 #'each of dimensions p x p
-#'@param logical flag for returning the log of the probability density
+#'@param Log logical flag for returning the log of the probability density
 #'function. Defaults is \code{TRUE}.
 #'@return matrix of densities of dimension K x n
 #'@export
@@ -220,10 +220,10 @@ mmvsnpdfC <- function(x, xi, psi, sigma, Log = TRUE) {
 #'distributions for which the density probability has to be ealuated
 #'@param psi skew parameter vectors matrix of dimension p x K, K being the number of
 #'distributions for which the density probability has to be ealuated
-#'@param varcovM list of length K of variance-covariance matrices,
+#'@param sigma list of length K of variance-covariance matrices,
 #'each of dimensions p x p
 #'@param df vector of length K of degree of freedom parameters
-#'@param logical flag for returning the log of the probability density
+#'@param Log logical flag for returning the log of the probability density
 #'function. Defaults is \code{TRUE}.
 #'@return matrix of densities of dimension K x n
 #'@export
@@ -270,7 +270,7 @@ mmvsnpdfC <- function(x, xi, psi, sigma, Log = TRUE) {
 #'               mmvstpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1),
 #'                         xi=matrix(c(0, 0)), psi=matrix(c(1, 1),ncol=1),
 #'                         sigma=list(diag(2)), df=10),
-#'               times=10000L)
+#'               times=1000L)
 #'
 mmvstpdfC <- function(x, xi, psi, sigma, df, Log = TRUE) {
     .Call('NPflow_mmvstpdfC', PACKAGE = 'NPflow', x, xi, psi, sigma, df, Log)
@@ -285,7 +285,7 @@ mmvstpdfC <- function(x, xi, psi, sigma, df, Log = TRUE) {
 #'@param varcovM list of length K of variance-covariance matrices,
 #'each of dimensions p x p
 #'@param df vector of length K of degree of freedom parameters
-#'@param logical flag for returning the log of the probability density
+#'@param Log logical flag for returning the log of the probability density
 #'function. Defaults is \code{TRUE}.
 #'@return matrix of densities of dimension K x n
 #'@export
@@ -322,7 +322,7 @@ mmvtpdfC <- function(x, mean, varcovM, df, Log = TRUE) {
 #'@param x data matrix
 #'@param mean mean vector
 #'@param varcovM variance covariance matrix
-#'@param logical flag for returning the log of the probability density
+#'@param Log logical flag for returning the log of the probability density
 #'function. Defaults is \code{TRUE}
 #'@return vector of densities
 #'
@@ -355,10 +355,12 @@ mvnpdfC <- function(x, mean, varcovM, Log = TRUE) {
 #'the storage of cluster parameters in \code{xi}, \code{psi}, and \code{varcovM}
 #'@param xi mean vectors matrix of dimension p x K, K being the number of
 #'clusters
-#'@param psi skew parameter vectors matrix of dimension p x K
-#'@param varcovM list of length K of variance-covariance matrices,
-#'each of dimensions p x p
-#'@param df vector of length K of degree of freedom parameters
+#'@param psi skew parameter vectors matrix of dimension \code{p x K}
+#'@param sigma list of length \code{K} of variance-covariance matrices,
+#'each of dimensions \code{p x p}.
+#'@param df vector of length \code{K} of degree of freedom parameters.
+#'@param loglik logical flag or returning the log-likelihood intead of the likelihood.
+#'Default is \code{TRUE}.
 #'@return a list:
 #'\itemize{
 #'\item{\code{"indiv"}:}{ vector of likelihood of length n;}

@@ -4,9 +4,12 @@
 \alias{mmNiWpdf}
 \title{multivariate Normal inverse Wishart probability density function for multiple inputs}
 \usage{
-mmNiWpdf(mu, Sigma, U_mu0, U_kappa0, U_nu0, U_lambda0, Log)
+mmNiWpdf(mu, Sigma, U_mu0, U_kappa0, U_nu0, U_lambda0, Log = TRUE)
 }
 \arguments{
+\item{Log}{logical flag for returning the log of the probability density
+function. Defaults is \code{TRUE}.}
+
 \item{x}{data matrix of dimension p x n, p being the dimension of the
 data and n the number of data points}
 
@@ -17,9 +20,6 @@ distributions for which the density probability has to be ealuated}
 each of dimensions p x p}
 
 \item{U_Nu0}{vector of length K of degree of freedom parameters}
-
-\item{logical}{flag for returning the log of the probability density
-function. Defaults is \code{TRUE}.}
 }
 \value{
 matrix of densities of dimension K x n

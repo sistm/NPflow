@@ -13,10 +13,12 @@ using namespace arma;
 //'the storage of cluster parameters in \code{xi}, \code{psi}, and \code{varcovM}
 //'@param xi mean vectors matrix of dimension p x K, K being the number of
 //'clusters
-//'@param psi skew parameter vectors matrix of dimension p x K
-//'@param varcovM list of length K of variance-covariance matrices,
-//'each of dimensions p x p
-//'@param df vector of length K of degree of freedom parameters
+//'@param psi skew parameter vectors matrix of dimension \code{p x K}
+//'@param sigma list of length \code{K} of variance-covariance matrices,
+//'each of dimensions \code{p x p}.
+//'@param df vector of length \code{K} of degree of freedom parameters.
+//'@param loglik logical flag or returning the log-likelihood intead of the likelihood.
+//'Default is \code{TRUE}.
 //'@return a list:
 //'\itemize{
 //'\item{\code{"indiv"}:}{ vector of likelihood of length n;}

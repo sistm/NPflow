@@ -7,22 +7,22 @@
 mmsNiWpdfC(xi, psi, Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_df0, Log = TRUE)
 }
 \arguments{
-\item{xi}{mean vectors matrix of dimension p x K, K being the number of 
+\item{xi}{mean vectors matrix of dimension p x K, K being the number of
 distributions for which the density probability has to be ealuated}
 
-\item{psi}{skew parameter vectors matrix of dimension p x K, K being the number of 
+\item{psi}{skew parameter vectors matrix of dimension p x K, K being the number of
 distributions for which the density probability has to be ealuated}
 
-\item{x}{data matrix of dimension p x n, p being the dimension of the 
-data and n the number of data points}
-
-\item{varcovM}{list of length K of variance-covariance matrices, 
+\item{Sigma}{list of length K of variance-covariance matrices,
 each of dimensions p x p}
 
-\item{df}{vector of length K of degree of freedom parameters}
-
-\item{logical}{flag for returning the log of the probability density 
+\item{Log}{logical flag for returning the log of the probability density
 function. Defaults is \code{TRUE}.}
+
+\item{x}{data matrix of dimension p x n, p being the dimension of the
+data and n the number of data points}
+
+\item{df}{vector of length K of degree of freedom parameters}
 }
 \value{
 matrix of densities of dimension K x n

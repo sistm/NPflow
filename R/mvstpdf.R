@@ -1,8 +1,8 @@
 #'multivariate skew-t  probability density function
 #'
 #'
-#'@param x p x n data matrix with n the number of observations and
-#'p the number of dimensions
+#'@param x \code{p x n} data matrix with \code{n} the number of observations and
+#'\code{p} the number of dimensions
 #'
 #'@param xi mean vector or list of mean vectors (either a vector,
 #'a matrix or a list)
@@ -16,7 +16,7 @@
 #'@param df a numeric vector or a list of the degrees of freedom
 #'(either a vector or a list)
 #'
-#'@param logical flag for returning the log of the probability density
+#'@param Log logical flag for returning the log of the probability density
 #'function. Defaults is \code{TRUE}.
 #'
 #'@seealso mvtpdf, mvsnpdf, mmvstpdfC, mvstlikC

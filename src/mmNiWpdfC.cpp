@@ -26,7 +26,7 @@ double lgamma_mv2C(double x,
 //'@param varcovM list of length K of variance-covariance matrices,
 //'each of dimensions p x p
 //'@param U_Nu0 vector of length K of degree of freedom parameters
-//'@param logical flag for returning the log of the probability density
+//'@param Log logical flag for returning the log of the probability density
 //'function. Defaults is \code{TRUE}.
 //'@return matrix of densities of dimension K x n
 //'@export

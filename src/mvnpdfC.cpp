@@ -14,7 +14,7 @@ const double log2pi2 = log(2.0 * M_PI)/2;
 //'@param x data matrix
 //'@param mean mean vector
 //'@param varcovM variance covariance matrix
-//'@param logical flag for returning the log of the probability density
+//'@param Log logical flag for returning the log of the probability density
 //'function. Defaults is \code{TRUE}
 //'@return vector of densities
 //'

@@ -12,7 +12,7 @@
   gg.add = list(theme_bw()), ...)
 }
 \arguments{
-\item{x}{a \code{summaryDPMMclust} object}
+\item{x}{a \code{summaryDPMMclust} object.}
 
 \item{...}{further arguments passed to or from other methods}
 

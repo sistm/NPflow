@@ -8,11 +8,15 @@ plot_ConvDPM(MCMCsample, from = 1,
   to = length(MCMCsample$logposterior_list), shift = 0, thin = 1, ...)
 }
 \arguments{
-\item{MCMCsample}{}
+\item{MCMCsample}{a \code{DPMMclust} or \code{summaryDPMMclust} object.}
 
-\item{from}{Default is \code{1}.}
+\item{from}{the MCMC iteration from which the plot should start.
+Default is \code{1}.}
 
-\item{to}{Default is \code{1}.}
+\item{to}{the MCMC iteration up until which the plot should stop.
+Default is \code{1}.}
+
+\item{shift}{a number of initial iterations not to be displayed. Default is \code{0}.}
 
 \item{thin}{integer giving the spacing at which MCMC iterations are kept.
 Default is \code{1}, i.e. no thining.}

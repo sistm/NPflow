@@ -18,12 +18,15 @@ the storage of cluster parameters in \code{xi}, \code{psi}, and \code{varcovM}}
 \item{xi}{mean vectors matrix of dimension p x K, K being the number of
 clusters}
 
-\item{psi}{skew parameter vectors matrix of dimension p x K}
+\item{psi}{skew parameter vectors matrix of dimension \code{p x K}}
 
-\item{df}{vector of length K of degree of freedom parameters}
+\item{sigma}{list of length \code{K} of variance-covariance matrices,
+each of dimensions \code{p x p}.}
 
-\item{varcovM}{list of length K of variance-covariance matrices,
-each of dimensions p x p}
+\item{df}{vector of length \code{K} of degree of freedom parameters.}
+
+\item{loglik}{logical flag or returning the log-likelihood intead of the likelihood.
+Default is \code{TRUE}.}
 }
 \value{
 a list:

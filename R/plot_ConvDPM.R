@@ -1,12 +1,14 @@
 #'Convergence diagnostic plots
 #'
-#'@param MCMCsample
+#'@param MCMCsample a \code{DPMMclust} or \code{summaryDPMMclust} object.
 #'
-#'@param from Default is \code{1}.
+#'@param from the MCMC iteration from which the plot should start.
+#'Default is \code{1}.
 #'
-#'@param to Default is \code{1}.
+#'@param to the MCMC iteration up until which the plot should stop.
+#'Default is \code{1}.
 #'
-#'@PARMA shift
+#'@param shift a number of initial iterations not to be displayed. Default is \code{0}.
 #'
 #'@param thin integer giving the spacing at which MCMC iterations are kept.
 #'Default is \code{1}, i.e. no thining.

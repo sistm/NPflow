@@ -16,7 +16,7 @@ distributions for which the density probability has to be ealuated}
 \item{varcovM}{list of length K of variance-covariance matrices,
 each of dimensions p x p}
 
-\item{logical}{flag for returning the log of the probability density
+\item{Log}{logical flag for returning the log of the probability density
 function. Defaults is \code{TRUE}}
 }
 \value{

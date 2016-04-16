@@ -13,7 +13,7 @@ mvnpdfC(x, mean, varcovM, Log = TRUE)
 
 \item{varcovM}{variance covariance matrix}
 
-\item{logical}{flag for returning the log of the probability density
+\item{Log}{logical flag for returning the log of the probability density
 function. Defaults is \code{TRUE}}
 }
 \value{

@@ -18,7 +18,7 @@ each of dimensions p x p}
 
 \item{df}{vector of length K of degree of freedom parameters}
 
-\item{logical}{flag for returning the log of the probability density
+\item{Log}{logical flag for returning the log of the probability density
 function. Defaults is \code{TRUE}.}
 }
 \value{

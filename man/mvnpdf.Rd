@@ -7,16 +7,16 @@
 mvnpdf(x, mean, varcovM, Log = TRUE)
 }
 \arguments{
-\item{x}{p x n data matrix with n the number of observations and 
+\item{x}{p x n data matrix with n the number of observations and
 p the number of dimensions}
 
-\item{mean}{mean vector or list of mean vectors (either a vector, 
+\item{mean}{mean vector or list of mean vectors (either a vector,
 a matrix or a list)}
 
-\item{varcovM}{variance-covariance matrix or list of variance-covariance 
+\item{varcovM}{variance-covariance matrix or list of variance-covariance
 matrices (either a matrix or a list)}
 
-\item{logical}{flag for returning the log of the probability density 
+\item{Log}{logical flag for returning the log of the probability density
 function. Defaults is \code{TRUE}.}
 }
 \description{
@@ -27,7 +27,7 @@ multivariate-Normal probability density function
 mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE)
 dnorm(1.96)
 
-mvnpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1), 
+mvnpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1),
       mean=c(0, 0), varcovM=diag(2), Log=FALSE
 )
 

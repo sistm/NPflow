@@ -1,8 +1,8 @@
 #'multivariate Student's t-distribution probability density function
 #'
 #'
-#'@param x p x n data matrix with n the number of observations and
-#'p the number of dimensions
+#'@param x \code{p x n} data matrix with \code{n} the number of observations and
+#'\code{p} the number of dimensions
 #'
 #'@param mean mean vector or list of mean vectors (either a vector,
 #'a matrix or a list)

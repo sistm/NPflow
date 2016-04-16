@@ -12,7 +12,7 @@ using namespace arma;
 //'distributions for which the density probability has to be ealuated
 //'@param psi skew parameter vectors matrix of dimension p x K, K being the number of
 //'distributions for which the density probability has to be ealuated
-//'@param varcovM list of length K of variance-covariance matrices,
+//'@param sigma list of length K of variance-covariance matrices,
 //'each of dimensions p x p
 //'@param df vector of length K of degree of freedom parameters
 //'@param Log logical flag for returning the log of the probability density

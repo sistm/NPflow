@@ -16,13 +16,13 @@ distributions for which the density probability has to be ealuated}
 \item{psi}{skew parameter vectors matrix of dimension p x K, K being the number of
 distributions for which the density probability has to be ealuated}
 
+\item{sigma}{list of length K of variance-covariance matrices,
+each of dimensions p x p}
+
 \item{df}{vector of length K of degree of freedom parameters}
 
 \item{Log}{logical flag for returning the log of the probability density
 function. Defaults is \code{TRUE}.}
-
-\item{varcovM}{list of length K of variance-covariance matrices,
-each of dimensions p x p}
 }
 \value{
 matrix of densities of dimension K x n

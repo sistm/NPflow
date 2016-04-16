@@ -107,7 +107,7 @@ summary.DPMMclust <- function(object, burnin=0, thin=1, gs=NULL, lossFn="F-measu
 #' Methods for a summary of a 'DPMMclust' object
 #'@rdname methods.summaryDPMMclust
 #'@aliases summaryDPMMclust print.summaryDPMMclust plot.summaryDPMMclust
-#'@param x a \code{summaryDPMMclust} object
+#'@param x a \code{summaryDPMMclust} object.
 #'@param hm logical flag to plot the heatmap of the similarity matrix.
 #'Default is \code{FALSE}.
 #'@param nbsim_densities the number of simulated observations to be used

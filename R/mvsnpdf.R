@@ -13,7 +13,7 @@
 #'@param psi skew parameter vector or list of skew parameter vectors
 #'(either a vector, a matrix or a list)
 #'
-#'@param logical flag for returning the log of the probability density
+#'@param Log logical flag for returning the log of the probability density
 #'function. Defaults is \code{TRUE}.
 #'
 #'@seealso mvnpdf, mmvsnpdfC
