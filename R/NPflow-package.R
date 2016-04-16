@@ -27,6 +27,4 @@
 #'@useDynLib NPflow
 #'@importFrom Rcpp sourceCpp
 #'
-.onUnload <- function (libpath) {
-  library.dynam.unload("NPflow", libpath)
-}
+NULL
