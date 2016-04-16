@@ -7,7 +7,6 @@
 #'@param ref vector of a reference partition
 #'
 #'@export
-#'@useDynLib NPflow FmeasureC
 #'
 #'@examples
 #'pred <- c(1,1,2,3,2,3)
@@ -399,14 +398,14 @@ mvstlikC <- function(x, c, clustval, xi, psi, sigma, df, loglik = TRUE) {
     .Call('NPflow_mvstlikC', PACKAGE = 'NPflow', x, c, clustval, xi, psi, sigma, df, loglik)
 }
 
-#' C++ implementation of the multinomial sampling from a matrix 
-#' of column vectors, each containing the sampling probabilities 
+#' C++ implementation of the multinomial sampling from a matrix
+#' of column vectors, each containing the sampling probabilities
 #' for their respective draw
-#' 
-#'@param probMat a numeric matrix of dim \code{k x n} of containing column vectors of sampling 
+#'
+#'@param probMat a numeric matrix of dim \code{k x n} of containing column vectors of sampling
 #'probabilities for each class \code{k}.
 #'
-#'@return a vector of integer of length \code{n} containing the multinomial draws for each 
+#'@return a vector of integer of length \code{n} containing the multinomial draws for each
 #'observation, i.e. the class allocation.
 #'
 #'@keywords internal

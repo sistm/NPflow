@@ -12,7 +12,6 @@ using namespace arma;
 //'@param ref vector of a reference partition
 //'
 //'@export
-//'@useDynLib NPflow FmeasureC
 //'
 //'@examples
 //'pred <- c(1,1,2,3,2,3)
