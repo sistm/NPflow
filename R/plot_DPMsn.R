@@ -3,7 +3,7 @@
 #'@param z data matrix \code{d x n} with \code{d} dimensions in rows
 #'and \code{n} observations in columns.
 #'
-#'@param c allocation vector of length \code{n} indicating which observation belongs to which 
+#'@param c allocation vector of length \code{n} indicating which observation belongs to which
 #'clusters.
 #'
 #'@param U_SS a list containing \code{"xi"}, \code{"psi"}, \code{"S"}, and \code{"df"}.
@@ -20,7 +20,7 @@
 #'A list of instructions to add to the ggplot2 instruction. See \code{\link[ggplot2]{+.gg}}.
 #'Default is \code{list(theme())}, which adds nothing to the plot.
 #'
-#'@param nbsim_dens number of simulated points used for computing clusters density contours in 2D 
+#'@param nbsim_dens number of simulated points used for computing clusters density contours in 2D
 #'plots. Default is \code{1000} points.
 #'
 #'@author Boris Hejblum
@@ -29,6 +29,8 @@
 #'
 #'@import reshape2
 #'
+#'@importFrom stats dnorm pnorm rnorm
+#'
 #'@export
 
 plot_DPMsn <- function(z, c, i="", alpha="?", U_SS,
@@ -36,7 +38,7 @@ plot_DPMsn <- function(z, c, i="", alpha="?", U_SS,
                        ellipses=ifelse(length(dims2plot)<3,TRUE,FALSE),
                        gg.add=list(theme()), nbsim_dens=1000){
 
-    mean_sn01 <- (dnorm(0)-dnorm(Inf))/(pnorm(Inf)-pnorm(0))
+    mean_sn01 <- (stats::dnorm(0)-stats::dnorm(Inf))/(stats::pnorm(Inf)-stats::pnorm(0))
 
     z <- z[dims2plot,]
 
@@ -183,7 +185,7 @@ plot_DPMsn <- function(z, c, i="", alpha="?", U_SS,
                 glabel <- levels(zClusters)[g]
                 #gind <- as.numeric(glabel)
                 ltnz <- rtruncnorm(nbsim_dens, a=0)
-                eps <- matrix(rnorm(2*nbsim_dens), ncol=2)%*%chol(U_Sigma2plot[[g]])
+                eps <- matrix(stats::rnorm(2*nbsim_dens), ncol=2)%*%chol(U_Sigma2plot[[g]])
                 simuDenstemp <- data.frame("D1"=U_xi2plot[1,g]+U_psi2plot[1,g]*ltnz+eps[,1],
                                            "D2"=U_xi2plot[2,g]+U_psi2plot[2,g]*ltnz+eps[,2],
                                            "Cluster"=rep(glabel, nbsim_dens))

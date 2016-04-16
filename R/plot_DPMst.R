@@ -3,7 +3,7 @@
 #'@param z data matrix \code{d x n} with \code{d} dimensions in rows
 #'and \code{n} observations in columns.
 #'
-#'@param c allocation vector of length \code{n} indicating which observation belongs to which 
+#'@param c allocation vector of length \code{n} indicating which observation belongs to which
 #'clusters.
 #'
 #'@param U_SS a list containing \code{"xi"}, \code{"psi"}, \code{"S"}, and \code{"df"}.
@@ -20,7 +20,7 @@
 #'A list of instructions to add to the ggplot2 instruction. See \code{\link[ggplot2]{+.gg}}.
 #'Default is \code{list(theme())}, which adds nothing to the plot.
 #'
-#'@param nbsim_dens number of simulated points used for computing clusters density contours in 2D 
+#'@param nbsim_dens number of simulated points used for computing clusters density contours in 2D
 #'plots. Default is \code{1000} points.
 #'
 #'@param nice logical flag changing the plot looks. Default is \code{FALSE}.
@@ -30,6 +30,7 @@
 #'@import ggplot2
 #'@import reshape2
 #'@importFrom truncnorm rtruncnorm
+#'@importFrom stats dnorm pnorm rgamma rnorm
 #'
 #' @export
 
@@ -38,7 +39,7 @@ plot_DPMst <- function(z, c, i="", alpha="?", U_SS,
                        ellipses=ifelse(length(dims2plot)<3,TRUE,FALSE),
                        gg.add=list(theme()), nbsim_dens=1000, nice=FALSE){
 
-    mean_sn01 <- (dnorm(0)-dnorm(Inf))/(pnorm(Inf)-pnorm(0))
+    mean_sn01 <- (stats::dnorm(0)-stats::dnorm(Inf))/(stats::pnorm(Inf)-stats::pnorm(0))
 
     z <- z[dims2plot,]
 
@@ -175,9 +176,9 @@ plot_DPMst <- function(z, c, i="", alpha="?", U_SS,
           for(g in 1:length(fullCl)){
             glabel <- levels(zClusters)[g]
             #gind <- as.numeric(glabel)
-            w <- rgamma(n=nbsim_dens, shape=U_nu2plot[[g]]/2, rate=U_nu2plot[[g]]/2)
-            ltnz <- rtruncnorm(n=nbsim_dens, a=0, sd=1/sqrt(w))
-            eps <- t(sapply(w, function(a){matrix(rnorm(2), ncol=2)%*%chol(U_Sigma2plot[[g]]/a)}))
+            w <- stats::rgamma(n=nbsim_dens, shape=U_nu2plot[[g]]/2, rate=U_nu2plot[[g]]/2)
+            ltnz <- truncnorm::rtruncnorm(n=nbsim_dens, a=0, sd=1/sqrt(w))
+            eps <- t(sapply(w, function(a){matrix(stats::rnorm(2), ncol=2)%*%chol(U_Sigma2plot[[g]]/a)}))
             #eps <- matrix(NA, nrow=nbsim_dens, ncol=2)
             #for(i in 1:nbsim_dens){
             #    eps[i,] <- matrix(rnorm(2), ncol=2)%*%chol(U_Sigma2plot[[g]]/w[i])

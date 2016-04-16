@@ -16,13 +16,13 @@ MAP_skewT_mmEM_weighted(xi_list, psi_list, S_list, obsweight_list, hyperG0, K,
   maxit = 100, tol = 0.1, doPlot = TRUE)
 }
 \arguments{
-\item{xi_list}{a list of length \code{n}, each element is a vector of size \code{d} 
+\item{xi_list}{a list of length \code{n}, each element is a vector of size \code{d}
 containing the argument \code{xi} of the corresponding allocated cluster.}
 
-\item{psi_list}{a list of length \code{n}, each element is a vector of size \code{d} 
+\item{psi_list}{a list of length \code{n}, each element is a vector of size \code{d}
 containing the argument \code{psi} of the corresponding allocated cluster.}
 
-\item{S_list}{a list of length \code{n}, each element is a matrix of size \code{d x d} 
+\item{S_list}{a list of length \code{n}, each element is a matrix of size \code{d x d}
 containing the argument \code{S} of the corresponding allocated cluster.}
 
 \item{hyperG0}{prior mixing distribution.}

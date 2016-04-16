@@ -8,6 +8,8 @@
 #'
 #'@param verbose logical flag indicating whether info is written in the console.
 #'
+#'@importFrom stats runif rgamma rmultinom rnorm
+#'
 #'@export rCRP
 #'
 #'@examples

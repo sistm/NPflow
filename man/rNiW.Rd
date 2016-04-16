@@ -2,7 +2,7 @@
 % Please edit documentation in R/rNiW.R
 \name{rNiW}
 \alias{rNiW}
-\title{Sample from a Normal inverse-Wishart distribution 
+\title{Sample from a Normal inverse-Wishart distribution
 whose parameter are given by the structure hyper}
 \usage{
 rNiW(hyper, diagVar)

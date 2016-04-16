@@ -24,6 +24,8 @@
 #'@references MD Escobar, M West, Bayesian Density Estimation and Inference Using Mixtures
 #'\emph{Journal of the American Statistical Association}, 90(430):577-588, 1995.
 #'
+#'@importFrom stats rbeta rgamma runif
+#'
 #'@export
 #'
 #'@examples
@@ -89,14 +91,14 @@
 sample_alpha <- function(alpha_old, n, K, a, b){
 
     # Sample scale factor in Dirichlet Process
-    x <- rbeta(n=1, shape1=alpha_old + 1, shape2=n)
+    x <- stats::rbeta(n=1, shape1=alpha_old + 1, shape2=n)
     temp <- (a+K-1) / (n*(b-log(x)))
     pi <- temp/(1+temp)
-    u <- runif(1)
+    u <- stats::runif(1)
     if (u<pi){
-        gamma_new = rgamma(n=1, shape=a + K, scale=1/(b - log(x)))
+        gamma_new = stats::rgamma(n=1, shape=a + K, scale=1/(b - log(x)))
     } else{
-        gamma_new = rgamma(n=1, shape=a + K - 1, scale=1/(b - log(x)))
+        gamma_new = stats::rgamma(n=1, shape=a + K - 1, scale=1/(b - log(x)))
     }
     return(gamma_new)
 }

@@ -3,18 +3,18 @@
 #'@param z data matrix \code{d x n} with \code{d} dimensions in rows
 #'and \code{n} observations in columns.
 #'
-#'@param U_mu either a list or a matrix containing the current estimates of mean vectors 
+#'@param U_mu either a list or a matrix containing the current estimates of mean vectors
 #'of length \code{d} for each cluster. Default is \code{NULL} in which case
 #'\code{U_SS} has to be provided.
 #'
-#'@param U_Sigma either a list or an array containing the \code{d x d} current estimates 
+#'@param U_Sigma either a list or an array containing the \code{d x d} current estimates
 #'for covariance matrix of each cluster. Default is \code{NULL} in which case
 #'\code{U_SS} has to be provided.
 #'
-#'@param m vector of length \code{n} containing the number of observations currently assigned to 
+#'@param m vector of length \code{n} containing the number of observations currently assigned to
 #'each clusters.
 #'
-#'@param c allocation vector of length \code{n} indicating which observation belongs to which 
+#'@param c allocation vector of length \code{n} indicating which observation belongs to which
 #'clusters.
 #'
 #'@param i current MCMC iteration number.
@@ -38,6 +38,7 @@
 #'
 #'@import ellipse
 #'@import reshape2
+#'@importFrom stats cov2cor cov
 #'
 #'@export
 
@@ -189,7 +190,7 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
       ellipse95 <- data.frame()
       for(g in 1:length(fullCl)){
         glabel <- levels(zClusters)[g]
-        U_corr2plot_g <- cov2cor(U_Sigma2plot[,,g])
+        U_corr2plot_g <- stats::cov2cor(U_Sigma2plot[,,g])
         # diag(1/sqrt(diag(U_Sigma2plot[,,g])))%*%U_Sigma2plot[,,g]%*%diag(1/sqrt(diag(U_Sigma2plot[,,g])))
         ellipse95 <- rbind(ellipse95,
                            cbind(as.data.frame(ellipse(U_corr2plot_g,
@@ -207,7 +208,7 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
                                (U_SS2plot[[glabel]]$nu
                                 -ncol(U_SS2plot[[glabel]]$lambda)-1)
         )
-        U_corr2plot_g <- cov2cor(U_Sigma2plot_esp)
+        U_corr2plot_g <- stats::cov2cor(U_Sigma2plot_esp)
         ellipse95_esp <- rbind(ellipse95_esp,
                                cbind(as.data.frame(ellipse(U_corr2plot_g,
                                                            scale=sqrt(diag(U_Sigma2plot_esp)),
@@ -223,8 +224,8 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
 
         #empirical covariance
         if(length(which(z2plot$Cluster==glabel))>1){
-          U_Sigma2plot_obs <- cov(z2plot[which(z2plot$Cluster==glabel), c(1,2)])
-          U_corr2plot_g <- cov2cor(U_Sigma2plot_obs)
+          U_Sigma2plot_obs <- stats::cov(z2plot[which(z2plot$Cluster==glabel), c(1,2)])
+          U_corr2plot_g <- stats::cov2cor(U_Sigma2plot_obs)
 
           ellipse95_obs <- rbind(ellipse95_obs,
                                  cbind(as.data.frame(ellipse(U_corr2plot_g,

@@ -1,3 +1,5 @@
+#'@keywords internal
+#'@importFrom stats rgamma runif
 sample_scale <- function(c, m, z, U_xi, U_psi,
                          U_Sigma, U_df, ltn, weights, scale){
 
@@ -59,7 +61,7 @@ sample_scale <- function(c, m, z, U_xi, U_psi,
     df_new <- numeric(n)
     for(j in 1:fullCl){
         df <- U_df_full[j]
-        df_new[j] <- 1+exp(runif(1, min=log(df-1)-c_df, max = log(df-1)+c_df))
+        df_new[j] <- 1+exp(stats::runif(1, min=log(df-1)-c_df, max = log(df-1)+c_df))
     }
 
     loglikold <- mvstlikC(x=z, c=c, clustval=fullCl_ind,
@@ -68,7 +70,7 @@ sample_scale <- function(c, m, z, U_xi, U_psi,
     logliknew <- mvstlikC(x=z, c=c, clustval=fullCl_ind,
                           xi=U_xi_full, psi=U_psi_full, sigma=U_Sigma_full, df=df_new,
                           loglik=TRUE)
-    u <- runif(fullCl)
+    u <- stats::runif(fullCl)
 
     if(fullCl>1){
         for(j in 1:fullCl){
@@ -96,7 +98,7 @@ sample_scale <- function(c, m, z, U_xi, U_psi,
             eps <- z[,obs_j, drop=FALSE] - U_xi_full[,j] - sapply(X=ltn[obs_j], FUN=function(x){x*U_psi_full[,j]})
             tra <- traceEpsC(eps, U_Sigma_full[[j]])[,1] # fast C++ code
             #  tra <- apply(X=eps, MARGIN=2, FUN=function(v){sum(diag(tcrossprod(v)%*%solve(U_Sigma_full[[j]])))}) # slow vectorized R code
-            scale[obs_j] <- rgamma(length(obs_j),
+            scale[obs_j] <- stats::rgamma(length(obs_j),
                                    shape=(U_df[j] + nrow(z) + 1)/2,
                                    rate=(U_df[j] + ltn[obs_j]^2 + tra)/2)
         }
@@ -121,7 +123,7 @@ sample_scale <- function(c, m, z, U_xi, U_psi,
         eps <- z - U_xi_full[,j] - sapply(X=ltn, FUN=function(x){x*U_psi_full[,j]})
         tra <- apply(X=eps, MARGIN=2, FUN=function(v){sum(diag(tcrossprod(v)%*%solve(U_Sigma_full[[j]])))})
 
-        scale <- rgamma(n, shape=(U_df[j] + nrow(z) + 1)/2,
+        scale <- stats::rgamma(n, shape=(U_df[j] + nrow(z) + 1)/2,
                         rate=(U_df[j] + ltn^2 + tra)/2)
     }
 

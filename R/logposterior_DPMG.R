@@ -1,4 +1,5 @@
 #'@keywords internal
+#'@importFrom stats dgamma
 logposterior_DPMG <- function(z, mu, Sigma, hyper, c, m, alpha, n, a, b){
     res <- NA
 
@@ -18,7 +19,7 @@ logposterior_DPMG <- function(z, mu, Sigma, hyper, c, m, alpha, n, a, b){
         log_prior_NiW <-  sum(log(dNiW(mu[as.character(indfull)], Sigma[as.character(indfull)], hyperprior=hyper)))
     }
 
-    log_prior_alpha <- dgamma(alpha, shape=a, scale=1/b, log=TRUE)
+    log_prior_alpha <- stats::dgamma(alpha, shape=a, scale=1/b, log=TRUE)
 
     log_clustering <- sum(c(lgamma(alpha), K*log(alpha), lgamma(mfull),-lgamma(alpha+n)))
 

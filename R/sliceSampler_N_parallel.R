@@ -1,5 +1,5 @@
 #'@keywords internal
-
+#'@importFrom stats rbeta rgamma runif
 sliceSampler_N_parallel <- function(Ncpus, c, m, alpha, z, hyperG0, U_mu, U_Sigma, diagVar, parallel_index){
 
     maxCl <- length(m) #maximum number of clusters
@@ -11,7 +11,7 @@ sliceSampler_N_parallel <- function(Ncpus, c, m, alpha, z, hyperG0, U_mu, U_Sigm
     # temp_{K+1} ~ Gamma(alpha, 1)
     # then renormalise temp
     w <- numeric(maxCl)
-    temp <- rgamma(n=(nb_fullCl+1), shape=c(m[ind], alpha), scale = 1)
+    temp <- stats::rgamma(n=(nb_fullCl+1), shape=c(m[ind], alpha), scale = 1)
     temp_norm <- temp/sum(temp)
     w[ind] <- temp_norm[-(nb_fullCl+1)]
     R <- temp_norm[(nb_fullCl+1)]
@@ -19,7 +19,7 @@ sliceSampler_N_parallel <- function(Ncpus, c, m, alpha, z, hyperG0, U_mu, U_Sigm
 
 
     # Sample the latent u
-    u  <- runif(maxCl)*w[c]
+    u  <- stats::runif(maxCl)*w[c]
     u_star <- min(u)
 
     # Sample the remaining weights that are needed with stick-breaking
@@ -34,7 +34,7 @@ sliceSampler_N_parallel <- function(Ncpus, c, m, alpha, z, hyperG0, U_mu, U_Sigm
         while(R>u_star && (t<length(ind_new))){
             # sum(w)<1-min(u) <=> R>min(u) car R=1-sum(w)
             t <- t+1
-            beta_temp <- rbeta(n=1, shape1=1, shape2=alpha)
+            beta_temp <- stats::rbeta(n=1, shape1=1, shape2=alpha)
             # weight of the new cluster
             w[ind_new[t]] <- R*beta_temp
             R <- R * (1-beta_temp) # remaining weight
@@ -74,7 +74,7 @@ sliceSampler_N_parallel <- function(Ncpus, c, m, alpha, z, hyperG0, U_mu, U_Sigm
             #         #alternative implementation:
             #         prob_colsum <- colSums(prob_mat)
             #         prob_norm <- apply(X=prob_mat, MARGIN=1, FUN=function(r){r/prob_colsum})
-            #         c <- fullCl_ind[apply(X=prob_norm, MARGIN=1, FUN=function(r){match(TRUE,runif(1) <cumsum(r))})]
+            #         c <- fullCl_ind[apply(X=prob_norm, MARGIN=1, FUN=function(r){match(TRUE,stats::runif(1) <cumsum(r))})]
         })
     }else{
         c <- rep(fullCl_ind, maxCl)

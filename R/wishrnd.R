@@ -8,6 +8,8 @@
 #'
 #'@keywords internal
 #'
+#'@importFrom stats rnorm
+#'
 #'@export wishrnd
 
 wishrnd <- function(n, Sigma){

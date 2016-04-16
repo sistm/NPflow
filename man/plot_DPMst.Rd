@@ -12,7 +12,7 @@ plot_DPMst(z, c, i = "", alpha = "?", U_SS, dims2plot = 1:nrow(z),
 \item{z}{data matrix \code{d x n} with \code{d} dimensions in rows
 and \code{n} observations in columns.}
 
-\item{c}{allocation vector of length \code{n} indicating which observation belongs to which 
+\item{c}{allocation vector of length \code{n} indicating which observation belongs to which
 clusters.}
 
 \item{i}{current MCMC iteration number.}
@@ -28,7 +28,7 @@ is \code{TRUE} if only 2 dimensions are plotted, \code{FALSE} otherwise.}
 \item{gg.add}{A list of instructions to add to the ggplot2 instruction. See \code{\link[ggplot2]{+.gg}}.
 Default is \code{list(theme())}, which adds nothing to the plot.}
 
-\item{nbsim_dens}{number of simulated points used for computing clusters density contours in 2D 
+\item{nbsim_dens}{number of simulated points used for computing clusters density contours in 2D
 plots. Default is \code{1000} points.}
 
 \item{nice}{logical flag changing the plot looks. Default is \code{FALSE}.}

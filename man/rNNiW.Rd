@@ -2,7 +2,7 @@
 % Please edit documentation in R/rNNiW.R
 \name{rNNiW}
 \alias{rNNiW}
-\title{Sample from a normal inverse Wishart distribution 
+\title{Sample from a normal inverse Wishart distribution
 whose parameter are given by the structure SufStat}
 \usage{
 rNNiW(SufStat, diagVar)

@@ -12,18 +12,18 @@ plot_DPM(z, U_mu = NULL, U_Sigma = NULL, m, c, i, alpha = "?",
 \item{z}{data matrix \code{d x n} with \code{d} dimensions in rows
 and \code{n} observations in columns.}
 
-\item{U_mu}{either a list or a matrix containing the current estimates of mean vectors 
+\item{U_mu}{either a list or a matrix containing the current estimates of mean vectors
 of length \code{d} for each cluster. Default is \code{NULL} in which case
 \code{U_SS} has to be provided.}
 
-\item{U_Sigma}{either a list or an array containing the \code{d x d} current estimates 
+\item{U_Sigma}{either a list or an array containing the \code{d x d} current estimates
 for covariance matrix of each cluster. Default is \code{NULL} in which case
 \code{U_SS} has to be provided.}
 
-\item{m}{vector of length \code{n} containing the number of observations currently assigned to 
+\item{m}{vector of length \code{n} containing the number of observations currently assigned to
 each clusters.}
 
-\item{c}{allocation vector of length \code{n} indicating which observation belongs to which 
+\item{c}{allocation vector of length \code{n} indicating which observation belongs to which
 clusters.}
 
 \item{i}{current MCMC iteration number.}

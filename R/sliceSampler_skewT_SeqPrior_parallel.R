@@ -1,5 +1,5 @@
 #'@keywords internal
-#'
+#'@importFrom stats rbeta rgamma runif
 sliceSampler_skewT_SeqPrior_parallel <- function(Ncpus, c, m, alpha, z, priorG1,
                                                  U_xi, U_psi, U_Sigma,
                                                  U_df, scale, diagVar,
@@ -15,7 +15,7 @@ sliceSampler_skewT_SeqPrior_parallel <- function(Ncpus, c, m, alpha, z, priorG1,
     # temp_{K+1} ~ Gamma(alpha, 1)
     # then renormalise temp
     w <- numeric(maxCl)
-    temp <- rgamma(n=(length(ind)+1), shape=c(m[ind], alpha), scale = 1)
+    temp <- stats::rgamma(n=(length(ind)+1), shape=c(m[ind], alpha), scale = 1)
     temp_norm <- temp/sum(temp)
     w[ind] <- temp_norm[-length(temp_norm)]
     R <- temp_norm[length(temp_norm)]
@@ -23,7 +23,7 @@ sliceSampler_skewT_SeqPrior_parallel <- function(Ncpus, c, m, alpha, z, priorG1,
 
 
     # Sample the latent u
-    u  <- runif(maxCl)*w[c]
+    u  <- stats::runif(maxCl)*w[c]
     u_star <- min(u)
 
     # Sample the remaining weights that are needed with stick-breaking
@@ -34,7 +34,7 @@ sliceSampler_skewT_SeqPrior_parallel <- function(Ncpus, c, m, alpha, z, priorG1,
         while(R>u_star && (t<length(ind_new))){
             # sum(w)<1-min(u) <=> R>min(u) car R=1-sum(w)
             t <- t+1
-            beta_temp <- rbeta(n=1, shape1=1, shape2=alpha)
+            beta_temp <- stats::rbeta(n=1, shape1=1, shape2=alpha)
             # weight of the new cluster
             w[ind_new[t]] <- R*beta_temp
             R <- R * (1-beta_temp) # remaining weight

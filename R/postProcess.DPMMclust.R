@@ -31,6 +31,8 @@
 #'
 #'@author Boris Hejblum
 #'
+#'@importFrom stats uniroot
+#'
 #'@export
 #'
 #'@importFrom gplots heatmap.2
@@ -181,6 +183,10 @@ postProcess.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measur
 #'Normal inverse Wishart distributed observations with an EM algorithm
 #'
 #'@rdname MLE_skewT_mmEM
+#'
+#'@importFrom stats uniroot
+#'
+#'@importFrom graphics plot
 #'
 #'@export MLE_skewT_mmEM
 #'
@@ -359,7 +365,7 @@ MLE_skewT_mmEM <- function( xi_list, psi_list, S_list, hyperG0, K, init=NULL,max
                             + N_k[k]*log(det(rSinv_sum))
                             + 2)
 
-      U_df[[k]] <- try(uniroot(function(nu0){(N_k[k]*digamma_mv(x=nu0/2, p=d)
+      U_df[[k]] <- try(stats::uniroot(function(nu0){(N_k[k]*digamma_mv(x=nu0/2, p=d)
                                               - N_k[k]*d*log(N_k[k]*nu0/2)
                                               + const_nu0_uniroot
       )}, lower = d+1, upper=1E12)$root, TRUE)
@@ -381,12 +387,12 @@ MLE_skewT_mmEM <- function( xi_list, psi_list, S_list, hyperG0, K, init=NULL,max
     }
 
     if(plot){
-      plot(y=loglik[2:(i+1)], x=c(1:i),
+      graphics::plot(y=loglik[2:(i+1)], x=c(1:i),
            ylab="Log-likelihood", xlab="Iteration", type="b", col="blue", pch=16)
     }
   }
   if(plot){
-    plot(y=loglik[2:(i+1)], x=c(1:i),
+    graphics::plot(y=loglik[2:(i+1)], x=c(1:i),
          ylab="Log-likelihood", xlab="it.", type="b", col="blue", pch=16)
   }
 
@@ -403,6 +409,10 @@ MLE_skewT_mmEM <- function( xi_list, psi_list, S_list, hyperG0, K, init=NULL,max
 
 
 #'@rdname MAP_skewT_mmEM
+#'
+#'@importFrom stats var uniroot
+#'
+#'@importFrom graphics plot
 #'
 #'@export
 #'
@@ -482,10 +492,10 @@ MAP_skewT_mmEM_vague <- function(xi_list, psi_list, S_list,
   #priors
   alpha <- rep(1, K) #parameters of a Dirichlet prior on the cluster weights
   nu<- d+1
-  lambda<- diag(apply(sapply(xi_list, "["),MARGIN=1, FUN=var))
+  lambda<- diag(apply(sapply(xi_list, "["),MARGIN=1, FUN=stats::var))
   C <- diag(2)*1000
-  L <- (diag(apply(sapply(xi_list, "["), MARGIN=1, FUN=var))
-        + diag(apply(sapply(psi_list, "["), MARGIN=1, FUN=var))
+  L <- (diag(apply(sapply(xi_list, "["), MARGIN=1, FUN=stats::var))
+        + diag(apply(sapply(psi_list, "["), MARGIN=1, FUN=stats::var))
   )/2
 
 
@@ -550,7 +560,7 @@ MAP_skewT_mmEM_vague <- function(xi_list, psi_list, S_list,
       const_nu0_uniroot <- (sum(r[k,]*sapply(S_list, function(S){log(det(S))}))
                             + N_k[k]*log(det(rSinv_sum))
                             + 2)
-      U_df[[k]] <- try(uniroot(function(nu0){(N_k[k]*digamma_mv(x=nu0/2, p=d)
+      U_df[[k]] <- try(stats::uniroot(function(nu0){(N_k[k]*digamma_mv(x=nu0/2, p=d)
                                               - N_k[k]*d*log(N_k[k]*nu0/2)
                                               + const_nu0_uniroot
       )}, lower = d+1, upper=1E12)$root, TRUE)
@@ -576,13 +586,13 @@ MAP_skewT_mmEM_vague <- function(xi_list, psi_list, S_list,
     if(abs(loglik[i+1]-loglik[i])<tol){break}
 
     if(plot){
-      plot(y=loglik[2:(i+1)], x=c(1:i),
+      graphics::plot(y=loglik[2:(i+1)], x=c(1:i),
            ylab="Log-likelihood", xlab="Iteration", type="b", col="blue", pch=16)
     }
   }
 
   if(plot){
-    plot(y=loglik[2:(i+1)], x=c(1:i),
+    graphics::plot(y=loglik[2:(i+1)], x=c(1:i),
          ylab="Log-likelihood", xlab="it.", type="b", col="blue", pch=16)
   }
 
@@ -602,13 +612,13 @@ MAP_skewT_mmEM_vague <- function(xi_list, psi_list, S_list,
 #'Maximum A Posteriori (MAP) estimation of mixture of
 #'Normal inverse Wishart distributed observations with an EM algorithm
 #'
-#'@param xi_list a list of length \code{n}, each element is a vector of size \code{d} 
+#'@param xi_list a list of length \code{n}, each element is a vector of size \code{d}
 #'containing the argument \code{xi} of the corresponding allocated cluster.
 #'
-#'@param psi_list a list of length \code{n}, each element is a vector of size \code{d} 
+#'@param psi_list a list of length \code{n}, each element is a vector of size \code{d}
 #'containing the argument \code{psi} of the corresponding allocated cluster.
 #'
-#'@param S_list a list of length \code{n}, each element is a matrix of size \code{d x d} 
+#'@param S_list a list of length \code{n}, each element is a matrix of size \code{d x d}
 #'containing the argument \code{S} of the corresponding allocated cluster.
 #'
 #'@param hyperG0 prior mixing distribution.
@@ -624,6 +634,10 @@ MAP_skewT_mmEM_vague <- function(xi_list, psi_list, S_list,
 #'Default is \code{TRUE}.
 #'
 #'@rdname MAP_skewT_mmEM
+#'
+#'@importFrom stats var uniroot
+#'
+#'@importFrom graphics plot
 #'
 #'@export
 MAP_skewT_mmEM<- function(xi_list, psi_list, S_list, hyperG0, init=NULL, K, maxit=100, tol=1E-1, plot=TRUE, verbose=TRUE){
@@ -650,10 +664,10 @@ MAP_skewT_mmEM<- function(xi_list, psi_list, S_list, hyperG0, init=NULL, K, maxi
   psi_p <- apply(sapply(psi_list, "["), MARGIN=1, FUN=mean)
   kappa0 <- 0.01
   nu<- d+1
-  lambda<- diag(apply(sapply(xi_list, "["),MARGIN=1, FUN=var))
+  lambda<- diag(apply(sapply(xi_list, "["),MARGIN=1, FUN=stats::var))
   C <- diag(2)*1000
-  L <- (diag(apply(sapply(xi_list, "["), MARGIN=1, FUN=var))
-        + diag(apply(sapply(psi_list, "["), MARGIN=1, FUN=var))
+  L <- (diag(apply(sapply(xi_list, "["), MARGIN=1, FUN=stats::var))
+        + diag(apply(sapply(psi_list, "["), MARGIN=1, FUN=stats::var))
   )/2
 
 
@@ -761,7 +775,7 @@ MAP_skewT_mmEM<- function(xi_list, psi_list, S_list, hyperG0, init=NULL, K, maxi
                             + N_k[k]*log(det(rSinv_sum))
                             + 2)
 
-      U_df[[k]] <- try(uniroot(function(nu0){(N_k[k]*digamma_mv(x=nu0/2, p=d)
+      U_df[[k]] <- try(stats::uniroot(function(nu0){(N_k[k]*digamma_mv(x=nu0/2, p=d)
                                               - N_k[k]*d*log(N_k[k]*nu0/2)
                                               + const_nu0_uniroot
       )}, lower = d, upper=1E12)$root, TRUE)
@@ -791,7 +805,7 @@ MAP_skewT_mmEM<- function(xi_list, psi_list, S_list, hyperG0, init=NULL, K, maxi
     }
 
     if(plot){
-      plot(y=loglik[2:(i+1)], x=c(1:i),
+      graphics::plot(y=loglik[2:(i+1)], x=c(1:i),
            ylab="Log-likelihood", xlab="Iteration", type="b", col="blue", pch=16)
     }
 
@@ -814,6 +828,10 @@ MAP_skewT_mmEM<- function(xi_list, psi_list, S_list, hyperG0, init=NULL, K, maxi
 #'
 #'@param obsweight_list a list of length \code{n} where each element is a vector of weights for
 #'each sampled cluster at each MCMC iterations.
+#'
+#'@importFrom stats var uniroot
+#'
+#'@importFrom graphics plot
 #'
 #'@export
 MAP_skewT_mmEM_weighted<- function(xi_list, psi_list, S_list, obsweight_list,
@@ -840,10 +858,10 @@ MAP_skewT_mmEM_weighted<- function(xi_list, psi_list, S_list, obsweight_list,
   psi_p <- apply(sapply(psi_list, "["), MARGIN=1, FUN=mean)
   kappa0 <- 0.01
   nu<- d+1
-  lambda<- diag(apply(sapply(xi_list, "["),MARGIN=1, FUN=var))
+  lambda<- diag(apply(sapply(xi_list, "["),MARGIN=1, FUN=stats::var))
   C <- diag(2)*1000
-  L <- (diag(apply(sapply(xi_list, "["), MARGIN=1, FUN=var))
-        + diag(apply(sapply(psi_list, "["), MARGIN=1, FUN=var))
+  L <- (diag(apply(sapply(xi_list, "["), MARGIN=1, FUN=stats::var))
+        + diag(apply(sapply(psi_list, "["), MARGIN=1, FUN=stats::var))
   )/2
 
 
@@ -912,7 +930,7 @@ MAP_skewT_mmEM_weighted<- function(xi_list, psi_list, S_list, obsweight_list,
       const_nu0_uniroot <- (sum(r[k,]*sapply(S_list, function(S){log(det(S))}))
                             + N_k[k]*log(det(rSinv_sum))
                             + 2)
-      U_df[[k]] <- try(uniroot(function(nu0){(N_k[k]*digamma_mv(x=nu0/2, p=d)
+      U_df[[k]] <- try(stats::uniroot(function(nu0){(N_k[k]*digamma_mv(x=nu0/2, p=d)
                                               - N_k[k]*d*log(N_k[k]*nu0/2)
                                               + const_nu0_uniroot
       )}, lower = d+1, upper=1E12)$root, TRUE)
@@ -936,13 +954,13 @@ MAP_skewT_mmEM_weighted<- function(xi_list, psi_list, S_list, obsweight_list,
     if(abs(loglik[i+1]-loglik[i])<tol){break}
 
     if(plot){
-      plot(y=loglik[2:(i+1)], x=c(1:i),
+      graphics::plot(y=loglik[2:(i+1)], x=c(1:i),
            ylab="Log-likelihood", xlab="Iteration", type="b", col="blue", pch=16)
     }
   }
 
   if(plot){
-    plot(y=loglik[2:(i+1)], x=c(1:i),
+    graphics::plot(y=loglik[2:(i+1)], x=c(1:i),
          ylab="Log-likelihood", xlab="it.", type="b", col="blue", pch=16)
   }
 
@@ -962,6 +980,8 @@ MAP_skewT_mmEM_weighted<- function(xi_list, psi_list, S_list, obsweight_list,
 #'Maximum likelihood estimation of Normal inverse Wishart distributed observations
 #'
 #'@rdname MLE_skewT
+#'
+#'@importFrom stats uniroot
 #'
 #'@export
 #'
@@ -1016,7 +1036,7 @@ MLE_skewT <- function( xi_list, psi_list, S_list, plot=TRUE){
   }, SIMPLIFY=TRUE)),
   nrow=2, byrow=FALSE))
 
-  U_df<- try(uniroot(function(nu0){(N/2*digamma_mv(x=nu0/2, p=d)
+  U_df<- try(stats::uniroot(function(nu0){(N/2*digamma_mv(x=nu0/2, p=d)
                                     + 1/2*sum(sapply(S_list, function(S){log(det(S))}))
                                     - N*d/2*log(N*nu0/2)
                                     + N/2*log(det(Sinv_sum))
@@ -1041,6 +1061,8 @@ MLE_skewT <- function( xi_list, psi_list, S_list, plot=TRUE){
 #'
 #'@param g a list of Gamma distributed observation.
 #'
+#'@importFrom stats uniroot
+#'
 #'@export
 #'
 #'@examples
@@ -1056,7 +1078,7 @@ MLE_skewT <- function( xi_list, psi_list, S_list, plot=TRUE){
 MLE_gamma <- function(g){
   N <- length(g)
 
-  a_mle <- try(uniroot(function(a){(N*mean(log(g))
+  a_mle <- try(stats::uniroot(function(a){(N*mean(log(g))
                                     - N*digamma(a)
                                     - N*log(mean(g))
                                     + N*log(a)
@@ -1082,6 +1104,10 @@ MLE_gamma <- function(g){
 #'Normal inverse Wishart distributed observations with an EM algorithm
 #'
 #'@rdname MLE_N_mmEM
+#'
+#'@importFrom stats uniroot
+#'
+#'@importFrom graphics plot
 #'
 #'@export
 #'
@@ -1244,7 +1270,7 @@ MLE_N_mmEM <- function( mu_list, S_list, hyperG0, K, maxit=100, tol=1e-1, plot=T
 
 
       max_upper<-1e12
-      U_nu[[k]] <- try(uniroot(function(nu0){(N_k[k]*digamma_mv(x=nu0/2, p=d)
+      U_nu[[k]] <- try(stats::uniroot(function(nu0){(N_k[k]*digamma_mv(x=nu0/2, p=d)
                                               - N_k[k]*d*log(N_k[k]*nu0/2)
                                               + const_nu0_uniroot
       )}, lower = d+1, upper=max_upper)$root, TRUE)
@@ -1271,12 +1297,12 @@ MLE_N_mmEM <- function( mu_list, S_list, hyperG0, K, maxit=100, tol=1e-1, plot=T
     if(abs(loglik[i+1]-loglik[i])<tol){break}
     #if (loglik[i+1]<loglik[i]){browser()}
     if(plot){
-      plot(y=loglik[2:(i+1)], x=c(1:i),
+      graphics::plot(y=loglik[2:(i+1)], x=c(1:i),
            ylab="Log-likelihood", xlab="Iteration", type="b", col="blue", pch=16)
     }
   }
   if(plot){
-    plot(y=loglik[2:(i+1)], x=c(1:i),
+    graphics::plot(y=loglik[2:(i+1)], x=c(1:i),
          ylab="Log-likelihood", xlab="it.", type="b", col="blue", pch=16)
   }
 

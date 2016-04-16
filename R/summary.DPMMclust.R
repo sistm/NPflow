@@ -136,6 +136,8 @@ print.summaryDPMMclust <- function(x,...){
 #'@rdname methods.summaryDPMMclust
 #'@param gg.add a list of instructions to add to the ggplot2 instruction.
 #'See \code{\link[ggplot2]{+.gg}}. Default is \code{list(theme())}, which adds nothing to the plot.
+#'@importFrom stats dist
+#'@importFrom grDevices colorRampPalette
 #'@export
 plot.summaryDPMMclust <- function(x, hm=FALSE, nbsim_densities=5000, gg.add=list(theme_bw()),...){
 
@@ -187,11 +189,11 @@ plot.summaryDPMMclust <- function(x, hm=FALSE, nbsim_densities=5000, gg.add=list
     if(is.null(x$point_estim$similarity)){
       stop("In order to plot the similarity matrix, the 'Binder' loss function should be used")
     }
-    tree <- fastcluster::hclust(dist(x$point_estim$similarity, method = "euclidean"),
+    tree <- fastcluster::hclust(stats::dist(x$point_estim$similarity, method = "euclidean"),
                                 method = "complete")
     ord_index <- tree$order
     pheatmap::pheatmap(x$point_estim$similarity[ord_index, ord_index], scale="none", border_color=NA,
-                       color=colorRampPalette(c("#F7FBFF", "#DEEBF7", "#C6DBEF",
+                       color=grDevices::colorRampPalette(c("#F7FBFF", "#DEEBF7", "#C6DBEF",
                                                 #"#9ECAE1", "#FEB24C",
                                                 "#FD8D3C", "#BD0026", "#800026"))(200),
                        show_rownames=FALSE, show_colnames=FALSE,

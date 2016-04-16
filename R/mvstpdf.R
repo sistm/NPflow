@@ -21,6 +21,8 @@
 #'
 #'@seealso mvtpdf, mvsnpdf, mmvstpdfC, mvstlikC
 #'
+#'@importFrom stats pt
+#'
 #'@export
 #'
 #'@examples
@@ -84,7 +86,7 @@ mvstpdf <- function(x, xi, sigma, psi, df, Log=TRUE){
             stop("omega is of the wrong size")
         }
         part1 <- log(2) + mvtpdf(x, mean=xi, varcovM=omega, df=df, Log=TRUE)
-        part2 <- pt(q=(t(alph)%*%diag(1/sqrt(diag(omega)))%*%(x0)*
+        part2 <- stats::pt(q=(t(alph)%*%diag(1/sqrt(diag(omega)))%*%(x0)*
                            sqrt((df+p)/(df+Qy))),
                     df=df+p)
     }
@@ -114,7 +116,7 @@ mvstpdf <- function(x, xi, sigma, psi, df, Log=TRUE){
         }
         part1 <- log(2) + mvtpdf(x, mean=xi, varcovM=omega, df=df, Log=TRUE)
         part2 <- mapply(FUN=function(a, o, Q, d, x){
-            pt(q=(crossprod(a,diag(1/sqrt(diag(o))))%*%(x)*
+            stats::pt(q=(crossprod(a,diag(1/sqrt(diag(o))))%*%(x)*
                       sqrt((d+p)/(d+Q))),
                df=d+p)},
             x=x0, o=omega, Q=Qy, a=alph, d=df)
