@@ -20,6 +20,7 @@ C++ implementation of multiple cost computations with Fmeasure as the loss
 function using the Armadillo library
 }
 \examples{
+library(NPflow)
 c <- list(c(1,1,2,3,2,3), c(1,1,1,2,3,3),c(2,2,1,1,1,1))
 Fmeasure_costC(sapply(c, "["))
 

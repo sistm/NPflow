@@ -29,6 +29,7 @@ matrix of densities of dimension K x n
 C++ implementation of multivariate skew Normal probability density function for multiple inputs
 }
 \examples{
+library(NPflow)
 mmvsnpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1),
          xi=matrix(c(0, 0)), psi=matrix(c(1, 1),ncol=1), sigma=list(diag(2)), Log=FALSE
          )

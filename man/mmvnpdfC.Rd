@@ -26,6 +26,7 @@ matrix of densities of dimension K x n
 C++ implementation of multivariate Normal probability density function for multiple inputs
 }
 \examples{
+library(NPflow)
 library(microbenchmark)
 microbenchmark(mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE),
               mvnpdfC(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE),

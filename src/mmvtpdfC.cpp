@@ -18,6 +18,7 @@ using namespace arma;
 //'@return matrix of densities of dimension K x n
 //'@export
 //'@examples
+//'library(NPflow)
 //'mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE)
 //'mvtpdf(x=matrix(1.96), mean=0, varcovM=diag(1), df=10000000, Log=FALSE)
 //'mmvtpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1)), df=10000000, Log=FALSE)

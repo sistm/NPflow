@@ -15,6 +15,7 @@ using namespace arma;
 //'@export
 //'
 //'@examples
+//'library(NPflow)
 //'c <- c(1,1,2,3,2,3)
 //'d <- matrix(runif(length(c)^2),length(c))
 //'NuMatParC(c,d)

@@ -12,6 +12,7 @@ using namespace arma;
 //'@export
 //'
 //'@examples
+//'library(NPflow)
 //'c <- list(c(1,1,2,3,2,3), c(1,1,1,2,3,3),c(2,2,1,1,1,1))
 //'similarityMat_nocostC(sapply(c, "["))
 //'

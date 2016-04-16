@@ -20,6 +20,7 @@ const double log2pi2 = log(2.0 * M_PI)/2;
 //'@return matrix of densities of dimension K x n
 //'@export
 //'@examples
+//'library(NPflow)
 //'mmvsnpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1),
 //'          xi=matrix(c(0, 0)), psi=matrix(c(1, 1),ncol=1), sigma=list(diag(2)), Log=FALSE
 //'          )

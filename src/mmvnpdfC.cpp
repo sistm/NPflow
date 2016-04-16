@@ -18,6 +18,7 @@ const double log2pi2 = log(2.0 * M_PI)/2;
 //'@return matrix of densities of dimension K x n
 //'@export
 //'@examples
+//'library(NPflow)
 //'library(microbenchmark)
 //'microbenchmark(mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE),
 //'               mvnpdfC(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE),

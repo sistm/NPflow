@@ -79,6 +79,7 @@ double FmeasureC(NumericVector pred, NumericVector ref){
 //'techniques, \emph{Nature Methods}, 10(3):228-38, 2013.
 //'
 //'@examples
+//'library(NPflow)
 //'c <- list(c(1,1,2,3,2,3), c(1,1,1,2,3,3),c(2,2,1,1,1,1))
 //'similarityMatC(sapply(c, "["))
 //'
@@ -155,6 +156,7 @@ double FmeasureC_no0(NumericVector pred, NumericVector ref){
 //'@export
 //'
 //'@examples
+//'library(NPflow)
 //'c <- list(c(1,1,2,3,2,3), c(1,1,1,2,3,3),c(2,2,1,1,1,1))
 //'Fmeasure_costC(sapply(c, "["))
 //'

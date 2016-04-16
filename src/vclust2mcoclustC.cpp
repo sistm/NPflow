@@ -12,6 +12,7 @@ using namespace arma;
 //'@export
 //'
 //'@examples
+//'library(NPflow)
 //'cc <- c(1,1,2,3,2,3)
 //'vclust2mcoclustC(cc)
 //'
