@@ -15,7 +15,7 @@ using namespace arma;
 //'@param varcovM list of length K of variance-covariance matrices,
 //'each of dimensions p x p
 //'@param df vector of length K of degree of freedom parameters
-//'@param logical flag for returning the log of the probability density
+//'@param Log logical flag for returning the log of the probability density
 //'function. Defaults is \code{TRUE}.
 //'@return matrix of densities of dimension K x n
 //'@export
@@ -62,7 +62,7 @@ using namespace arma;
 //'               mmvstpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1),
 //'                         xi=matrix(c(0, 0)), psi=matrix(c(1, 1),ncol=1),
 //'                         sigma=list(diag(2)), df=10),
-//'               times=10000L)
+//'               times=1000L)
 //'
 // [[Rcpp::export]]
 NumericMatrix mmvstpdfC(arma::mat x,
