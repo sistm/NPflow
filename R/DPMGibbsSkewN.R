@@ -80,7 +80,7 @@
 #'  c[k] = which(rmultinom(n=1, size=1, prob=p)!=0)
 #'  z[,k] <- xi[, c[k]] + psi[, c[k]]*abs(rnorm(1)) + sdev[, , c[k]]%*%matrix(rnorm(d, mean = 0,
 #'                                                                        sd = 1), nrow=d, ncol=1)
-#'  cat(k, "/", n, " observations simulated\n", sep="")
+#'  #cat(k, "/", n, " observations simulated\n", sep="")
 #' }
 #'
 #' # Set parameters of G0
