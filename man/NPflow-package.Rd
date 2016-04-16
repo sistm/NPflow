@@ -2,13 +2,9 @@
 % Please edit documentation in R/NPflow-package.R
 \docType{package}
 \name{NPflow-package}
-\alias{.onUnload}
 \alias{NPflow}
 \alias{NPflow-package}
 \title{Nonparametrics Bayesian Automatic Gating of Flow Cytometry data}
-\usage{
-.onUnload(libpath)
-}
 \description{
 This package implements
 }
