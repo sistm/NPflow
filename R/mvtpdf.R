@@ -13,7 +13,7 @@
 #'@param df a numeric vector or a list of the degrees of freedom
 #'(either a vector or a list)
 #'
-#'@param logical flag for returning the log of the probability density
+#'@param Log logical flag for returning the log of the probability density
 #'function. Defaults is \code{TRUE}.
 #'
 #'@export

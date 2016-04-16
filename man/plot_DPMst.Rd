@@ -17,6 +17,8 @@ clusters.}
 
 \item{i}{current MCMC iteration number.}
 
+\item{alpha}{current value of the DP concentration parameter.}
+
 \item{U_SS}{a list containing \code{"xi"}, \code{"psi"}, \code{"S"}, and \code{"df"}.}
 
 \item{dims2plot}{index vector, subset of \code{1:d} indicating which dimensions should be drawn.

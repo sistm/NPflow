@@ -1,5 +1,12 @@
 #'Convergence diagnostic plots
 #'
+#'@param MCMCsample
+#'
+#'@param from Default is \code{1}.
+#'
+#'@param to Default is \code{1}.
+#'
+#'@PARMA shift
 #'
 #'@param thin integer giving the spacing at which MCMC iterations are kept.
 #'Default is \code{1}, i.e. no thining.

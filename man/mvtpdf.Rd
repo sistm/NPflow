@@ -19,7 +19,7 @@ matrices (either a matrix or a list)}
 \item{df}{a numeric vector or a list of the degrees of freedom
 (either a vector or a list)}
 
-\item{logical}{flag for returning the log of the probability density
+\item{Log}{flag for returning the log of the probability density
 function. Defaults is \code{TRUE}.}
 }
 \description{

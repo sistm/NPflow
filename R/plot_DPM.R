@@ -3,6 +3,8 @@
 #'@param z data matrix \code{d x n} with \code{d} dimensions in rows
 #'and \code{n} observations in columns.
 #'
+#'@param alpha current value of the DP concentration parameter.
+#'
 #'@param U_mu either a list or a matrix containing the current estimates of mean vectors
 #'of length \code{d} for each cluster. Default is \code{NULL} in which case
 #'\code{U_SS} has to be provided.
@@ -18,8 +20,6 @@
 #'clusters.
 #'
 #'@param i current MCMC iteration number.
-#'
-#'@param alpha current value of the DP concentration parameter.
 #'
 #'@param U_SS a list containing \code{"mu"} and \code{"S"}. Default is \code{NULL} in which case
 #'\code{U_mu} and \code{U_Sigma} have to be provided.

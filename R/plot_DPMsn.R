@@ -6,6 +6,8 @@
 #'@param c allocation vector of length \code{n} indicating which observation belongs to which
 #'clusters.
 #'
+#'@param alpha current value of the DP concentration parameter.
+#'
 #'@param U_SS a list containing \code{"xi"}, \code{"psi"}, \code{"S"}, and \code{"df"}.
 #'
 #'@param i current MCMC iteration number.
