@@ -24,7 +24,7 @@
 #'@name NPflow-package
 #'@aliases NPflow
 #'
-#'@useDynLib NPflow, .registration = TRUE
+#'@useDynLib NPflow
 #'@importFrom Rcpp sourceCpp
 #'
 .onUnload <- function (libpath) {

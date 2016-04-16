@@ -15,6 +15,7 @@ FmeasureC(pred, ref)
 C++ implementation of the F-measure computation
 }
 \examples{
+library(NPflow)
 pred <- c(1,1,2,3,2,3)
 ref <- c(2,2,1,1,1,3)
 FmeasureC(pred, ref)
