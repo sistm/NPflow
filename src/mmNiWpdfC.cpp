@@ -1,24 +1,10 @@
 #include <RcppArmadillo.h>
+#include "lgamma_mvC.h"
 
 using namespace Rcpp;
 using namespace arma;
 
-// [[Rcpp::interfaces(r, cpp)]]
 // [[Rcpp::depends(RcppArmadillo)]]
-
-double lgamma_mv2C(double x,
-                   double p){
-
-  double res = (p*(p-1)/4)*log(M_PI);
-
-  for(int i=0; i < p; i++){
-    res = res + lgamma(x - (double)i/2);
-  }
-
-  return (res);
-}
-
-
 
 //' C++ implementation of multivariate Normal inverse Wishart probability density function for multiple inputs
 //'
@@ -64,7 +50,7 @@ NumericMatrix mmNiWpdfC(arma::mat Mu,
 
     double k_const = (- nu0*d*log(2)
                         + nu0*log(det(lambda0))
-                        - 2*lgamma_mv2C(nu0/2, d)
+                        - 2*lgamma_mvC(nu0/2, d)
     );
 
 

@@ -2,7 +2,6 @@
 using namespace Rcpp;
 using namespace arma;
 
-// [[Rcpp::interfaces(r, cpp)]]
 // [[Rcpp::depends(RcppArmadillo)]]
 
 //' C++ implementation of the multinomial sampling from a matrix

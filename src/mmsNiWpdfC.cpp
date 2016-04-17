@@ -1,30 +1,10 @@
 #include <RcppArmadillo.h>
+#include "lgamma_mvC.h"
+
 using namespace Rcpp;
 using namespace arma;
 
-// [[Rcpp::interfaces(r, cpp)]]
 // [[Rcpp::depends(RcppArmadillo)]]
-
-//' C++ implementation of multivariate log gamma function
-//'
-//'@param x strictly positive real number
-//'@param p integer
-//'
-//'@export
-//'
-// [[Rcpp::export]]
-double lgamma_mvC(double x,
-                  double p){
-
-    double res = (p*(p-1)/4)*log(M_PI);
-
-    for(int i=0; i < p; i++){
-        res = res + lgamma(x - (double)i/2);
-    }
-
-    return (res);
-}
-
 
 
 //' C++ implementation of multivariate structured Normal inverse Wishart probability density function for multiple inputs
