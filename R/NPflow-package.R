@@ -25,6 +25,6 @@
 #'@aliases NPflow
 #'
 #'@useDynLib NPflow
-#'@importFrom Rcpp sourceCpp
+#'@importFrom Rcpp evalCpp
 #'
 NULL
