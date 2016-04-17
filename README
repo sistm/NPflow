@@ -10,7 +10,7 @@ Documentation
 NPflow is a R package which performs Bayesian estimation of Dirichlet process mixture of skew t-distributions model.
 It is specially oriented towards flow-cytometry data preprocessing applications.
 On top of the CRAN help pdf-file, the following article explains what TcGSA is about:
-Hejblum, B.P., Caron, F., Gottardo R., Thiebaut, R., 2015, Dirichlet process mixture of skew t-distributions for model based clustering of flow cytometry data, under preparation.
+Hejblum, B.P., Caron, F., Gottardo R., Thiebaut, R., 2015, Sequential Dirichlet Process Mixtures of Multivariate Skew t-distributions for Model-based Clustering of Flow Cytometry Data.
 
 
    -- Boris Hejblum

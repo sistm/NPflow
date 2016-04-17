@@ -16,9 +16,9 @@
 #'@author Boris P. Hejblum, Chariff Alkhassim, Francois Caron
 #'--- Maintainer: Boris P. Hejblum
 #'
-#'@references BP Hejblum, C Alkhassim, F Caron, R Thiebaut, Sequential Dirichlet
+#'@references BP Hejblum, C Alkhassim, R Gottardo, F Caron, R Thiebaut, Sequential Dirichlet
 #'Process Mixtures of Multivariate Skew t-distributions for Model-based Clustering
-#'of Flow Cytometry Data, submitted 2016
+#'of Flow Cytometry Data, submitted 2016.
 #'
 #'@docType package
 #'@name NPflow-package

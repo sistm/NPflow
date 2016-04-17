@@ -24,7 +24,7 @@ Flimited(6, pred, ref)
 
 }
 \references{
-BP Hejblum, C Alkhassim, F Caron, R Thiebaut, Sequential Dirichlet
+BP Hejblum, C Alkhassim, R Gottardo, F Caron, R Thiebaut, Sequential Dirichlet
 Process Mixtures of Multivariate Skew t-distributions for Model-based Clustering
 of Flow Cytometry Data, submitted 2016
 }
