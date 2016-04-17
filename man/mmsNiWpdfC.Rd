@@ -7,25 +7,30 @@
 mmsNiWpdfC(xi, psi, Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_df0, Log = TRUE)
 }
 \arguments{
-\item{xi}{mean vectors matrix of dimension p x K, K being the number of
-distributions for which the density probability has to be ealuated}
+\item{xi}{data matrix of dimensions \code{p x n} where columns contain the observed
+mean vectors.}
 
-\item{psi}{skew parameter vectors matrix of dimension p x K, K being the number of
-distributions for which the density probability has to be ealuated}
+\item{psi}{data matrix of dimensions \code{p x n} where columns contain the observed
+skew parameter vectors.}
 
-\item{Sigma}{list of length K of variance-covariance matrices,
-each of dimensions p x p}
+\item{Sigma}{list of length \code{n} of observed variance-covariance matrices,
+each of dimensions \code{p x p}.}
+
+\item{U_xi0}{mean vectors matrix of dimension \code{p x K}, \code{K} being the number of
+distributions for which the density probability has to be evaluated.}
+
+\item{U_psi0}{skew parameter vectors matrix of dimension \code{p x K}.}
+
+\item{U_Sigma0}{list of length \code{K} of variance-covariance matrices,
+each of dimensions \code{p x p}.}
+
+\item{U_df0}{vector of length \code{K} of degree of freedom parameters.}
 
 \item{Log}{logical flag for returning the log of the probability density
 function. Defaults is \code{TRUE}.}
-
-\item{x}{data matrix of dimension p x n, p being the dimension of the
-data and n the number of data points}
-
-\item{df}{vector of length K of degree of freedom parameters}
 }
 \value{
-matrix of densities of dimension K x n
+matrix of densities of dimension \code{K x n}
 }
 \description{
 C++ implementation of multivariate structured Normal inverse Wishart probability density function for multiple inputs

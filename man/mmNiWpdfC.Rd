@@ -7,19 +7,24 @@
 mmNiWpdfC(Mu, Sigma, U_Mu0, U_Kappa0, U_Nu0, U_Sigma0, Log = TRUE)
 }
 \arguments{
-\item{Mu}{mean vectors matrix of dimension p x K, K being the number of
-distributions for which the density probability has to be ealuated}
+\item{Mu}{data matrix of dimension \code{p x n}, \code{p} being the dimension of the
+data and n the number of data points, where each column is an observed mean vector.}
 
-\item{U_Nu0}{vector of length K of degree of freedom parameters}
+\item{Sigma}{list of length \code{n} of observed variance-covariance matrices,
+each of dimensions \code{p x p}.}
+
+\item{U_Mu0}{mean vectors matrix of dimension \code{p x K}, \code{K} being the number of
+distributions for which the density probability has to be evaluated}
+
+\item{U_Kappa0}{vector of length \code{K} of scale parameters.}
+
+\item{U_Nu0}{vector of length \code{K} of degree of freedom parameters.}
+
+\item{U_Sigma0}{list of length \code{K} of variance-covariance matrices,
+each of dimensions \code{p x p}.}
 
 \item{Log}{logical flag for returning the log of the probability density
 function. Defaults is \code{TRUE}.}
-
-\item{x}{data matrix of dimension p x n, p being the dimension of the
-data and n the number of data points}
-
-\item{varcovM}{list of length K of variance-covariance matrices,
-each of dimensions p x p}
 }
 \value{
 matrix of densities of dimension K x n

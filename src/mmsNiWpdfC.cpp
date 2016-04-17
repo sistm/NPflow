@@ -2,6 +2,7 @@
 using namespace Rcpp;
 using namespace arma;
 
+// [[Rcpp::interfaces(r, cpp)]]
 // [[Rcpp::depends(RcppArmadillo)]]
 
 //' C++ implementation of multivariate log gamma function
@@ -28,44 +29,43 @@ double lgamma_mvC(double x,
 
 //' C++ implementation of multivariate structured Normal inverse Wishart probability density function for multiple inputs
 //'
-//'@param x data matrix of dimension p x n, p being the dimension of the
-//'data and n the number of data points
-//'@param xi mean vectors matrix of dimension p x K, K being the number of
-//'distributions for which the density probability has to be ealuated
-//'@param psi skew parameter vectors matrix of dimension p x K, K being the number of
-//'distributions for which the density probability has to be ealuated
-//'@param Sigma list of length K of variance-covariance matrices,
-//'each of dimensions p x p
-//'@param df vector of length K of degree of freedom parameters
+//'@param xi data matrix of dimensions \code{p x n} where columns contain the observed
+//'mean vectors.
+//'@param psi data matrix of dimensions \code{p x n} where columns contain the observed
+//'skew parameter vectors.
+//'@param Sigma list of length \code{n} of observed variance-covariance matrices,
+//'each of dimensions \code{p x p}.
+//'@param U_xi0 mean vectors matrix of dimension \code{p x K}, \code{K} being the number of
+//'distributions for which the density probability has to be evaluated.
+//'@param U_psi0 skew parameter vectors matrix of dimension \code{p x K}.
+//'@param U_Sigma0 list of length \code{K} of variance-covariance matrices,
+//'each of dimensions \code{p x p}.
+//'@param U_df0 vector of length \code{K} of degree of freedom parameters.
 //'@param Log logical flag for returning the log of the probability density
 //'function. Defaults is \code{TRUE}.
-//'@return matrix of densities of dimension K x n
+//'@return matrix of densities of dimension \code{K x n}
 //'@export
-//'
 //'
 // [[Rcpp::export]]
 NumericMatrix mmsNiWpdfC(arma::mat xi,
                          arma::mat psi,
                          List Sigma,
-                         NumericMatrix U_xi0,
-                         NumericMatrix U_psi0,
+                         arma::mat U_xi0,
+                         arma::mat U_psi0,
                          List U_B0,
                          List U_Sigma0,
                          NumericVector U_df0,
                          bool Log=true){
 
-
-    mat mxi0 = as<mat>(U_xi0);
-    mat mpsi0 = as<mat>(U_psi0);
     int d = xi.n_rows;
     int n = xi.n_cols;
-    int K = mxi0.n_cols;
+    int K = U_xi0.n_cols;
     NumericMatrix y = NumericMatrix(K,n);
 
     const double dlog2pi = -d*log(2.0 * M_PI);
 
     for(int k=0; k < K; k++){
-        colvec mu0 = join_vert(mxi0.col(k), mpsi0.col(k));
+        colvec mu0 = join_vert(U_xi0.col(k), U_psi0.col(k));
         mat lambda0 = U_Sigma0[k];
         mat B0 = U_B0[k];
         mat B0inv = inv_sympd(B0);

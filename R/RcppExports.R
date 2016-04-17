@@ -81,13 +81,16 @@ Fmeasure_costC <- function(c) {
 
 #' C++ implementation of multivariate Normal inverse Wishart probability density function for multiple inputs
 #'
-#'@param x data matrix of dimension p x n, p being the dimension of the
-#'data and n the number of data points
-#'@param Mu mean vectors matrix of dimension p x K, K being the number of
-#'distributions for which the density probability has to be ealuated
-#'@param varcovM list of length K of variance-covariance matrices,
-#'each of dimensions p x p
-#'@param U_Nu0 vector of length K of degree of freedom parameters
+#'@param Mu data matrix of dimension \code{p x n}, \code{p} being the dimension of the
+#'data and n the number of data points, where each column is an observed mean vector.
+#'@param Sigma list of length \code{n} of observed variance-covariance matrices,
+#'each of dimensions \code{p x p}.
+#'@param U_Mu0 mean vectors matrix of dimension \code{p x K}, \code{K} being the number of
+#'distributions for which the density probability has to be evaluated
+#'@param U_Sigma0 list of length \code{K} of variance-covariance matrices,
+#'each of dimensions \code{p x p}.
+#'@param U_Kappa0 vector of length \code{K} of scale parameters.
+#'@param U_Nu0 vector of length \code{K} of degree of freedom parameters.
 #'@param Log logical flag for returning the log of the probability density
 #'function. Defaults is \code{TRUE}.
 #'@return matrix of densities of dimension K x n
@@ -111,20 +114,22 @@ lgamma_mvC <- function(x, p) {
 
 #' C++ implementation of multivariate structured Normal inverse Wishart probability density function for multiple inputs
 #'
-#'@param x data matrix of dimension p x n, p being the dimension of the
-#'data and n the number of data points
-#'@param xi mean vectors matrix of dimension p x K, K being the number of
-#'distributions for which the density probability has to be ealuated
-#'@param psi skew parameter vectors matrix of dimension p x K, K being the number of
-#'distributions for which the density probability has to be ealuated
-#'@param Sigma list of length K of variance-covariance matrices,
-#'each of dimensions p x p
-#'@param df vector of length K of degree of freedom parameters
+#'@param xi data matrix of dimensions \code{p x n} where columns contain the observed
+#'mean vectors.
+#'@param psi data matrix of dimensions \code{p x n} where columns contain the observed
+#'skew parameter vectors.
+#'@param Sigma list of length \code{n} of observed variance-covariance matrices,
+#'each of dimensions \code{p x p}.
+#'@param U_xi0 mean vectors matrix of dimension \code{p x K}, \code{K} being the number of
+#'distributions for which the density probability has to be evaluated.
+#'@param U_psi0 skew parameter vectors matrix of dimension \code{p x K}.
+#'@param U_Sigma0 list of length \code{K} of variance-covariance matrices,
+#'each of dimensions \code{p x p}.
+#'@param U_df0 vector of length \code{K} of degree of freedom parameters.
 #'@param Log logical flag for returning the log of the probability density
 #'function. Defaults is \code{TRUE}.
-#'@return matrix of densities of dimension K x n
+#'@return matrix of densities of dimension \code{K x n}
 #'@export
-#'
 #'
 mmsNiWpdfC <- function(xi, psi, Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_df0, Log = TRUE) {
     .Call('NPflow_mmsNiWpdfC', PACKAGE = 'NPflow', xi, psi, Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_df0, Log)
@@ -490,3 +495,7 @@ vclust2mcoclustC <- function(c) {
     .Call('NPflow_vclust2mcoclustC', PACKAGE = 'NPflow', c)
 }
 
+# Register entry points for exported C++ functions
+methods::setLoadAction(function(ns) {
+    .Call('NPflow_RcppExport_registerCCallable', PACKAGE = 'NPflow')
+})

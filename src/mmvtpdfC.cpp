@@ -2,6 +2,7 @@
 using namespace Rcpp;
 using namespace arma;
 
+// [[Rcpp::interfaces(r, cpp)]]
 // [[Rcpp::depends(RcppArmadillo)]]
 
 //' C++ implementation of multivariate Normal probability density function for multiple inputs

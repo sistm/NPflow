@@ -2,6 +2,7 @@
 using namespace Rcpp;
 using namespace arma;
 
+// [[Rcpp::interfaces(r, cpp)]]
 // [[Rcpp::depends(RcppArmadillo)]]
 const double log2pi2 = log(2.0 * M_PI)/2;
 
