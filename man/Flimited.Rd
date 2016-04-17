@@ -17,11 +17,10 @@ Flimited(n_small_clst, pred, ref)
 A limited version of F-measure that only takes into accout small clusters
 }
 \examples{
-library(NPflow)
 pred <- c(rep(1, 5),rep(2, 8),rep(3,10))
 ref <- c(rep(1, 5),rep(c(2,3), 4),rep(c(3,2),5))
-#FmeasureC(pred, ref)
-#Flimited(6, pred, ref)
+FmeasureC(pred, ref)
+Flimited(6, pred, ref)
 
 }
 \references{

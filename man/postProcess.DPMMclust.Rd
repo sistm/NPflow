@@ -22,6 +22,8 @@ partition of the \code{n} observations to compare to the point estimate.}
 \item{lossFn}{character string specifying the loss function to be used.
 Either "F-measure" or "Binder" (see Details). Default is "F-measure".}
 
+\item{K}{integer giving the number of mixture components. Default is \code{10}.}
+
 \item{...}{further arguments passed to or from other methods}
 }
 \value{
