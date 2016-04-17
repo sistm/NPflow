@@ -18,6 +18,8 @@ using namespace arma;
 //'@param U_xi0 mean vectors matrix of dimension \code{p x K}, \code{K} being the number of
 //'distributions for which the density probability has to be evaluated.
 //'@param U_psi0 skew parameter vectors matrix of dimension \code{p x K}.
+//'@param U_B0 list of length \code{K} of structured scale matrices,
+//'each of dimensions \code{p x p}.
 //'@param U_Sigma0 list of length \code{K} of variance-covariance matrices,
 //'each of dimensions \code{p x p}.
 //'@param U_df0 vector of length \code{K} of degree of freedom parameters.

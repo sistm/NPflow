@@ -21,6 +21,9 @@ distributions for which the density probability has to be evaluated.}
 
 \item{U_psi0}{skew parameter vectors matrix of dimension \code{p x K}.}
 
+\item{U_B0}{list of length \code{K} of structured scale matrices,
+each of dimensions \code{p x p}.}
+
 \item{U_Sigma0}{list of length \code{K} of variance-covariance matrices,
 each of dimensions \code{p x p}.}
 

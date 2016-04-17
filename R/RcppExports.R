@@ -79,6 +79,42 @@ Fmeasure_costC <- function(c) {
     .Call('NPflow_Fmeasure_costC', PACKAGE = 'NPflow', c)
 }
 
+#' C++ implementation
+#'
+#'
+#'@param c an MCMC partitions of length \code{n}.
+#'
+#'@param d a symmetric \code{n x n} matrix containing distances
+#'between each group distributions.
+#'
+#'@export
+#'
+#'@examples
+#'library(NPflow)
+#'c <- c(1,1,2,3,2,3)
+#'d <- matrix(runif(length(c)^2),length(c))
+#'NuMatParC(c,d)
+#'
+#'
+NuMatParC <- function(c, d) {
+    .Call('NPflow_NuMatParC', PACKAGE = 'NPflow', c, d)
+}
+
+#' C++ implementation of residual trace computation step used when sampling the scale
+#'
+#'@param eps a numeric matrix where each column contains the centered and unskewed observations
+#'@param sigma a numeric covariance matrix
+#'
+#'@return the computed trace
+#'
+#'@keywords internal
+#'
+#'@export
+#'
+traceEpsC <- function(eps, sigma) {
+    .Call('NPflow_traceEpsC', PACKAGE = 'NPflow', eps, sigma)
+}
+
 #' C++ implementation of multivariate Normal inverse Wishart probability density function for multiple inputs
 #'
 #'@param Mu data matrix of dimension \code{p x n}, \code{p} being the dimension of the
@@ -112,6 +148,8 @@ mmNiWpdfC <- function(Mu, Sigma, U_Mu0, U_Kappa0, U_Nu0, U_Sigma0, Log = TRUE) {
 #'@param U_xi0 mean vectors matrix of dimension \code{p x K}, \code{K} being the number of
 #'distributions for which the density probability has to be evaluated.
 #'@param U_psi0 skew parameter vectors matrix of dimension \code{p x K}.
+#'@param U_B0 list of length \code{K} of structured scale matrices,
+#'each of dimensions \code{p x p}.
 #'@param U_Sigma0 list of length \code{K} of variance-covariance matrices,
 #'each of dimensions \code{p x p}.
 #'@param U_df0 vector of length \code{K} of degree of freedom parameters.
@@ -366,27 +404,6 @@ mvstlikC <- function(x, c, clustval, xi, psi, sigma, df, loglik = TRUE) {
     .Call('NPflow_mvstlikC', PACKAGE = 'NPflow', x, c, clustval, xi, psi, sigma, df, loglik)
 }
 
-#' C++ implementation
-#'
-#'
-#'@param c an MCMC partitions of length \code{n}.
-#'
-#'@param d a symmetric \code{n x n} matrix containing distances
-#'between each group distributions.
-#'
-#'@export
-#'
-#'@examples
-#'library(NPflow)
-#'c <- c(1,1,2,3,2,3)
-#'d <- matrix(runif(length(c)^2),length(c))
-#'NuMatParC(c,d)
-#'
-#'
-NuMatParC <- function(c, d) {
-    .Call('NPflow_NuMatParC', PACKAGE = 'NPflow', c, d)
-}
-
 #' C++ implementation of the multinomial sampling from a matrix
 #' of column vectors, each containing the sampling probabilities
 #' for their respective draw
@@ -403,6 +420,28 @@ NuMatParC <- function(c, d) {
 #'
 sampleClassC <- function(probMat) {
     .Call('NPflow_sampleClassC', PACKAGE = 'NPflow', probMat)
+}
+
+#' C++ implementation
+#'
+#'
+#'@param cc a matrix whose columns each represents a (MCMC) partition
+#'
+#'@export
+#'
+#'@examples
+#'library(NPflow)
+#'c <- list(c(1,1,2,3,2,3), c(1,1,1,2,3,3),c(2,2,1,1,1,1))
+#'similarityMatC(sapply(c, "["))
+#'
+#'c2 <- list()
+#'for(i in 1:10){
+#'     c2 <- c(c2, list(rmultinom(n=1, size=200, prob=rexp(n=200))))
+#'}
+#'similarityMatC(sapply(c2, "["))
+#'
+similarityMatC <- function(cc) {
+    .Call('NPflow_similarityMatC', PACKAGE = 'NPflow', cc)
 }
 
 #' C++ implementation
@@ -428,43 +467,6 @@ sampleClassC <- function(probMat) {
 #'
 similarityMat_nocostC <- function(cc) {
     .Call('NPflow_similarityMat_nocostC', PACKAGE = 'NPflow', cc)
-}
-
-#' C++ implementation
-#'
-#'
-#'@param cc a matrix whose columns each represents a (MCMC) partition
-#'
-#'@export
-#'
-#'@examples
-#'library(NPflow)
-#'c <- list(c(1,1,2,3,2,3), c(1,1,1,2,3,3),c(2,2,1,1,1,1))
-#'similarityMatC(sapply(c, "["))
-#'
-#'c2 <- list()
-#'for(i in 1:10){
-#'     c2 <- c(c2, list(rmultinom(n=1, size=200, prob=rexp(n=200))))
-#'}
-#'similarityMatC(sapply(c2, "["))
-#'
-similarityMatC <- function(cc) {
-    .Call('NPflow_similarityMatC', PACKAGE = 'NPflow', cc)
-}
-
-#' C++ implementation of residual trace computation step used when sampling the scale
-#'
-#'@param eps a numeric matrix where each column contains the centered and unskewed observations
-#'@param sigma a numeric covariance matrix
-#'
-#'@return the computed trace
-#'
-#'@keywords internal
-#'
-#'@export
-#'
-traceEpsC <- function(eps, sigma) {
-    .Call('NPflow_traceEpsC', PACKAGE = 'NPflow', eps, sigma)
 }
 
 #' C++ implementation

@@ -1,13 +1,19 @@
 
 #'multivariate Normal inverse Wishart probability density function for multiple inputs
 
-#'@param x data matrix of dimension p x n, p being the dimension of the
-#'data and n the number of data points
-#'@param Mu mean vectors matrix of dimension p x K, K being the number of
-#'distributions for which the density probability has to be ealuated
-#'@param varcovM list of length K of variance-covariance matrices,
-#'each of dimensions p x p
-#'@param U_Nu0 vector of length K of degree of freedom parameters
+#'@param mu data matrix of dimension \code{p x n}, \code{p} being the dimension of the
+#'data and n the number of data points, where each column is an observed mean vector.
+#'@param Sigma list of length \code{n} of observed variance-covariance matrices,
+#'each of dimensions \code{p x p}.
+#'@param U_mu0 mean vectors matrix of dimension \code{p x K}, \code{K} being the number of
+#'distributions for which the density probability has to be evaluated
+#'@param U_lambda0 list of length \code{K} of variance-covariance matrices,
+#'each of dimensions \code{p x p}.
+#'@param U_kappa0 vector of length \code{K} of scale parameters.
+#'@param U_nu0 vector of length \code{K} of degree of freedom parameters.
+#'@param Log logical flag for returning the log of the probability density
+#'function. Defaults is \code{TRUE}.
+#'@param U_nu0 vector of length K of degree of freedom parameters
 #'@param Log logical flag for returning the log of the probability density
 #'function. Defaults is \code{TRUE}.
 #'@return matrix of densities of dimension K x n

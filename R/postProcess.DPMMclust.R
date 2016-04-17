@@ -39,7 +39,7 @@
 #'
 #'@seealso \code{\link{similarityMat}} \code{\link{summary.DPMMclust}}
 #'
-postProcess.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measure", K=10,...){
+postProcess.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measure", K=10, ...){
 
   x_invar <- burn.DPMMclust(x, burnin = burnin, thin=thin)
 

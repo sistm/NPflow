@@ -28,12 +28,20 @@ Default to \code{TRUE}.}
 \item{nbclust_init}{number of clusters at initialisation.
 Default to 30 (or less if there are less than 30 observations).}
 
+\item{plotevery}{an integer indicating the interval between plotted iterations when \code{doPlot}
+is \code{TRUE}.}
+
 \item{diagVar}{logical flag indicating wether the variance of each cluster is
 estimated as a diagonal matrix, or as a full matrix.
 Default is \code{TRUE} (diagonal variance).}
 
 \item{verbose}{logical flag indicating wether partition info is
 written in the console at each MCMC iteration.}
+
+\item{ncores}{number of cores to use.}
+
+\item{distrib}{the distribution used for the clustering. Current possibilities are
+\code{"gaussian"}, \code{"skewnorm"} and \code{"skewt"}.}
 }
 \value{
 a object of class \code{DPMclust} with the following attributes:

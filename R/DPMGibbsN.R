@@ -7,18 +7,18 @@
 #'@param hyperG0 prior mixing distribution.
 #'
 #'@param a shape hyperparameter of the Gamma prior on the concentration parameter of the Dirichlet
-#'  Process.
+#' Process.
 #'
 #'@param b scale hyperparameter of the Gamma prior on the concentration parameter of the Dirichlet
-#'  Process.
+#' Process.
 #'
 #'@param N number of MCMC iterations.
 #'
 #'@param doPlot logical flag indicating wether to plot MCMC iteration or not. Default to
-#'  \code{TRUE}.
+#' \code{TRUE}.
 #'
 #'@param plotevery an integer indicating the interval between plotted iterations when \code{doPlot}
-#'  is \code{TRUE}.
+#' is \code{TRUE}.
 #'
 #'@param nbclust_init number of clusters at initialisation. Default to 30 (or less if there are less
 #'  than 30 observations).

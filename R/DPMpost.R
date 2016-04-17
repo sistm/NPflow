@@ -22,6 +22,9 @@
 #'@param nbclust_init number of clusters at initialisation.
 #'Default to 30 (or less if there are less than 30 observations).
 #'
+#'@param plotevery an integer indicating the interval between plotted iterations when \code{doPlot}
+#'  is \code{TRUE}.
+#'
 #'@param diagVar logical flag indicating wether the variance of each cluster is
 #'estimated as a diagonal matrix, or as a full matrix.
 #'Default is \code{TRUE} (diagonal variance).
@@ -29,6 +32,10 @@
 #'@param verbose logical flag indicating wether partition info is
 #'written in the console at each MCMC iteration.
 #'
+#'@param distrib the distribution used for the clustering. Current possibilities are
+#'\code{"gaussian"}, \code{"skewnorm"} and \code{"skewt"}.
+#'
+#'@param ncores number of cores to use.
 #'
 #'@return a object of class \code{DPMclust} with the following attributes:
 #'  \itemize{
