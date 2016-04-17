@@ -18,7 +18,7 @@ using namespace arma;
 //'library(NPflow)
 //'pred <- c(1,1,2,3,2,3)
 //'ref <- c(2,2,1,1,1,3)
-//'#FmeasureC(pred, ref)
+//'FmeasureC(pred, ref)
 //'
 // [[Rcpp::export]]
 double FmeasureC(NumericVector pred, NumericVector ref){
@@ -84,8 +84,8 @@ double FmeasureC(NumericVector pred, NumericVector ref){
 //'library(NPflow)
 //'pred <- c(1,1,2,3,2,3)
 //'ref <- c(2,2,0,0,0,3)
-//'#FmeasureC(pred, ref)
-//'#FmeasureC_no0(pred, ref)
+//'FmeasureC(pred, ref)
+//'FmeasureC_no0(pred, ref)
 //'
 // [[Rcpp::export]]
 double FmeasureC_no0(NumericVector pred, NumericVector ref){
@@ -159,7 +159,7 @@ double FmeasureC_no0(NumericVector pred, NumericVector ref){
 //'for(i in 1:100){
 //'     c2 <- c(c2, list(rmultinom(n=1, size=2000, prob=rexp(n=2000))))
 //'}
-//'#Fmeasure_costC(sapply(c2, "["))
+//'Fmeasure_costC(sapply(c2, "["))
 //'}
 //'
 // [[Rcpp::export]]

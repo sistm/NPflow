@@ -18,8 +18,8 @@ Aghaeepour in FlowCAP 1 ignore the reference class labeled "0"
 library(NPflow)
 pred <- c(1,1,2,3,2,3)
 ref <- c(2,2,0,0,0,3)
-#FmeasureC(pred, ref)
-#FmeasureC_no0(pred, ref)
+FmeasureC(pred, ref)
+FmeasureC_no0(pred, ref)
 
 }
 \references{

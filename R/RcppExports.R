@@ -12,7 +12,7 @@
 #'library(NPflow)
 #'pred <- c(1,1,2,3,2,3)
 #'ref <- c(2,2,1,1,1,3)
-#'#FmeasureC(pred, ref)
+#'FmeasureC(pred, ref)
 #'
 FmeasureC <- function(pred, ref) {
     .Call('NPflow_FmeasureC', PACKAGE = 'NPflow', pred, ref)
@@ -35,8 +35,8 @@ FmeasureC <- function(pred, ref) {
 #'library(NPflow)
 #'pred <- c(1,1,2,3,2,3)
 #'ref <- c(2,2,0,0,0,3)
-#'#FmeasureC(pred, ref)
-#'#FmeasureC_no0(pred, ref)
+#'FmeasureC(pred, ref)
+#'FmeasureC_no0(pred, ref)
 #'
 FmeasureC_no0 <- function(pred, ref) {
     .Call('NPflow_FmeasureC_no0', PACKAGE = 'NPflow', pred, ref)
@@ -65,7 +65,7 @@ FmeasureC_no0 <- function(pred, ref) {
 #'for(i in 1:100){
 #'     c2 <- c(c2, list(rmultinom(n=1, size=2000, prob=rexp(n=2000))))
 #'}
-#'#Fmeasure_costC(sapply(c2, "["))
+#'Fmeasure_costC(sapply(c2, "["))
 #'}
 #'
 Fmeasure_costC <- function(c) {

@@ -29,7 +29,7 @@ c2 <- list()
 for(i in 1:100){
     c2 <- c(c2, list(rmultinom(n=1, size=2000, prob=rexp(n=2000))))
 }
-#Fmeasure_costC(sapply(c2, "["))
+Fmeasure_costC(sapply(c2, "["))
 }
 
 }
