@@ -39,6 +39,7 @@
 #'@export MLE_sNiW_mmEM
 #'
 #'@examples
+#'set.seed(1234)
 #'hyperG0 <- list()
 #'hyperG0$b_xi <- c(0.3, -1.5)
 #'hyperG0$b_psi <- c(0, 0)
@@ -51,7 +52,7 @@
 #'xi_list <- list()
 #'psi_list <- list()
 #'S_list <- list()
-#'for(k in 1:1000){
+#'for(k in 1:200){
 #'  NNiW <- rNNiW(hyperG0, diagVar=FALSE)
 #'  xi_list[[k]] <- NNiW[["xi"]]
 #'  psi_list[[k]] <- NNiW[["psi"]]
@@ -67,7 +68,7 @@
 #'hyperG02$nu <- 3
 #'hyperG02$lambda <- 0.5*diag(2)
 #'
-#'for(k in 1001:2000){
+#'for(k in 201:400){
 #'  NNiW <- rNNiW(hyperG02, diagVar=FALSE)
 #'  xi_list[[k]] <- NNiW[["xi"]]
 #'  psi_list[[k]] <- NNiW[["psi"]]
@@ -75,7 +76,6 @@
 #'}
 #'
 #'mle <- MLE_sNiW_mmEM(xi_list, psi_list, S_list, hyperG0, K=2)
-#'mle
 #'
 MLE_sNiW_mmEM <- function(xi_list, psi_list, S_list, hyperG0, K, init=NULL, maxit=100, tol=1E-1,
                            doPlot=TRUE, verbose=TRUE){
@@ -242,7 +242,7 @@ MLE_sNiW_mmEM <- function(xi_list, psi_list, S_list, hyperG0, K, init=NULL, maxi
   }
   if(doPlot){
     graphics::plot(y=loglik[2:(i+1)], x=c(1:i),
-                   ylab="Log-likelihood", xlab="it.", type="b", col="blue", pch=16)
+                   ylab="Log-likelihood", xlab="Iteration", type="b", col="blue", pch=16)
   }
 
   return(list("r"=r,
@@ -482,7 +482,7 @@ MLE_NiW_mmEM <- function(mu_list, S_list, hyperG0, K, maxit=100, tol=1e-1, doPlo
   }
   if(doPlot){
     graphics::plot(y=loglik[2:(i+1)], x=c(1:i),
-                   ylab="Log-likelihood", xlab="it.", type="b", col="blue", pch=16)
+                   ylab="Log-likelihood", xlab="Iteration", type="b", col="blue", pch=16)
   }
 
   return(list("r"=r,

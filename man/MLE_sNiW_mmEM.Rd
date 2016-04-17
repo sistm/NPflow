@@ -40,6 +40,7 @@ Maximum likelihood estimation of mixture of
 Normal inverse Wishart distributed observations with an EM algorithm
 }
 \examples{
+set.seed(1234)
 hyperG0 <- list()
 hyperG0$b_xi <- c(0.3, -1.5)
 hyperG0$b_psi <- c(0, 0)
@@ -52,7 +53,7 @@ hyperG0$lambda <- diag(c(0.25,0.35))
 xi_list <- list()
 psi_list <- list()
 S_list <- list()
-for(k in 1:1000){
+for(k in 1:200){
  NNiW <- rNNiW(hyperG0, diagVar=FALSE)
  xi_list[[k]] <- NNiW[["xi"]]
  psi_list[[k]] <- NNiW[["psi"]]
@@ -68,7 +69,7 @@ hyperG02$D_psi <- 10
 hyperG02$nu <- 3
 hyperG02$lambda <- 0.5*diag(2)
 
-for(k in 1001:2000){
+for(k in 201:400){
  NNiW <- rNNiW(hyperG02, diagVar=FALSE)
  xi_list[[k]] <- NNiW[["xi"]]
  psi_list[[k]] <- NNiW[["psi"]]
@@ -76,7 +77,6 @@ for(k in 1001:2000){
 }
 
 mle <- MLE_sNiW_mmEM(xi_list, psi_list, S_list, hyperG0, K=2)
-mle
 
 }
 

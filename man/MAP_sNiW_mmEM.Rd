@@ -58,7 +58,7 @@ an estimates incorporating a vague component in the mixture.
 \code{MAP_sNiW_mmEM_weighted} provides a weigthed version of the algorithm.
 }
 \examples{
-set.seed(123)
+set.seed(1234)
 hyperG0 <- list()
 hyperG0$b_xi <- c(0.3, -1.5)
 hyperG0$b_psi <- c(0, 0)
@@ -82,7 +82,7 @@ psi_list <- list()
 S_list <- list()
 w_list <- list()
 
-for(k in 1:1000){
+for(k in 1:200){
  NNiW <- rNNiW(hyperG0, diagVar=FALSE)
  xi_list[[k]] <- NNiW[["xi"]]
  psi_list[[k]] <- NNiW[["psi"]]
@@ -100,7 +100,7 @@ hyperG02$D_psi <- 1
 hyperG02$nu <- 4
 hyperG02$lambda <- 0.5*diag(2)
 
-for(k in 1001:2000){
+for(k in 201:400){
  NNiW <- rNNiW(hyperG02, diagVar=FALSE)
  xi_list[[k]] <- NNiW[["xi"]]
  psi_list[[k]] <- NNiW[["psi"]]

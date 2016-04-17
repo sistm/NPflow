@@ -367,7 +367,7 @@ MAP_sNiW_mmEM_weighted<- function(xi_list, psi_list, S_list, obsweight_list,
 
   if(doPlot){
     graphics::plot(y=loglik[2:(i+1)], x=c(1:i),
-                   ylab="Log-likelihood", xlab="it.", type="b", col="blue", pch=16)
+                   ylab="Log-likelihood", xlab="Iteration", type="b", col="blue", pch=16)
   }
 
   return(list("r"=r,
@@ -398,7 +398,7 @@ MAP_sNiW_mmEM_weighted<- function(xi_list, psi_list, S_list, obsweight_list,
 #'@export
 #'
 #'@examples
-#'set.seed(123)
+#'set.seed(1234)
 #'hyperG0 <- list()
 #'hyperG0$b_xi <- c(0.3, -1.5)
 #'hyperG0$b_psi <- c(0, 0)
@@ -422,7 +422,7 @@ MAP_sNiW_mmEM_weighted<- function(xi_list, psi_list, S_list, obsweight_list,
 #'S_list <- list()
 #'w_list <- list()
 #'
-#'for(k in 1:1000){
+#'for(k in 1:200){
 #'  NNiW <- rNNiW(hyperG0, diagVar=FALSE)
 #'  xi_list[[k]] <- NNiW[["xi"]]
 #'  psi_list[[k]] <- NNiW[["psi"]]
@@ -440,7 +440,7 @@ MAP_sNiW_mmEM_weighted<- function(xi_list, psi_list, S_list, obsweight_list,
 #'hyperG02$nu <- 4
 #'hyperG02$lambda <- 0.5*diag(2)
 #'
-#'for(k in 1001:2000){
+#'for(k in 201:400){
 #'  NNiW <- rNNiW(hyperG02, diagVar=FALSE)
 #'  xi_list[[k]] <- NNiW[["xi"]]
 #'  psi_list[[k]] <- NNiW[["psi"]]
@@ -453,7 +453,6 @@ MAP_sNiW_mmEM_weighted<- function(xi_list, psi_list, S_list, obsweight_list,
 #'
 MAP_sNiW_mmEM_vague <- function(xi_list, psi_list, S_list,
                                  hyperG0, K=10, maxit=100, tol=1E-1, doPlot=TRUE, verbose=TRUE){
-
 
   N <- length(xi_list)
   d <- length(hyperG0[[1]])
@@ -575,7 +574,7 @@ MAP_sNiW_mmEM_vague <- function(xi_list, psi_list, S_list,
 
   if(doPlot){
     graphics::plot(y=loglik[2:(i+1)], x=c(1:i),
-                   ylab="Log-likelihood", xlab="it.", type="b", col="blue", pch=16)
+                   ylab="Log-likelihood", xlab="Iteration", type="b", col="blue", pch=16)
   }
 
   return(list("r"=r,
