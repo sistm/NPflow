@@ -82,6 +82,44 @@ namespace NPflow {
         return Rcpp::as<List >(__result);
     }
 
+    inline List NuMatParC(NumericVector c, arma::mat d) {
+        typedef SEXP(*Ptr_NuMatParC)(SEXP,SEXP);
+        static Ptr_NuMatParC p_NuMatParC = NULL;
+        if (p_NuMatParC == NULL) {
+            validateSignature("List(*NuMatParC)(NumericVector,arma::mat)");
+            p_NuMatParC = (Ptr_NuMatParC)R_GetCCallable("NPflow", "NPflow_NuMatParC");
+        }
+        RObject __result;
+        {
+            RNGScope __rngScope;
+            __result = p_NuMatParC(Rcpp::wrap(c), Rcpp::wrap(d));
+        }
+        if (__result.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (__result.inherits("try-error"))
+            throw Rcpp::exception(as<std::string>(__result).c_str());
+        return Rcpp::as<List >(__result);
+    }
+
+    inline NumericVector traceEpsC(arma::mat eps, arma::mat sigma) {
+        typedef SEXP(*Ptr_traceEpsC)(SEXP,SEXP);
+        static Ptr_traceEpsC p_traceEpsC = NULL;
+        if (p_traceEpsC == NULL) {
+            validateSignature("NumericVector(*traceEpsC)(arma::mat,arma::mat)");
+            p_traceEpsC = (Ptr_traceEpsC)R_GetCCallable("NPflow", "NPflow_traceEpsC");
+        }
+        RObject __result;
+        {
+            RNGScope __rngScope;
+            __result = p_traceEpsC(Rcpp::wrap(eps), Rcpp::wrap(sigma));
+        }
+        if (__result.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (__result.inherits("try-error"))
+            throw Rcpp::exception(as<std::string>(__result).c_str());
+        return Rcpp::as<NumericVector >(__result);
+    }
+
     inline NumericMatrix mmNiWpdfC(arma::mat Mu, List Sigma, arma::mat U_Mu0, NumericVector U_Kappa0, NumericVector U_Nu0, List U_Sigma0, bool Log = true) {
         typedef SEXP(*Ptr_mmNiWpdfC)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
         static Ptr_mmNiWpdfC p_mmNiWpdfC = NULL;
@@ -253,25 +291,6 @@ namespace NPflow {
         return Rcpp::as<List >(__result);
     }
 
-    inline List NuMatParC(NumericVector c, arma::mat d) {
-        typedef SEXP(*Ptr_NuMatParC)(SEXP,SEXP);
-        static Ptr_NuMatParC p_NuMatParC = NULL;
-        if (p_NuMatParC == NULL) {
-            validateSignature("List(*NuMatParC)(NumericVector,arma::mat)");
-            p_NuMatParC = (Ptr_NuMatParC)R_GetCCallable("NPflow", "NPflow_NuMatParC");
-        }
-        RObject __result;
-        {
-            RNGScope __rngScope;
-            __result = p_NuMatParC(Rcpp::wrap(c), Rcpp::wrap(d));
-        }
-        if (__result.inherits("interrupted-error"))
-            throw Rcpp::internal::InterruptedException();
-        if (__result.inherits("try-error"))
-            throw Rcpp::exception(as<std::string>(__result).c_str());
-        return Rcpp::as<List >(__result);
-    }
-
     inline IntegerVector sampleClassC(arma::mat probMat) {
         typedef SEXP(*Ptr_sampleClassC)(SEXP);
         static Ptr_sampleClassC p_sampleClassC = NULL;
@@ -289,25 +308,6 @@ namespace NPflow {
         if (__result.inherits("try-error"))
             throw Rcpp::exception(as<std::string>(__result).c_str());
         return Rcpp::as<IntegerVector >(__result);
-    }
-
-    inline List similarityMat_nocostC(arma::mat cc) {
-        typedef SEXP(*Ptr_similarityMat_nocostC)(SEXP);
-        static Ptr_similarityMat_nocostC p_similarityMat_nocostC = NULL;
-        if (p_similarityMat_nocostC == NULL) {
-            validateSignature("List(*similarityMat_nocostC)(arma::mat)");
-            p_similarityMat_nocostC = (Ptr_similarityMat_nocostC)R_GetCCallable("NPflow", "NPflow_similarityMat_nocostC");
-        }
-        RObject __result;
-        {
-            RNGScope __rngScope;
-            __result = p_similarityMat_nocostC(Rcpp::wrap(cc));
-        }
-        if (__result.inherits("interrupted-error"))
-            throw Rcpp::internal::InterruptedException();
-        if (__result.inherits("try-error"))
-            throw Rcpp::exception(as<std::string>(__result).c_str());
-        return Rcpp::as<List >(__result);
     }
 
     inline List similarityMatC(arma::mat cc) {
@@ -329,23 +329,23 @@ namespace NPflow {
         return Rcpp::as<List >(__result);
     }
 
-    inline NumericVector traceEpsC(arma::mat eps, arma::mat sigma) {
-        typedef SEXP(*Ptr_traceEpsC)(SEXP,SEXP);
-        static Ptr_traceEpsC p_traceEpsC = NULL;
-        if (p_traceEpsC == NULL) {
-            validateSignature("NumericVector(*traceEpsC)(arma::mat,arma::mat)");
-            p_traceEpsC = (Ptr_traceEpsC)R_GetCCallable("NPflow", "NPflow_traceEpsC");
+    inline List similarityMat_nocostC(arma::mat cc) {
+        typedef SEXP(*Ptr_similarityMat_nocostC)(SEXP);
+        static Ptr_similarityMat_nocostC p_similarityMat_nocostC = NULL;
+        if (p_similarityMat_nocostC == NULL) {
+            validateSignature("List(*similarityMat_nocostC)(arma::mat)");
+            p_similarityMat_nocostC = (Ptr_similarityMat_nocostC)R_GetCCallable("NPflow", "NPflow_similarityMat_nocostC");
         }
         RObject __result;
         {
             RNGScope __rngScope;
-            __result = p_traceEpsC(Rcpp::wrap(eps), Rcpp::wrap(sigma));
+            __result = p_similarityMat_nocostC(Rcpp::wrap(cc));
         }
         if (__result.inherits("interrupted-error"))
             throw Rcpp::internal::InterruptedException();
         if (__result.inherits("try-error"))
             throw Rcpp::exception(as<std::string>(__result).c_str());
-        return Rcpp::as<NumericVector >(__result);
+        return Rcpp::as<List >(__result);
     }
 
     inline List vclust2mcoclustC(NumericVector c) {
