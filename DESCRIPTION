@@ -14,18 +14,18 @@ Maintainer: Boris P. Hejblum <bhejblum@hsph.harvard.edu>
 LinkingTo: Rcpp, RcppArmadillo
 Depends:
     R (>= 3.0.0),
-    truncnorm,
-    Rcpp (>= 0.12.4)
+    Rcpp (>= 0.12.4),
+    truncnorm
 Imports:
-    ggplot2,
-    stats,
     graphics,
-    fastcluster,
-    reshape2,
-    gplots,
-    pheatmap,
+    stats,
+    grDevices,
     ellipse,
-    grDevices
+    fastcluster,
+    gplots,
+    ggplot2,
+    pheatmap,
+    reshape2
 Suggests:
     foreach,
     parallel,
