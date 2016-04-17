@@ -4,8 +4,23 @@
 \alias{MLE_skewT_mmEM}
 \title{EM MLE for mixture of sNiW}
 \usage{
-MLE_skewT_mmEM(xi_list, psi_list, S_list, hyperG0, K, init = NULL,
+MLE_skewT_mmEM(xi_list, psi_list, S_list, hyperG0, K = 10, init = NULL,
   maxit = 100, tol = 0.1, plot = TRUE, verbose = TRUE)
+}
+\arguments{
+\item{xi_list}{a list of length \code{N} whose elements are observed vectors of length \code{d}
+of the mean parameters xi.}
+
+\item{psi_list}{a list of length \code{N} whose elements are observed vectors of length \code{d}
+of the skew parameters psi.}
+
+\item{S_list}{a list of length \code{N} whose elements are observed variance-covariance matrices
+of dimension \code{d x d}.}
+
+\item{K}{the number of cluster that the EM algorithm is fitting. Default is \code{10}.}
+
+\item{maxit}{the maximum number of iteration after which the EM Algorithm is stopped if
+convergence has not been reached. Default is \code{100}.}
 }
 \description{
 Maximum likelihood estimation of mixture of

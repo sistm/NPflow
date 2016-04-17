@@ -182,6 +182,20 @@ postProcess.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measur
 #'Maximum likelihood estimation of mixture of
 #'Normal inverse Wishart distributed observations with an EM algorithm
 #'
+#'@param xi_list a list of length \code{N} whose elements are observed vectors of length \code{d}
+#'of the mean parameters xi.
+#'
+#'@param psi_list a list of length \code{N} whose elements are observed vectors of length \code{d}
+#'of the skew parameters psi.
+#'
+#'@param S_list a list of length \code{N} whose elements are observed variance-covariance matrices
+#'of dimension \code{d x d}.
+#'
+#'@param K the number of cluster that the EM algorithm is fitting. Default is \code{10}.
+#'
+#'@param maxit the maximum number of iteration after which the EM Algorithm is stopped if
+#'convergence has not been reached. Default is \code{100}.
+#'
 #'@rdname MLE_skewT_mmEM
 #'
 #'@importFrom stats uniroot
@@ -229,7 +243,8 @@ postProcess.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measur
 #'mle <- MLE_skewT_mmEM(xi_list, psi_list, S_list, hyperG0, K=2)
 #'mle
 #'
-MLE_skewT_mmEM <- function( xi_list, psi_list, S_list, hyperG0, K, init=NULL,maxit=100, tol=1E-1, plot=TRUE,verbose=TRUE){
+MLE_skewT_mmEM <- function(xi_list, psi_list, S_list, hyperG0, K=10, init=NULL, maxit=100, tol=1E-1,
+                           plot=TRUE, verbose=TRUE){
 
 
   N <- length(xi_list)

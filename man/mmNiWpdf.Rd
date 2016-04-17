@@ -25,11 +25,6 @@ each of dimensions \code{p x p}.}
 
 \item{Log}{logical flag for returning the log of the probability density
 function. Defaults is \code{TRUE}.}
-
-\item{U_nu0}{vector of length K of degree of freedom parameters}
-
-\item{Log}{logical flag for returning the log of the probability density
-function. Defaults is \code{TRUE}.}
 }
 \value{
 matrix of densities of dimension K x n

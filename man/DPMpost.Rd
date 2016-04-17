@@ -6,7 +6,7 @@
 \usage{
 DPMpost(z, hyperG0, a = 1e-04, b = 1e-04, N, doPlot = TRUE,
   nbclust_init = 30, plotevery = 1, diagVar = TRUE, verbose = TRUE,
-  dist = c("gaussian", "skewnorm", "skewt"), ncores = 1)
+  distrib = c("gaussian", "skewnorm", "skewt"), ncores = 1)
 }
 \arguments{
 \item{z}{data matrix \code{d x n} with \code{d} dimensions in rows
@@ -38,10 +38,10 @@ Default is \code{TRUE} (diagonal variance).}
 \item{verbose}{logical flag indicating wether partition info is
 written in the console at each MCMC iteration.}
 
-\item{ncores}{number of cores to use.}
-
 \item{distrib}{the distribution used for the clustering. Current possibilities are
 \code{"gaussian"}, \code{"skewnorm"} and \code{"skewt"}.}
+
+\item{ncores}{number of cores to use.}
 }
 \value{
 a object of class \code{DPMclust} with the following attributes:

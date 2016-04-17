@@ -13,9 +13,6 @@
 #'@param U_nu0 vector of length \code{K} of degree of freedom parameters.
 #'@param Log logical flag for returning the log of the probability density
 #'function. Defaults is \code{TRUE}.
-#'@param U_nu0 vector of length K of degree of freedom parameters
-#'@param Log logical flag for returning the log of the probability density
-#'function. Defaults is \code{TRUE}.
 #'@return matrix of densities of dimension K x n
 #'@export
 

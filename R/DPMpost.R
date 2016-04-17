@@ -162,7 +162,7 @@
 DPMpost <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
                      nbclust_init=30, plotevery=1,
                      diagVar=TRUE, verbose=TRUE,
-                     dist=c("gaussian", "skewnorm", "skewt"),
+                     distrib=c("gaussian", "skewnorm", "skewt"),
                      ncores = 1
 ){
 
@@ -350,7 +350,7 @@ DPMpost <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
                   "logposterior_list"=logposterior_list,
                   "data"=z,
                   "nb_mcmcit"=N,
-                  "clust_distrib"="skewT",
+                  "clust_distrib"=distrib,
                   "acc_rate"=acc_rate,
                   "hyperG0"=hyperG0)
   class(dpmclus) <- "DPMMclust"
