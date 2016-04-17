@@ -10,5 +10,4 @@
 *.so
 *.dll
 Rprof.out
-src/RcppExports.cpp
 defaultmonitor.txt
