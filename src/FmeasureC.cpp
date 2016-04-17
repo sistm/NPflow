@@ -18,7 +18,7 @@ using namespace arma;
 //'library(NPflow)
 //'pred <- c(1,1,2,3,2,3)
 //'ref <- c(2,2,1,1,1,3)
-//'FmeasureC(pred, ref)
+//'#FmeasureC(pred, ref)
 //'
 // [[Rcpp::export]]
 double FmeasureC(NumericVector pred, NumericVector ref){
@@ -71,7 +71,6 @@ double FmeasureC(NumericVector pred, NumericVector ref){
 //'
 //' Aghaeepour in FlowCAP 1 ignore the reference class labeled "0"
 //'
-//'
 //'@param pred vector of a predicted partition
 //'@param ref vector of a reference partition
 //'
@@ -79,20 +78,14 @@ double FmeasureC(NumericVector pred, NumericVector ref){
 //'RH Scheuermann, Critical assessment of automated flow cytometry data analysis
 //'techniques, \emph{Nature Methods}, 10(3):228-38, 2013.
 //'
+//'@export
+//'
 //'@examples
 //'library(NPflow)
-//'c <- list(c(1,1,2,3,2,3), c(1,1,1,2,3,3),c(2,2,1,1,1,1))
-//'similarityMatC(sapply(c, "["))
-//'
-//'
-//'\dontrun{
-//'c2 <- list()
-//'for(i in 1:10){
-//'     c2 <- c(c2, list(rmultinom(n=1, size=3000, prob=rexp(n=3000))))
-//'}
-//'c3 <-sapply(c2, "[")
-//'similarityMatC(c3)
-//'}
+//'pred <- c(1,1,2,3,2,3)
+//'ref <- c(2,2,0,0,0,3)
+//'#FmeasureC(pred, ref)
+//'#FmeasureC_no0(pred, ref)
 //'
 // [[Rcpp::export]]
 double FmeasureC_no0(NumericVector pred, NumericVector ref){
@@ -159,14 +152,14 @@ double FmeasureC_no0(NumericVector pred, NumericVector ref){
 //'@examples
 //'library(NPflow)
 //'c <- list(c(1,1,2,3,2,3), c(1,1,1,2,3,3),c(2,2,1,1,1,1))
-//'Fmeasure_costC(sapply(c, "["))
+//'#Fmeasure_costC(sapply(c, "["))
 //'
 //'\dontrun{
 //'c2 <- list()
 //'for(i in 1:100){
 //'     c2 <- c(c2, list(rmultinom(n=1, size=2000, prob=rexp(n=2000))))
 //'}
-//'Fmeasure_costC(sapply(c2, "["))
+//'#Fmeasure_costC(sapply(c2, "["))
 //'}
 //'
 // [[Rcpp::export]]

@@ -12,7 +12,7 @@
 #'library(NPflow)
 #'pred <- c(1,1,2,3,2,3)
 #'ref <- c(2,2,1,1,1,3)
-#'FmeasureC(pred, ref)
+#'#FmeasureC(pred, ref)
 #'
 FmeasureC <- function(pred, ref) {
     .Call('NPflow_FmeasureC', PACKAGE = 'NPflow', pred, ref)
@@ -22,7 +22,6 @@ FmeasureC <- function(pred, ref) {
 #'
 #' Aghaeepour in FlowCAP 1 ignore the reference class labeled "0"
 #'
-#'
 #'@param pred vector of a predicted partition
 #'@param ref vector of a reference partition
 #'
@@ -30,20 +29,14 @@ FmeasureC <- function(pred, ref) {
 #'RH Scheuermann, Critical assessment of automated flow cytometry data analysis
 #'techniques, \emph{Nature Methods}, 10(3):228-38, 2013.
 #'
+#'@export
+#'
 #'@examples
 #'library(NPflow)
-#'c <- list(c(1,1,2,3,2,3), c(1,1,1,2,3,3),c(2,2,1,1,1,1))
-#'similarityMatC(sapply(c, "["))
-#'
-#'
-#'\dontrun{
-#'c2 <- list()
-#'for(i in 1:10){
-#'     c2 <- c(c2, list(rmultinom(n=1, size=3000, prob=rexp(n=3000))))
-#'}
-#'c3 <-sapply(c2, "[")
-#'similarityMatC(c3)
-#'}
+#'pred <- c(1,1,2,3,2,3)
+#'ref <- c(2,2,0,0,0,3)
+#'#FmeasureC(pred, ref)
+#'#FmeasureC_no0(pred, ref)
 #'
 FmeasureC_no0 <- function(pred, ref) {
     .Call('NPflow_FmeasureC_no0', PACKAGE = 'NPflow', pred, ref)
@@ -65,18 +58,54 @@ FmeasureC_no0 <- function(pred, ref) {
 #'@examples
 #'library(NPflow)
 #'c <- list(c(1,1,2,3,2,3), c(1,1,1,2,3,3),c(2,2,1,1,1,1))
-#'Fmeasure_costC(sapply(c, "["))
+#'#Fmeasure_costC(sapply(c, "["))
 #'
 #'\dontrun{
 #'c2 <- list()
 #'for(i in 1:100){
 #'     c2 <- c(c2, list(rmultinom(n=1, size=2000, prob=rexp(n=2000))))
 #'}
-#'Fmeasure_costC(sapply(c2, "["))
+#'#Fmeasure_costC(sapply(c2, "["))
 #'}
 #'
 Fmeasure_costC <- function(c) {
     .Call('NPflow_Fmeasure_costC', PACKAGE = 'NPflow', c)
+}
+
+#' C++ implementation
+#'
+#'
+#'@param c an MCMC partitions of length \code{n}.
+#'
+#'@param d a symmetric \code{n x n} matrix containing distances
+#'between each group distributions.
+#'
+#'@export
+#'
+#'@examples
+#'library(NPflow)
+#'c <- c(1,1,2,3,2,3)
+#'d <- matrix(runif(length(c)^2),length(c))
+#'NuMatParC(c,d)
+#'
+#'
+NuMatParC <- function(c, d) {
+    .Call('NPflow_NuMatParC', PACKAGE = 'NPflow', c, d)
+}
+
+#' C++ implementation of residual trace computation step used when sampling the scale
+#'
+#'@param eps a numeric matrix where each column contains the centered and unskewed observations
+#'@param sigma a numeric covariance matrix
+#'
+#'@return the computed trace
+#'
+#'@keywords internal
+#'
+#'@export
+#'
+traceEpsC <- function(eps, sigma) {
+    .Call('NPflow_traceEpsC', PACKAGE = 'NPflow', eps, sigma)
 }
 
 #' C++ implementation of multivariate Normal inverse Wishart probability density function for multiple inputs
@@ -368,27 +397,6 @@ mvstlikC <- function(x, c, clustval, xi, psi, sigma, df, loglik = TRUE) {
     .Call('NPflow_mvstlikC', PACKAGE = 'NPflow', x, c, clustval, xi, psi, sigma, df, loglik)
 }
 
-#' C++ implementation
-#'
-#'
-#'@param c an MCMC partitions of length \code{n}.
-#'
-#'@param d a symmetric \code{n x n} matrix containing distances
-#'between each group distributions.
-#'
-#'@export
-#'
-#'@examples
-#'library(NPflow)
-#'c <- c(1,1,2,3,2,3)
-#'d <- matrix(runif(length(c)^2),length(c))
-#'NuMatParC(c,d)
-#'
-#'
-NuMatParC <- function(c, d) {
-    .Call('NPflow_NuMatParC', PACKAGE = 'NPflow', c, d)
-}
-
 #' C++ implementation of the multinomial sampling from a matrix
 #' of column vectors, each containing the sampling probabilities
 #' for their respective draw
@@ -405,6 +413,28 @@ NuMatParC <- function(c, d) {
 #'
 sampleClassC <- function(probMat) {
     .Call('NPflow_sampleClassC', PACKAGE = 'NPflow', probMat)
+}
+
+#' C++ implementation
+#'
+#'
+#'@param cc a matrix whose columns each represents a (MCMC) partition
+#'
+#'@export
+#'
+#'@examples
+#'library(NPflow)
+#'c <- list(c(1,1,2,3,2,3), c(1,1,1,2,3,3),c(2,2,1,1,1,1))
+#'similarityMatC(sapply(c, "["))
+#'
+#'c2 <- list()
+#'for(i in 1:10){
+#'     c2 <- c(c2, list(rmultinom(n=1, size=200, prob=rexp(n=200))))
+#'}
+#'similarityMatC(sapply(c2, "["))
+#'
+similarityMatC <- function(cc) {
+    .Call('NPflow_similarityMatC', PACKAGE = 'NPflow', cc)
 }
 
 #' C++ implementation
@@ -430,43 +460,6 @@ sampleClassC <- function(probMat) {
 #'
 similarityMat_nocostC <- function(cc) {
     .Call('NPflow_similarityMat_nocostC', PACKAGE = 'NPflow', cc)
-}
-
-#' C++ implementation
-#'
-#'
-#'@param cc a matrix whose columns each represents a (MCMC) partition
-#'
-#'@export
-#'
-#'@examples
-#'library(NPflow)
-#'c <- list(c(1,1,2,3,2,3), c(1,1,1,2,3,3),c(2,2,1,1,1,1))
-#'similarityMatC(sapply(c, "["))
-#'
-#'c2 <- list()
-#'for(i in 1:10){
-#'     c2 <- c(c2, list(rmultinom(n=1, size=200, prob=rexp(n=200))))
-#'}
-#'similarityMatC(sapply(c2, "["))
-#'
-similarityMatC <- function(cc) {
-    .Call('NPflow_similarityMatC', PACKAGE = 'NPflow', cc)
-}
-
-#' C++ implementation of residual trace computation step used when sampling the scale
-#'
-#'@param eps a numeric matrix where each column contains the centered and unskewed observations
-#'@param sigma a numeric covariance matrix
-#'
-#'@return the computed trace
-#'
-#'@keywords internal
-#'
-#'@export
-#'
-traceEpsC <- function(eps, sigma) {
-    .Call('NPflow_traceEpsC', PACKAGE = 'NPflow', eps, sigma)
 }
 
 #' C++ implementation

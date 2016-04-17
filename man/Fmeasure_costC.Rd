@@ -22,14 +22,14 @@ function using the Armadillo library
 \examples{
 library(NPflow)
 c <- list(c(1,1,2,3,2,3), c(1,1,1,2,3,3),c(2,2,1,1,1,1))
-Fmeasure_costC(sapply(c, "["))
+#Fmeasure_costC(sapply(c, "["))
 
 \dontrun{
 c2 <- list()
 for(i in 1:100){
     c2 <- c(c2, list(rmultinom(n=1, size=2000, prob=rexp(n=2000))))
 }
-Fmeasure_costC(sapply(c2, "["))
+#Fmeasure_costC(sapply(c2, "["))
 }
 
 }

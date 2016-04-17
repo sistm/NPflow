@@ -16,18 +16,10 @@ Aghaeepour in FlowCAP 1 ignore the reference class labeled "0"
 }
 \examples{
 library(NPflow)
-c <- list(c(1,1,2,3,2,3), c(1,1,1,2,3,3),c(2,2,1,1,1,1))
-similarityMatC(sapply(c, "["))
-
-
-\dontrun{
-c2 <- list()
-for(i in 1:10){
-    c2 <- c(c2, list(rmultinom(n=1, size=3000, prob=rexp(n=3000))))
-}
-c3 <-sapply(c2, "[")
-similarityMatC(c3)
-}
+pred <- c(1,1,2,3,2,3)
+ref <- c(2,2,0,0,0,3)
+#FmeasureC(pred, ref)
+#FmeasureC_no0(pred, ref)
 
 }
 \references{
