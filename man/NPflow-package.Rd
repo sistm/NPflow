@@ -16,8 +16,7 @@ Version: \tab 0.3.0\cr
 Date: \tab 2016-04-02\cr
 License:\tab \href{http://www.gnu.org/licenses/lgpl.txt}{LGPL-3}\cr
 }
-The main functions in this package are \code{\link{clusDPM}} and \code{\link{DPMpost}} which
-perform TODO
+The main functions in this package is \code{\link{DPMpost}}.
 }
 \author{
 Boris P. Hejblum, Chariff Alkhassim, Francois Caron

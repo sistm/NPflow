@@ -2,7 +2,7 @@
 % Please edit documentation in R/DPMpost.R
 \name{DPMpost}
 \alias{DPMpost}
-\title{Posterior estimation for Dirichlet process mixture of multivariate distibutions models}
+\title{Posterior estimation for Dirichlet process mixture of multivariate (potentially skew) distibutions models}
 \usage{
 DPMpost(data, hyperG0, a = 1e-04, b = 1e-04, N, doPlot = TRUE,
   nbclust_init = 30, plotevery = floor(N/10), diagVar = TRUE,
@@ -93,15 +93,13 @@ ncl <- 4
 
 sdev <- array(dim=c(d,d,ncl))
 
-#xi <- matrix(nrow=d, ncol=ncl, c(-1.5, 1.5, 1.5, 1.5, 2, -2.5, -2.5, -3))
-#xi <- matrix(nrow=d, ncol=ncl, c(-0.5, 0, 0.5, 0, 0.5, -1, -1, 1))
-xi <- matrix(nrow=d, ncol=ncl, c(-0.2, 0.5, 2.4, 0.4, 0.6, -1.3, -0.9, -2.7))
+xi <- matrix(nrow=d, ncol=ncl, c(-1.5, 1.5, 1.5, 1.5, 2, -2.5, -2.5, -3))
 psi <- matrix(nrow=d, ncol=4, c(0.3, -0.7, -0.8, 0, 0.3, -0.7, 0.2, 0.9))
 nu <- c(100,25,8,5)
 p <- c(0.15, 0.05, 0.5, 0.3) # frequence des clusters
 sdev[, ,1] <- matrix(nrow=d, ncol=d, c(0.3, 0, 0, 0.3))
 sdev[, ,2] <- matrix(nrow=d, ncol=d, c(0.1, 0, 0, 0.3))
-sdev[, ,3] <- matrix(nrow=d, ncol=d, c(0.3, 0.15, 0.15, 0.3))
+sdev[, ,3] <- matrix(nrow=d, ncol=d, c(0.3, 0, 0, 0.2))
 sdev[, ,4] <- .3*diag(2)
 
 
@@ -154,17 +152,17 @@ hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
        + scale_colour_discrete(guide=guide_legend(override.aes = list(size = 6, shape=22))))
  pp #pdf(height=7, width=7.5)
 
- MCMCsample_st <- DPMpost(data=data, hyperG0=hyperG0, N=2000,
+\dontrun{
+ MCMCsample_st <- DPMpost(data=z, hyperG0=hyperG0, N=2000,
                           distrib="skewt",
                           gg.add=list(theme_bw(),
                           guides(shape=guide_legend(override.aes = list(fill="grey45"))))
  )
- s <- summary(MCMCsample_st, burnin = 900, thin=2, lossFn = "Binder")
- print(s)
- plot(s, hm=TRUE) #pdf(height=8.5, width=10.5) #png(height=700, width=720)
- plot_ConvDPM(MCMCsample_st, from=2)
- #cluster_est_binder(MCMCsample_st$mcmc_partitions[900:1000])
-
+ s <- summary(MCMCsample_st, burnin = 1500, thin=5, lossFn = "Binder")
+ s
+ plot(s)
+ #plot(s, hm=TRUE) #pdf(height=8.5, width=10.5) #png(height=700, width=720)
+}
 
 
 
