@@ -3,6 +3,11 @@
 #'Partially collapse slice Gibbs sampling for Dirichlet process mixture of multivariate
 #'normal, skew normal or skew t distributions.
 #'
+#'@details This function is a wrapper around \code{\link{DPMGibbsN}}, \code{\link{DPMGibbsN_parallel}},
+#'\code{\link{DPMGibbsN_SeqPrior}}, \code{\link{DPMGibbsSkewN}}, \code{\link{DPMGibbsSkewN_parallel}},
+#'\code{\link{DPMGibbsSkewT}}, \code{\link{DPMGibbsSkewT_parallel}},
+#'\code{\link{DPMGibbsSkewT_SeqPrior}}, \code{\link{DPMGibbsSkewT_SeqPrior_parallel}}.
+#'
 #'@param z data matrix \code{d x n} with \code{d} dimensions in rows
 #'and \code{n} observations in columns.
 #'
@@ -42,17 +47,26 @@
 #'      \item{\code{mcmc_partitions}:}{ a list of length \code{N}. Each
 #'       element \code{mcmc_partitions[n]} is a vector of length
 #'       \code{n} giving the partition of the \code{n} observations.}
-#'      \item{\code{alpha}:}{ a vector of length \code{N}. \code{cost[j]} is the cost
+#'      \item{\code{alpha}:}{a vector of length \code{N}. \code{cost[j]} is the cost
 #' associated to partition \code{c[[j]]}}
-#'      \item{\code{weights_list}:}{}
-#'      \item{\code{logposterior_list}:}{}
-#'      \item{\code{data}:}{ the data matrix \code{d x n} with \code{d} dimensions in rows
-#'and \code{n} observations in columns.}
+#'       \item{\code{U_SS_list}:}{a list of length \code{N} containing the lists of
+#'       sufficient statistics for all the mixture components at each MCMC iteration}
+#'      \item{\code{weights_list}:}{a list of length \code{N} containing the weights of each
+#'      mixture component for each MCMC iterations}
+#'      \item{\code{logposterior_list}:}{a list of length \code{N} containing the logposterior values
+#'       at each MCMC iterations}
+#'      \item{\code{data}:}{the data matrix \code{d x n} with \code{d} dimensions in rows
+#'and \code{n} observations in columns}
 #'      \item{\code{nb_mcmcit}:}{ the number of MCMC itertations}
+#'      \item{\code{clust_distrib}:}{the parametric distribution of the mixture component}
 #'      \item{\code{hyperG0}:}{the prior on the cluster location}
 #'  }
 #'
 #'@author Boris Hejblum
+#'
+#'@references BP Hejblum, C Alkhassim, R Gottardo, F Caron, R Thiebaut, Sequential Dirichlet
+#'Process Mixtures of Multivariate Skew t-distributions for Model-based Clustering
+#'of Flow Cytometry Data, submitted 2016
 #'
 #'@export
 #'
@@ -74,15 +88,13 @@
 #'
 #' sdev <- array(dim=c(d,d,ncl))
 #'
-#' #xi <- matrix(nrow=d, ncol=ncl, c(-1.5, 1.5, 1.5, 1.5, 2, -2.5, -2.5, -3))
-#' #xi <- matrix(nrow=d, ncol=ncl, c(-0.5, 0, 0.5, 0, 0.5, -1, -1, 1))
-#' xi <- matrix(nrow=d, ncol=ncl, c(-0.2, 0.5, 2.4, 0.4, 0.6, -1.3, -0.9, -2.7))
+#' xi <- matrix(nrow=d, ncol=ncl, c(-1.5, 1.5, 1.5, 1.5, 2, -2.5, -2.5, -3))
 #' psi <- matrix(nrow=d, ncol=4, c(0.3, -0.7, -0.8, 0, 0.3, -0.7, 0.2, 0.9))
 #' nu <- c(100,25,8,5)
 #' p <- c(0.15, 0.05, 0.5, 0.3) # frequence des clusters
 #' sdev[, ,1] <- matrix(nrow=d, ncol=d, c(0.3, 0, 0, 0.3))
 #' sdev[, ,2] <- matrix(nrow=d, ncol=d, c(0.1, 0, 0, 0.3))
-#' sdev[, ,3] <- matrix(nrow=d, ncol=d, c(0.3, 0.15, 0.15, 0.3))
+#' sdev[, ,3] <- matrix(nrow=d, ncol=d, c(0.3, 0, 0, 0.2))
 #' sdev[, ,4] <- .3*diag(2)
 #'
 #'
@@ -111,10 +123,6 @@
 #'  a <- 0.0001
 #'  b <- 0.0001
 #'
-#'  # do some plots
-#'  doPlot <- TRUE
-#'  nbclust_init <- 30
-#'
 #'
 #'
 #'  ## Data
@@ -139,220 +147,90 @@
 #'        + scale_colour_discrete(guide=guide_legend(override.aes = list(size = 6, shape=22))))
 #'  pp #pdf(height=7, width=7.5)
 #'
-#'
-#'  ## alpha priors plots
-#'  #####################
-#'  prioralpha <- data.frame("alpha"=rgamma(n=5000, shape=a, scale=1/b),
-#'                          "distribution" =factor(rep("prior",5000),
-#'                          levels=c("prior", "posterior")))
-#'  p <- (ggplot(prioralpha, aes(x=alpha))
-#'        + geom_histogram(aes(y=..density..),
-#'                         colour="black", fill="white")
-#'        + geom_density(alpha=.2, fill="red")
-#'        + ggtitle(paste("Prior distribution on alpha: Gamma(", a,
-#'                  ",", b, ")\n", sep=""))
-#'       )
-#'  p
+#'\dontrun{
+#'  MCMCsample_st <- DPMpost(data=z, hyperG0=hyperG0, N=2000,
+#'                           distrib="skewt",
+#'                           gg.add=list(theme_bw(),
+#'                           guides(shape=guide_legend(override.aes = list(fill="grey45"))))
+#'  )
+#'  s <- summary(MCMCsample_st, burnin = 1500, thin=5, lossFn = "Binder")
+#'  s
+#'  plot(s)
+#'  #plot(s, hm=TRUE) #pdf(height=8.5, width=10.5) #png(height=700, width=720)
+#'}
 #'
 #'
 #'
 #'
 #'
 #'
-DPMpost <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
-                     nbclust_init=30, plotevery=1,
+DPMpost <- function (data, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
+                     nbclust_init=30, plotevery=floor(N/10),
                      diagVar=TRUE, verbose=TRUE,
                      distrib=c("gaussian", "skewnorm", "skewt"),
-                     ncores = 1
+                     ncores = 1,
+                     informPrior=NULL,
+                     ...
 ){
 
-  if(doPlot){requireNamespace("ggplot2", quietly=TRUE)}
-
-  p <- dim(z)[1]
-  n <- dim(z)[2]
-  U_xi <- matrix(0, nrow=p, ncol=n)
-  U_psi <- matrix(0, nrow=p, ncol=n)
-  U_Sigma <- array(0, dim=c(p, p, n))
-  U_df <- rep(10,n)
-  U_B <- array(0, dim=c(2, 2, n))
-  U_nu <- rep(p,n)
-
-  # U_SS is a list where each U_SS[[k]] contains the sufficient
-  # statistics associated to cluster k
-  U_SS <- list()
-
-  #store U_SS :
-  U_SS_list <- list()
-  #store clustering :
-  c_list <- list()
-  #store sliced weights
-  weights_list <- list()
-
-  #store log posterior probability
-  logposterior_list <- list()
-
-  m <- numeric(n) # number of obs in each clusters
-  c <- numeric(n) # cluster label of ech observation
-  ltn <- rtruncnorm(n, a=0, b=Inf, mean=0, sd=1) # latent truncated normal
-  sc <- rep(1,n)
-
-  # Initialisation----
-  # each observation is assigned to a different cluster
-  # or to 1 of the 'nbclust_init" initial clusters if there are more than
-  # nbclust_init' observations
-  i <- 1
-
-  if(ncol(z)<nbclust_init){
-    for (k in 1:n){
-      c[k] <- k
-      #cat("cluster ", k, ":\n")
-      U_SS[[k]] <- update_SSst(z=z[, k, drop=FALSE], S=hyperG0, ltn=ltn[k], scale=sc[k], df=U_df[k])
-      NNiW <- rNNiW(U_SS[[k]], diagVar)
-      U_xi[, k] <- NNiW[["xi"]]
-      U_SS[[k]][["xi"]] <- NNiW[["xi"]]
-      U_psi[, k] <- NNiW[["psi"]]
-      U_SS[[k]][["psi"]] <- NNiW[["psi"]]
-      U_Sigma[, , k] <- NNiW[["S"]]
-      U_SS[[k]][["S"]] <- NNiW[["S"]]
-      U_B[, ,k] <- U_SS[[k]][["B"]]
-      m[k] <- m[k]+1
-      U_SS[[k]][["weight"]] <- 1/n
-    }
-  } else{
-    c <- sample(x=1:nbclust_init, size=n, replace=TRUE)
-    for (k in unique(c)){
-      obs_k <- which(c==k)
-      U_SS[[k]] <- update_SSst(z=z[, obs_k, drop=FALSE], S=hyperG0, ltn=ltn[obs_k], scale=sc[obs_k], df=U_df[k])
-      NNiW <- rNNiW(U_SS[[k]], diagVar)
-      U_xi[, k] <- NNiW[["xi"]]
-      U_SS[[k]][["xi"]] <- NNiW[["xi"]]
-      U_psi[, k] <- NNiW[["psi"]]
-      U_SS[[k]][["psi"]] <- NNiW[["psi"]]
-      U_Sigma[, , k] <- NNiW[["S"]]
-      U_SS[[k]][["S"]] <- NNiW[["S"]]
-      U_B[, ,k] <- U_SS[[k]][["B"]]
-      m[k] <- length(obs_k)
-      U_SS[[k]][["weight"]] <- m[k]/n
-    }
-  }
-
-
-  alpha <- c(log(n))
-
-
-  U_SS_list[[i]] <- U_SS
-  c_list[[i]] <- c
-  weights_list[[1]] <- numeric(length(m))
-  weights_list[[1]][unique(c)] <- table(c)/length(c)
-
-  logposterior_list[[i]] <- logposterior_DPMST(z, xi=U_xi, psi=U_psi, Sigma=U_Sigma, df=U_df, B=U_B,
-                                               hyper=hyperG0, c=c, m=m, alpha=alpha[i], n=n, a=a, b=b, diagVar)
-
-  if(doPlot){
-    plot_DPMst(z=z, c=c, i=i, alpha=alpha[i], U_SS=U_SS_list[[i]], ellipses=TRUE)
-  }
-  if(verbose){
-    cat(i, "/", N, " samplings:\n", sep="")
-    cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="")
-    cl2print <- unique(c)
-    cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
-  }
-
-  acc_rate <- 0
-
-
-  if(N>1){
-    for(i in 2:N){
-      nbClust <- length(unique(c))
-
-      alpha <- c(alpha,
-                 sample_alpha(alpha_old=alpha[i-1], n=n,
-                              K=nbClust, a=a, b=b)
+  if(ncores<2){
+    if(is.null(informPrior)){
+      res <- switch(distrib,
+                    "gaussian"=DPMGibbsN(data, hyperG0, a, b, N, doPlot, nbclust_init, plotevery, diagVar,
+                                         verbose, ...),
+                    "skewnorm"=DPMGibbsSkewN(data, hyperG0, a, b, N, doPlot, nbclust_init, plotevery, diagVar,
+                                             verbose, ...),
+                    "skewt"=DPMGibbsSkewT(data, hyperG0, a, b, N, doPlot, nbclust_init, plotevery, diagVar,
+                                          verbose, ...)
       )
-
-      slice <- sliceSampler_skewT(c=c, m=m, alpha=alpha[i],
-                                  z=z, hyperG0=hyperG0,
-                                  U_xi=U_xi, U_psi=U_psi,
-                                  U_Sigma=U_Sigma, U_df=U_df,
-                                  scale=sc, diagVar)
-      m <- slice[["m"]]
-      c <- slice[["c"]]
-      weights_list[[i]] <- slice[["weights"]]
-      ltn <- slice[["latentTrunc"]]
-      U_xi <- slice[["xi"]]
-      U_psi <- slice[["psi"]]
-      U_Sigma <- slice[["Sigma"]]
-      U_df <- slice[["df"]]
-
-
-      # Update cluster locations
-      fullCl <- which(m!=0)
-      fullCl_nb <- length(fullCl)
-      for(k in 1:fullCl_nb){
-        j <- fullCl[k]
-        obs_j <- which(c==j)
-        #cat("cluster ", j, ":\n")
-        U_SS[[j]] <- update_SSst(z=z[, obs_j, drop=FALSE], S=hyperG0,
-                                 ltn=ltn[obs_j], scale=sc[obs_j],
-                                 df=U_df[j],
-                                 hyperprior = list("Sigma"=U_Sigma[,,j])
-        )
-        U_nu[j] <- U_SS[[j]][["nu"]]
-        NNiW <- rNNiW(U_SS[[j]], diagVar)
-        U_xi[, j] <- NNiW[["xi"]]
-        U_SS[[j]][["xi"]] <- NNiW[["xi"]]
-        U_psi[, j] <- NNiW[["psi"]]
-        U_SS[[j]][["psi"]] <- NNiW[["psi"]]
-        U_Sigma[, , j] <- NNiW[["S"]]
-        U_SS[[j]][["S"]] <- NNiW[["S"]]
-        U_B[, ,j] <- U_SS[[j]][["B"]]
-        U_SS[[j]][["weight"]] <- weights_list[[i]][j]
+    }else{
+      res <- switch(distrib,
+                    "gaussian"=DPMGibbsN_SeqPrior(z, informPrior, hyperG0, a, b, N, doPlot, nbclust_init, plotevery, diagVar,
+                                                  verbose, ...),
+                    "skewnorm"=stop("Skew normal ditributions with informative prior is not implemented yet.\n",
+                                    "Contact the maintainer if you would like to see this feature implemented.\n",
+                                    "In the meantime, try the skew t distribution with 'skewt' which is a generalization ",
+                                    "of the skew normal distribution."),
+                    "skewt"=DPMGibbsSkewT_SeqPrior(z, informPrior, hyperG0, a, b, N, doPlot, nbclust_init, plotevery, diagVar,
+                                                   verbose, ...)
+      )
+    }
+  }else{
+    if(is.null(informPrior)){
+      if(distrib=="skewnorm"){
+        warning("Parallel implementation with skew normal ditributions is not available yet.\n",
+                "Contact the maintainer if you would like to see this feature implemented.\n",
+                "In the meantime, the non-parallel implementation is being run instead")
       }
-
-      update_scale <- sample_scale(c=c, m=m, z=z, U_xi=U_xi,
-                                   U_psi=U_psi, U_Sigma=U_Sigma,
-                                   U_df=U_df, ltn=ltn,
-                                   weights=weights_list[[i]],
-                                   scale=sc)
-      U_df_list <- update_scale[["df"]]
-      sc <- update_scale[["scale"]]
-      acc_rate <- acc_rate + update_scale[["acc_rate"]]
-
-      for(k in 1:fullCl_nb){
-        j <- fullCl[k]
-        U_df[j] <- U_df_list[[k]]
-        U_SS[[j]][["df"]] <- U_df[j]
-      }
-
-      U_SS_list[[i]] <- c(U_SS[which(m!=0)])
-      c_list[[i]] <- c
-
-      logposterior_list[[i]] <- logposterior_DPMST(z, xi=U_xi, psi=U_psi, Sigma=U_Sigma, df=U_df, B=U_B,
-                                                   hyper=hyperG0, c=c, m=m, alpha=alpha[i], n=n, a=a, b=b, diagVar)
-
-      if(doPlot && i/plotevery==floor(i/plotevery)){
-        plot_DPMst(z=z, c=c, i=i, alpha=alpha[i], U_SS=U_SS_list[[i]], ellipses=TRUE)
-      }
-      if(verbose){
-        cat(i, "/", N, " samplings:\n", sep="")
-        cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="")
-        cl2print <- unique(c)
-        cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
-      }
+      res <- switch(distrib,
+                    "gaussian"=DPMGibbsN_parallel(ncores, type_connect, data, hyperG0, a, b, N,
+                                                  doPlot, nbclust_init, plotevery, diagVar,
+                                                  verbose, ...),
+                    "skewnorm"=DPMGibbsSkewN(data, hyperG0, a, b, N, doPlot, nbclust_init, plotevery, diagVar,
+                                             verbose, ...),
+                    "skewt"=DPMGibbsSkewT_parallel(ncores, type_connect, data, hyperG0, a, b, N,
+                                                   doPlot, nbclust_init, plotevery, diagVar,
+                                                   verbose, ...)
+      )
+    }else{
+      warning("Parallel implementation with an informative prior for gaussian ditributions is not available yet.\n",
+              "Contact the maintainer if you would like to see this feature implemented.\n",
+              "In the meantime, the non-parallel implementation is being run instead.")
+      res <- switch(distrib,
+                    "gaussian"=DPMGibbsN_SeqPrior(z, informPrior, hyperG0, a, b, N, doPlot,
+                                                  nbclust_init, plotevery, diagVar,
+                                                  verbose, ...),
+                    "skewnorm"=stop("Skew normal ditributions with informative prior is not implemented yet.\n",
+                                    "Contact the maintainer if you would like to see this feature implemented.\n",
+                                    "In the meantime, try the skew t distribution with 'skewt' which is a generalization ",
+                                    "of the skew normal distribution."),
+                    "skewt"=DPMGibbsSkewT_SeqPrior_parallel(ncores, type_connect, z, informPrior,
+                                                            hyperG0, a, b, N, doPlot, nbclust_init,
+                                                            plotevery, diagVar,
+                                                            verbose, ...)
+      )
     }
   }
-  acc_rate <- acc_rate/N
 
-  dpmclus <- list("mcmc_partitions" = c_list,
-                  "alpha"=alpha,
-                  "U_SS_list"=U_SS_list,
-                  "weights_list"=weights_list,
-                  "logposterior_list"=logposterior_list,
-                  "data"=z,
-                  "nb_mcmcit"=N,
-                  "clust_distrib"=distrib,
-                  "acc_rate"=acc_rate,
-                  "hyperG0"=hyperG0)
-  class(dpmclus) <- "DPMMclust"
-  return(dpmclus)
+  return(res)
 }

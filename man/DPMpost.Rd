@@ -4,14 +4,12 @@
 \alias{DPMpost}
 \title{Posterior estimation for Dirichlet process mixture of multivariate distibutions models}
 \usage{
-DPMpost(z, hyperG0, a = 1e-04, b = 1e-04, N, doPlot = TRUE,
-  nbclust_init = 30, plotevery = 1, diagVar = TRUE, verbose = TRUE,
-  distrib = c("gaussian", "skewnorm", "skewt"), ncores = 1)
+DPMpost(data, hyperG0, a = 1e-04, b = 1e-04, N, doPlot = TRUE,
+  nbclust_init = 30, plotevery = floor(N/10), diagVar = TRUE,
+  verbose = TRUE, distrib = c("gaussian", "skewnorm", "skewt"),
+  ncores = 1, informPrior = NULL, ...)
 }
 \arguments{
-\item{z}{data matrix \code{d x n} with \code{d} dimensions in rows
-and \code{n} observations in columns.}
-
 \item{hyperG0}{prior mixing distribution.}
 
 \item{a}{shape hyperparameter of the Gamma prior
@@ -42,6 +40,9 @@ written in the console at each MCMC iteration.}
 \code{"gaussian"}, \code{"skewnorm"} and \code{"skewt"}.}
 
 \item{ncores}{number of cores to use.}
+
+\item{z}{data matrix \code{d x n} with \code{d} dimensions in rows
+and \code{n} observations in columns.}
 }
 \value{
 a object of class \code{DPMclust} with the following attributes:
@@ -49,19 +50,30 @@ a object of class \code{DPMclust} with the following attributes:
      \item{\code{mcmc_partitions}:}{ a list of length \code{N}. Each
       element \code{mcmc_partitions[n]} is a vector of length
       \code{n} giving the partition of the \code{n} observations.}
-     \item{\code{alpha}:}{ a vector of length \code{N}. \code{cost[j]} is the cost
+     \item{\code{alpha}:}{a vector of length \code{N}. \code{cost[j]} is the cost
 associated to partition \code{c[[j]]}}
-     \item{\code{weights_list}:}{}
-     \item{\code{logposterior_list}:}{}
-     \item{\code{data}:}{ the data matrix \code{d x n} with \code{d} dimensions in rows
-and \code{n} observations in columns.}
+      \item{\code{U_SS_list}:}{a list of length \code{N} containing the lists of
+      sufficient statistics for all the mixture components at each MCMC iteration}
+     \item{\code{weights_list}:}{a list of length \code{N} containing the weights of each
+     mixture component for each MCMC iterations}
+     \item{\code{logposterior_list}:}{a list of length \code{N} containing the logposterior values
+      at each MCMC iterations}
+     \item{\code{data}:}{the data matrix \code{d x n} with \code{d} dimensions in rows
+and \code{n} observations in columns}
      \item{\code{nb_mcmcit}:}{ the number of MCMC itertations}
+     \item{\code{clust_distrib}:}{the parametric distribution of the mixture component}
      \item{\code{hyperG0}:}{the prior on the cluster location}
  }
 }
 \description{
 Partially collapse slice Gibbs sampling for Dirichlet process mixture of multivariate
 normal, skew normal or skew t distributions.
+}
+\details{
+This function is a wrapper around \code{\link{DPMGibbsN}}, \code{\link{DPMGibbsN_parallel}},
+\code{\link{DPMGibbsN_SeqPrior}}, \code{\link{DPMGibbsSkewN}}, \code{\link{DPMGibbsSkewN_parallel}},
+\code{\link{DPMGibbsSkewT}}, \code{\link{DPMGibbsSkewT_parallel}},
+\code{\link{DPMGibbsSkewT_SeqPrior}}, \code{\link{DPMGibbsSkewT_SeqPrior_parallel}}.
 }
 \examples{
 rm(list=ls())
@@ -118,10 +130,6 @@ hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
  a <- 0.0001
  b <- 0.0001
 
- # do some plots
- doPlot <- TRUE
- nbclust_init <- 30
-
 
 
  ## Data
@@ -146,20 +154,17 @@ hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
        + scale_colour_discrete(guide=guide_legend(override.aes = list(size = 6, shape=22))))
  pp #pdf(height=7, width=7.5)
 
+ MCMCsample_st <- DPMpost(data=data, hyperG0=hyperG0, N=2000,
+                          distrib="skewt",
+                          gg.add=list(theme_bw(),
+                          guides(shape=guide_legend(override.aes = list(fill="grey45"))))
+ )
+ s <- summary(MCMCsample_st, burnin = 900, thin=2, lossFn = "Binder")
+ print(s)
+ plot(s, hm=TRUE) #pdf(height=8.5, width=10.5) #png(height=700, width=720)
+ plot_ConvDPM(MCMCsample_st, from=2)
+ #cluster_est_binder(MCMCsample_st$mcmc_partitions[900:1000])
 
- ## alpha priors plots
- #####################
- prioralpha <- data.frame("alpha"=rgamma(n=5000, shape=a, scale=1/b),
-                         "distribution" =factor(rep("prior",5000),
-                         levels=c("prior", "posterior")))
- p <- (ggplot(prioralpha, aes(x=alpha))
-       + geom_histogram(aes(y=..density..),
-                        colour="black", fill="white")
-       + geom_density(alpha=.2, fill="red")
-       + ggtitle(paste("Prior distribution on alpha: Gamma(", a,
-                 ",", b, ")\\n", sep=""))
-      )
- p
 
 
 
@@ -169,5 +174,10 @@ hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
 }
 \author{
 Boris Hejblum
+}
+\references{
+BP Hejblum, C Alkhassim, R Gottardo, F Caron, R Thiebaut, Sequential Dirichlet
+Process Mixtures of Multivariate Skew t-distributions for Model-based Clustering
+of Flow Cytometry Data, submitted 2016
 }
 
