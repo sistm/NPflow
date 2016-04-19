@@ -18,6 +18,8 @@
 #'
 #'@importFrom stats uniroot
 #'
+#'@author Boris Hejblum, Chariff Alkhassim
+#'
 #'@export
 #'
 #'@examples

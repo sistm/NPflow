@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{NuMatParC}
 \alias{NuMatParC}
-\title{C++ implementation}
+\title{C++ implementation of similarity matrix computation using precomputed distances}
 \usage{
 NuMatParC(c, d)
 }
@@ -13,14 +13,16 @@ NuMatParC(c, d)
 between each group distributions.}
 }
 \description{
-C++ implementation
+C++ implementation of similarity matrix computation using precomputed distances
 }
 \examples{
-library(NPflow)
 c <- c(1,1,2,3,2,3)
 d <- matrix(runif(length(c)^2),length(c))
 NuMatParC(c,d)
 
 
+}
+\author{
+Boris Hejblum, Chariff Alkhassim
 }
 

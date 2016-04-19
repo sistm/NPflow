@@ -38,6 +38,8 @@
 #'
 #'@export MLE_sNiW_mmEM
 #'
+#'@author Boris Hejblum, Chariff Alkhassim
+#'
 #'@examples
 #'set.seed(1234)
 #'hyperG0 <- list()

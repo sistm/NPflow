@@ -38,6 +38,8 @@
 #'
 #'@rdname MAP_sNiW_mmEM
 #'
+#'@author Boris Hejblum, Chariff Alkhassim
+#'
 #'@importFrom stats var uniroot
 #'
 #'@importFrom graphics plot

@@ -45,4 +45,7 @@ for(k in 1:1000){
 mle <- MLE_sNiW(xi_list, psi_list, S_list)
 mle
 }
+\author{
+Boris Hejblum, Chariff Alkhassim
+}
 

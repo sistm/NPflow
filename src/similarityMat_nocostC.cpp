@@ -12,7 +12,6 @@ using namespace arma;
 //'@export
 //'
 //'@examples
-//'library(NPflow)
 //'c <- list(c(1,1,2,3,2,3), c(1,1,1,2,3,3),c(2,2,1,1,1,1))
 //'similarityMat_nocostC(sapply(c, "["))
 //'
@@ -36,8 +35,7 @@ List similarityMat_nocostC(arma::mat cc){
 
     for(int i=0; i<n-1; i++){
         for(int j=i+1; j<n; j++){
-            similarity(i,j) = sum(cc.row(i) == cc.row(j));
-            similarity(i,j) = similarity(i,j)/N;
+            similarity(i,j) = sum(cc.row(i) == cc.row(j))/N;
             similarity(j,i) = similarity(i,j);
         }
     }

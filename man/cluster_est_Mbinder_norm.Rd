@@ -52,7 +52,7 @@ The modified Binder loss function takes into account the distance between
 mixture components using #'the  Bhattacharyya distance.
 }
 \author{
-Francois Caron, Chariff Alkhassim, Boris Hejblum
+Chariff Alkhassim
 }
 \references{
 JW Lau, PJ Green, Bayesian Model-Based Clustering Procedures,

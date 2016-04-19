@@ -9,7 +9,6 @@
 #'@export
 #'
 #'@examples
-#'library(NPflow)
 #'pred <- c(1,1,2,3,2,3)
 #'ref <- c(2,2,1,1,1,3)
 #'FmeasureC(pred, ref)
@@ -72,6 +71,43 @@ Fmeasure_costC <- function(c) {
     .Call('NPflow_Fmeasure_costC', PACKAGE = 'NPflow', c)
 }
 
+#' C++ implementation of similarity matrix computation using precomputed distances
+#'
+#'
+#'@param c an MCMC partitions of length \code{n}.
+#'
+#'@param d a symmetric \code{n x n} matrix containing distances
+#'between each group distributions.
+#'
+#'@author Boris Hejblum, Chariff Alkhassim
+#'
+#'@export
+#'
+#'@examples
+#'c <- c(1,1,2,3,2,3)
+#'d <- matrix(runif(length(c)^2),length(c))
+#'NuMatParC(c,d)
+#'
+#'
+NuMatParC <- function(c, d) {
+    .Call('NPflow_NuMatParC', PACKAGE = 'NPflow', c, d)
+}
+
+#' C++ implementation of residual trace computation step used when sampling the scale
+#'
+#'@param eps a numeric matrix where each column contains the centered and unskewed observations
+#'@param sigma a numeric covariance matrix
+#'
+#'@return the computed trace
+#'
+#'@keywords internal
+#'
+#'@export
+#'
+traceEpsC <- function(eps, sigma) {
+    .Call('NPflow_traceEpsC', PACKAGE = 'NPflow', eps, sigma)
+}
+
 #' C++ implementation of multivariate Normal inverse Wishart probability density function for multiple inputs
 #'
 #'@param Mu data matrix of dimension \code{p x n}, \code{p} being the dimension of the
@@ -87,6 +123,11 @@ Fmeasure_costC <- function(c) {
 #'@param Log logical flag for returning the log of the probability density
 #'function. Defaults is \code{TRUE}.
 #'@return matrix of densities of dimension K x n
+#'
+#'@references BP Hejblum, C Alkhassim, R Gottardo, F Caron, R Thiebaut, Sequential Dirichlet
+#'Process Mixtures of Multivariate Skew t-distributions for Model-based Clustering
+#'of Flow Cytometry Data, submitted 2016.
+#'
 #'@export
 #'
 #'
@@ -113,6 +154,11 @@ mmNiWpdfC <- function(Mu, Sigma, U_Mu0, U_Kappa0, U_Nu0, U_Sigma0, Log = TRUE) {
 #'@param Log logical flag for returning the log of the probability density
 #'function. Defaults is \code{TRUE}.
 #'@return matrix of densities of dimension \code{K x n}
+#'
+#'@references BP Hejblum, C Alkhassim, R Gottardo, F Caron, R Thiebaut, Sequential Dirichlet
+#'Process Mixtures of Multivariate Skew t-distributions for Model-based Clustering
+#'of Flow Cytometry Data, submitted 2016
+#'
 #'@export
 #'
 mmsNiWpdfC <- function(xi, psi, Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_df0, Log = TRUE) {
@@ -121,18 +167,17 @@ mmsNiWpdfC <- function(xi, psi, Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_df0, Log
 
 #' C++ implementation of multivariate Normal probability density function for multiple inputs
 #'
-#'@param x data matrix of dimension p x n, p being the dimension of the
-#'data and n the number of data points
-#'@param mean mean vectors matrix of dimension p x K, K being the number of
-#'distributions for which the density probability has to be ealuated
-#'@param varcovM list of length K of variance-covariance matrices,
-#'each of dimensions p x p
+#'@param x data matrix of dimension \code{p x n}, \code{p} being the dimension of the
+#'data and n the number of data points.
+#'@param mean mean vectors matrix of dimension \code{p x K}, \code{K} being the number of
+#'distributions for which the density probability has to be evaluated.
+#'@param varcovM list of length \code{K} of variance-covariance matrices,
+#'each of dimensions \code{p x p}.
 #'@param Log logical flag for returning the log of the probability density
-#'function. Defaults is \code{TRUE}
-#'@return matrix of densities of dimension K x n
+#'function. Defaults is \code{TRUE}.
+#'@return matrix of densities of dimension \code{K x n}.
 #'@export
 #'@examples
-#'library(NPflow)
 #'library(microbenchmark)
 #'microbenchmark(mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE),
 #'               mvnpdfC(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE),
@@ -160,20 +205,21 @@ mmvnpdfC <- function(x, mean, varcovM, Log = TRUE) {
 
 #' C++ implementation of multivariate skew Normal probability density function for multiple inputs
 #'
-#'@param x data matrix of dimension p x n, p being the dimension of the
-#'data and n the number of data points
-#'@param xi mean vectors matrix of dimension p x K, K being the number of
-#'distributions for which the density probability has to be ealuated
-#'@param psi skew parameter vectors matrix of dimension p x K, K being the number of
-#'distributions for which the density probability has to be ealuated
+#'@param x data matrix of dimension \code{p x n}, \code{p} being the dimension of the
+#'data and n the number of data points.
+#'@param xi mean vectors matrix of dimension \code{p x K}, \code{K} being the number of
+#'distributions for which the density probability has to be evaluated.
+#'@param psi skew parameter vectors matrix of dimension \code{p x K}.
 #'@param sigma list of length K of variance-covariance matrices,
-#'each of dimensions p x p
+#'each of dimensions \code{p x p}.
 #'@param Log logical flag for returning the log of the probability density
 #'function. Defaults is \code{TRUE}.
-#'@return matrix of densities of dimension K x n
+#'@return matrix of densities of dimension \code{K x n}.
+#'
+#'@author Boris Hejblum
+#'
 #'@export
 #'@examples
-#'library(NPflow)
 #'mmvsnpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1),
 #'          xi=matrix(c(0, 0)), psi=matrix(c(1, 1),ncol=1), sigma=list(diag(2)), Log=FALSE
 #'          )
@@ -203,21 +249,22 @@ mmvsnpdfC <- function(x, xi, psi, sigma, Log = TRUE) {
 
 #' C++ implementation of multivariate Normal probability density function for multiple inputs
 #'
-#'@param x data matrix of dimension p x n, p being the dimension of the
-#'data and n the number of data points
-#'@param xi mean vectors matrix of dimension p x K, K being the number of
-#'distributions for which the density probability has to be ealuated
-#'@param psi skew parameter vectors matrix of dimension p x K, K being the number of
-#'distributions for which the density probability has to be ealuated
-#'@param sigma list of length K of variance-covariance matrices,
-#'each of dimensions p x p
-#'@param df vector of length K of degree of freedom parameters
+#'@param x data matrix of dimension \code{p x n}, \code{p} being the dimension of the
+#'data and n the number of data points.
+#'@param xi mean vectors matrix of dimension \code{p x K}, \code{K} being the number of
+#'distributions for which the density probability has to be evaluated.
+#'@param psi skew parameter vectors matrix of dimension \code{p x K}.
+#'@param sigma list of length \code{K} of variance-covariance matrices,
+#'each of dimensions \code{p x p}.
+#'@param df vector of length K of degree of freedom parameters.
 #'@param Log logical flag for returning the log of the probability density
 #'function. Defaults is \code{TRUE}.
-#'@return matrix of densities of dimension K x n
+#'@return matrix of densities of dimension \code{K x n}.
+#'
+#'@author Boris Hejblum
+#'
 #'@export
 #'@examples
-#'library(NPflow)
 #'mmvstpdfC(x = matrix(c(3.399890,-5.936962), ncol=1), xi=matrix(c(0.2528859,-2.4234067)),
 #'psi=matrix(c(11.20536,-12.51052), ncol=1),
 #'sigma=list(matrix(c(0.2134011, -0.0382573, -0.0382573, 0.2660086), ncol=2)),
@@ -267,19 +314,21 @@ mmvstpdfC <- function(x, xi, psi, sigma, df, Log = TRUE) {
 
 #' C++ implementation of multivariate Normal probability density function for multiple inputs
 #'
-#'@param x data matrix of dimension p x n, p being the dimension of the
-#'data and n the number of data points
-#'@param mean mean vectors matrix of dimension p x K, K being the number of
-#'distributions for which the density probability has to be ealuated
-#'@param varcovM list of length K of variance-covariance matrices,
-#'each of dimensions p x p
-#'@param df vector of length K of degree of freedom parameters
+#'@param x data matrix of dimension \code{p x n}, \code{p} being the dimension of the
+#'data and n the number of data points.
+#'@param mean mean vectors matrix of dimension \code{p x K}, \code{K} being the number of
+#'distributions for which the density probability has to be evaluated.
+#'@param varcovM list of length \code{K} of variance-covariance matrices,
+#'each of dimensions \code{p x p}.
+#'@param df vector of length \code{K} of degree of freedom parameters.
 #'@param Log logical flag for returning the log of the probability density
 #'function. Defaults is \code{TRUE}.
-#'@return matrix of densities of dimension K x n
+#'@return matrix of densities of dimension \code{K x n}.
+#'
+#'@author Boris Hejblum
+#'
 #'@export
 #'@examples
-#'library(NPflow)
 #'mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE)
 #'mvtpdf(x=matrix(1.96), mean=0, varcovM=diag(1), df=10000000, Log=FALSE)
 #'mmvtpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1)), df=10000000, Log=FALSE)
@@ -320,7 +369,6 @@ mmvtpdfC <- function(x, mean, varcovM, df, Log = TRUE) {
 #'@export
 #'
 #'@examples
-#'library(NPflow)
 #'mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE)
 #'mvnpdfC(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE)
 #'mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1))
@@ -357,29 +405,10 @@ mvnpdfC <- function(x, mean, varcovM, Log = TRUE) {
 #'\item{\code{"total"}:}{ total (log)-likelihood;}
 #'}
 #'
+#'@author Boris Hejblum
+#'
 mvstlikC <- function(x, c, clustval, xi, psi, sigma, df, loglik = TRUE) {
     .Call('NPflow_mvstlikC', PACKAGE = 'NPflow', x, c, clustval, xi, psi, sigma, df, loglik)
-}
-
-#' C++ implementation
-#'
-#'
-#'@param c an MCMC partitions of length \code{n}.
-#'
-#'@param d a symmetric \code{n x n} matrix containing distances
-#'between each group distributions.
-#'
-#'@export
-#'
-#'@examples
-#'library(NPflow)
-#'c <- c(1,1,2,3,2,3)
-#'d <- matrix(runif(length(c)^2),length(c))
-#'NuMatParC(c,d)
-#'
-#'
-NuMatParC <- function(c, d) {
-    .Call('NPflow_NuMatParC', PACKAGE = 'NPflow', c, d)
 }
 
 #' C++ implementation of the multinomial sampling from a matrix
@@ -403,12 +432,32 @@ sampleClassC <- function(probMat) {
 #' C++ implementation
 #'
 #'
+#'@param cc a matrix whose columns each represents a (MCMC) partition
+#'
+#'@export
+#'
+#'@examples
+#'c <- list(c(1,1,2,3,2,3), c(1,1,1,2,3,3),c(2,2,1,1,1,1))
+#'similarityMatC(sapply(c, "["))
+#'
+#'c2 <- list()
+#'for(i in 1:10){
+#'     c2 <- c(c2, list(rmultinom(n=1, size=200, prob=rexp(n=200))))
+#'}
+#'similarityMatC(sapply(c2, "["))
+#'
+similarityMatC <- function(cc) {
+    .Call('NPflow_similarityMatC', PACKAGE = 'NPflow', cc)
+}
+
+#' C++ implementation
+#'
+#'
 #'@param cc a matrix whose columns each represents a ()MCMC) partition
 #'
 #'@export
 #'
 #'@examples
-#'library(NPflow)
 #'c <- list(c(1,1,2,3,2,3), c(1,1,1,2,3,3),c(2,2,1,1,1,1))
 #'similarityMat_nocostC(sapply(c, "["))
 #'
@@ -428,49 +477,13 @@ similarityMat_nocostC <- function(cc) {
 #' C++ implementation
 #'
 #'
-#'@param cc a matrix whose columns each represents a (MCMC) partition
-#'
-#'@export
-#'
-#'@examples
-#'library(NPflow)
-#'c <- list(c(1,1,2,3,2,3), c(1,1,1,2,3,3),c(2,2,1,1,1,1))
-#'similarityMatC(sapply(c, "["))
-#'
-#'c2 <- list()
-#'for(i in 1:10){
-#'     c2 <- c(c2, list(rmultinom(n=1, size=200, prob=rexp(n=200))))
-#'}
-#'similarityMatC(sapply(c2, "["))
-#'
-similarityMatC <- function(cc) {
-    .Call('NPflow_similarityMatC', PACKAGE = 'NPflow', cc)
-}
-
-#' C++ implementation of residual trace computation step used when sampling the scale
-#'
-#'@param eps a numeric matrix where each column contains the centered and unskewed observations
-#'@param sigma a numeric covariance matrix
-#'
-#'@return the computed trace
-#'
-#'@keywords internal
-#'
-#'@export
-#'
-traceEpsC <- function(eps, sigma) {
-    .Call('NPflow_traceEpsC', PACKAGE = 'NPflow', eps, sigma)
-}
-
-#' C++ implementation
-#'
-#'
 #'@param c is an MCMC partition
 #'
+#'@author Chariff Alkhassim
+#'
 #'@export
 #'
 #'@examples
-#'library(NPflow)
 #'cc <- c(1,1,2,3,2,3)
 #'vclust2mcoclustC(cc)
 #'

@@ -25,7 +25,6 @@ http://gallery.rcpp.org/articles/dmvnorm_arma/
 (accessed in August 2014)
 }
 \examples{
-library(NPflow)
 mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE)
 mvnpdfC(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE)
 mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1))

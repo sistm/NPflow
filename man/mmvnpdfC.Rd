@@ -7,26 +7,25 @@
 mmvnpdfC(x, mean, varcovM, Log = TRUE)
 }
 \arguments{
-\item{x}{data matrix of dimension p x n, p being the dimension of the
-data and n the number of data points}
+\item{x}{data matrix of dimension \code{p x n}, \code{p} being the dimension of the
+data and n the number of data points.}
 
-\item{mean}{mean vectors matrix of dimension p x K, K being the number of
-distributions for which the density probability has to be ealuated}
+\item{mean}{mean vectors matrix of dimension \code{p x K}, \code{K} being the number of
+distributions for which the density probability has to be evaluated.}
 
-\item{varcovM}{list of length K of variance-covariance matrices,
-each of dimensions p x p}
+\item{varcovM}{list of length \code{K} of variance-covariance matrices,
+each of dimensions \code{p x p}.}
 
 \item{Log}{logical flag for returning the log of the probability density
-function. Defaults is \code{TRUE}}
+function. Defaults is \code{TRUE}.}
 }
 \value{
-matrix of densities of dimension K x n
+matrix of densities of dimension \code{K x n}.
 }
 \description{
 C++ implementation of multivariate Normal probability density function for multiple inputs
 }
 \examples{
-library(NPflow)
 library(microbenchmark)
 microbenchmark(mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE),
               mvnpdfC(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE),

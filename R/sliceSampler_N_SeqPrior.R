@@ -1,4 +1,5 @@
 #'@keywords internal
+#'@author Boris Hejblum
 #'@importFrom stats rbeta rgamma runif
 sliceSampler_N_SeqPrior<- function(c, m, alpha, z, priorG1, U_mu, U_Sigma, diagVar){
   maxCl <- length(m) #maximum number of clusters

@@ -1,4 +1,5 @@
 #'@keywords internal
+#'@author Boris Hejblum
 #'@importFrom stats rbeta rgamma runif
 sliceSampler_N_parallel <- function(Ncpus, c, m, alpha, z, hyperG0, U_mu, U_Sigma, diagVar, parallel_index){
 

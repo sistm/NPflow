@@ -5,7 +5,7 @@
 \title{Slice Sampling of Dirichlet Process Mixture of skew Students's t-distibutions}
 \usage{
 DPMGibbsSkewT(z, hyperG0, a, b, N, doPlot = TRUE, nbclust_init = 30,
-  plotevery = 1, diagVar = TRUE, verbose = TRUE, ...)
+  plotevery = N/10, diagVar = TRUE, verbose = TRUE, ...)
 }
 \arguments{
 \item{z}{data matrix \code{d x n} with \code{d} dimensions in rows
@@ -46,13 +46,18 @@ a object of class \code{DPMclust} with the following attributes:
      \item{\code{mcmc_partitions}:}{ a list of length \code{N}. Each
       element \code{mcmc_partitions[n]} is a vector of length
       \code{n} giving the partition of the \code{n} observations.}
-     \item{\code{alpha}:}{ a vector of length \code{N}. \code{cost[j]} is the cost
+     \item{\code{alpha}:}{a vector of length \code{N}. \code{cost[j]} is the cost
 associated to partition \code{c[[j]]}}
-     \item{\code{weights_list}:}{}
-     \item{\code{logposterior_list}:}{}
-     \item{\code{data}:}{ the data matrix \code{d x n} with \code{d} dimensions in rows
-and \code{n} observations in columns.}
-     \item{\code{nb_mcmcit}:}{ the number of MCMC itertations}
+      \item{\code{U_SS_list}:}{a list of length \code{N} containing the lists of
+      sufficient statistics for all the mixture components at each MCMC iteration}
+     \item{\code{weights_list}:}{a list of length \code{N} containing the weights of each
+     mixture component for each MCMC iterations}
+     \item{\code{logposterior_list}:}{a list of length \code{N} containing the logposterior values
+      at each MCMC iterations}
+     \item{\code{data}:}{the data matrix \code{d x n} with \code{d} dimensions in rows
+and \code{n} observations in columns}
+     \item{\code{nb_mcmcit}:}{the number of MCMC itertations}
+     \item{\code{clust_distrib}:}{the parametric distribution of the mixture component - \code{"skewt"}}
      \item{\code{hyperG0}:}{the prior on the cluster location}
  }
 }
@@ -160,7 +165,7 @@ hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
 \dontrun{
  # Gibbs sampler for Dirichlet Process Mixtures
  ##############################################
- MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=1000,
+ MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=2000,
                                 doPlot, nbclust_init, plotevery=100,
                                 gg.add=list(theme_bw(),
                                  guides(shape=guide_legend(override.aes = list(fill="grey45")))),
@@ -266,5 +271,10 @@ hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
 }
 \author{
 Boris Hejblum
+}
+\references{
+BP Hejblum, C Alkhassim, R Gottardo, F Caron, R Thiebaut, Sequential Dirichlet
+Process Mixtures of Multivariate Skew t-distributions for Model-based Clustering
+of Flow Cytometry Data, submitted 2016
 }
 

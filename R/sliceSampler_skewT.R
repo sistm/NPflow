@@ -1,4 +1,5 @@
 #'@keywords internal
+#'@author Boris Hejblum
 #'@importFrom stats rbeta rgamma runif
 sliceSampler_skewT <- function(c, m, alpha, z, hyperG0, U_xi, U_psi,
                                U_Sigma, U_df, scale, diagVar){

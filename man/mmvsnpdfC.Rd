@@ -7,29 +7,27 @@
 mmvsnpdfC(x, xi, psi, sigma, Log = TRUE)
 }
 \arguments{
-\item{x}{data matrix of dimension p x n, p being the dimension of the
-data and n the number of data points}
+\item{x}{data matrix of dimension \code{p x n}, \code{p} being the dimension of the
+data and n the number of data points.}
 
-\item{xi}{mean vectors matrix of dimension p x K, K being the number of
-distributions for which the density probability has to be ealuated}
+\item{xi}{mean vectors matrix of dimension \code{p x K}, \code{K} being the number of
+distributions for which the density probability has to be evaluated.}
 
-\item{psi}{skew parameter vectors matrix of dimension p x K, K being the number of
-distributions for which the density probability has to be ealuated}
+\item{psi}{skew parameter vectors matrix of dimension \code{p x K}.}
 
 \item{sigma}{list of length K of variance-covariance matrices,
-each of dimensions p x p}
+each of dimensions \code{p x p}.}
 
 \item{Log}{logical flag for returning the log of the probability density
 function. Defaults is \code{TRUE}.}
 }
 \value{
-matrix of densities of dimension K x n
+matrix of densities of dimension \code{K x n}.
 }
 \description{
 C++ implementation of multivariate skew Normal probability density function for multiple inputs
 }
 \examples{
-library(NPflow)
 mmvsnpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1),
          xi=matrix(c(0, 0)), psi=matrix(c(1, 1),ncol=1), sigma=list(diag(2)), Log=FALSE
          )
@@ -53,5 +51,8 @@ microbenchmark(mvsnpdf(x=matrix(c(rep(1.96,2),rep(0,2)), nrow=2, ncol=2),
                      psi=matrix(c(0.1,0.1,-0.1,-1, 0.5,-1.5), nrow=2, ncol=3),
                      sigma=list(diag(2),10*diag(2), 20*diag(2)), Log=FALSE),
               times=1000L)
+}
+\author{
+Boris Hejblum
 }
 

@@ -39,4 +39,7 @@ a list:
 \description{
 C++ implementation of multivariate Normal probability density function for multiple inputs
 }
+\author{
+Boris Hejblum
+}
 

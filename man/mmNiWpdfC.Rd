@@ -32,4 +32,9 @@ matrix of densities of dimension K x n
 \description{
 C++ implementation of multivariate Normal inverse Wishart probability density function for multiple inputs
 }
+\references{
+BP Hejblum, C Alkhassim, R Gottardo, F Caron, R Thiebaut, Sequential Dirichlet
+Process Mixtures of Multivariate Skew t-distributions for Model-based Clustering
+of Flow Cytometry Data, submitted 2016.
+}
 

@@ -4,7 +4,7 @@ using namespace arma;
 
 // [[Rcpp::depends(RcppArmadillo)]]
 
-//' C++ implementation
+//' C++ implementation of similarity matrix computation using precomputed distances
 //'
 //'
 //'@param c an MCMC partitions of length \code{n}.
@@ -12,10 +12,11 @@ using namespace arma;
 //'@param d a symmetric \code{n x n} matrix containing distances
 //'between each group distributions.
 //'
+//'@author Boris Hejblum, Chariff Alkhassim
+//'
 //'@export
 //'
 //'@examples
-//'library(NPflow)
 //'c <- c(1,1,2,3,2,3)
 //'d <- matrix(runif(length(c)^2),length(c))
 //'NuMatParC(c,d)

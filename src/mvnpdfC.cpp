@@ -23,7 +23,6 @@ const double log2pi2 = log(2.0 * M_PI)/2;
 //'@export
 //'
 //'@examples
-//'library(NPflow)
 //'mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE)
 //'mvnpdfC(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE)
 //'mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1))

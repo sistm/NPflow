@@ -1,4 +1,5 @@
 #'@keywords internal
+#'@author Boris Hejblum
 #'@importFrom stats rbeta rgamma runif
 sliceSampler_N <- function(c, m, alpha, z, hyperG0, U_mu, U_Sigma, diagVar){
 

@@ -7,20 +7,21 @@ const double log2pi2 = log(2.0 * M_PI)/2;
 
 //' C++ implementation of multivariate skew Normal probability density function for multiple inputs
 //'
-//'@param x data matrix of dimension p x n, p being the dimension of the
-//'data and n the number of data points
-//'@param xi mean vectors matrix of dimension p x K, K being the number of
-//'distributions for which the density probability has to be ealuated
-//'@param psi skew parameter vectors matrix of dimension p x K, K being the number of
-//'distributions for which the density probability has to be ealuated
+//'@param x data matrix of dimension \code{p x n}, \code{p} being the dimension of the
+//'data and n the number of data points.
+//'@param xi mean vectors matrix of dimension \code{p x K}, \code{K} being the number of
+//'distributions for which the density probability has to be evaluated.
+//'@param psi skew parameter vectors matrix of dimension \code{p x K}.
 //'@param sigma list of length K of variance-covariance matrices,
-//'each of dimensions p x p
+//'each of dimensions \code{p x p}.
 //'@param Log logical flag for returning the log of the probability density
 //'function. Defaults is \code{TRUE}.
-//'@return matrix of densities of dimension K x n
+//'@return matrix of densities of dimension \code{K x n}.
+//'
+//'@author Boris Hejblum
+//'
 //'@export
 //'@examples
-//'library(NPflow)
 //'mmvsnpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1),
 //'          xi=matrix(c(0, 0)), psi=matrix(c(1, 1),ncol=1), sigma=list(diag(2)), Log=FALSE
 //'          )

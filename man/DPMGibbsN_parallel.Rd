@@ -52,6 +52,31 @@ Default is \code{""} which is no monitoring.  See Details.}
 \item{...}{additional arguments to be passed to \code{\link{plot_DPM}}.
 Only used if \code{doPlot} is \code{TRUE}.}
 }
+\value{
+a object of class \code{DPMclust} with the following attributes:
+ \itemize{
+     \item{\code{mcmc_partitions}:}{ a list of length \code{N}. Each
+      element \code{mcmc_partitions[n]} is a vector of length
+      \code{n} giving the partition of the \code{n} observations.}
+     \item{\code{alpha}:}{a vector of length \code{N}. \code{cost[j]} is the cost
+associated to partition \code{c[[j]]}}
+      \item{\code{listU_mu}:}{a list of length \code{N} containing the matrices of
+      mean vectors for all the mixture components at each MCMC iteration}
+      \item{\code{listU_Sigma}:}{a list of length \code{N} containing the arrays of
+      covariances matrices for all the mixture components at each MCMC iteration}
+      \item{\code{U_SS_list}:}{a list of length \code{N} containing the lists of
+      sufficient statistics for all the mixture components at each MCMC iteration}
+     \item{\code{weights_list}:}{a list of length \code{N} containing the logposterior values
+      at each MCMC iterations}
+     \item{\code{logposterior_list}:}{a list of length \code{N} containing the logposterior values
+      at each MCMC iterations}
+     \item{\code{data}:}{the data matrix \code{d x n} with \code{d} dimensions in rows
+and \code{n} observations in columns}
+     \item{\code{nb_mcmcit}:}{ the number of MCMC itertations}
+     \item{\code{clust_distrib}:}{the parametric distribution of the mixture component - \code{"gaussian"}}
+     \item{\code{hyperG0}:}{the prior on the cluster location}
+ }
+}
 \description{
 Slice Sampling of the Dirichlet Process Mixture Model
 with a prior on alpha
@@ -114,5 +139,8 @@ nbclust_init <- 30
 }
 \author{
 Boris Hejblum
+}
+\seealso{
+\code{\link{DPMGibbsN}}
 }
 

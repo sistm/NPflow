@@ -42,7 +42,7 @@
 #'  }
 #'
 #'
-#'@author Francois Caron, Chariff Alkhassim, Boris Hejblum
+#'@author Chariff Alkhassim
 #'
 #'
 #'@references JW Lau, PJ Green, Bayesian Model-Based Clustering Procedures,

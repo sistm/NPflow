@@ -26,6 +26,8 @@ using namespace arma;
 //'\item{\code{"total"}:}{ total (log)-likelihood;}
 //'}
 //'
+//'@author Boris Hejblum
+//'
 // [[Rcpp::export]]
 List mvstlikC(arma::mat x,
               arma::vec c,

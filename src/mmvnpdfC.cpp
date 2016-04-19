@@ -7,18 +7,17 @@ const double log2pi2 = log(2.0 * M_PI)/2;
 
 //' C++ implementation of multivariate Normal probability density function for multiple inputs
 //'
-//'@param x data matrix of dimension p x n, p being the dimension of the
-//'data and n the number of data points
-//'@param mean mean vectors matrix of dimension p x K, K being the number of
-//'distributions for which the density probability has to be ealuated
-//'@param varcovM list of length K of variance-covariance matrices,
-//'each of dimensions p x p
+//'@param x data matrix of dimension \code{p x n}, \code{p} being the dimension of the
+//'data and n the number of data points.
+//'@param mean mean vectors matrix of dimension \code{p x K}, \code{K} being the number of
+//'distributions for which the density probability has to be evaluated.
+//'@param varcovM list of length \code{K} of variance-covariance matrices,
+//'each of dimensions \code{p x p}.
 //'@param Log logical flag for returning the log of the probability density
-//'function. Defaults is \code{TRUE}
-//'@return matrix of densities of dimension K x n
+//'function. Defaults is \code{TRUE}.
+//'@return matrix of densities of dimension \code{K x n}.
 //'@export
 //'@examples
-//'library(NPflow)
 //'library(microbenchmark)
 //'microbenchmark(mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE),
 //'               mvnpdfC(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE),

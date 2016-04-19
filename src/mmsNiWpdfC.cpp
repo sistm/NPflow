@@ -26,6 +26,11 @@ using namespace arma;
 //'@param Log logical flag for returning the log of the probability density
 //'function. Defaults is \code{TRUE}.
 //'@return matrix of densities of dimension \code{K x n}
+//'
+//'@references BP Hejblum, C Alkhassim, R Gottardo, F Caron, R Thiebaut, Sequential Dirichlet
+//'Process Mixtures of Multivariate Skew t-distributions for Model-based Clustering
+//'of Flow Cytometry Data, submitted 2016
+//'
 //'@export
 //'
 // [[Rcpp::export]]

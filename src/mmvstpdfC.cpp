@@ -6,21 +6,22 @@ using namespace arma;
 
 //' C++ implementation of multivariate Normal probability density function for multiple inputs
 //'
-//'@param x data matrix of dimension p x n, p being the dimension of the
-//'data and n the number of data points
-//'@param xi mean vectors matrix of dimension p x K, K being the number of
-//'distributions for which the density probability has to be ealuated
-//'@param psi skew parameter vectors matrix of dimension p x K, K being the number of
-//'distributions for which the density probability has to be ealuated
-//'@param sigma list of length K of variance-covariance matrices,
-//'each of dimensions p x p
-//'@param df vector of length K of degree of freedom parameters
+//'@param x data matrix of dimension \code{p x n}, \code{p} being the dimension of the
+//'data and n the number of data points.
+//'@param xi mean vectors matrix of dimension \code{p x K}, \code{K} being the number of
+//'distributions for which the density probability has to be evaluated.
+//'@param psi skew parameter vectors matrix of dimension \code{p x K}.
+//'@param sigma list of length \code{K} of variance-covariance matrices,
+//'each of dimensions \code{p x p}.
+//'@param df vector of length K of degree of freedom parameters.
 //'@param Log logical flag for returning the log of the probability density
 //'function. Defaults is \code{TRUE}.
-//'@return matrix of densities of dimension K x n
+//'@return matrix of densities of dimension \code{K x n}.
+//'
+//'@author Boris Hejblum
+//'
 //'@export
 //'@examples
-//'library(NPflow)
 //'mmvstpdfC(x = matrix(c(3.399890,-5.936962), ncol=1), xi=matrix(c(0.2528859,-2.4234067)),
 //'psi=matrix(c(11.20536,-12.51052), ncol=1),
 //'sigma=list(matrix(c(0.2134011, -0.0382573, -0.0382573, 0.2660086), ncol=2)),
