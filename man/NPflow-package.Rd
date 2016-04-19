@@ -4,9 +4,9 @@
 \name{NPflow-package}
 \alias{NPflow}
 \alias{NPflow-package}
-\title{Nonparametrics Bayesian Automatic Gating of Flow Cytometry data}
+\title{Bayesian Nonparametrics for Automatic Gating of Flow Cytometry data}
 \description{
-This package implements
+This package implements Bayesian estimation for Dirichlet process mixture of skew t-distributions.
 }
 \details{
 \tabular{ll}{

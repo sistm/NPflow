@@ -6,13 +6,13 @@
 \usage{
 DPMGibbsSkewT_SeqPrior(z, prior_inform, hyperG0, N, nbclust_init,
   add.vagueprior = TRUE, weightnoninfo = NULL, doPlot = TRUE,
-  plotevery = 1, diagVar = TRUE, verbose = TRUE, ...)
+  plotevery = N/10, diagVar = TRUE, verbose = TRUE, ...)
 }
 \arguments{
 \item{z}{data matrix \code{d x n} with \code{d} dimensions in rows
 and \code{n} observations in columns.}
 
-\item{prior_inform}{an informative prior such a the approximation computed by \code{summary.DPMMclust}.}
+\item{prior_inform}{an informative prior such as the approximation computed by \code{summary.DPMMclust}.}
 
 \item{hyperG0}{prior mixing distribution.}
 

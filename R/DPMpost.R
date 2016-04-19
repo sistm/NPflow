@@ -8,7 +8,7 @@
 #'\code{\link{DPMGibbsSkewT}}, \code{\link{DPMGibbsSkewT_parallel}},
 #'\code{\link{DPMGibbsSkewT_SeqPrior}}, \code{\link{DPMGibbsSkewT_SeqPrior_parallel}}.
 #'
-#'@param z data matrix \code{d x n} with \code{d} dimensions in rows
+#'@param data data matrix \code{d x n} with \code{d} dimensions in rows
 #'and \code{n} observations in columns.
 #'
 #'@param hyperG0 prior mixing distribution.
@@ -41,6 +41,16 @@
 #'\code{"gaussian"}, \code{"skewnorm"} and \code{"skewt"}.
 #'
 #'@param ncores number of cores to use.
+#'
+#'@param type_connec The type of connection between the processors. Supported
+#'cluster types are \code{"SOCK"}, \code{"FORK"}, \code{"MPI"}, and
+#'\code{"NWS"}. See also \code{\link[parallel:makeCluster]{makeCluster}}.
+#'
+#'@param informPrior an optional informative prior such as the approximation computed
+#'by \code{summary.DPMMclust}.
+#'
+#'@param ... additional arguments to be passed to \code{\link{plot_DPM}}.
+#'Only used if \code{doPlot} is \code{TRUE}.
 #'
 #'@return a object of class \code{DPMclust} with the following attributes:
 #'  \itemize{
@@ -169,6 +179,7 @@ DPMpost <- function (data, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
                      diagVar=TRUE, verbose=TRUE,
                      distrib=c("gaussian", "skewnorm", "skewt"),
                      ncores = 1,
+                     type_connec = "SOCK",
                      informPrior=NULL,
                      ...
 ){
@@ -192,14 +203,16 @@ DPMpost <- function (data, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
       )
     }else{
       res <- switch(distrib,
-                    "gaussian"=DPMGibbsN_SeqPrior(z, informPrior, hyperG0, a, b, N, doPlot, nbclust_init, plotevery, diagVar,
-                                                  verbose, ...),
+                    "gaussian"=DPMGibbsN_SeqPrior(data, informPrior, hyperG0, N,
+                                                  nbclust_init, doPlot=doPlot, plotevery=plotevery,
+                                                  diagVar=diagVar, verbose=verbose, ...),
                     "skewnorm"=stop("Skew normal ditributions with informative prior is not implemented yet.\n",
                                     "Contact the maintainer if you would like to see this feature implemented.\n",
                                     "In the meantime, try the skew t distribution with 'skewt' which is a generalization ",
                                     "of the skew normal distribution."),
-                    "skewt"=DPMGibbsSkewT_SeqPrior(z, informPrior, hyperG0, a, b, N, doPlot, nbclust_init, plotevery, diagVar,
-                                                   verbose, ...)
+                    "skewt"=DPMGibbsSkewT_SeqPrior(data, informPrior, hyperG0, N, nbclust_init,
+                                                   doPlot=doPlot, plotevery=plotevery, diagVar=diagVar,
+                                                   verbose=verbose, ...)
       )
     }
   }else{
@@ -210,12 +223,12 @@ DPMpost <- function (data, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
                 "In the meantime, the non-parallel implementation is being run instead")
       }
       res <- switch(distrib,
-                    "gaussian"=DPMGibbsN_parallel(ncores, type_connect, data, hyperG0, a, b, N,
+                    "gaussian"=DPMGibbsN_parallel(ncores, type_connec, data, hyperG0, a, b, N,
                                                   doPlot, nbclust_init, plotevery, diagVar,
                                                   verbose, ...),
                     "skewnorm"=DPMGibbsSkewN(data, hyperG0, a, b, N, doPlot, nbclust_init, plotevery, diagVar,
                                              verbose, ...),
-                    "skewt"=DPMGibbsSkewT_parallel(ncores, type_connect, data, hyperG0, a, b, N,
+                    "skewt"=DPMGibbsSkewT_parallel(ncores, type_connec, data, hyperG0, a, b, N,
                                                    doPlot, nbclust_init, plotevery, diagVar,
                                                    verbose, ...)
       )
@@ -224,17 +237,17 @@ DPMpost <- function (data, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
               "Contact the maintainer if you would like to see this feature implemented.\n",
               "In the meantime, the non-parallel implementation is being run instead.")
       res <- switch(distrib,
-                    "gaussian"=DPMGibbsN_SeqPrior(z, informPrior, hyperG0, a, b, N, doPlot,
-                                                  nbclust_init, plotevery, diagVar,
-                                                  verbose, ...),
+                    "gaussian"=DPMGibbsN_SeqPrior(data, informPrior, hyperG0, N,
+                                                  nbclust_init, doPlot=doPlot, plotevery=plotevery,
+                                                  diagVar=diagVar, verbose=verbose, ...),
                     "skewnorm"=stop("Skew normal ditributions with informative prior is not implemented yet.\n",
                                     "Contact the maintainer if you would like to see this feature implemented.\n",
                                     "In the meantime, try the skew t distribution with 'skewt' which is a generalization ",
                                     "of the skew normal distribution."),
-                    "skewt"=DPMGibbsSkewT_SeqPrior_parallel(ncores, type_connect, z, informPrior,
-                                                            hyperG0, a, b, N, doPlot, nbclust_init,
-                                                            plotevery, diagVar,
-                                                            verbose, ...)
+                    "skewt"=DPMGibbsSkewT_SeqPrior_parallel(ncores, type_connec, data, informPrior,
+                                                            hyperG0, N, nbclust_init, doPlot=doPlot,
+                                                            plotevery=plotevery, diagVar=diagVar,
+                                                            verbose=verbose, ...)
       )
     }
   }

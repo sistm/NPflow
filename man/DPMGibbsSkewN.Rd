@@ -5,7 +5,7 @@
 \title{Slice Sampling of Dirichlet Process Mixture of skew normal ditributions}
 \usage{
 DPMGibbsSkewN(z, hyperG0, a, b, N, doPlot = TRUE, nbclust_init = 30,
-  plotevery = 1, diagVar = TRUE, verbose = TRUE, ...)
+  plotevery = N/10, diagVar = TRUE, verbose = TRUE, ...)
 }
 \arguments{
 \item{z}{data matrix \code{d x n} with \code{d} dimensions in rows

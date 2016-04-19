@@ -1,6 +1,6 @@
 Package: NPflow
 Type: Package
-Title: Non Parametric Bayesian clustering of flow-cytometry data
+Title: Bayesian nonparametrics for automatic gating of flow-cytometry data
 Version: 0.3.0
 Date: 2016-04-02
 Authors@R: c(person("Boris P.", "Hejblum", role = c("aut", "cre"),
@@ -34,4 +34,5 @@ Suggests:
 Description: This package implements a Dirichlet process mixture of normal, skew-normal or skew t
     distributions modeling oriented towards flow-cytometry data preprocessing application.
 License: LGPL-3 | file LICENSE
+BugReports: https://github.com/borishejblum/NPflow/issues
 RoxygenNote: 5.0.1

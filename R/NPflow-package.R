@@ -1,6 +1,6 @@
-#'Nonparametrics Bayesian Automatic Gating of Flow Cytometry data
+#'Bayesian Nonparametrics for Automatic Gating of Flow Cytometry data
 #'
-#'This package implements
+#'This package implements Bayesian estimation for Dirichlet process mixture of skew t-distributions.
 #'
 #'
 #'\tabular{ll}{

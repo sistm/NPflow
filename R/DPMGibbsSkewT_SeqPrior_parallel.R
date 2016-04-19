@@ -3,13 +3,13 @@
 #'@param Ncpus the number of processors available
 #'
 #'@param type_connec The type of connection between the processors. Supported
-#'cluster types are \code{"SOCK"}, \code{"PVM"}, \code{"MPI"}, and
+#'cluster types are \code{"SOCK"}, \code{"FORK"}, \code{"MPI"}, and
 #'\code{"NWS"}. See also \code{\link[parallel:makeCluster]{makeCluster}}.
 #'
 #'@param z data matrix \code{d x n} with \code{d} dimensions in rows
 #'and \code{n} observations in columns.
 #'
-#'@param prior_inform an informative prior such a the approximation computed by \code{summary.DPMMclust}.
+#'@param prior_inform an informative prior such as the approximation computed by \code{summary.DPMMclust}.
 #'
 #'@param hyperG0 prior mixing distribution.
 #'
@@ -171,7 +171,7 @@
 DPMGibbsSkewT_SeqPrior_parallel <- function (Ncpus, type_connec,
                                              z, prior_inform, hyperG0, N, nbclust_init,
                                              add.vagueprior = TRUE, weightnoninfo=NULL,
-                                             doPlot=FALSE, plotevery=1,
+                                             doPlot=FALSE, plotevery=N/10,
                                              diagVar=TRUE, verbose=TRUE,
                                              monitorfile="",
                                              ...){

@@ -3,7 +3,7 @@
 #'@param Ncpus the number of processors available
 #'
 #'@param type_connec The type of connection between the processors. Supported
-#'cluster types are \code{"SOCK"}, \code{"PVM"}, \code{"MPI"}, and
+#'cluster types are \code{"SOCK"}, \code{"FORK"}, \code{"MPI"}, and
 #'\code{"NWS"}. See also \code{\link[parallel:makeCluster]{makeCluster}}.
 #'
 #'@param z data matrix \code{d x n} with \code{d} dimensions in rows
@@ -182,7 +182,7 @@
 #'
 DPMGibbsSkewT_parallel <- function (Ncpus, type_connec,
                                     z, hyperG0, a, b, N, doPlot=FALSE,
-                                    nbclust_init=30, plotevery=1,
+                                    nbclust_init=30, plotevery=N/10,
                                     diagVar=TRUE, verbose=FALSE,
                                     monitorfile="",
                                     ...){

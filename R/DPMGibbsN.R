@@ -206,7 +206,7 @@
 #'
 
 DPMGibbsN <- function (z, hyperG0, a, b, N, doPlot=TRUE,
-                       nbclust_init=30, plotevery=1,
+                       nbclust_init=30, plotevery=N/10,
                        diagVar=TRUE, verbose=TRUE,
                        ...){
 

@@ -7,9 +7,12 @@
 DPMpost(data, hyperG0, a = 1e-04, b = 1e-04, N, doPlot = TRUE,
   nbclust_init = 30, plotevery = floor(N/10), diagVar = TRUE,
   verbose = TRUE, distrib = c("gaussian", "skewnorm", "skewt"),
-  ncores = 1, informPrior = NULL, ...)
+  ncores = 1, type_connec = "SOCK", informPrior = NULL, ...)
 }
 \arguments{
+\item{data}{data matrix \code{d x n} with \code{d} dimensions in rows
+and \code{n} observations in columns.}
+
 \item{hyperG0}{prior mixing distribution.}
 
 \item{a}{shape hyperparameter of the Gamma prior
@@ -41,8 +44,15 @@ written in the console at each MCMC iteration.}
 
 \item{ncores}{number of cores to use.}
 
-\item{z}{data matrix \code{d x n} with \code{d} dimensions in rows
-and \code{n} observations in columns.}
+\item{type_connec}{The type of connection between the processors. Supported
+cluster types are \code{"SOCK"}, \code{"FORK"}, \code{"MPI"}, and
+\code{"NWS"}. See also \code{\link[parallel:makeCluster]{makeCluster}}.}
+
+\item{informPrior}{an optional informative prior such as the approximation computed
+by \code{summary.DPMMclust}.}
+
+\item{...}{additional arguments to be passed to \code{\link{plot_DPM}}.
+Only used if \code{doPlot} is \code{TRUE}.}
 }
 \value{
 a object of class \code{DPMclust} with the following attributes:
