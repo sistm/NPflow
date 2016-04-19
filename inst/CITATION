@@ -10,7 +10,7 @@ citEntry(entry = "Article",
    pages  = "",
    doi    = "",
    url    = "",
-   note   = "R package version 0.3.0",
+   note   = "R package version 0.4.0",
    textVersion = "Hejblum BP, Alkhassim C, Gottardo R, Caron F and Thiebaut R (2016) Sequential Dirichlet Process Mixtures of Multivariate Skew t-distributions for Model-based Clustering of Flow Cytometry Data. Under preparation."
 )
 

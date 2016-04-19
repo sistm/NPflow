@@ -12,8 +12,8 @@ This package implements Bayesian estimation for Dirichlet process mixture of ske
 \tabular{ll}{
 Package: \tab NPflow\cr
 Type: \tab Package\cr
-Version: \tab 0.3.0\cr
-Date: \tab 2016-04-02\cr
+Version: \tab 0.4.0\cr
+Date: \tab 2016-04-18\cr
 License:\tab \href{http://www.gnu.org/licenses/lgpl.txt}{LGPL-3}\cr
 }
 The main functions in this package is \code{\link{DPMpost}}.
