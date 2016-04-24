@@ -41,6 +41,30 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// NuMatParC
+List NuMatParC(NumericVector c, arma::mat d);
+RcppExport SEXP NPflow_NuMatParC(SEXP cSEXP, SEXP dSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< NumericVector >::type c(cSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type d(dSEXP);
+    __result = Rcpp::wrap(NuMatParC(c, d));
+    return __result;
+END_RCPP
+}
+// traceEpsC
+NumericVector traceEpsC(arma::mat eps, arma::mat sigma);
+RcppExport SEXP NPflow_traceEpsC(SEXP epsSEXP, SEXP sigmaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< arma::mat >::type eps(epsSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type sigma(sigmaSEXP);
+    __result = Rcpp::wrap(traceEpsC(eps, sigma));
+    return __result;
+END_RCPP
+}
 // mmNiWpdfC
 NumericMatrix mmNiWpdfC(arma::mat Mu, List Sigma, arma::mat U_Mu0, NumericVector U_Kappa0, NumericVector U_Nu0, List U_Sigma0, bool Log);
 RcppExport SEXP NPflow_mmNiWpdfC(SEXP MuSEXP, SEXP SigmaSEXP, SEXP U_Mu0SEXP, SEXP U_Kappa0SEXP, SEXP U_Nu0SEXP, SEXP U_Sigma0SEXP, SEXP LogSEXP) {
@@ -169,18 +193,6 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
-// NuMatParC
-List NuMatParC(NumericVector c, arma::mat d);
-RcppExport SEXP NPflow_NuMatParC(SEXP cSEXP, SEXP dSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< NumericVector >::type c(cSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type d(dSEXP);
-    __result = Rcpp::wrap(NuMatParC(c, d));
-    return __result;
-END_RCPP
-}
 // sampleClassC
 IntegerVector sampleClassC(arma::mat probMat);
 RcppExport SEXP NPflow_sampleClassC(SEXP probMatSEXP) {
@@ -189,17 +201,6 @@ BEGIN_RCPP
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< arma::mat >::type probMat(probMatSEXP);
     __result = Rcpp::wrap(sampleClassC(probMat));
-    return __result;
-END_RCPP
-}
-// similarityMat_nocostC
-List similarityMat_nocostC(arma::mat cc);
-RcppExport SEXP NPflow_similarityMat_nocostC(SEXP ccSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< arma::mat >::type cc(ccSEXP);
-    __result = Rcpp::wrap(similarityMat_nocostC(cc));
     return __result;
 END_RCPP
 }
@@ -214,15 +215,14 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
-// traceEpsC
-NumericVector traceEpsC(arma::mat eps, arma::mat sigma);
-RcppExport SEXP NPflow_traceEpsC(SEXP epsSEXP, SEXP sigmaSEXP) {
+// similarityMat_nocostC
+List similarityMat_nocostC(arma::mat cc);
+RcppExport SEXP NPflow_similarityMat_nocostC(SEXP ccSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< arma::mat >::type eps(epsSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type sigma(sigmaSEXP);
-    __result = Rcpp::wrap(traceEpsC(eps, sigma));
+    Rcpp::traits::input_parameter< arma::mat >::type cc(ccSEXP);
+    __result = Rcpp::wrap(similarityMat_nocostC(cc));
     return __result;
 END_RCPP
 }

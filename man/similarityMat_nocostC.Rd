@@ -23,7 +23,7 @@ for(i in 1:10){
 
 c3 <- sapply(c2, "[")
 library(microbenchmark)
-microbenchmark(similarityMat(c3), similarityMat_nocostC(c3), times=10L)
+microbenchmark(similarityMat(c3), similarityMat_nocostC(c3), times=2L)
 
 }
 

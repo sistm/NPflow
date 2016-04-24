@@ -44,7 +44,7 @@ hyperG0[["kappa"]] <- 0.01
 hyperG0[["nu"]] <- d+1
 hyperG0[["lambda"]] <- diag(d)
 
-for(k in 1:1000){
+for(k in 1:200){
 
   NiW <- rNiW(hyperG0, diagVar=FALSE)
   U_mu[[k]] <-NiW[["mu"]]
@@ -58,7 +58,7 @@ hyperG02[["kappa"]] <- 1
 hyperG02[["nu"]] <- d+10
 hyperG02[["lambda"]] <- diag(d)/10
 
-for(k in 1001:2000){
+for(k in 201:400){
 
   NiW <- rNiW(hyperG02, diagVar=FALSE)
   U_mu[[k]] <-NiW[["mu"]]
