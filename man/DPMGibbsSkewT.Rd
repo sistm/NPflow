@@ -273,8 +273,8 @@ hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
 Boris Hejblum
 }
 \references{
-BP Hejblum, C Alkhassim, R Gottardo, F Caron, R Thiebaut, Sequential Dirichlet
+Hejblum BP, Alkhassim C, Gottardo R, Caron F, Thiebaut R, Sequential Dirichlet
 Process Mixtures of Multivariate Skew t-distributions for Model-based Clustering
-of Flow Cytometry Data, submitted 2016
+of Flow Cytometry Data, in preparation.
 }
 

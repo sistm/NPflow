@@ -27,9 +27,9 @@ using namespace arma;
 //'function. Defaults is \code{TRUE}.
 //'@return matrix of densities of dimension \code{K x n}
 //'
-//'@references BP Hejblum, C Alkhassim, R Gottardo, F Caron, R Thiebaut, Sequential Dirichlet
+//'@references Hejblum BP, Alkhassim C, Gottardo R, Caron F, Thiebaut R, Sequential Dirichlet
 //'Process Mixtures of Multivariate Skew t-distributions for Model-based Clustering
-//'of Flow Cytometry Data, submitted 2016
+//'of Flow Cytometry Data, in preparation.
 //'
 //'@export
 //'

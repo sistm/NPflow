@@ -8,9 +8,9 @@
 #'
 #'@param ref vector of a reference partition
 #'
-#'@references BP Hejblum, C Alkhassim, R Gottardo, F Caron, R Thiebaut, Sequential Dirichlet
+#'@references Hejblum BP, Alkhassim C, Gottardo R, Caron F, Thiebaut R, Sequential Dirichlet
 #'Process Mixtures of Multivariate Skew t-distributions for Model-based Clustering
-#'of Flow Cytometry Data, submitted 2016
+#'of Flow Cytometry Data, in preparation.
 #'
 #'@examples
 #'pred <- c(rep(1, 5),rep(2, 8),rep(3,10))
