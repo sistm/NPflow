@@ -1,6 +1,7 @@
 #'Bayesian Nonparametrics for Automatic Gating of Flow Cytometry data
 #'
-#'This package implements Bayesian estimation for Dirichlet process mixture of skew t-distributions.
+#'Dirichlet process mixture of multivariate normal, skew-normal or skew t-distributions
+#'modeling oriented towards flow-cytometry data preprocessing applications.
 #'
 #'
 #'\tabular{ll}{

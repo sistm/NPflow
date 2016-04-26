@@ -31,8 +31,8 @@ Suggests:
     parallel,
     doParallel,
     microbenchmark
-Description: Dirichlet process mixture of normal, skew-normal or skew t-distributions
-             modeling oriented towards flow-cytometry data preprocessing application.
+Description: Dirichlet process mixture of multivariate normal, skew-normal or skew t-distributions
+             modeling oriented towards flow-cytometry data preprocessing applications.
 License: LGPL-3 | file LICENSE
 BugReports: https://github.com/borishejblum/NPflow/issues
 RoxygenNote: 5.0.1
