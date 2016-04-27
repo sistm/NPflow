@@ -13,7 +13,7 @@ sliceSampler_skewT <- function(c, m, alpha, z, hyperG0, U_xi, U_psi,
     # temp_{K+1} ~ Gamma(alpha, 1)
     # then renormalise temp
     w <- numeric(maxCl)
-    temp <-stats::rgamma(n=(length(ind)+1), shape=c(m[ind], alpha), scale = 1)
+    temp <- stats::rgamma(n=(length(ind)+1), shape=c(m[ind], alpha), scale = 1)
     temp_norm <- temp/sum(temp)
     w[ind] <- temp_norm[-length(temp_norm)]
     R <- temp_norm[length(temp_norm)]

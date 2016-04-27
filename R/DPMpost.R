@@ -14,10 +14,11 @@
 #'@param hyperG0 prior mixing distribution.
 #'
 #'@param a shape hyperparameter of the Gamma prior
-#'on the parameter of the Dirichlet Process.
+#'on the concentration parameter of the Dirichlet Process. Default is \code{0.0001}.
 #'
 #'@param b scale hyperparameter of the Gamma prior
-#'on the parameter of the Dirichlet Process.
+#'on the concentration parameter of the Dirichlet Process. Default is \code{0.0001}. If \code{0}, 
+#'then the concentration is fixed set to \code{a}.
 #'
 #'@param N number of MCMC iterations.
 #'

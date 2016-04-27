@@ -12,9 +12,12 @@
 #'
 #'@param a shape hyperparameter of the Gamma prior
 #'on the concentration parameter of the Dirichlet Process.
+#'Default is \code{0.0001}.
 #'
 #'@param b scale hyperparameter of the Gamma prior
 #'on the concentration parameter of the Dirichlet Process.
+#'Default is \code{0.0001}. If \code{0} then the concentration is fixed and this function
+#'returns \code{a}.
 #'
 #'@details A Gamma prior is used.
 #'
@@ -88,18 +91,24 @@
 #'
 #'
 
-sample_alpha <- function(alpha_old, n, K, a, b){
+sample_alpha <- function(alpha_old, n, K, a=0.0001, b=0.0001){
 
+  if(b > 0){
     # Sample scale factor in Dirichlet Process
     x <- stats::rbeta(n=1, shape1=alpha_old + 1, shape2=n)
     temp <- (a+K-1) / (n*(b-log(x)))
     pi <- temp/(1+temp)
     u <- stats::runif(1)
     if (u<pi){
-        gamma_new = stats::rgamma(n=1, shape=a + K, scale=1/(b - log(x)))
+        alpha_new  <-  stats::rgamma(n=1, shape=a + K, scale=1/(b - log(x)))
     } else{
-        gamma_new = stats::rgamma(n=1, shape=a + K - 1, scale=1/(b - log(x)))
+      alpha_new <-  stats::rgamma(n=1, shape=a + K - 1, scale=1/(b - log(x)))
     }
-    return(gamma_new)
+    return(alpha_new)
+  }else if(b==0){
+    alpha_new=a
+  }else{
+    print("b cannot be negative")
+  }
 }
 

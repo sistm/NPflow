@@ -4,7 +4,7 @@
 \alias{sample_alpha}
 \title{Sampler for the concentration parameter of a Dirichlet process}
 \usage{
-sample_alpha(alpha_old, n, K, a, b)
+sample_alpha(alpha_old, n, K, a = 1e-04, b = 1e-04)
 }
 \arguments{
 \item{alpha_old}{the current value of alpha}
@@ -14,10 +14,13 @@ sample_alpha(alpha_old, n, K, a, b)
 \item{K}{current number of cluster}
 
 \item{a}{shape hyperparameter of the Gamma prior
-on the concentration parameter of the Dirichlet Process.}
+on the concentration parameter of the Dirichlet Process.
+Default is \code{0.0001}.}
 
 \item{b}{scale hyperparameter of the Gamma prior
-on the concentration parameter of the Dirichlet Process.}
+on the concentration parameter of the Dirichlet Process.
+Default is \code{0.0001}. If \code{0} then the concentration is fixed and this function
+returns \code{a}.}
 }
 \description{
 Sampler udating the concentration parameter of a Dirichlet process given
