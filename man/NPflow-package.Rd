@@ -13,8 +13,8 @@ modeling oriented towards flow-cytometry data preprocessing applications.
 \tabular{ll}{
 Package: \tab NPflow\cr
 Type: \tab Package\cr
-Version: \tab 0.9.0\cr
-Date: \tab 2016-04-26\cr
+Version: \tab 0.10.0\cr
+Date: \tab 2016-04-27\cr
 License:\tab \href{http://www.gnu.org/licenses/lgpl.txt}{LGPL-3}\cr
 }
 The main functions in this package is \code{\link{DPMpost}}.
