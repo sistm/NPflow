@@ -4,13 +4,13 @@ using namespace arma;
 
 // [[Rcpp::depends(RcppArmadillo)]]
 
-//' C++ implementation of multivariate Normal probability density function for multiple inputs
+//' C++ implementation of multivariate skew t likelihood function for multiple inputs
 //'
 //'@param x data matrix of dimension p x n, p being the dimension of the
 //'data and n the number of data points
 //'@param c integer vector of cluster allocations with values from 1 to K
 //'@param clustval vector of unique values from c in the order corresponding to
-//'the storage of cluster parameters in \code{xi}, \code{psi}, and \code{varcovM}
+//'the storage of cluster parameters in \code{xi}, \code{psi}, and \code{sigma}
 //'@param xi mean vectors matrix of dimension p x K, K being the number of
 //'clusters
 //'@param psi skew parameter vectors matrix of dimension \code{p x K}

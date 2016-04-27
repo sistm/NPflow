@@ -41,6 +41,30 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// NuMatParC
+List NuMatParC(NumericVector c, arma::mat d);
+RcppExport SEXP NPflow_NuMatParC(SEXP cSEXP, SEXP dSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< NumericVector >::type c(cSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type d(dSEXP);
+    __result = Rcpp::wrap(NuMatParC(c, d));
+    return __result;
+END_RCPP
+}
+// traceEpsC
+NumericVector traceEpsC(arma::mat eps, arma::mat sigma);
+RcppExport SEXP NPflow_traceEpsC(SEXP epsSEXP, SEXP sigmaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< arma::mat >::type eps(epsSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type sigma(sigmaSEXP);
+    __result = Rcpp::wrap(traceEpsC(eps, sigma));
+    return __result;
+END_RCPP
+}
 // mmNiWpdfC
 NumericMatrix mmNiWpdfC(arma::mat Mu, List Sigma, arma::mat U_Mu0, NumericVector U_Kappa0, NumericVector U_Nu0, List U_Sigma0, bool Log);
 RcppExport SEXP NPflow_mmNiWpdfC(SEXP MuSEXP, SEXP SigmaSEXP, SEXP U_Mu0SEXP, SEXP U_Kappa0SEXP, SEXP U_Nu0SEXP, SEXP U_Sigma0SEXP, SEXP LogSEXP) {
@@ -78,13 +102,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // mmvnpdfC
-NumericMatrix mmvnpdfC(NumericMatrix x, NumericMatrix mean, List varcovM, bool Log);
+NumericMatrix mmvnpdfC(arma::mat x, arma::mat mean, List varcovM, bool Log);
 RcppExport SEXP NPflow_mmvnpdfC(SEXP xSEXP, SEXP meanSEXP, SEXP varcovMSEXP, SEXP LogSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< NumericMatrix >::type x(xSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type mean(meanSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type x(xSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type mean(meanSEXP);
     Rcpp::traits::input_parameter< List >::type varcovM(varcovMSEXP);
     Rcpp::traits::input_parameter< bool >::type Log(LogSEXP);
     __result = Rcpp::wrap(mmvnpdfC(x, mean, varcovM, Log));
@@ -92,14 +116,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // mmvsnpdfC
-NumericMatrix mmvsnpdfC(NumericMatrix x, NumericMatrix xi, NumericMatrix psi, List sigma, bool Log);
+NumericMatrix mmvsnpdfC(arma::mat x, arma::mat xi, arma::mat psi, List sigma, bool Log);
 RcppExport SEXP NPflow_mmvsnpdfC(SEXP xSEXP, SEXP xiSEXP, SEXP psiSEXP, SEXP sigmaSEXP, SEXP LogSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< NumericMatrix >::type x(xSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type xi(xiSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type psi(psiSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type x(xSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type xi(xiSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type psi(psiSEXP);
     Rcpp::traits::input_parameter< List >::type sigma(sigmaSEXP);
     Rcpp::traits::input_parameter< bool >::type Log(LogSEXP);
     __result = Rcpp::wrap(mmvsnpdfC(x, xi, psi, sigma, Log));
@@ -137,6 +161,22 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// mvnlikC
+List mvnlikC(arma::mat x, arma::vec c, arma::vec clustval, arma::mat mu, List sigma, bool loglik);
+RcppExport SEXP NPflow_mvnlikC(SEXP xSEXP, SEXP cSEXP, SEXP clustvalSEXP, SEXP muSEXP, SEXP sigmaSEXP, SEXP loglikSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< arma::mat >::type x(xSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type c(cSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type clustval(clustvalSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type mu(muSEXP);
+    Rcpp::traits::input_parameter< List >::type sigma(sigmaSEXP);
+    Rcpp::traits::input_parameter< bool >::type loglik(loglikSEXP);
+    __result = Rcpp::wrap(mvnlikC(x, c, clustval, mu, sigma, loglik));
+    return __result;
+END_RCPP
+}
 // mvnpdfC
 NumericVector mvnpdfC(NumericMatrix x, NumericVector mean, NumericMatrix varcovM, bool Log);
 RcppExport SEXP NPflow_mvnpdfC(SEXP xSEXP, SEXP meanSEXP, SEXP varcovMSEXP, SEXP LogSEXP) {
@@ -148,6 +188,23 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericMatrix >::type varcovM(varcovMSEXP);
     Rcpp::traits::input_parameter< bool >::type Log(LogSEXP);
     __result = Rcpp::wrap(mvnpdfC(x, mean, varcovM, Log));
+    return __result;
+END_RCPP
+}
+// mvsnlikC
+List mvsnlikC(arma::mat x, arma::vec c, arma::vec clustval, arma::mat xi, arma::mat psi, List sigma, bool loglik);
+RcppExport SEXP NPflow_mvsnlikC(SEXP xSEXP, SEXP cSEXP, SEXP clustvalSEXP, SEXP xiSEXP, SEXP psiSEXP, SEXP sigmaSEXP, SEXP loglikSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< arma::mat >::type x(xSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type c(cSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type clustval(clustvalSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type xi(xiSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type psi(psiSEXP);
+    Rcpp::traits::input_parameter< List >::type sigma(sigmaSEXP);
+    Rcpp::traits::input_parameter< bool >::type loglik(loglikSEXP);
+    __result = Rcpp::wrap(mvsnlikC(x, c, clustval, xi, psi, sigma, loglik));
     return __result;
 END_RCPP
 }
@@ -169,18 +226,6 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
-// NuMatParC
-List NuMatParC(NumericVector c, arma::mat d);
-RcppExport SEXP NPflow_NuMatParC(SEXP cSEXP, SEXP dSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< NumericVector >::type c(cSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type d(dSEXP);
-    __result = Rcpp::wrap(NuMatParC(c, d));
-    return __result;
-END_RCPP
-}
 // sampleClassC
 IntegerVector sampleClassC(arma::mat probMat);
 RcppExport SEXP NPflow_sampleClassC(SEXP probMatSEXP) {
@@ -189,17 +234,6 @@ BEGIN_RCPP
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< arma::mat >::type probMat(probMatSEXP);
     __result = Rcpp::wrap(sampleClassC(probMat));
-    return __result;
-END_RCPP
-}
-// similarityMat_nocostC
-List similarityMat_nocostC(arma::mat cc);
-RcppExport SEXP NPflow_similarityMat_nocostC(SEXP ccSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< arma::mat >::type cc(ccSEXP);
-    __result = Rcpp::wrap(similarityMat_nocostC(cc));
     return __result;
 END_RCPP
 }
@@ -214,15 +248,14 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
-// traceEpsC
-NumericVector traceEpsC(arma::mat eps, arma::mat sigma);
-RcppExport SEXP NPflow_traceEpsC(SEXP epsSEXP, SEXP sigmaSEXP) {
+// similarityMat_nocostC
+List similarityMat_nocostC(arma::mat cc);
+RcppExport SEXP NPflow_similarityMat_nocostC(SEXP ccSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< arma::mat >::type eps(epsSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type sigma(sigmaSEXP);
-    __result = Rcpp::wrap(traceEpsC(eps, sigma));
+    Rcpp::traits::input_parameter< arma::mat >::type cc(ccSEXP);
+    __result = Rcpp::wrap(similarityMat_nocostC(cc));
     return __result;
 END_RCPP
 }

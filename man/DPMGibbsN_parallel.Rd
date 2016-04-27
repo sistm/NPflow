@@ -5,9 +5,9 @@
 \title{Slice Sampling of the Dirichlet Process Mixture Model
 with a prior on alpha}
 \usage{
-DPMGibbsN_parallel(Ncpus, type_connec, z, hyperG0, a, b, N, doPlot = TRUE,
-  nbclust_init = 30, plotevery = N/10, diagVar = TRUE, verbose = TRUE,
-  monitorfile = "", ...)
+DPMGibbsN_parallel(Ncpus, type_connec, z, hyperG0, a = 1e-04, b = 1e-04, N,
+  doPlot = TRUE, nbclust_init = 30, plotevery = N/10, diagVar = TRUE,
+  verbose = TRUE, monitorfile = "", ...)
 }
 \arguments{
 \item{Ncpus}{the number of processors available}
@@ -22,10 +22,11 @@ and \code{n} observations in columns.}
 \item{hyperG0}{prior mixing distribution.}
 
 \item{a}{shape hyperparameter of the Gamma prior
-on the parameter of the Dirichlet Process.}
+on the concentration parameter of the Dirichlet Process. Default is \code{0.0001}.}
 
 \item{b}{scale hyperparameter of the Gamma prior
-on the parameter of the Dirichlet Process.}
+on the concentration parameter of the Dirichlet Process. Default is \code{0.0001}. If \code{0}, 
+then the concentration is fixed set to \code{a}.}
 
 \item{N}{number of MCMC iterations.}
 

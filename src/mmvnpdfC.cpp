@@ -40,16 +40,14 @@ const double log2pi2 = log(2.0 * M_PI)/2;
 //'               times=1000L)
 //'
 // [[Rcpp::export]]
-NumericMatrix mmvnpdfC(NumericMatrix x,
-                       NumericMatrix mean,
+NumericMatrix mmvnpdfC(arma::mat x,
+                       arma::mat mean,
                        List varcovM,
                        bool Log=true){
 
-    mat xx = as<mat>(x);
-    mat m = as<mat>(mean);
-    int p = xx.n_rows;
-    int n = xx.n_cols;
-    int K = m.n_cols;
+    int p = x.n_rows;
+    int n = x.n_cols;
+    int K = mean.n_cols;
     NumericMatrix y = NumericMatrix(K,n);
     double constant = - p*log2pi2;
 
@@ -57,10 +55,10 @@ NumericMatrix mmvnpdfC(NumericMatrix x,
         mat S = varcovM[k];
         mat Rinv = inv(trimatu(chol(S)));
         double logSqrtDetvarcovM = sum(log(Rinv.diag()));
-        colvec mtemp = m.col(k);
+        colvec mtemp = mean.col(k);
 
         for (int i=0; i < n; i++) {
-            colvec x_i = xx.col(i) - mtemp;
+            colvec x_i = x.col(i) - mtemp;
             rowvec xRinv = trans(x_i)*Rinv;
             double quadform = sum(xRinv%xRinv);
             if (!Log) {

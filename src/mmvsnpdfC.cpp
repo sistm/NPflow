@@ -46,24 +46,22 @@ const double log2pi2 = log(2.0 * M_PI)/2;
 //'                      sigma=list(diag(2),10*diag(2), 20*diag(2)), Log=FALSE),
 //'               times=1000L)
 // [[Rcpp::export]]
-NumericMatrix mmvsnpdfC(NumericMatrix x,
-                        NumericMatrix xi,
-                        NumericMatrix psi,
+NumericMatrix mmvsnpdfC(arma::mat x,
+                        arma::mat xi,
+                        arma::mat psi,
                         List sigma,
                         bool Log=true){
 
-    mat xx = as<mat>(x);
-    mat mxi = as<mat>(xi);
-    mat mpsi = as<mat>(psi);
-    int p = xx.n_rows;
-    int n = xx.n_cols;
-    int K = mxi.n_cols;
+
+    int p = x.n_rows;
+    int n = x.n_cols;
+    int K = xi.n_cols;
     NumericMatrix y = NumericMatrix(K,n);
     double constant = - p*log2pi2;
 
     for(int k=0; k < K; k++){
-        colvec mtemp = mxi.col(k);
-        mat psitemp = mpsi.col(k);
+        colvec mtemp = xi.col(k);
+        mat psitemp = psi.col(k);
         mat sigmatemp = sigma[k];
 
         mat omega = sigmatemp + psitemp*trans(psitemp);
@@ -77,7 +75,7 @@ NumericMatrix mmvsnpdfC(NumericMatrix x,
         double logSqrtDetvarcovM = sum(log(Rinv.diag()));
 
         for (int i=0; i < n; i++) {
-            colvec x_i = xx.col(i) - mtemp;
+            colvec x_i = x.col(i) - mtemp;
             rowvec xRinv = trans(x_i)*Rinv;
             double quadform = sum(xRinv%xRinv);
             double part1 = log(2) -0.5*quadform + logSqrtDetvarcovM + constant;

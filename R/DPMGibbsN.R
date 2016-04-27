@@ -7,10 +7,10 @@
 #'@param hyperG0 prior mixing distribution.
 #'
 #'@param a shape hyperparameter of the Gamma prior on the concentration parameter of the Dirichlet
-#' Process.
+#' Process. Default is \code{0.0001}.
 #'
 #'@param b scale hyperparameter of the Gamma prior on the concentration parameter of the Dirichlet
-#' Process.
+#' Process. Default is \code{0.0001}. If \code{0}, then the concentration is fixed set to \code{a}.
 #'
 #'@param N number of MCMC iterations.
 #'
@@ -205,7 +205,7 @@
 #'
 #'
 
-DPMGibbsN <- function (z, hyperG0, a, b, N, doPlot=TRUE,
+DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
                        nbclust_init=30, plotevery=N/10,
                        diagVar=TRUE, verbose=TRUE,
                        ...){
@@ -288,7 +288,7 @@ DPMGibbsN <- function (z, hyperG0, a, b, N, doPlot=TRUE,
   weights_list[[i]][unique(c)] <- table(c)/length(c)
 
   logposterior_list[[i]] <- logposterior_DPMG(z, mu=U_mu, Sigma=U_Sigma,
-                                              hyper=hyperG0, c=c, m=m, alpha=alpha[i], n=n, a=a, b=b)
+                                              hyper=hyperG0, c=c, m=m, alpha=alpha[i], n=n, a=a, b=b, diagVar)
 
   cat(i, "/", N, " samplings:\n", sep="")
   cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="")
@@ -340,7 +340,7 @@ DPMGibbsN <- function (z, hyperG0, a, b, N, doPlot=TRUE,
     U_SS_list[[i]] <- U_SS[which(m!=0)]
     c_list[[i]] <- c
     logposterior_list[[i]] <- logposterior_DPMG(z, mu=U_mu, Sigma=U_Sigma,
-                                                hyper=hyperG0, c=c, m=m, alpha=alpha[i], n=n, a=a, b=b)
+                                                hyper=hyperG0, c=c, m=m, alpha=alpha[i], n=n, a=a, b=b, diagVar)
 
     if(verbose){
       cat(i, "/", N, " samplings:\n", sep="")

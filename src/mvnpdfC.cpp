@@ -5,7 +5,7 @@ using namespace arma;
 // [[Rcpp::depends(RcppArmadillo)]]
 const double log2pi2 = log(2.0 * M_PI)/2;
 
-//' C++ implementation of multivariate Normal probability density function
+//' C++ implementation of multivariate normal likelihood function for multiple inputs
 //'
 //'Based on the implementation from Nino Hardt and Dicko Ahmadou
 //'http://gallery.rcpp.org/articles/dmvnorm_arma/

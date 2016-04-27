@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{mvnpdfC}
 \alias{mvnpdfC}
-\title{C++ implementation of multivariate Normal probability density function}
+\title{C++ implementation of multivariate normal likelihood function for multiple inputs}
 \usage{
 mvnpdfC(x, mean, varcovM, Log = TRUE)
 }
