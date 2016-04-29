@@ -37,6 +37,10 @@
 #'estimated as a diagonal matrix, or as a full matrix.
 #'Default is \code{TRUE} (diagonal variance).
 #'
+#'@param use_variance_hyperprior logical flag indicating whether a hyperprior is added 
+#'for the variance parameter. Default is \code{TRUE} which decrease the impact of the variance prior
+#'on the posterior. \code{FALSE} is useful for using an informative prior.
+#'
 #'@param verbose logical flag indicating wether partition info is
 #'written in the console at each MCMC iteration.
 #'
@@ -220,7 +224,7 @@
 DPMGibbsSkewN_parallel <- function (Ncpus, type_connec,
                                     z, hyperG0, a=0.0001, b=0.0001, N, doPlot=FALSE,
                                     nbclust_init=30, plotevery=N/10,
-                                    diagVar=TRUE, verbose=FALSE,
+                                    diagVar=TRUE, use_variance_hyperprior=TRUE, verbose=FALSE,
                                     monitorfile="",
                                     ...){
 
@@ -373,8 +377,17 @@ DPMGibbsSkewN_parallel <- function (Ncpus, type_connec,
         fullCl <- which(m!=0)
         for(j in fullCl){
           obs_j <- which(c==j)
-          U_SS[[j]] <- update_SSsn(z=z[, obs_j], S=hyperG0,  ltn=ltn[obs_j],
-                                   hyperprior = list("Sigma"=U_Sigma[,,j]))
+          if(use_variance_hyperprior){
+            U_SS[[j]] <- update_SSsn(z=z[, obs_j, drop=FALSE], S=hyperG0,
+                                     ltn=ltn[obs_j],
+                                     hyperprior = list("Sigma"=U_Sigma[,,j])
+            )
+          }else{
+            U_SS[[j]] <- update_SSsn(z=z[, obs_j, drop=FALSE], S=hyperG0,
+                                     ltn=ltn[obs_j]
+            )
+          }
+          
           NNiW <- rNNiW(U_SS[[j]], diagVar)
           U_xi[, j] <- NNiW[["xi"]]
           U_SS[[j]][["xi"]] <- NNiW[["xi"]]
