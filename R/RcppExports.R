@@ -421,7 +421,6 @@ mvnpdfC <- function(x, mean, varcovM, Log = TRUE) {
 #'@param psi skew parameter vectors matrix of dimension \code{p x K}
 #'@param sigma list of length \code{K} of variance-covariance matrices,
 #'each of dimensions \code{p x p}.
-#'@param df vector of length \code{K} of degree of freedom parameters.
 #'@param loglik logical flag or returning the log-likelihood intead of the likelihood.
 #'Default is \code{TRUE}.
 #'@return a list:

@@ -25,8 +25,6 @@ each of dimensions \code{p x p}.}
 
 \item{loglik}{logical flag or returning the log-likelihood intead of the likelihood.
 Default is \code{TRUE}.}
-
-\item{df}{vector of length \code{K} of degree of freedom parameters.}
 }
 \value{
 a list:
