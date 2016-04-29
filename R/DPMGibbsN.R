@@ -213,40 +213,40 @@ DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
                        nbclust_init=30, plotevery=N/10,
                        diagVar=TRUE, use_variance_hyperprior=TRUE, verbose=TRUE,
                        ...){
-
+  
   p <- nrow(z)
   n <- ncol(z)
   U_mu <- matrix(0, nrow=p, ncol=n)
   U_Sigma = array(0, dim=c(p, p, n))
   listU_mu<-list()
   listU_Sigma<-list()
-
+  
   # U_SS is a list where each U_SS[[k]] contains the sufficient
   # statistics associated to cluster k
   U_SS <- list()
-
+  
   #store U_SS :
   U_SS_list <- list()
   #store clustering :
   c_list <- list()
   #store sliced weights
   weights_list <- list()
-
+  
   #store concentration parameter
   #alpha <- list()
-
+  
   #store log posterior probability
   logposterior_list <- list()
-
+  
   m <- numeric(n) # number of obs in each clusters
   c <-numeric(n)
   # initial number of clusters
-
+  
   # Initialisation----
   # each observation is assigned to a different cluster
   # or to 1 of the 50 initial clusters if there are more than
   # 50 observations
-
+  
   i <- 1
   if(n<nbclust_init){
     for (k in 1:n){
@@ -254,13 +254,13 @@ DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
       #cat("cluster ", k, ":\n")
       U_SS[[k]] <- update_SS(z=z[, k, drop=FALSE], S=hyperG0, hyperprior = NULL)
       NiW <- rNiW(U_SS[[k]], diagVar=diagVar)
-
+      
       U_mu[, k] <- NiW[["mu"]]
       U_SS[[k]][["mu"]] <- NiW[["mu"]]
-
+      
       U_Sigma[, , k] <- NiW[["S"]]
       U_SS[[k]][["S"]] <- NiW[["S"]]
-
+      
       m[k] <- m[k]+1
       U_SS[[k]][["weight"]] <- 1/n
     }
@@ -271,46 +271,48 @@ DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
       #cat("cluster ", k, ":\n")
       U_SS[[k]] <- update_SS(z=z[, obs_k,drop=FALSE], S=hyperG0)
       NiW <- rNiW(U_SS[[k]], diagVar=diagVar)
-
+      
       U_mu[, k] <- NiW[["mu"]]
       U_SS[[k]][["mu"]] <- NiW[["mu"]]
-
+      
       U_Sigma[, , k] <- NiW[["S"]]
       U_SS[[k]][["S"]] <- NiW[["S"]]
-
+      
       m[k] <- length(obs_k)
       U_SS[[k]][["weight"]] <- m[k]/n
     }
   }
   listU_mu[[i]]<-U_mu
   listU_Sigma[[i]]<-U_Sigma
-
+  
   alpha <- c(log(n))
   U_SS_list[[i]] <- U_SS
   c_list[[i]] <- c
   weights_list[[i]] <- numeric(length(m))
   weights_list[[i]][unique(c)] <- table(c)/length(c)
-
+  
   logposterior_list[[i]] <- logposterior_DPMG(z, mu=U_mu, Sigma=U_Sigma,
                                               hyper=hyperG0, c=c, m=m, alpha=alpha[i], n=n, a=a, b=b, diagVar)
-
-  cat(i, "/", N, " samplings:\n", sep="")
-  cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="")
-
+  
+  if(verbose){
+    cat(i, "/", N, " samplings:\n", sep="")
+    cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="")
+  }
+  
   if(doPlot){
     plot_DPM(z=z, U_mu=U_mu, U_Sigma=U_Sigma,
              c=c, i=i, alpha=alpha[[i]], U_SS=U_SS, ...)
-  }else{
+  }else if(verbose){
     cl2print <- unique(c)
     cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
   }
-
-
+  
+  
   for(i in 2:N){
     nbClust <- length(unique(c))
     alpha <- c(alpha,sample_alpha(alpha_old=alpha[i-1], n=n,
                                   K=nbClust, a=a, b=b))
-
+    
     slice <- sliceSampler_N(c=c, m=m, alpha=alpha[i],
                             z=z, hyperG0=hyperG0,
                             U_mu=U_mu, U_Sigma=U_Sigma,
@@ -320,7 +322,7 @@ DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
     weights_list[[i]] <- slice[["weights"]]
     U_mu<-slice[["U_mu"]]
     U_Sigma<-slice[["U_Sigma"]]
-
+    
     # Update cluster locations
     fullCl <- which(m!=0)
     for(j in fullCl){
@@ -332,31 +334,31 @@ DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
         U_SS[[j]] <- update_SS(z=z[, obs_j,drop=FALSE], S=hyperG0)
       }
       NiW <- rNiW(U_SS[[j]], diagVar=diagVar)
-
+      
       U_mu[, j] <- NiW[["mu"]]
       U_SS[[j]][["mu"]] <- NiW[["mu"]]
-
+      
       U_Sigma[, , j] <- NiW[["S"]]
       U_SS[[j]][["S"]] <- NiW[["S"]]
-
+      
       U_SS[[j]][["weight"]] <- weights_list[[i]][j]
       #cat("sampled S =", NiW[["S"]], "\n\n\n")
     }
-
+    
     listU_mu[[i]]<-U_mu
     listU_Sigma[[i]]<-U_Sigma
     U_SS_list[[i]] <- U_SS[which(m!=0)]
     c_list[[i]] <- c
     logposterior_list[[i]] <- logposterior_DPMG(z, mu=U_mu, Sigma=U_Sigma,
                                                 hyper=hyperG0, c=c, m=m, alpha=alpha[i], n=n, a=a, b=b, diagVar)
-
+    
     if(verbose){
       cat(i, "/", N, " samplings:\n", sep="")
       cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="")
       cl2print <- unique(c)
       cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
     }
-
+    
     if(doPlot && i/plotevery==floor(i/plotevery)){
       plot_DPM(z=z, U_mu=U_mu, U_Sigma=U_Sigma, c=c, i=i,
                alpha=alpha[i], U_SS=U_SS, ...)
@@ -364,9 +366,9 @@ DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
       cl2print <- unique(c)
       cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
     }
-
+    
   }
-
+  
   #     return(list("clusters" = c, "U_mu" = U_mu, "U_Sigma" = U_Sigma,
   #                 "partition" = m, "alpha"=alpha, "U_SS_list"=U_SS_list,
   #                 "c_list" = c_list, "weights_list"=weights_list,

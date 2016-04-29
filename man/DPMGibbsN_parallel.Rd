@@ -7,7 +7,7 @@ with a prior on alpha}
 \usage{
 DPMGibbsN_parallel(Ncpus, type_connec, z, hyperG0, a = 1e-04, b = 1e-04, N,
   doPlot = TRUE, nbclust_init = 30, plotevery = N/10, diagVar = TRUE,
-  verbose = TRUE, monitorfile = "", ...)
+  use_variance_hyperprior = TRUE, verbose = TRUE, monitorfile = "", ...)
 }
 \arguments{
 \item{Ncpus}{the number of processors available}
@@ -42,6 +42,10 @@ is \code{TRUE}.}
 \item{diagVar}{logical flag indicating wether the variance of each cluster is
 estimated as a diagonal matrix, or as a full matrix.
 Default is \code{TRUE} (diagonal variance).}
+
+\item{use_variance_hyperprior}{logical flag indicating whether a hyperprior is added 
+for the variance parameter. Default is \code{TRUE} which decrease the impact of the variance prior
+on the posterior. \code{FALSE} is useful for using an informative prior.}
 
 \item{verbose}{logical flag indicating wether partition info is
 written in the console at each MCMC iteration.}
@@ -91,8 +95,8 @@ n <- 2000
 set.seed(1234)
 
 # Sample data
-d <- 10
-nclust <- 20
+d <- 3
+nclust <- 5
 m <- matrix(nrow=d, ncol=nclust, runif(d*nclust)*8)
 # p: cluster probabilities
 p <- runif(nclust)
@@ -135,6 +139,14 @@ hyperG0[["lambda"]] <- diag(d)/10
 
 
 nbclust_init <- 30
+
+\dontrun{
+ library(doParallel)
+ MCMCsample <- DPMGibbsN_parallel(Ncpus=2, type_connec="FORK", z, hyperG0, a, b, N=1000, doPlot, nbclust_init, plotevery=100,
+                                  gg.add=list(theme_bw(),
+                                  guides(shape=guide_legend(override.aes = list(fill="grey45")))),
+                                  diagVar=FALSE)
+}
 
 
 }
