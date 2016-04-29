@@ -5,8 +5,8 @@
 \title{Slice Sampling of Dirichlet Process Mixture of skew Students's t-distibutions}
 \usage{
 DPMGibbsSkewT(z, hyperG0, a = 1e-04, b = 1e-04, N, doPlot = TRUE,
-  nbclust_init = 30, plotevery = N/10, diagVar = TRUE, verbose = TRUE,
-  ...)
+  nbclust_init = 30, plotevery = N/10, diagVar = TRUE,
+  use_variance_hyperprior = TRUE, verbose = TRUE, ...)
 }
 \arguments{
 \item{z}{data matrix \code{d x n} with \code{d} dimensions in rows
@@ -36,7 +36,11 @@ is \code{TRUE}.}
 estimated as a diagonal matrix, or as a full matrix.
 Default is \code{TRUE} (diagonal variance).}
 
-\item{verbose}{logical flag indicating wether partition info is
+\item{use_variance_hyperprior}{logical flag indicating whether a hyperprior is added 
+for the variance parameter. Default is \code{TRUE} which decrease the impact of the variance prior
+on the posterior. \code{FALSE} is useful for using an informative prior.}
+
+\item{verbose}{logical flag indicating whether partition info is
 written in the console at each MCMC iteration.}
 
 \item{...}{additional arguments to be passed to \code{\link{plot_DPMst}}.

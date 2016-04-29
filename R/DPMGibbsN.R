@@ -23,8 +23,12 @@
 #'@param nbclust_init number of clusters at initialisation. Default to 30 (or less if there are less
 #'  than 30 observations).
 #'
-#'@param diagVar logical flag indicating wether the variance of each cluster is estimated as a
+#'@param diagVar logical flag indicating whether the variance of each cluster is estimated as a
 #'  diagonal matrix, or as a full matrix. Default is \code{TRUE} (diagonal variance).
+#'
+#'@param use_variance_hyperprior logical flag indicating whether a hyperprior is added 
+#'for the variance parameter. Default is \code{TRUE} which decrease the impact of the variance prior
+#'on the posterior. \code{FALSE} is useful for using an informative prior.
 #'
 #'@param verbose logical flag indicating wether partition info is written in the console at each
 #'  MCMC iteration.
@@ -136,7 +140,7 @@
 #'  # Gibbs sampler for Dirichlet Process Mixtures
 #'  ##############################################
 #'\dontrun{
-#'  MCMCsample <- DPMGibbsN(z, hyperG0, a, b, N=500, doPlot, nbclust_init, plotevery=50,
+#'  MCMCsample <- DPMGibbsN(z, hyperG0, a, b, N=500, doPlot, nbclust_init, plotevery=100,
 #'                          gg.add=list(theme_bw(),
 #'                                  guides(shape=guide_legend(override.aes = list(fill="grey45")))),
 #'                          diagVar=FALSE)
@@ -207,7 +211,7 @@
 
 DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
                        nbclust_init=30, plotevery=N/10,
-                       diagVar=TRUE, verbose=TRUE,
+                       diagVar=TRUE, use_variance_hyperprior=TRUE, verbose=TRUE,
                        ...){
 
   p <- nrow(z)
@@ -322,7 +326,11 @@ DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
     for(j in fullCl){
       obs_j <- which(c==j)
       #cat("cluster ", j, ":\n")
-      U_SS[[j]] <- update_SS(z=z[, obs_j,drop=FALSE], S=hyperG0, hyperprior = list("Sigma"=U_Sigma[,,j]))
+      if(use_variance_hyperprior){
+        U_SS[[j]] <- update_SS(z=z[, obs_j,drop=FALSE], S=hyperG0, hyperprior = list("Sigma"=U_Sigma[,,j]))
+      }else{
+        U_SS[[j]] <- update_SS(z=z[, obs_j,drop=FALSE], S=hyperG0)
+      }
       NiW <- rNiW(U_SS[[j]], diagVar=diagVar)
 
       U_mu[, j] <- NiW[["mu"]]

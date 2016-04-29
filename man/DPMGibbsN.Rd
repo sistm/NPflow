@@ -5,8 +5,8 @@
 \title{Slice Sampling of the Dirichlet Process Mixture Model with a prior on alpha}
 \usage{
 DPMGibbsN(z, hyperG0, a = 1e-04, b = 1e-04, N, doPlot = TRUE,
-  nbclust_init = 30, plotevery = N/10, diagVar = TRUE, verbose = TRUE,
-  ...)
+  nbclust_init = 30, plotevery = N/10, diagVar = TRUE,
+  use_variance_hyperprior = TRUE, verbose = TRUE, ...)
 }
 \arguments{
 \item{z}{data matrix \code{d x n} with \code{d} dimensions in rows and \code{n} observations in
@@ -31,8 +31,12 @@ than 30 observations).}
 \item{plotevery}{an integer indicating the interval between plotted iterations when \code{doPlot}
 is \code{TRUE}.}
 
-\item{diagVar}{logical flag indicating wether the variance of each cluster is estimated as a
+\item{diagVar}{logical flag indicating whether the variance of each cluster is estimated as a
 diagonal matrix, or as a full matrix. Default is \code{TRUE} (diagonal variance).}
+
+\item{use_variance_hyperprior}{logical flag indicating whether a hyperprior is added 
+for the variance parameter. Default is \code{TRUE} which decrease the impact of the variance prior
+on the posterior. \code{FALSE} is useful for using an informative prior.}
 
 \item{verbose}{logical flag indicating wether partition info is written in the console at each
 MCMC iteration.}
@@ -144,7 +148,7 @@ for(k in 1:n){
  # Gibbs sampler for Dirichlet Process Mixtures
  ##############################################
 \dontrun{
- MCMCsample <- DPMGibbsN(z, hyperG0, a, b, N=500, doPlot, nbclust_init, plotevery=50,
+ MCMCsample <- DPMGibbsN(z, hyperG0, a, b, N=500, doPlot, nbclust_init, plotevery=100,
                          gg.add=list(theme_bw(),
                                  guides(shape=guide_legend(override.aes = list(fill="grey45")))),
                          diagVar=FALSE)

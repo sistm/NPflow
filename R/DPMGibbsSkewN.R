@@ -26,7 +26,11 @@
 #'@param diagVar logical flag indicating wether the variance of a cluster is a diagonal matrice.
 #'Default is \code{FALSE} (full matrix).
 #'
-#'@param verbose logical flag indicating wether partition info is
+#'@param use_variance_hyperprior logical flag indicating whether a hyperprior is added 
+#'for the variance parameter. Default is \code{TRUE} which decrease the impact of the variance prior
+#'on the posterior. \code{FALSE} is useful for using an informative prior.
+#'
+#'@param verbose logical flag indicating whether partition info is
 #'written in the console at each MCMC iteration.
 #'
 #'@param ... additional arguments to be passed to \code{\link{plot_DPMsn}}.
@@ -377,41 +381,41 @@
 #'
 DPMGibbsSkewN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
                            nbclust_init=30, plotevery=N/10,
-                           diagVar=TRUE, verbose=TRUE,
+                           diagVar=TRUE, use_variance_hyperprior=TRUE, verbose=TRUE,
                            ...){
-
+  
   if(doPlot){requireNamespace("ggplot2", quietly=TRUE)}
-
+  
   p <- dim(z)[1]
   n <- dim(z)[2]
   U_xi <- matrix(0, nrow=p, ncol=n)
   U_psi <- matrix(0, nrow=p, ncol=n)
   U_Sigma = array(0, dim=c(p, p, n))
   U_B = array(0, dim=c(2, 2, n))
-
+  
   # U_SS is a list where each U_SS[[k]] contains the sufficient
   # statistics associated to cluster k
   U_SS <- list()
-
+  
   #store U_SS :
   U_SS_list <- list()
   #store clustering :
   c_list <- list()
   #store sliced weights
   weights_list <- list()
-
+  
   #store log posterior probability
   logposterior_list <- list()
-
+  
   m <- numeric(n) # number of obs in each clusters
   c <- numeric(n) # cluster label of ech observation
   ltn <- rtruncnorm(n, a=0, b=Inf, mean=0, sd=1) # latent truncated normal
-
+  
   # Initialisation----
   # each observation is assigned to a different cluster
   # or to 1 of the 50 initial clusters if there are more than
   # 50 observations
-
+  
   i <- 1
   if(ncol(z)<nbclust_init){
     for (k in 1:n){
@@ -447,20 +451,20 @@ DPMGibbsSkewN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
       m[k] <- length(obs_k)
     }
   }
-
-
-
+  
+  
+  
   alpha <- c(log(n))
-
-
+  
+  
   U_SS_list[[i]] <- U_SS
   c_list[[i]] <- c
   weights_list[[1]] <- numeric(length(m))
   weights_list[[1]][unique(c)] <- table(c)/length(c)
-
+  
   logposterior_list[[i]] <- logposterior_DPMSN(z, xi=U_xi, psi=U_psi, Sigma=U_Sigma, B=U_B,
                                                hyper=hyperG0, c=c, m=m, alpha=alpha[i], n=n, a=a, b=b, diagVar)
-
+  
   if(doPlot){
     plot_DPMsn(z=z, c=c, i=i, alpha=alpha[i], U_SS=U_SS_list[[i]], ellipses=TRUE, ...)
   }
@@ -470,18 +474,18 @@ DPMGibbsSkewN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
     cl2print <- unique(c)
     cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
   }
-
-
+  
+  
   if(N>1){
     for(i in 2:N){
-
+      
       nbClust <- length(unique(c))
-
+      
       alpha <- c(alpha,
                  sample_alpha(alpha_old=alpha[i-1], n=n,
                               K=nbClust, a=a, b=b)
       )
-
+      
       slice <- sliceSampler_SkewN(c=c, m=m, alpha=alpha[i],
                                   z=z, hyperG0=hyperG0,
                                   U_xi=U_xi, U_psi=U_psi,
@@ -490,17 +494,24 @@ DPMGibbsSkewN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
       c <- slice[["c"]]
       weights_list[[i]] <- slice[["weights"]]
       ltn <- slice[["latentTrunc"]]
-
-
-
+      
+      
+      
       # Update cluster locations
       fullCl <- which(m!=0)
       for(j in fullCl){
         obs_j <- which(c==j)
         #cat("cluster ", j, ":\n")
-        U_SS[[j]] <- update_SSsn(z=z[, obs_j, drop=FALSE], S=hyperG0,
-                                 ltn=ltn[obs_j],
-                                 hyperprior = list("Sigma"=U_Sigma[,,j]))
+        if(use_variance_hyperprior){
+          U_SS[[j]] <- update_SSsn(z=z[, obs_j, drop=FALSE], S=hyperG0,
+                                   ltn=ltn[obs_j],
+                                   hyperprior = list("Sigma"=U_Sigma[,,j])
+          )
+        }else{
+          U_SS[[j]] <- update_SSsn(z=z[, obs_j, drop=FALSE], S=hyperG0,
+                                   ltn=ltn[obs_j]
+          )
+        }
         NNiW <- rNNiW(U_SS[[j]], diagVar)
         U_xi[, j] <- NNiW[["xi"]]
         U_SS[[j]][["xi"]] <- NNiW[["xi"]]
@@ -510,14 +521,14 @@ DPMGibbsSkewN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
         U_SS[[j]][["S"]] <- NNiW[["S"]]
         U_B[, ,j] <- U_SS[[j]][["B"]]
       }
-
-
+      
+      
       U_SS_list[[i]] <- U_SS[which(m!=0)]
       c_list[[i]] <- c
-
+      
       logposterior_list[[i]] <- logposterior_DPMSN(z, xi=U_xi, psi=U_psi, Sigma=U_Sigma, B=U_B,
                                                    hyper=hyperG0, c=c, m=m, alpha=alpha[i], n=n, a=a, b=b, diagVar)
-
+      
       if(doPlot && i/plotevery==floor(i/plotevery)){
         plot_DPMsn(z=z, c=c, i=i, alpha=alpha[i], U_SS=U_SS_list[[i]], ellipses=TRUE, ...)
       }
@@ -529,7 +540,7 @@ DPMGibbsSkewN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
       }
     }
   }
-
+  
   dpmclus <- list("mcmc_partitions" = c_list,
                   "alpha"=alpha,
                   "U_SS_list"=U_SS_list,
