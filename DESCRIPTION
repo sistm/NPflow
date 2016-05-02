@@ -2,7 +2,7 @@ Package: NPflow
 Type: Package
 Title: Bayesian Nonparametrics for Automatic Gating of Flow-Cytometry Data
 Version: 0.10.0
-Date: 2016-04-27
+Date: 2016-05-02
 Authors@R: c(person("Boris P.", "Hejblum", role = c("aut", "cre"),
     email = "bhejblum@hsph.harvard.edu"),
     person("Chariff", "Alkhassim", role = c("aut"),
