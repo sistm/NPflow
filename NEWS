@@ -1,0 +1,7 @@
+News about the R package NPflow:
+--------------------------------
+
+Main changes in Version 0.10.0 (2016-05-02):
+* Optimization of the log-posterior computation for normal and skew normal distributions
+* Improvement of the parallel sampler for normal distributions
+* Bug fix: log of integers disambiguated in C++ function (compilation error under Solaris)
