@@ -3,7 +3,7 @@ using namespace Rcpp;
 using namespace arma;
 
 // [[Rcpp::depends(RcppArmadillo)]]
-const double log2pi2 = log(2.0 * M_PI)/2;
+const double log2pi2 = log(2.0 * M_PI)/2.0;
 
 //' C++ implementation of multivariate Normal probability density function for multiple inputs
 //'

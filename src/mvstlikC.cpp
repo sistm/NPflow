@@ -69,8 +69,8 @@ List mvstlikC(arma::mat x,
             rowvec xRinv = trans(x_i)*Rinv;
             mat Qy = x_i.t()*omegaInv*x_i;
             double quadform = sum(xRinv%xRinv);
-            double a = lgamma((dftemp + p)/2) - lgamma(dftemp/2) - log(dftemp*M_PI)*p/2;
-            double part1 = log(2) + (-(dftemp + p)/2)*log(1 + quadform/dftemp) + a + logSqrtDetvarcovM;
+            double a = lgamma((dftemp + p)/2.0) - lgamma(dftemp/2.0) - log(dftemp*M_PI)*p/2.0;
+            double part1 = log(2.0) + (-(dftemp + p)/2)*log(1.0 + quadform/dftemp) + a + logSqrtDetvarcovM;
             mat quant = trans(alph)*diagmat(1/sqrt(diagvec(omega)))*x_i*sqrt((dftemp + p)/(dftemp+Qy));
             double part2 = ::Rf_pt(quant(0,0), (dftemp + p) , 1, 0);
             yindiv(indk(i)) = part1 + log(part2);

@@ -3,7 +3,7 @@ using namespace Rcpp;
 using namespace arma;
 
 // [[Rcpp::depends(RcppArmadillo)]]
-const double log2pi2 = log(2.0 * M_PI)/2;
+const double log2pi2 = log(2.0 * M_PI)/2.0;
 
 //' C++ implementation of multivariate skew normal likelihood function for multiple inputs
 //'
@@ -67,7 +67,7 @@ List mvsnlikC(arma::mat x,
       colvec x_i = xtemp.col(i) - mtemp;
       rowvec xRinv = trans(x_i)*Rinv;
       double quadform = sum(xRinv%xRinv);
-      double part1 = log(2) -0.5*quadform + logSqrtDetvarcovM + constant;
+      double part1 = log(2.0) -0.5*quadform + logSqrtDetvarcovM + constant;
       mat quant = trans(alph)*diagmat(1/sqrt(diagvec(omega)))*x_i;
       double part2 = Rcpp::stats::pnorm_0(quant(0,0), 1, 0);
       yindiv(indk(i)) = part1 + log(part2);

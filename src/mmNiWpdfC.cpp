@@ -53,9 +53,9 @@ NumericMatrix mmNiWpdfC(arma::mat Mu,
 
 
 
-    double k_const = (- nu0*d*log(2)
+    double k_const = (- nu0*d*log(2.0)
                         + nu0*log(det(lambda0))
-                        - 2*lgamma_mvC(nu0/2, d)
+                        - 2.0*lgamma_mvC(nu0/2.0, d)
     );
 
 
@@ -74,13 +74,13 @@ NumericMatrix mmNiWpdfC(arma::mat Mu,
       double sign2;
       log_det(logdet_sigma, sign2, sigma);
 
-      double res = (-(nu0 + d +1)*logdet_sigma
+      double res = (-(nu0 + d + 1.0)*logdet_sigma
                       - logdet_kappa0sigma
                       - trace(lambda0*sigmainv)
                       - quadform(0,0)
       );
 
-      y(k,i) = (dlog2pi + k_const + res)/2;
+      y(k,i) = (dlog2pi + k_const + res)/2.0;
 
       if (!Log) {
         y(k,i) = exp(y(k,i));
