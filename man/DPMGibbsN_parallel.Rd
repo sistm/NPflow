@@ -142,8 +142,8 @@ nbclust_init <- 30
 
 \dontrun{
  library(doParallel)
- MCMCsample <- DPMGibbsN_parallel(Ncpus=2, type_connec="FORK", z, hyperG0, a, b, N=1000, doPlot, nbclust_init, plotevery=100,
-                                  gg.add=list(theme_bw(),
+ MCMCsample <- DPMGibbsN_parallel(Ncpus=2, type_connec="FORK", z, hyperG0, a, b, N=1000, doPlot, 
+                                  nbclust_init, plotevery=100, gg.add=list(theme_bw(),
                                   guides(shape=guide_legend(override.aes = list(fill="grey45")))),
                                   diagVar=FALSE)
 }
