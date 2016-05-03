@@ -22,8 +22,12 @@ for(i in 1:10){
 }
 
 c3 <- sapply(c2, "[")
+
+if(require(microbenchmark)){
 library(microbenchmark)
 microbenchmark(similarityMat(c3), similarityMat_nocostC(c3), times=2L)
-
+}else{
+cat("package 'microbenchmark' not available\\n")
+}
 }
 

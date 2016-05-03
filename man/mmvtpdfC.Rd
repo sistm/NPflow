@@ -40,12 +40,15 @@ mvtpdf(x=matrix(1.96), mean=0, varcovM=diag(1), df=10)
 mmvtpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1)), df=10)
 
 
+if(require(microbenchmark)){
 library(microbenchmark)
 microbenchmark(mvtpdf(x=matrix(1.96), mean=0, varcovM=diag(1), df=1, Log=FALSE),
-              mmvtpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1)),
-                       df=c(1), Log=FALSE),
-              times=10000L)
-
+               mmvtpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1)),
+                        df=c(1), Log=FALSE),
+               times=10000L)
+}else{
+cat("package 'microbenchmark' not available\\n")
+}
 }
 \author{
 Boris Hejblum

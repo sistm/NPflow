@@ -33,12 +33,15 @@ using namespace arma;
 //'mmvtpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1)), df=10)
 //'
 //'
-//'library(microbenchmark)
-//'microbenchmark(mvtpdf(x=matrix(1.96), mean=0, varcovM=diag(1), df=1, Log=FALSE),
-//'               mmvtpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1)),
-//'                        df=c(1), Log=FALSE),
-//'               times=10000L)
-//'
+//'if(require(microbenchmark)){
+//' library(microbenchmark)
+//' microbenchmark(mvtpdf(x=matrix(1.96), mean=0, varcovM=diag(1), df=1, Log=FALSE),
+//'                mmvtpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1)),
+//'                         df=c(1), Log=FALSE),
+//'                times=10000L)
+//'}else{
+//' cat("package 'microbenchmark' not available\n")
+//'}
 // [[Rcpp::export]]
 NumericMatrix mmvtpdfC(NumericMatrix x,
                        NumericMatrix mean,

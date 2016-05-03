@@ -56,15 +56,18 @@ using namespace arma;
 //'          df=10
 //'          )
 //'
-//'library(microbenchmark)
-//'microbenchmark(mvstpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1),
-//'                       xi=c(0, 0), psi=c(1, 1),
-//'                       sigma=diag(2), df=10),
-//'               mmvstpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1),
-//'                         xi=matrix(c(0, 0)), psi=matrix(c(1, 1),ncol=1),
-//'                         sigma=list(diag(2)), df=10),
-//'               times=1000L)
-//'
+//'if(require(microbenchmark)){
+//' library(microbenchmark)
+//' microbenchmark(mvstpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1),
+//'                        xi=c(0, 0), psi=c(1, 1),
+//'                        sigma=diag(2), df=10),
+//'                mmvstpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1),
+//'                          xi=matrix(c(0, 0)), psi=matrix(c(1, 1),ncol=1),
+//'                          sigma=list(diag(2)), df=10),
+//'                times=1000L)
+//'}else{
+//' cat("package 'microbenchmark' not available\n")
+//'}
 // [[Rcpp::export]]
 NumericMatrix mmvstpdfC(arma::mat x,
                         arma::mat xi,

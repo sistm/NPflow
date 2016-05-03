@@ -21,9 +21,13 @@ using namespace arma;
 //'}
 //'
 //'c3 <- sapply(c2, "[")
-//'library(microbenchmark)
-//'microbenchmark(similarityMat(c3), similarityMat_nocostC(c3), times=2L)
 //'
+//'if(require(microbenchmark)){
+//' library(microbenchmark)
+//' microbenchmark(similarityMat(c3), similarityMat_nocostC(c3), times=2L)
+//'}else{
+//' cat("package 'microbenchmark' not available\n")
+//'}
 // [[Rcpp::export]]
 List similarityMat_nocostC(arma::mat cc){
 
