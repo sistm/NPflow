@@ -78,7 +78,7 @@ NumericMatrix mmvsnpdfC(arma::mat x,
             colvec x_i = x.col(i) - mtemp;
             rowvec xRinv = trans(x_i)*Rinv;
             double quadform = sum(xRinv%xRinv);
-            double part1 = log(2) -0.5*quadform + logSqrtDetvarcovM + constant;
+            double part1 = log(2.0) -0.5*quadform + logSqrtDetvarcovM + constant;
             mat quant = trans(alph)*diagmat(1/sqrt(diagvec(omega)))*x_i;
             double part2 = Rcpp::stats::pnorm_0(quant(0,0), 1, 0);
             if (!Log) {
