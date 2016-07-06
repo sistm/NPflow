@@ -4,8 +4,8 @@
 \alias{cytoScatter}
 \title{Scatterplot of flow cytometry data}
 \usage{
-cytoScatter(cytomatrix, dims2plot = c(1, 2), scale_log = FALSE,
-  xlim = NULL, ylim = NULL, gg.add = list(theme()))
+cytoScatter(cytomatrix, dims2plot = c(1, 2), gating = NULL,
+  scale_log = FALSE, xlim = NULL, ylim = NULL, gg.add = list(theme()))
 }
 \arguments{
 \item{cytomatrix}{a \code{p x n} data matrix, of \code{n} cell observations measured over \code{p}
@@ -13,6 +13,9 @@ markers.}
 
 \item{dims2plot}{a vector of length at least 2, indicating of the dimensions to be plotted.
 Default is \code{c(1, 2)}.}
+
+\item{gating}{an optional vector of length \code{n} indicating a known gating of the cells to be 
+displayed. Default is \code{NULL} in which case no gating is displayed.}
 
 \item{scale_log}{a logical Flag indicating wether the data should be plotted on the log scale.
 Default is \code{FALSE}.}
