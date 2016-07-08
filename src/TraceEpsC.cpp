@@ -20,7 +20,7 @@ NumericVector traceEpsC(arma::mat eps,
                         arma::mat sigma){
 
     int n =eps.n_cols;
-    vec tra = vec(n);
+    vec tra(n);
 
     for(int i=0; i<n; i++){
         colvec eps_i = eps.col(i);

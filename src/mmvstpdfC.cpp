@@ -79,17 +79,17 @@ NumericMatrix mmvstpdfC(arma::mat x,
     int p = x.n_rows;
     int n = x.n_cols;
     int K = xi.n_cols;
-    NumericMatrix y = NumericMatrix(K,n);
+    NumericMatrix y(K,n);
 
     for(int k=0; k < K; k++){
         colvec mtemp = xi.col(k);
         mat psitemp = psi.col(k);
-        mat sigmatemp = sigma[k];
         double dftemp = df(k);
 
-        mat omega = sigmatemp + psitemp*trans(psitemp);
+        mat omega = as<arma::mat>(sigma[k]) + psitemp*trans(psitemp);
         mat omegaInv = inv_sympd(omega);
-        mat Rinv=inv(trimatu(chol(omega)));
+        //mat R = chol(omega);
+        mat Rinv = inv(trimatu(chol(omega)));
         mat smallomega = diagmat(sqrt(diagvec(omega)));
         vec alphnum = smallomega*omegaInv*psitemp;
         mat alphtemp =sqrt(1-trans(psitemp)*omegaInv*psitemp);
@@ -100,12 +100,13 @@ NumericMatrix mmvstpdfC(arma::mat x,
         for (int i=0; i < n; i++) {
             colvec x_i = x.col(i) - mtemp;
             rowvec xRinv = trans(x_i)*Rinv;
+            //vec xRinv = solve(trimatl(R.t()), x_i);
             mat Qy = x_i.t()*omegaInv*x_i;
             double quadform = sum(xRinv%xRinv);
             double a = lgamma((dftemp + p)/2.0) - lgamma(dftemp/2.0) - log(dftemp*M_PI)*p/2.0;
-            double part1 = log(2.0) + (-(dftemp + p)/2.0)*log(1.0 + quadform/dftemp) + a +logSqrtDetvarcovM ;
+            double part1 = log(2.0) + (-(dftemp + p)/2.0)*log(1.0 + quadform/dftemp) + a + logSqrtDetvarcovM ;
             //double part1 = 2*pow((1 + quadform/dftemp),(-(dftemp + p)/2))*exp(a+logSqrtDetvarcovM);
-            mat quant = trans(alph)*diagmat(1/sqrt(diagvec(omega)))*x_i*sqrt((dftemp + p)/(dftemp+Qy));
+            mat quant = trans(alph)*diagmat(1/sqrt(diagvec(omega)))*x_i*sqrt((dftemp + p)/(dftemp + Qy));
             double part2 = ::Rf_pt(quant(0,0), (dftemp + p) , 1, 0);
             if (!Log) {
                 y(k,i) = exp(part1)*part2;

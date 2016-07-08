@@ -7,8 +7,8 @@
 #'\tabular{ll}{
 #'Package: \tab NPflow\cr
 #'Type: \tab Package\cr
-#'Version: \tab 0.10.1\cr
-#'Date: \tab 2016-05-03\cr
+#'Version: \tab 0.10.2\cr
+#'Date: \tab 2016-07-08\cr
 #'License:\tab \href{http://www.gnu.org/licenses/lgpl.txt}{LGPL-3}\cr
 #'}
 #'The main functions in this package is \code{\link{DPMpost}}.

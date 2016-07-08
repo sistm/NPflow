@@ -22,47 +22,47 @@ using namespace arma;
 // [[Rcpp::export]]
 double FmeasureC(NumericVector pred, NumericVector ref){
 
-    vec K = unique(pred);
-    K = sort(K);
-    vec C = unique(ref);
-    C = sort(C);
-    int m = K.size();
-    int n = C.size();
+  vec K = unique(pred);
+  K = sort(K);
+  vec C = unique(ref);
+  C = sort(C);
+  int m = K.size();
+  int n = C.size();
 
-    mat M = mat(n, m);
-    mat Pr = mat(n, m);
-    mat Re = mat(n, m);
-    mat Fmat = mat(n, m);
+  mat M(n, m);
+  mat Pr(n, m);
+  mat Re(n, m);
+  mat Fmat(n, m);
 
-    vec C_card = vec(n);
-    vec K_card = vec(m);
+  vec C_card(n);
+  vec K_card(m);
 
-    for(int i=0; i<n; i++){
-        C_card(i) = sum(ref == C(i));
-        for(int j=0; j<m; j++){
-            K_card(j) = sum(pred == K(j));
-            M(i,j) = sum((ref==C(i)) & (pred==K(j)));
-            Pr(i,j) = M(i,j)/K_card(j);
-            Re(i,j) = M(i,j)/C_card(i);
-            if((Pr(i,j) + Re(i,j)) == 0.0){
-                Fmat(i,j) = 0;
-            }else{
-                Fmat(i,j) = 2.0*Pr(i,j)*Re(i,j)/(Pr(i,j) + Re(i,j));
-            }
-        }
+  for(int i=0; i<n; i++){
+    C_card(i) = sum(ref == C(i));
+    for(int j=0; j<m; j++){
+      K_card(j) = sum(pred == K(j));
+      M(i,j) = sum((ref==C(i)) & (pred==K(j)));
+      Pr(i,j) = M(i,j)/K_card(j);
+      Re(i,j) = M(i,j)/C_card(i);
+      if((Pr(i,j) + Re(i,j)) == 0.0){
+        Fmat(i,j) = 0;
+      }else{
+        Fmat(i,j) = 2.0*Pr(i,j)*Re(i,j)/(Pr(i,j) + Re(i,j));
+      }
     }
+  }
 
-    double C_card_sum = sum(C_card);
-    vec Ffinal = vec(n);
-    vec Fsum = vec(n);
+  double C_card_sum = sum(C_card);
+  vec Ffinal(n);
+  vec Fsum(n);
 
-    for(int i=0; i<n; i++){
-        Ffinal(i) = max(Fmat.row(i));
-        Fsum(i) = Ffinal(i)*C_card(i)/C_card_sum;
-    }
-    double Ftotal = sum(Fsum);
+  for(int i=0; i<n; i++){
+    Ffinal(i) = max(Fmat.row(i));
+    Fsum(i) = Ffinal(i)*C_card(i)/C_card_sum;
+  }
+  double Ftotal = sum(Fsum);
 
-    return Ftotal;
+  return Ftotal;
 }
 
 
@@ -89,49 +89,49 @@ double FmeasureC(NumericVector pred, NumericVector ref){
 // [[Rcpp::export]]
 double FmeasureC_no0(NumericVector pred, NumericVector ref){
 
-    vec K = unique(pred);
-    K = sort(K);
-    vec C = unique(ref);
-    C = sort(C);
-    int p = K.size();
-    int n = C.size();
-    vec C_no0 = C.subvec(1, n-1);
-    int n_no0 = n-1;
+  vec K = unique(pred);
+  K = sort(K);
+  vec C = unique(ref);
+  C = sort(C);
+  int p = K.size();
+  int n = C.size();
+  vec C_no0 = C.subvec(1, n-1);
+  int n_no0 = n-1;
 
-        mat M = mat(n_no0, p);
-        mat Pr = mat(n_no0, p);
-        mat Re = mat(n_no0, p);
-        mat Fmat = mat(n_no0, p);
+  mat M(n_no0, p);
+  mat Pr(n_no0, p);
+  mat Re(n_no0, p);
+  mat Fmat(n_no0, p);
 
-        vec C_card = vec(n_no0);
-        vec K_card = vec(p);
+  vec C_card(n_no0);
+  vec K_card(p);
 
-        for(int i=0; i<n_no0; i++){
-            C_card(i) = sum(ref == C_no0(i));
-            for(int j=0; j<p; j++){
-                K_card(j) = sum((pred == K(j)) & (ref !=C(0)));
-                M(i,j) = sum((ref==C_no0(i)) & (pred==K(j)));
-                Pr(i,j) = M(i,j)/K_card(j);
-                Re(i,j) = M(i,j)/C_card(i);
-                if((Pr(i,j) + Re(i,j)) == 0.0){
-                    Fmat(i,j) = 0;
-                }else{
-                    Fmat(i,j) = 2.0*Pr(i,j)*Re(i,j)/(Pr(i,j) + Re(i,j));
-                }
-            }
-        }
+  for(int i=0; i<n_no0; i++){
+    C_card(i) = sum(ref == C_no0(i));
+    for(int j=0; j<p; j++){
+      K_card(j) = sum((pred == K(j)) & (ref !=C(0)));
+      M(i,j) = sum((ref==C_no0(i)) & (pred==K(j)));
+      Pr(i,j) = M(i,j)/K_card(j);
+      Re(i,j) = M(i,j)/C_card(i);
+      if((Pr(i,j) + Re(i,j)) == 0.0){
+        Fmat(i,j) = 0;
+      }else{
+        Fmat(i,j) = 2.0*Pr(i,j)*Re(i,j)/(Pr(i,j) + Re(i,j));
+      }
+    }
+  }
 
-        double C_card_sum = sum(C_card);
-        vec Ffinal = vec(n_no0);
-        vec Fsum = vec(n_no0);
+  double C_card_sum = sum(C_card);
+  vec Ffinal(n_no0);
+  vec Fsum(n_no0);
 
-        for(int i=0; i<n_no0; i++){
-            Ffinal(i) = max(Fmat.row(i));
-            Fsum(i) = Ffinal(i)*C_card(i)/C_card_sum;
-        }
-        double Ftotal = sum(Fsum);
+  for(int i=0; i<n_no0; i++){
+    Ffinal(i) = max(Fmat.row(i));
+    Fsum(i) = Ffinal(i)*C_card(i)/C_card_sum;
+  }
+  double Ftotal = sum(Fsum);
 
-    return Ftotal;
+  return Ftotal;
 }
 
 
@@ -164,25 +164,25 @@ double FmeasureC_no0(NumericVector pred, NumericVector ref){
 // [[Rcpp::export]]
 List Fmeasure_costC(arma::mat c){
 
-    int N = c.n_cols;
-    //int n = c.n_rows;
+  int N = c.n_cols;
+  //int n = c.n_rows;
 
-    NumericVector cost = NumericVector(N);
-    mat Fmeas = mat(N, N, fill::eye);
+  NumericVector cost = NumericVector(N);
+  mat Fmeas(N, N, fill::eye);
 
-    for(int i=0; i<N-1; i++){
-        for(int j=i+1; j<N; j++){
-            vec pred_i_temp = c.col(i);
-            vec ref_j_temp = c.col(j);
-            NumericVector pred_i = as<NumericVector>(wrap(pred_i_temp));
-            NumericVector ref_j = as<NumericVector>(wrap(ref_j_temp));
-            Fmeas(i,j) = FmeasureC(pred_i, ref_j);
-            Fmeas(j,i) = Fmeas(i,j);
-        }
+  for(int i=0; i<N-1; i++){
+    for(int j=i+1; j<N; j++){
+      vec pred_i_temp = c.col(i);
+      vec ref_j_temp = c.col(j);
+      NumericVector pred_i = as<NumericVector>(wrap(pred_i_temp));
+      NumericVector ref_j = as<NumericVector>(wrap(ref_j_temp));
+      Fmeas(i,j) = FmeasureC(pred_i, ref_j);
+      Fmeas(j,i) = Fmeas(i,j);
     }
-    for(int k=0; k<N; k++){
-        cost(k) = 1-(sum(Fmeas.col(k))-1)/N;
-    }
-    return Rcpp::List::create(Rcpp::Named("Fmeas") = Fmeas,
-                              Rcpp::Named("cost")=cost);
+  }
+  for(int k=0; k<N; k++){
+    cost(k) = 1-(sum(Fmeas.col(k))-1)/N;
+  }
+  return Rcpp::List::create(Rcpp::Named("Fmeas") = Fmeas,
+                            Rcpp::Named("cost")=cost);
 }

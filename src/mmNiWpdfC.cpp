@@ -41,7 +41,7 @@ NumericMatrix mmNiWpdfC(arma::mat Mu,
   int d = Mu.n_rows;
   int n = Mu.n_cols;
   int K = U_Mu0.n_cols;
-  NumericMatrix y = NumericMatrix(K,n);
+  NumericMatrix y(K,n);
 
   const double dlog2pi = -d*log(2.0 * M_PI);
 

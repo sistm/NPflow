@@ -24,13 +24,13 @@ const double log2pi2 = log(2.0 * M_PI)/2.0;
 //'                mvnpdfC(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE),
 //'                mmvnpdfC(x=matrix(1.96), mean=matrix(0), varcovM=list(diag(1)), Log=FALSE),
 //'                times=1000L)
-//' microbenchmark(mvnpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1), mean=c(0, 0),
-//'                       varcovM=diag(2), Log=FALSE),
-//'                mvnpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1), mean=c(0, 0),
-//'                        varcovM=diag(2), Log=FALSE),
+//' microbenchmark(mvnpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1), mean=c(-0.2, 0.3),
+//'                       varcovM=matrix(c(2, 0.2, 0.2, 2), ncol=2), Log=FALSE),
+//'                mvnpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1), mean=c(-0.2, 0.3),
+//'                        varcovM=matrix(c(2, 0.2, 0.2, 2), ncol=2), Log=FALSE),
 //'                mmvnpdfC(x=matrix(rep(1.96,2), nrow=2, ncol=1),
-//'                         mean=matrix(c(0, 0), nrow=2, ncol=1),
-//'                         varcovM=list(diag(2)), Log=FALSE),
+//'                         mean=matrix(c(-0.2, 0.3), nrow=2, ncol=1),
+//'                         varcovM=list(matrix(c(2, 0.2, 0.2, 2), ncol=2)), Log=FALSE),
 //'                times=1000L)
 //' microbenchmark(mvnpdf(x=matrix(c(rep(1.96,2),rep(0,2)), nrow=2, ncol=2),
 //'                       mean=list(c(0,0),c(-1,-1), c(1.5,1.5)),
@@ -51,18 +51,19 @@ NumericMatrix mmvnpdfC(arma::mat x,
     int p = x.n_rows;
     int n = x.n_cols;
     int K = mean.n_cols;
-    NumericMatrix y = NumericMatrix(K,n);
+    NumericMatrix y(K,n);
     double constant = - p*log2pi2;
 
     for(int k=0; k < K; k++){
-        mat S = varcovM[k];
-        mat Rinv = inv(trimatu(chol(S)));
+        mat Rinv = inv(trimatu(chol(as<arma::mat>(varcovM[k]))));
+        //mat R = chol(as<arma::mat>(varcovM[k]));
         double logSqrtDetvarcovM = sum(log(Rinv.diag()));
         colvec mtemp = mean.col(k);
 
         for (int i=0; i < n; i++) {
             colvec x_i = x.col(i) - mtemp;
             rowvec xRinv = trans(x_i)*Rinv;
+            //vec xRinv = solve(trimatl(R.t()), x_i);
             double quadform = sum(xRinv%xRinv);
             if (!Log) {
                 y(k,i) = exp(-0.5*quadform + logSqrtDetvarcovM + constant);

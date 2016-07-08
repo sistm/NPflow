@@ -38,57 +38,58 @@ List mvstlikC(arma::mat x,
               NumericVector df,
               bool loglik=true){
 
-    int p = x.n_rows;
-    int n = x.n_cols;
-    int K = xi.n_cols;
-    vec yindiv = vec(n);
-    vec yclust = vec(K);
+  int p = x.n_rows;
+  int n = x.n_cols;
+  int K = xi.n_cols;
+  vec yindiv = vec(n);
+  vec yclust = vec(K);
 
-    for(int k=0; k < K; k++){
-        uvec indk = find(c==clustval(k));
-        mat xtemp= x.cols(indk);
-        int ntemp = indk.size();
+  for(int k=0; k < K; k++){
+    uvec indk = find(c==clustval(k));
+    mat xtemp= x.cols(indk);
+    int ntemp = indk.size();
 
-        colvec mtemp = xi.col(k);
-        mat psitemp = psi.col(k);
-        mat sigmatemp = sigma[k];
-        double dftemp = df(k);
+    colvec mtemp = xi.col(k);
+    mat psitemp = psi.col(k);
+    double dftemp = df(k);
 
-        mat omega = sigmatemp + psitemp*trans(psitemp);
-        mat omegaInv =  inv_sympd(omega);
-        mat Rinv=inv(trimatu(chol(omega)));
-        mat smallomega = diagmat(sqrt(diagvec(omega)));
-        vec alphnum = smallomega*omegaInv*psitemp;
-        mat alphtemp =sqrt(1-trans(psitemp)*omegaInv*psitemp);
-        vec alphden = rep(alphtemp(0,0), alphnum.size());
-        vec alph = alphnum/alphden;
-        double logSqrtDetvarcovM = sum(log(Rinv.diag()));
+    mat omega = as<arma::mat>(sigma[k])  + psitemp*trans(psitemp);
+    mat omegaInv =  inv_sympd(omega);
+    mat Rinv = inv(trimatu(chol(omega)));
+    //mat R = chol(omega);
+    mat smallomega = diagmat(sqrt(diagvec(omega)));
+    vec alphnum = smallomega*omegaInv*psitemp;
+    mat alphtemp =sqrt(1-trans(psitemp)*omegaInv*psitemp);
+    vec alphden = rep(alphtemp(0,0), alphnum.size());
+    vec alph = alphnum/alphden;
+    double logSqrtDetvarcovM = sum(log(Rinv.diag()));
 
-        for (int i=0; i < ntemp; i++) {
-            colvec x_i = xtemp.col(i) - mtemp;
-            rowvec xRinv = trans(x_i)*Rinv;
-            mat Qy = x_i.t()*omegaInv*x_i;
-            double quadform = sum(xRinv%xRinv);
-            double a = lgamma((dftemp + p)/2.0) - lgamma(dftemp/2.0) - log(dftemp*M_PI)*p/2.0;
-            double part1 = log(2.0) + (-(dftemp + p)/2)*log(1.0 + quadform/dftemp) + a + logSqrtDetvarcovM;
-            mat quant = trans(alph)*diagmat(1/sqrt(diagvec(omega)))*x_i*sqrt((dftemp + p)/(dftemp+Qy));
-            double part2 = ::Rf_pt(quant(0,0), (dftemp + p) , 1, 0);
-            yindiv(indk(i)) = part1 + log(part2);
-        }
-        yclust(k) = sum(yindiv(indk));
+    for (int i=0; i < ntemp; i++) {
+      colvec x_i = xtemp.col(i) - mtemp;
+      rowvec xRinv = trans(x_i)*Rinv;
+      //vec xRinv = solve(trimatl(R.t()), x_i);
+      mat Qy = x_i.t()*omegaInv*x_i;
+      double quadform = sum(xRinv%xRinv);
+      double a = lgamma((dftemp + p)/2.0) - lgamma(dftemp/2.0) - log(dftemp*M_PI)*p/2.0;
+      double part1 = log(2.0) + (-(dftemp + p)/2)*log(1.0 + quadform/dftemp) + a + logSqrtDetvarcovM;
+      mat quant = trans(alph)*diagmat(1/sqrt(diagvec(omega)))*x_i*sqrt((dftemp + p)/(dftemp+Qy));
+      double part2 = ::Rf_pt(quant(0,0), (dftemp + p) , 1, 0);
+      yindiv(indk(i)) = part1 + log(part2);
     }
-    double ytot = sum(yclust);
+    yclust(k) = sum(yindiv(indk));
+  }
+  double ytot = sum(yclust);
 
-    if(!loglik){
-        yindiv = exp(yindiv);
-        yclust = exp(yclust);
-        ytot = exp(ytot);
-    }
+  if(!loglik){
+    yindiv = exp(yindiv);
+    yclust = exp(yclust);
+    ytot = exp(ytot);
+  }
 
 
-    return Rcpp::List::create(Rcpp::Named("indiv") = wrap(yindiv),
-                              Rcpp::Named("clust") = wrap(yclust),
-                              Rcpp::Named("total") = wrap(ytot)
-                             );
+  return Rcpp::List::create(Rcpp::Named("indiv") = wrap(yindiv),
+                            Rcpp::Named("clust") = wrap(yclust),
+                            Rcpp::Named("total") = wrap(ytot)
+  );
 
 }

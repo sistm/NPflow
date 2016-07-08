@@ -31,17 +31,16 @@ using namespace arma;
 // [[Rcpp::export]]
 List similarityMat_nocostC(arma::mat cc){
 
-    int N = cc.n_cols;
-    int n = cc.n_rows;
+  int N = cc.n_cols;
+  int n = cc.n_rows;
 
-    NumericVector cost = NumericVector(N);
-    mat similarity = mat(n, n, fill::eye);
+  mat similarity(n, n, fill::eye);
 
-    for(int i=0; i<n-1; i++){
-        for(int j=i+1; j<n; j++){
-            similarity(i,j) = sum(cc.row(i) == cc.row(j))/N;
-            similarity(j,i) = similarity(i,j);
-        }
+  for(int i=0; i<n-1; i++){
+    for(int j=i+1; j<n; j++){
+      similarity(i,j) = sum(cc.row(i) == cc.row(j))/N;
+      similarity(j,i) = similarity(i,j);
     }
-    return Rcpp::List::create(Rcpp::Named("similarity") = similarity);
+  }
+  return Rcpp::List::create(Rcpp::Named("similarity") = similarity);
 }

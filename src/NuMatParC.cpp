@@ -27,12 +27,12 @@ List NuMatParC(NumericVector c, arma::mat d){
 
   int n = c.size();
 
-  mat similarity = mat(n, n, fill::zeros);
+  mat similarity(n, n, fill::zeros);
   for(int i=0; i<n-1; i++){
     for(int j=i+1; j<n; j++){
-      similarity(i,j)=(c(i) != c(j) )*d(c(i)-1,c(j)-1);
+      similarity(i,j) = (c(i) != c(j) )*d(c(i)-1,c(j)-1);
       similarity(j,i) = similarity(i,j);
     }
   }
-return Rcpp::List::create(Rcpp::Named("NuMatParC") = similarity);
+  return Rcpp::List::create(Rcpp::Named("NuMatParC") = similarity);
 }

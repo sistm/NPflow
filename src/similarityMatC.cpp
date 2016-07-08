@@ -27,8 +27,8 @@ List similarityMatC(arma::mat cc){
     int N = cc.n_cols;
     int n = cc.n_rows;
 
-    NumericVector cost = NumericVector(N);
-    mat similarity = mat(n, n, fill::eye);
+    NumericVector cost(N);
+    mat similarity(n, n, fill::eye);
 
     for(int i=0; i<n-1; i++){
         for(int j=i+1; j<n; j++){

@@ -22,7 +22,7 @@ using namespace arma;
 IntegerVector sampleClassC(arma::mat probMat){
 
     int n = probMat.n_cols;
-    IntegerVector c = IntegerVector(n);
+    IntegerVector c(n);
 
     GetRNGstate();
 

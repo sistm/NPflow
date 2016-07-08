@@ -43,29 +43,30 @@ NumericVector mvnpdfC(NumericMatrix x,
                       NumericMatrix varcovM,
                       bool Log=true){
 
-mat xx = as<mat>(x);
-mat S =  as<mat>(varcovM);
-colvec m = as<colvec>(mean);
-int p = xx.n_rows;
-int n = xx.n_cols;
-NumericVector y = NumericVector(n);
+  mat xx = as<mat>(x);
+  colvec m = as<colvec>(mean);
+  int p = xx.n_rows;
+  int n = xx.n_cols;
+  NumericVector y(n);
 
-mat Rinv = inv(trimatu(chol(S)));
-double logSqrtDetvarcovM = sum(log(Rinv.diag()));
-double constant = - p*log2pi2;
+  mat Rinv = inv(trimatu(chol(as<arma::mat>(varcovM))));
+  //mat R = chol(as<arma::mat>(varcovM));
+  double logSqrtDetvarcovM = sum(log(Rinv.diag()));
+  double constant = - p*log2pi2;
 
-    for (int i=0; i < n; i++) {
-        colvec x_i = xx.col(i) - m;
-        rowvec xRinv = trans(x_i)*Rinv;
-        double quadform = sum(xRinv%xRinv);
-        if (!Log) {
-            y(i) = exp(-0.5*quadform + logSqrtDetvarcovM + constant);
-        } else{
-            y(i) = -0.5*quadform + logSqrtDetvarcovM + constant;
-        }
+  for (int i=0; i < n; i++) {
+    colvec x_i = xx.col(i) - m;
+    rowvec xRinv = trans(x_i)*Rinv;
+    //vec xRinv = solve(trimatl(R.t()), x_i);
+    double quadform = sum(xRinv%xRinv);
+    if (!Log) {
+      y(i) = exp(-0.5*quadform + logSqrtDetvarcovM + constant);
+    } else{
+      y(i) = -0.5*quadform + logSqrtDetvarcovM + constant;
     }
+  }
 
-return y;
+  return y;
 
 }
 

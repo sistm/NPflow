@@ -54,11 +54,11 @@ NumericMatrix mmvtpdfC(NumericMatrix x,
     int p = xx.n_rows;
     int n = xx.n_cols;
     int K = m.n_cols;
-    NumericMatrix y = NumericMatrix(K,n);
+    NumericMatrix y(K,n);
 
     for(int k=0; k < K; k++){
-        mat S = varcovM[k];
-        mat Rinv = inv(trimatu(chol(S)));
+        mat Rinv = inv(trimatu(chol(as<arma::mat>(varcovM[k]))));
+        //mat R = chol(as<arma::mat>(varcovM[k]));
         double logSqrtDetvarcovM = sum(log(Rinv.diag()));
         colvec mtemp = m.col(k);
         double dftemp = df(k);
@@ -66,6 +66,7 @@ NumericMatrix mmvtpdfC(NumericMatrix x,
         for (int i=0; i < n; i++) {
             colvec x_i = xx.col(i) - mtemp;
             rowvec xRinv = trans(x_i)*Rinv;
+            //vec xRinv = solve(trimatl(R.t()), x_i);
             double quadform = sum(xRinv%xRinv);
             double a = lgamma((dftemp + p)/2.0) - lgamma(dftemp/2.0) - log(dftemp*M_PI)*p/2.0 ;
             if (!Log) {

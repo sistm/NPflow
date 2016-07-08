@@ -60,17 +60,17 @@ NumericMatrix mmvsnpdfC(arma::mat x,
     int p = x.n_rows;
     int n = x.n_cols;
     int K = xi.n_cols;
-    NumericMatrix y = NumericMatrix(K,n);
+    NumericMatrix y(K,n);
     double constant = - p*log2pi2;
 
     for(int k=0; k < K; k++){
         colvec mtemp = xi.col(k);
         mat psitemp = psi.col(k);
-        mat sigmatemp = sigma[k];
 
-        mat omega = sigmatemp + psitemp*trans(psitemp);
+        mat omega = as<arma::mat>(sigma[k]) + psitemp*trans(psitemp);
         mat omegaInv = inv(omega);
         mat Rinv=inv(trimatu(chol(omega)));
+        //mat R = chol(omega);
         mat smallomega = diagmat(sqrt(diagvec(omega)));
         vec alphnum = smallomega*omegaInv*psitemp;
         mat alphtemp =sqrt(1-trans(psitemp)*omegaInv*psitemp);
@@ -81,6 +81,7 @@ NumericMatrix mmvsnpdfC(arma::mat x,
         for (int i=0; i < n; i++) {
             colvec x_i = x.col(i) - mtemp;
             rowvec xRinv = trans(x_i)*Rinv;
+            //vec xRinv = solve(trimatl(R.t()), x_i);
             double quadform = sum(xRinv%xRinv);
             double part1 = log(2.0) -0.5*quadform + logSqrtDetvarcovM + constant;
             mat quant = trans(alph)*diagmat(1/sqrt(diagvec(omega)))*x_i;

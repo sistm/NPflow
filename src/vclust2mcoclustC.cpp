@@ -23,7 +23,7 @@ List vclust2mcoclustC(NumericVector c){
 
   int n = c.size();
 
-  mat cc = mat(n, n, fill::zeros);
+  mat cc(n, n, fill::zeros);
   for(int i=0; i<n-1; i++){
     for(int j=i+1; j<n; j++){
       cc(i,j)=(c(i) == c(j) );

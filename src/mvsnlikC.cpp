@@ -36,36 +36,37 @@ List mvsnlikC(arma::mat x,
               arma::mat psi,
               List sigma,
               bool loglik=true){
-  
+
   int p = x.n_rows;
   int n = x.n_cols;
   int K = xi.n_cols;
   vec yindiv = vec(n);
   vec yclust = vec(K);
   double constant = - p*log2pi2;
-  
+
   for(int k=0; k < K; k++){
     uvec indk = find(c==clustval(k));
     mat xtemp= x.cols(indk);
     int ntemp = indk.size();
-    
+
     colvec mtemp = xi.col(k);
     mat psitemp = psi.col(k);
-    mat sigmatemp = sigma[k];
-    
-    mat omega = sigmatemp + psitemp*trans(psitemp);
+
+    mat omega = as<arma::mat>(sigma[k]) + psitemp*trans(psitemp);
     mat omegaInv =  inv_sympd(omega);
-    mat Rinv=inv(trimatu(chol(omega)));
+    mat Rinv = inv(trimatu(chol(omega)));
+    //mat R = chol(omega);
     mat smallomega = diagmat(sqrt(diagvec(omega)));
     vec alphnum = smallomega*omegaInv*psitemp;
     mat alphtemp =sqrt(1-trans(psitemp)*omegaInv*psitemp);
     vec alphden = rep(alphtemp(0,0), alphnum.size());
     vec alph = alphnum/alphden;
     double logSqrtDetvarcovM = sum(log(Rinv.diag()));
-    
+
     for (int i=0; i < ntemp; i++) {
       colvec x_i = xtemp.col(i) - mtemp;
       rowvec xRinv = trans(x_i)*Rinv;
+      //vec xRinv = solve(trimatl(R.t()), x_i);
       double quadform = sum(xRinv%xRinv);
       double part1 = log(2.0) -0.5*quadform + logSqrtDetvarcovM + constant;
       mat quant = trans(alph)*diagmat(1/sqrt(diagvec(omega)))*x_i;
@@ -75,17 +76,17 @@ List mvsnlikC(arma::mat x,
     yclust(k) = sum(yindiv(indk));
   }
   double ytot = sum(yclust);
-  
+
   if(!loglik){
     yindiv = exp(yindiv);
     yclust = exp(yclust);
     ytot = exp(ytot);
   }
-  
-  
+
+
   return Rcpp::List::create(Rcpp::Named("indiv") = wrap(yindiv),
                             Rcpp::Named("clust") = wrap(yclust),
                             Rcpp::Named("total") = wrap(ytot)
   );
-  
+
 }
