@@ -48,11 +48,11 @@
 
 summary.DPMMclust <- function(object, burnin=0, thin=1, gs=NULL, lossFn="F-measure",
                               posterior_approx=FALSE, ...){
-
+  
   x_invar <- burn.DPMMclust(object, burnin = burnin, thin=thin)
-
-
-
+  
+  
+  
   #if(!posterior_approx){
   if(lossFn == "F-measure"){
     point_estim <- cluster_est_Fmeasure(x_invar$mcmc_partitions,
@@ -69,7 +69,7 @@ summary.DPMMclust <- function(object, burnin=0, thin=1, gs=NULL, lossFn="F-measu
     stop("Specified loss function not available.\n
          Specify either 'F-measure' or 'Binder' for the lossFn argument.")
   }
-
+  
   index_estim <- point_estim$opt_ind
   loss <- NA
   if(!is.null(gs)){
@@ -91,7 +91,7 @@ summary.DPMMclust <- function(object, burnin=0, thin=1, gs=NULL, lossFn="F-measu
   else{
     param_post <- NULL
   }
-
+  
   s <- c(x_invar, list("burnin"=burnin,
                        "thin"=thin,
                        "point_estim"=point_estim,
@@ -99,7 +99,7 @@ summary.DPMMclust <- function(object, burnin=0, thin=1, gs=NULL, lossFn="F-measu
                        "index_estim"=index_estim,
                        "param_posterior"=param_post))
   class(s) <- "summaryDPMMclust"
-
+  
   invisible(s)
 }
 
@@ -116,7 +116,7 @@ summary.DPMMclust <- function(object, burnin=0, thin=1, gs=NULL, lossFn="F-measu
 #'@author Boris Hejblum
 #'@export
 print.summaryDPMMclust <- function(x,...){
-
+  
   cat(class(x), "object with", x$nb_mcmcit, "MCMC iterations:\n")
   cat(rep("-",40),"\n", sep="")
   cat(rep("-",40),"\n", sep="")
@@ -129,24 +129,31 @@ print.summaryDPMMclust <- function(x,...){
   print(t2print, quote=F)
   cat("\nLoss of the point estimate partition:", x$loss, "\n")
   cat(rep("-",40),"\n", sep="")
-
+  
 }
 
 
 #'@rdname methods.summaryDPMMclust
 #'@param gg.add a list of instructions to add to the ggplot2 instruction.
 #'See \code{\link[ggplot2]{+.gg}}. Default is \code{list(theme())}, which adds nothing to the plot.
+#'@param hm_subsample a integer designating the number of observations to use when plotting the heatmap. 
+#'Used only if \code{hm} is \code{TRUE}. #'Default is \code{NULL} in which no subsampling is done and 
+#'all observations are plotted.
+#'@param hm_order_by_clust logical flag indicating whether observations should be ordered according to
+#'the point estimate first. Used only if \code{hm} is \code{TRUE}. Default is \code{TRUE}.
 #'@importFrom stats dist
 #'@importFrom grDevices colorRampPalette
 #'@export
-plot.summaryDPMMclust <- function(x, hm=FALSE, nbsim_densities=5000, gg.add=list(theme_bw()),...){
-
+plot.summaryDPMMclust <- function(x, hm=FALSE, nbsim_densities=5000, 
+                                  hm_subsample=NULL, hm_order_by_clust=TRUE, 
+                                  gg.add=list(theme_bw()),...){
+  
   if(length(x$logposterior_list[[1]])>1){
     plot_ConvDPM(x, shift=x$burnin, thin=x$thin)
   }
-
+  
   ind <- x$index_estim
-
+  
   cat("Plotting point estimate (may take a few sec)... ")
   if(x$clust_distrib=="gaussian"){
     plot_DPM(z=x$data,
@@ -183,22 +190,70 @@ plot.summaryDPMMclust <- function(x, hm=FALSE, nbsim_densities=5000, gg.add=list
     )
   }
   cat("DONE!\n")
-
+  
   if(hm){
-    cat("Plotting heatmap of similarity (may take a few min)...\n")
+    
     if(is.null(x$point_estim$similarity)){
-      stop("In order to plot the similarity matrix, the 'Binder' loss function should be used")
+      warning("\nThe similarity matrix makes more sense when using the 'Binder' loss function...")
+      cat("Estimating posterior similarity matrix (this may take some time, complexity in O(n^2))...")
+      x$point_estim$similarity <- similarityMat_nocostC(do.call(cbind, x$mcmc_partitions))$similarity
+      cat("Done!\n")
     }
-    tree <- fastcluster::hclust(stats::dist(x$point_estim$similarity, method = "euclidean"),
-                                method = "complete")
-    ord_index <- tree$order
-    pheatmap::pheatmap(x$point_estim$similarity[ord_index, ord_index], scale="none", border_color=NA,
+    
+    cat("Plotting heatmap of similarity (may take a few min):\n")
+    if(!is.null(hm_subsample)){
+      if(length(hm_subsample)>1){
+        select <- hm_subsample
+      }else{
+        select <- sample(1:ncol(x$point_estim$similarity), size=hm_subsample)
+      }
+      x$point_estim$similarity <- x$point_estim$similarity[select, select]
+      x$point_estim$c_est <- x$point_estim$c_est[select]
+    }
+    
+    
+    if(hm_order_by_clust){
+      cat(" computing pairwise distances...")
+      prop <- table(x$point_estim$c_est)
+      clusters_ordered <- names(prop)[order(prop, decreasing=TRUE)]
+      
+      ord_index <- list()
+      for(k in clusters_ordered){
+        index <- which(x$point_estim$c_est==as.integer(k))
+        if(length(index)>1){
+          dist_mat <- stats::dist(x$point_estim$similarity[index, index], method = "euclidean")
+          tree <- fastcluster::hclust(dist_mat, method = "complete")
+          ord_index[[k]] <- index[tree$order]
+        }else{
+          ord_index[[k]] <- index
+        }
+      }
+      cat("DONE!\n ordering samples now...")
+      ord_final <- do.call(c, ord_index)
+      cat("DONE!\n")
+    }else{
+      cat(" computing pairwise distances...")
+      dist_mat <- stats::dist(x$point_estim$similarity, method = "euclidean")
+      cat("DONE!\n ordering samples now...")
+      tree <- fastcluster::hclust(dist_mat, method = "complete")
+      ord_final <- tree$order
+      cat("DONE!\n")
+    }
+    
+    my_annot_row <- cbind.data.frame("Clustering from point estimate"=factor(x$point_estim$c_est))
+    rownames(x$point_estim$similarity) <- as.character(1:nrow(x$point_estim$similarity)) 
+    colnames(x$point_estim$similarity) <- as.character(1:ncol(x$point_estim$similarity)) 
+    
+    pheatmap::pheatmap(x$point_estim$similarity[ord_final, ord_final], scale="none", border_color=NA,
                        color=grDevices::colorRampPalette(c("#F7FBFF", "#DEEBF7", "#C6DBEF",
-                                                #"#9ECAE1", "#FEB24C",
-                                                "#FD8D3C", "#BD0026", "#800026"))(200),
+                                                           #"#9ECAE1", "#FEB24C",
+                                                           "#FD8D3C", "#BD0026", "#800026"))(200),
                        show_rownames=FALSE, show_colnames=FALSE,
-                       cluster_rows=FALSE, cluster_cols =TRUE,
-                       main="Posterior similarity matrix")
-    cat("DONE! Wait for plot rendering...\n")
+                       cluster_rows=FALSE, cluster_cols = FALSE,
+                       #annotation_row = my_annot_row[ord_index, , drop=FALSE],
+                       annotation_col = my_annot_row[ord_final, , drop=FALSE],
+                       annotation_names_col = FALSE,
+                       main="Posterior similarity matrix\n")
+    cat("Almost over, wait for plot rendering now...\n\n")
   }
 }

@@ -9,6 +9,7 @@
 \method{print}{summaryDPMMclust}(x, ...)
 
 \method{plot}{summaryDPMMclust}(x, hm = FALSE, nbsim_densities = 5000,
+  hm_subsample = NULL, hm_order_by_clust = TRUE,
   gg.add = list(theme_bw()), ...)
 }
 \arguments{
@@ -21,6 +22,13 @@ Default is \code{FALSE}.}
 
 \item{nbsim_densities}{the number of simulated observations to be used
 to plot the density lines of the clusters in the point estimate partition plot}
+
+\item{hm_subsample}{a integer designating the number of observations to use when plotting the heatmap. 
+Used only if \code{hm} is \code{TRUE}. #'Default is \code{NULL} in which no subsampling is done and 
+all observations are plotted.}
+
+\item{hm_order_by_clust}{logical flag indicating whether observations should be ordered according to
+the point estimate first. Used only if \code{hm} is \code{TRUE}. Default is \code{TRUE}.}
 
 \item{gg.add}{a list of instructions to add to the ggplot2 instruction.
 See \code{\link[ggplot2]{+.gg}}. Default is \code{list(theme())}, which adds nothing to the plot.}
