@@ -102,7 +102,7 @@ cytoScatter <- function(cytomatrix, dims2plot=c(1,2), gating=NULL,
       p <- (ggplot(zDplotfull, aes_string(x="X", y="Y", group="Gate"))
             + facet_grid(dimensionY~dimensionX, scales="free")
             #+ stat_density2d(aes_string(fill = "..level.."), alpha=0.1, geom="polygon")
-            + geom_point(aes_string(colour="Gate"), data=zDplotfull, alpha=0.4, size=2/(0.3*log(n)))      
+            + geom_point(aes_string(colour="Gate"), data=zDplotfull, alpha=0.5/(0.3*log(n)), size=2/(0.3*log(n)), shape=16)      
             + theme_bw()
             + ggtitle(paste(n, " cells", sep=""))
             + guides(colour=guide_legend(override.aes = list(alpha=1)))
