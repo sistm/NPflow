@@ -46,7 +46,6 @@
 #'
 #'@examples
 #' rm(list=ls())
-#' library(ggplot2)
 #' 
 #' #Number of data
 #' n <- 2000
@@ -145,7 +144,6 @@ DPMGibbsSkewT_SeqPrior <- function (z, prior, hyperG0, N, nbclust_init,
         stop("'nbclust_init' is larger than the number of observations")
     }
     
-    if(doPlot){library(ggplot2)}
     
     p <- dim(z)[1]
     n <- dim(z)[2]

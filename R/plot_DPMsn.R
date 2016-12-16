@@ -1,14 +1,18 @@
 #' @author Boris Hejblum
 #'
+#'
+#'@importFrom ellipse ellipse
+#'@importFrom stats dnorm pnorm rnorm
+#'@import ggplot2
+#'@import reshape2
 #' @export
 
 plot_DPMsn <- function(z, c, i="", alpha="?", U_SS,
                        dims2plot=1:nrow(z),
                        ellipses=ifelse(length(dims2plot)<3,TRUE,FALSE),
                        gg.add=list(theme()), nbsim_dens=1000){ 
-    library(ellipse)
-    library(reshape2)
-    mean_sn01 <- (dnorm(0)-dnorm(Inf))/(pnorm(Inf)-pnorm(0))
+
+    mean_sn01 <- (stats::dnorm(0)-stats::dnorm(Inf))/(stats::pnorm(Inf)-stats::pnorm(0))
     
     z <- z[dims2plot,]
     
@@ -31,12 +35,10 @@ plot_DPMsn <- function(z, c, i="", alpha="?", U_SS,
     
     expK <- ifelse(is.numeric(alpha), round(alpha*(digamma(alpha+n)-digamma(alpha))), NA)
     alpha2print <- ifelse(is.numeric(alpha), formatC(alpha, digits=2), alpha)
-    
-    
-    library(ellipse)
+
     
     if(p>2){
-        zDplot <- melt(cbind.data.frame("ID"=as.character(1:n), 
+        zDplot <- reshape2::melt(cbind.data.frame("ID"=as.character(1:n), 
                                         t(z),
                                         "Cluster"=zClusters
         ),
@@ -58,7 +60,7 @@ plot_DPMsn <- function(z, c, i="", alpha="?", U_SS,
                 zDplotfull, zDplottemp)
         }
         
-        UDplot <- melt(cbind.data.frame(t(U_mu2plot),
+        UDplot <- reshape2::melt(cbind.data.frame(t(U_mu2plot),
                                         "Cluster"=factor(as.character(fullCl), 
                                                          levels=as.character(fullCl), 
                                                          ordered=TRUE)
@@ -88,7 +90,7 @@ plot_DPMsn <- function(z, c, i="", alpha="?", U_SS,
         #                     glabel <- levels(zClusters)[g]
         #                     U_corr2plot_g <- cov2cor(U_Sigma2plot[c(dx,dy),c(dx,dy),g])
         #                     ellipse95 <- rbind(ellipse95, 
-        #                                cbind(as.data.frame(ellipse(U_corr2plot_g, 
+        #                                cbind(as.data.frame(ellipse::ellipse(U_corr2plot_g, 
         #                                                            scale=sqrt(diag(U_Sigma2plot[c(dx,dy),c(dx,dy),g])), 
         #                                                            centre=U_mu2plot[c(dx,dy),g])),
         #                                      Cluster=as.character(glabel), 
@@ -101,11 +103,11 @@ plot_DPMsn <- function(z, c, i="", alpha="?", U_SS,
         
         p <- (ggplot(zDplotfull) 
               + facet_grid(dimensionY~dimensionX, scales="free")
-              + geom_point(aes(x=X, y=Y, colour=Cluster, order=Cluster), 
+              + geom_point(aes_string(x="X", y="Y", colour="Cluster"),#, order="Cluster"), 
                            data=zDplotfull, alpha=1, size=2/(0.3*log(n)))
               #               + geom_polygon(aes(x=x, y=y, fill=Cluster, colour=Cluster, order=Cluster), 
               #                              data=ellipse95, size=0.5, linetype=2, colour="black", alpha=.3)
-              + geom_point(aes(x=X, y=Y, fill=Cluster, order=Cluster),
+              + geom_point(aes_string(x="X", y="Y", fill="Cluster"),#, order="Cluster"),
                            data=UDplotfull, shape=22, size=5/(0.3*log(n)))
               + ggtitle(paste(n, " obs.",
                               "\niteration ", i, " : ", 
@@ -130,11 +132,11 @@ plot_DPMsn <- function(z, c, i="", alpha="?", U_SS,
         )
         p <- (ggplot(z2plot) 
               
-              + geom_point(aes(x=D1, y=D2, colour=Cluster, order=Cluster), 
+              + geom_point(aes_string(x="D1", y="D2", colour="Cluster"), #order=Cluster), 
                            data=z2plot)
-              + geom_point(aes(x=D1, y=D2, fill=Cluster, order=Cluster, shape="22"),
+              + geom_point(aes_q(x=quote(D1), y=quote(D2), fill=quote(Cluster), shape="22"),
                            data=U2plot, size=5)
-              + geom_point(aes(x=D1, y=D2, fill=Cluster, order=Cluster, shape="23"),
+              + geom_point(aes_q(x=quote(D1), y=quote(D2), fill=quote(Cluster), shape="23"),
                            data=xi2plot, size=5)
               + ggtitle(paste(n, " obs.",
                               "\niteration ", i, " : ", 
@@ -154,7 +156,7 @@ plot_DPMsn <- function(z, c, i="", alpha="?", U_SS,
                                       D2=tapply(X=z2plot[,2], INDEX=z2plot$Cluster, FUN=mean)
         )
         zmean2plot <- cbind.data.frame(zmean2plot, Cluster=rownames(zmean2plot))
-        p <- (p + geom_point(aes(x=D1, y=D2, fill=Cluster, order=Cluster, shape="24"), 
+        p <- (p + geom_point(aes_q(x=quote(D1), y=quote(D2), fill=quote(Cluster), shape="24"), 
                              data=zmean2plot, size=5)
               + scale_shape_manual(values=c(24,22,23), 
                                    labels=c("observed mean", "sampled mean", "xi param"), 
@@ -166,7 +168,7 @@ plot_DPMsn <- function(z, c, i="", alpha="?", U_SS,
                 glabel <- levels(zClusters)[g]
                 #gind <- as.numeric(glabel)
                 ltnz <- rtruncnorm(nbsim_dens, a=0)
-                eps <- matrix(rnorm(2*nbsim_dens), ncol=2)%*%chol(U_Sigma2plot[[g]])
+                eps <- matrix(stats::rnorm(2*nbsim_dens), ncol=2)%*%chol(U_Sigma2plot[[g]])
                 simuDenstemp <- data.frame("D1"=U_xi2plot[1,g]+U_psi2plot[1,g]*ltnz+eps[,1], 
                                            "D2"=U_xi2plot[2,g]+U_psi2plot[2,g]*ltnz+eps[,2], 
                                            "Cluster"=rep(glabel, nbsim_dens))
@@ -174,7 +176,7 @@ plot_DPMsn <- function(z, c, i="", alpha="?", U_SS,
             }
             
             p <- (p 
-                  + geom_density2d(data=simuDens, aes(x=D1,y=D2, colour=Cluster, linetype="1"))
+                  + geom_density2d(data=simuDens, aes_q(x=quote(D1), y=quote(D2), colour=quote(Cluster), linetype="1"))
                   + scale_linetype_manual(values=c(1),
                                           labels=c("simulations derived\n from sampled xi & psi"),
                                           name="Density contour", limits=c(1))

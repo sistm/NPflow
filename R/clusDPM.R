@@ -2,9 +2,9 @@
 #'
 #'Wrapping function for mcmc sampling and partition estimation.
 #'
-#'@param data
+#'@param data a data.frame or matrix
 #'
-#'@param distribution
+#'@param distribution a character string, either \code{"Normal"}, \code{"skewNormal"}, \code{"skewStudent"}.
 #'
 #'@seealso DPM_GibbsSampler_SkewN
 #'@seealso cluster_est_binder
@@ -15,9 +15,11 @@ clusDPM <- function(data,
                       distibution=c("Normal", "skewNormal", "skewStudent")
 ){
     if(distribution=="skewStudent"){
-        stop("Skew-Student distribution is not implemented yet\n")
+        stop("skew-Student distribution is not implemented yet\n")
     }
     
-    res <- list(data, )
+    TODO
+  
+    res <- list(data)
     class(res) <- "NPlow"
 }

@@ -47,8 +47,6 @@
 #'
 #'@examples
 #' rm(list=ls())
-#' library(ggplot2)
-#' library(truncnorm)
 #' 
 #' #Number of data
 #' n <- 50000
@@ -164,7 +162,6 @@
 #'  }
 #'  
 #'  library(microbenchmark)
-#'  library(doSNOW)
 #'  
 #'  microbenchmark(fparC(2), fseq(2), fpar(2), times=5L, unit="s")
 #'  microbenchmark(fparC(10), fseq(10), fpar(10), times=5Lunit="s")
@@ -178,8 +175,6 @@ DPMGibbsSkewT_parC <- function (z, hyperG0, a, b, N, doPlot=TRUE,
                            nbclust_init=30, plotevery=1, 
                            diagVar=TRUE, verbose=TRUE, Ncpus=1,
                            ...){
-    
-    if(doPlot){library(ggplot2)}
     
     p <- dim(z)[1]
     n <- dim(z)[2]

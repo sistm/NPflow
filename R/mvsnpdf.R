@@ -18,6 +18,8 @@
 #'
 #'@seealso mvnpdf, mmvsnpdfC
 #'
+#'@importFrom stats pnorm
+#'
 #'@export
 #'
 #'@examples
@@ -110,7 +112,7 @@ mvsnpdf <- function(x, xi, sigma, psi, Log=TRUE){
             stop("omega is of the wrong size")
         }
         part1 <- log(2) + mvnpdf(x, mean=xi, varcovM=omega, Log=TRUE)
-        part2 <- pnorm(t(alph)%*%diag(1/sqrt(diag(omega)))%*%(x0))
+        part2 <- stats::pnorm(t(alph)%*%diag(1/sqrt(diag(omega)))%*%(x0))
     }
     else{
         if(!is.list(sigma)){
@@ -132,7 +134,7 @@ mvsnpdf <- function(x, xi, sigma, psi, Log=TRUE){
 
         part1 <- log(2) + mvnpdf(x, mean=xi, varcovM=omega, Log=TRUE)
         part2 <- mapply(FUN=function(a, o, x){
-            pnorm(crossprod(a,diag(1/sqrt(diag(o))))%*%(x))},
+            stats::pnorm(crossprod(a,diag(1/sqrt(diag(o))))%*%(x))},
             x=x0, o=omega, a=alph)
 
     }

@@ -29,7 +29,7 @@
 #'
 #'@examples
 #' rm(list=ls())
-#' library(ggplot2)
+#' library(NPflow)
 #' #Number of data
 #' n <- 1000
 #' #n <- 2000
@@ -112,8 +112,6 @@
 
 DPM_GibbsSampler_SkewN_test1K <- function (z, hyperG0, a, b, N, doPlot=TRUE, 
                                            nbclust_init=30, plotevery=1, ...){
-    
-    if(doPlot){library(ggplot2)}
     
     p <- dim(z)[1]
     n <- dim(z)[2]

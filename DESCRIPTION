@@ -1,10 +1,10 @@
 Package: NPflow
 Type: Package
 Title: Non Parametric Bayesian clustering of flow-cytometry data
-Version: 0.2.72
-Date: 2016-02-03
+Version: 0.3
+Date: 2016-12-16
 Authors@R: c(person("Boris P.", "Hejblum", role = c("aut", "cre"),
-    email = "bhejblum@hsph.harvard.edu"),
+    email = "boris.hejblum@u-bordeaux.fr"),
     person("Chariff", "Alkhassim", role = c("aut"),
     email = "chariff.alkhassim@isped.fr"),
     person("Francois", "Caron", role = c("aut"),
@@ -24,7 +24,9 @@ Imports:
     gplots,
     pheatmap,
     ellipse
+Suggests:
+    doParallel
 Description: This package implements a Dirichlet process mixture of skew t-
-    distributions oriented towards flow-cytometry data preprocessing application
+    distributions oriented towards flow-cytometry data preprocessing application.
 License: LGPL-3 | file LICENSE
 RoxygenNote: 5.0.1

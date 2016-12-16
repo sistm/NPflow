@@ -101,8 +101,10 @@ DPMGibbsN_parallel <- function (Ncpus, type_connec,
                                 diagVar=TRUE, verbose=TRUE,
                                 ...){
   
-  if(doPlot){library(ggplot2)}
-  library(doSNOW)
+  if(requireNamespace("doParallel", quietly = TRUE)){
+  }else{
+   stop("package doParallel is not available") 
+  }
   
   p <- nrow(z)
   n <- ncol(z)
@@ -128,8 +130,8 @@ DPMGibbsN_parallel <- function (Ncpus, type_connec,
   c <-numeric(n) # initial number of clusters
   
   # declare the cores
-  cl <- makeCluster(Ncpus, type = type_connec)
-  registerDoSNOW(cl)
+  cl <- parallel::makeCluster(Ncpus, type = type_connec)
+  doParallel::registerDoParallel(cl)
   
   
   # Initialisation----
@@ -144,9 +146,9 @@ DPMGibbsN_parallel <- function (Ncpus, type_connec,
     c <- sample(x=1:nbclust_init, size=n, replace=TRUE)
   }
   
-  browser()
   
-  res <- foreach(k=unique(c), .packages="NPflow")%dopar%{
+  k <- NULL
+  res <- foreach::foreach(k=unique(c), .packages="NPflow")%dopar%{
     obs_k <- which(c==k)
     U_SS_par <- update_SS(z=z[, obs_k], S=hyperG0)
     NiW <- rNiW(U_SS_par, diagVar)
@@ -252,7 +254,7 @@ DPMGibbsN_parallel <- function (Ncpus, type_connec,
     
   }
   
-  stopCluster(cl)
+  parallel::stopCluster(cl)
   
   return(list("clusters" = c, "U_mu" = U_mu, "U_Sigma" = U_Sigma, 
               "partition" = m, "alpha"=alpha, "U_SS_list"=U_SS_list,

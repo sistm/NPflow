@@ -6,8 +6,7 @@ plot_DPMsn_test1K <- function(z, U_xi, U_psi, U_Sigma, m, c, i, alpha="?", U_SS=
                        dims2plot=1:nrow(z),
                        ellipses=ifelse(length(dims2plot)<3,TRUE,FALSE),
                        gg.add=list(theme())){ 
-    library(ellipse)
-    library(reshape2)
+  
     mean_sn01 <- (dnorm(0)-dnorm(Inf))/(pnorm(Inf)-pnorm(0))
     
     z <- z[dims2plot,]

@@ -47,8 +47,6 @@
 #'
 #'@examples
 #' rm(list=ls())
-#' library(ggplot2)
-#' library(truncnorm)
 #'
 #' #Number of data
 #' n <- 2000
@@ -81,7 +79,7 @@
 #' for(k in 1:n){
 #'  c[k] = which(rmultinom(n=1, size=1, prob=p)!=0)
 #'  w[k] <- rgamma(1, shape=nu[c[k]]/2, rate=nu[c[k]]/2)
-#'  z[,k] <- xi[, c[k]] + psi[, c[k]]*rtruncnorm(n=1, a=0, b=Inf, mean=0, sd=1/sqrt(w[k])) + (sdev[, , c[k]]/sqrt(w[k]))%*%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
+#'  z[,k] <- xi[, c[k]] + psi[, c[k]]*truncnorm::rtruncnorm(n=1, a=0, b=Inf, mean=0, sd=1/sqrt(w[k])) + (sdev[, , c[k]]/sqrt(w[k]))%*%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
 #'  cat(k, "/", n, " observations simulated\n", sep="")
 #' }
 #'
@@ -261,8 +259,6 @@ DPMGibbsSkewT <- function (z, hyperG0, a, b, N, doPlot=TRUE,
                            diagVar=TRUE, verbose=TRUE,
                            ...){
 
-    if(doPlot){library(ggplot2)}
-
     p <- dim(z)[1]
     n <- dim(z)[2]
     U_xi <- matrix(0, nrow=p, ncol=n)
@@ -288,7 +284,7 @@ DPMGibbsSkewT <- function (z, hyperG0, a, b, N, doPlot=TRUE,
 
     m <- numeric(n) # number of obs in each clusters
     c <- numeric(n) # cluster label of ech observation
-    ltn <- rtruncnorm(n, a=0, b=Inf, mean=0, sd=1) # latent truncated normal
+    ltn <- truncnorm::rtruncnorm(n, a=0, b=Inf, mean=0, sd=1) # latent truncated normal
     sc <- rep(1,n)
 
     # Initialisation----

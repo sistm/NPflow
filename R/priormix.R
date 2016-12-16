@@ -11,7 +11,6 @@
 #'
 #'@examples
 #' rm(list=ls())
-#' library(ggplot2)
 #' 
 #' #Number of data
 #' n <- 2000

@@ -49,7 +49,6 @@
 #'@examples
 #'
 #'rm(list=ls())
-#'library(ggplot2)
 #'#Number of data
 #'n <- 2000
 #'# Sample data
@@ -137,8 +136,6 @@ DPMGibbsN_SeqPrior <- function (z, prior, hyperG0, N, nbclust_init,
   if(nbclust_init > ncol(z)){
     stop("'nbclust_init' is larger than the number of observations")
   }
-  
-  if(doPlot){library(ggplot2)}
   
   p <- nrow(z)
   n <- ncol(z)

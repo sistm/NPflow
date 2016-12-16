@@ -51,7 +51,6 @@
 #'
 #'@examples
 #' rm(list=ls())
-#' library(ggplot2)
 #' 
 #' #Number of data
 #' n <- 2000
@@ -172,114 +171,201 @@ DPMGibbsSkewT_parallel <- function (Ncpus, type_connec,
                                     diagVar=TRUE, verbose=FALSE,
                                     monitorfile="",
                                     ...){
-    
-    # declare the cores
-    library(doSNOW)
-    cl <- makeCluster(Ncpus, type = type_connec)
-    registerDoSNOW(cl)
-    
-    if(doPlot){library(ggplot2)}
-    
-    p <- dim(z)[1]
-    n <- dim(z)[2]
-    U_xi <- matrix(0, nrow=p, ncol=n)
-    U_psi <- matrix(0, nrow=p, ncol=n)
-    U_Sigma = array(0, dim=c(p, p, n))
-    U_df = rep(10,n)
-    U_B = array(0, dim=c(2, 2, n))
-    U_nu <- rep(p,n)
-    
-    par_ind <- list()
-    temp_ind <- 0
-    if(Ncpus>1){
-        nb_simult <- floor(n%/%(Ncpus))
-        for(i in 1:(Ncpus-1)){
-            par_ind[[i]] <- temp_ind + 1:nb_simult
-            temp_ind <- temp_ind + nb_simult
-        }
-        par_ind[[Ncpus]] <- (temp_ind+1):n
+  
+  # declare the cores
+  if(requireNamespace("doParallel", quietly = TRUE)){
+  }else{
+    stop("package doParallel is not available") 
+  }
+  cl <- parallel::makeCluster(Ncpus, type = type_connec)
+  doParallel::registerDoParallel(cl)
+  
+  
+  p <- dim(z)[1]
+  n <- dim(z)[2]
+  U_xi <- matrix(0, nrow=p, ncol=n)
+  U_psi <- matrix(0, nrow=p, ncol=n)
+  U_Sigma = array(0, dim=c(p, p, n))
+  U_df = rep(10,n)
+  U_B = array(0, dim=c(2, 2, n))
+  U_nu <- rep(p,n)
+  
+  par_ind <- list()
+  temp_ind <- 0
+  if(Ncpus>1){
+    nb_simult <- floor(n%/%(Ncpus))
+    for(i in 1:(Ncpus-1)){
+      par_ind[[i]] <- temp_ind + 1:nb_simult
+      temp_ind <- temp_ind + nb_simult
     }
-    else{
-        cat("Only 1 core specified\n=> non-parallel version of the algorithm would be more efficient",
-            file=monitorfile, append = TRUE)
-        nb_simult <- n
-        par_ind[[Ncpus]] <- (temp_ind+1):n
+    par_ind[[Ncpus]] <- (temp_ind+1):n
+  }
+  else{
+    cat("Only 1 core specified\n=> non-parallel version of the algorithm would be more efficient",
+        file=monitorfile, append = TRUE)
+    nb_simult <- n
+    par_ind[[Ncpus]] <- (temp_ind+1):n
+  }
+  
+  # U_SS is a list where each U_SS[[k]] contains the sufficient
+  # statistics associated to cluster k
+  U_SS <- list()
+  
+  #store U_SS :
+  U_SS_list <- list()
+  #store clustering :
+  c_list <- list()
+  #store sliced weights
+  weights_list <- list()
+  
+  #store log posterior probability
+  logposterior_list <- list()
+  
+  m <- numeric(n) # number of obs in each clusters
+  c <- numeric(n) # cluster label of ech observation
+  ltn <- rtruncnorm(n, a=0, b=Inf, mean=0, sd=1) # latent truncated normal
+  sc <- rep(1,n)
+  
+  # Initialisation----
+  # each observation is assigned to a different cluster
+  # or to 1 of the 50 initial clusters if there are more than
+  # 50 observations
+  
+  i <- 1
+  
+  if(ncol(z)<nbclust_init){       
+    for (k in 1:n){
+      c[k] <- k
+      #cat("cluster ", k, ":\n")
+      U_SS[[k]] <- update_SSst(z=z[, k], S=hyperG0, ltn=ltn[k], scale=sc[obs_k], df=U_df[k])
+      NNiW <- rNNiW(U_SS[[k]], diagVar)
+      U_xi[, k] <- NNiW[["xi"]]
+      U_SS[[k]][["xi"]] <- NNiW[["xi"]]
+      U_psi[, k] <- NNiW[["psi"]]
+      U_SS[[k]][["psi"]] <- NNiW[["psi"]]
+      U_Sigma[, , k] <- NNiW[["S"]]
+      U_SS[[k]][["S"]] <- NNiW[["S"]]
+      U_B[, ,k] <- U_SS[[k]][["B"]]
+      m[k] <- m[k]+1
     }
-    
-    # U_SS is a list where each U_SS[[k]] contains the sufficient
-    # statistics associated to cluster k
-    U_SS <- list()
-    
-    #store U_SS :
-    U_SS_list <- list()
-    #store clustering :
-    c_list <- list()
-    #store sliced weights
-    weights_list <- list()
-    
-    #store log posterior probability
-    logposterior_list <- list()
-    
-    m <- numeric(n) # number of obs in each clusters
-    c <- numeric(n) # cluster label of ech observation
-    ltn <- rtruncnorm(n, a=0, b=Inf, mean=0, sd=1) # latent truncated normal
-    sc <- rep(1,n)
-    
-    # Initialisation----
-    # each observation is assigned to a different cluster
-    # or to 1 of the 50 initial clusters if there are more than
-    # 50 observations
-    
-    i <- 1
-    
-    if(ncol(z)<nbclust_init){       
-        for (k in 1:n){
-            c[k] <- k
-            #cat("cluster ", k, ":\n")
-            U_SS[[k]] <- update_SSst(z=z[, k], S=hyperG0, ltn=ltn[k], scale=sc[obs_k], df=U_df[k])
-            NNiW <- rNNiW(U_SS[[k]], diagVar)
-            U_xi[, k] <- NNiW[["xi"]]
-            U_SS[[k]][["xi"]] <- NNiW[["xi"]]
-            U_psi[, k] <- NNiW[["psi"]]
-            U_SS[[k]][["psi"]] <- NNiW[["psi"]]
-            U_Sigma[, , k] <- NNiW[["S"]]
-            U_SS[[k]][["S"]] <- NNiW[["S"]]
-            U_B[, ,k] <- U_SS[[k]][["B"]]
-            m[k] <- m[k]+1
-        }
-    } else{
-        c <- sample(x=1:nbclust_init, size=n, replace=TRUE)
-        for (k in unique(c)){
-            obs_k <- which(c==k)
-            U_SS[[k]] <- update_SSst(z=z[, obs_k], S=hyperG0, ltn=ltn[obs_k], scale=sc[obs_k], df=U_df[k])
-            NNiW <- rNNiW(U_SS[[k]], diagVar)
-            U_xi[, k] <- NNiW[["xi"]]
-            U_SS[[k]][["xi"]] <- NNiW[["xi"]]
-            U_psi[, k] <- NNiW[["psi"]]
-            U_SS[[k]][["psi"]] <- NNiW[["psi"]]
-            U_Sigma[, , k] <- NNiW[["S"]]
-            U_SS[[k]][["S"]] <- NNiW[["S"]]
-            U_B[, ,k] <- U_SS[[k]][["B"]]
-            m[k] <- length(obs_k)
-        }
+  } else{
+    c <- sample(x=1:nbclust_init, size=n, replace=TRUE)
+    for (k in unique(c)){
+      obs_k <- which(c==k)
+      U_SS[[k]] <- update_SSst(z=z[, obs_k], S=hyperG0, ltn=ltn[obs_k], scale=sc[obs_k], df=U_df[k])
+      NNiW <- rNNiW(U_SS[[k]], diagVar)
+      U_xi[, k] <- NNiW[["xi"]]
+      U_SS[[k]][["xi"]] <- NNiW[["xi"]]
+      U_psi[, k] <- NNiW[["psi"]]
+      U_SS[[k]][["psi"]] <- NNiW[["psi"]]
+      U_Sigma[, , k] <- NNiW[["S"]]
+      U_SS[[k]][["S"]] <- NNiW[["S"]]
+      U_B[, ,k] <- U_SS[[k]][["B"]]
+      m[k] <- length(obs_k)
     }
-    
-    
-    alpha <- c(log(n))
-    
-    
-    U_SS_list[[i]] <- U_SS
-    c_list[[i]] <- c
-    weights_list[[1]] <- numeric(length(m))
-    weights_list[[1]][unique(c)] <- table(c)/length(c)
-    
-    logposterior_list[[i]] <- logposterior_DPMST(z, xi=U_xi, psi=U_psi, Sigma=U_Sigma, df=U_df, B=U_B,
-                                                 hyper=hyperG0, c=c, m=m, alpha=alpha[i], n=n, a=a, b=b, diagVar)
-    
-    if(doPlot){
+  }
+  
+  
+  alpha <- c(log(n))
+  
+  
+  U_SS_list[[i]] <- U_SS
+  c_list[[i]] <- c
+  weights_list[[1]] <- numeric(length(m))
+  weights_list[[1]][unique(c)] <- table(c)/length(c)
+  
+  logposterior_list[[i]] <- logposterior_DPMST(z, xi=U_xi, psi=U_psi, Sigma=U_Sigma, df=U_df, B=U_B,
+                                               hyper=hyperG0, c=c, m=m, alpha=alpha[i], n=n, a=a, b=b, diagVar)
+  
+  if(doPlot){
+    plot_DPMst(z=z, c=c, i=i, alpha=alpha[i], U_SS=U_SS_list[[i]], ellipses=TRUE, ...)
+  }
+  if(verbose){
+    cat(i, "/", N, " samplings:\n", sep="",
+        file=monitorfile, append = TRUE)
+    cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="",
+        file=monitorfile, append = TRUE)
+    cl2print <- unique(c)
+    cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n",
+        file=monitorfile, append = TRUE)
+  }
+  
+  
+  if(N>1){
+    for(i in 2:N){
+      nbClust <- length(unique(c))
+      
+      alpha <- c(alpha,
+                 sample_alpha(alpha_old=alpha[i-1], n=n, 
+                              K=nbClust, a=a, b=b)
+      )
+      
+      slice <- sliceSampler_skewT_parallel(Ncpus=Ncpus,
+                                           c=c, m=m, 
+                                           alpha=alpha[i], 
+                                           z=z, hyperG0=hyperG0, 
+                                           U_xi=U_xi, 
+                                           U_psi=U_psi, 
+                                           U_Sigma=U_Sigma, 
+                                           U_df=U_df,
+                                           scale=sc, diagVar, 
+                                           parallel_index=par_ind)
+      m <- slice[["m"]]
+      c <- slice[["c"]]        
+      weights_list[[i]] <- slice[["weights"]]
+      ltn <- slice[["latentTrunc"]]
+      U_xi <- slice[["xi"]]
+      U_psi <- slice[["psi"]]        
+      U_Sigma <- slice[["Sigma"]]
+      U_df <- slice[["df"]]
+      
+      # Update cluster locations            
+      fullCl <- which(m!=0)
+      fullCl_nb <- length(fullCl)
+      for(k in 1:fullCl_nb){
+        j <- fullCl[k]
+        obs_j <- which(c==j)
+        #cat("cluster ", j, ":\n")
+        U_SS[[j]] <- update_SSst(z=z[, obs_j, drop=FALSE], S=hyperG0, 
+                                 ltn=ltn[obs_j], scale=sc[obs_j], 
+                                 df=U_df[j], 
+                                 hyperprior= list("Sigma"=U_Sigma[,,j]) 
+        )
+        U_nu[j] <- U_SS[[j]][["nu"]]
+        NNiW <- rNNiW(U_SS[[j]], diagVar)
+        U_xi[, j] <- NNiW[["xi"]]
+        U_SS[[j]][["xi"]] <- NNiW[["xi"]]
+        U_psi[, j] <- NNiW[["psi"]]
+        U_SS[[j]][["psi"]] <- NNiW[["psi"]]
+        U_Sigma[, , j] <- NNiW[["S"]]
+        U_SS[[j]][["S"]] <- NNiW[["S"]]
+        U_B[, ,j] <- U_SS[[j]][["B"]]
+      }
+      
+      update_scale <- sample_scale(c=c, m=m, z=z, U_xi=U_xi, 
+                                   U_psi=U_psi, U_Sigma=U_Sigma, 
+                                   U_df=U_df, ltn=ltn, 
+                                   weights=weights_list[[i]],
+                                   scale=sc)
+      U_df_full <- update_scale[["df"]]
+      sc <- update_scale[["scale"]]
+      
+      for(k in 1:fullCl_nb){
+        j <- fullCl[k]
+        U_df[j] <- U_df_full[k]
+        U_SS[[j]][["df"]] <- U_df[j]
+      }
+      
+      U_SS_list[[i]] <- U_SS[which(m!=0)]
+      c_list[[i]] <- c
+      
+      logposterior_list[[i]] <- logposterior_DPMST(z, xi=U_xi, psi=U_psi, Sigma=U_Sigma, df=U_df, B=U_B,
+                                                   hyper=hyperG0, c=c, m=m, alpha=alpha[i], n=n, a=a, b=b, diagVar)
+      
+      if(doPlot && i/plotevery==floor(i/plotevery)){
         plot_DPMst(z=z, c=c, i=i, alpha=alpha[i], U_SS=U_SS_list[[i]], ellipses=TRUE, ...)
-    }
-    if(verbose){
+      }
+      if(verbose){
         cat(i, "/", N, " samplings:\n", sep="",
             file=monitorfile, append = TRUE)
         cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="",
@@ -287,110 +373,25 @@ DPMGibbsSkewT_parallel <- function (Ncpus, type_connec,
         cl2print <- unique(c)
         cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n",
             file=monitorfile, append = TRUE)
+      }
     }
-    
-    
-    if(N>1){
-        for(i in 2:N){
-            nbClust <- length(unique(c))
-            
-            alpha <- c(alpha,
-                       sample_alpha(alpha_old=alpha[i-1], n=n, 
-                                    K=nbClust, a=a, b=b)
-            )
-            
-            slice <- sliceSampler_skewT_parallel(Ncpus=Ncpus,
-                                                 c=c, m=m, 
-                                                 alpha=alpha[i], 
-                                                 z=z, hyperG0=hyperG0, 
-                                                 U_xi=U_xi, 
-                                                 U_psi=U_psi, 
-                                                 U_Sigma=U_Sigma, 
-                                                 U_df=U_df,
-                                                 scale=sc, diagVar, 
-                                                 parallel_index=par_ind)
-            m <- slice[["m"]]
-            c <- slice[["c"]]        
-            weights_list[[i]] <- slice[["weights"]]
-            ltn <- slice[["latentTrunc"]]
-            U_xi <- slice[["xi"]]
-            U_psi <- slice[["psi"]]        
-            U_Sigma <- slice[["Sigma"]]
-            U_df <- slice[["df"]]
-            
-            # Update cluster locations            
-            fullCl <- which(m!=0)
-            fullCl_nb <- length(fullCl)
-            for(k in 1:fullCl_nb){
-                j <- fullCl[k]
-                obs_j <- which(c==j)
-                #cat("cluster ", j, ":\n")
-                U_SS[[j]] <- update_SSst(z=z[, obs_j, drop=FALSE], S=hyperG0, 
-                                         ltn=ltn[obs_j], scale=sc[obs_j], 
-                                         df=U_df[j], 
-                                         hyperprior= list("Sigma"=U_Sigma[,,j]) 
-                )
-                U_nu[j] <- U_SS[[j]][["nu"]]
-                NNiW <- rNNiW(U_SS[[j]], diagVar)
-                U_xi[, j] <- NNiW[["xi"]]
-                U_SS[[j]][["xi"]] <- NNiW[["xi"]]
-                U_psi[, j] <- NNiW[["psi"]]
-                U_SS[[j]][["psi"]] <- NNiW[["psi"]]
-                U_Sigma[, , j] <- NNiW[["S"]]
-                U_SS[[j]][["S"]] <- NNiW[["S"]]
-                U_B[, ,j] <- U_SS[[j]][["B"]]
-            }
-            
-            update_scale <- sample_scale(c=c, m=m, z=z, U_xi=U_xi, 
-                                         U_psi=U_psi, U_Sigma=U_Sigma, 
-                                         U_df=U_df, ltn=ltn, 
-                                         weights=weights_list[[i]],
-                                         scale=sc)
-            U_df_full <- update_scale[["df"]]
-            sc <- update_scale[["scale"]]
-            
-            for(k in 1:fullCl_nb){
-                j <- fullCl[k]
-                U_df[j] <- U_df_full[k]
-                U_SS[[j]][["df"]] <- U_df[j]
-            }
-            
-            U_SS_list[[i]] <- U_SS[which(m!=0)]
-            c_list[[i]] <- c
-            
-            logposterior_list[[i]] <- logposterior_DPMST(z, xi=U_xi, psi=U_psi, Sigma=U_Sigma, df=U_df, B=U_B,
-                                                         hyper=hyperG0, c=c, m=m, alpha=alpha[i], n=n, a=a, b=b, diagVar)
-            
-            if(doPlot && i/plotevery==floor(i/plotevery)){
-                plot_DPMst(z=z, c=c, i=i, alpha=alpha[i], U_SS=U_SS_list[[i]], ellipses=TRUE, ...)
-            }
-            if(verbose){
-                cat(i, "/", N, " samplings:\n", sep="",
-                    file=monitorfile, append = TRUE)
-                cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="",
-                    file=monitorfile, append = TRUE)
-                cl2print <- unique(c)
-                cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n",
-                    file=monitorfile, append = TRUE)
-            }
-        }
-    }
-    
-    
-    
-    stopCluster(cl)
-    
-    dpmclus <- list("mcmc_partitions" = c_list, 
-                    "alpha"=alpha, 
-                    "U_SS_list"=U_SS_list,
-                    "weights_list"=weights_list, 
-                    "logposterior_list"=logposterior_list, 
-                    "data"=z,
-                    "nb_mcmcit"=N,
-                    "clust_distrib"="skewT",
-                    "hyperG0"=hyperG0)
-    class(dpmclus) <- "DPMMclust"
-    return(dpmclus)
+  }
+  
+  
+  
+  parallel::stopCluster(cl)
+  
+  dpmclus <- list("mcmc_partitions" = c_list, 
+                  "alpha"=alpha, 
+                  "U_SS_list"=U_SS_list,
+                  "weights_list"=weights_list, 
+                  "logposterior_list"=logposterior_list, 
+                  "data"=z,
+                  "nb_mcmcit"=N,
+                  "clust_distrib"="skewT",
+                  "hyperG0"=hyperG0)
+  class(dpmclus) <- "DPMMclust"
+  return(dpmclus)
 }
 
 

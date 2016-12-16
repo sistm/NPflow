@@ -13,11 +13,14 @@
 #'@param Sigma is list of length \code{n} composed of arrays containing a maximum of 
 #'\code{l} \code{p x p} covariance matrices.
 #'
-#'@param lambda is a nonnegative tunning parameter allowing further control over the distance
-#'function. 
+#'@param lambda a nonnegative tunning parameter allowing further control over the distance
+#'function. Default is \code{0}.
 #'
-#'@param  \code{a} and \code{b} are nonnegative constants seen as the unit cost for each
-#'kind of pairwise misclassification.
+#'@param  a is a nonnegative constant seen as the unit cost for each
+#'the first kind of pairwise misclassification. Default is \code{1}.
+#'
+#'@param  b is a nonnegative constant seen as the unit cost for each
+#'the other kind of pairwise misclassification. Default is \code{1}.
 #'
 #'@param logposterior vector of logposterior correponding to each 
 #'partition from \code{c} used to break ties when minimizing the cost function

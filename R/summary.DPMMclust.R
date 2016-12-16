@@ -1,9 +1,9 @@
 #'Summarizing Dirichlet Process Mixture Models
 #'
 #'
-#'@param x a \code{DPMMclust} object.
+#'@param object a \code{DPMMclust} object.
 #'
-#'@param burnin integer giving the number of MCMC iterations to burn (defaults is half)
+#'@param burnin integer giving the number of MCMC iterations to burn (defaults is half). Default is \code{0}.
 #'
 #'@param thin integer giving the spacing at which MCMC iterations are kept. 
 #'Default is \code{1}, i.e. no thining.
@@ -12,15 +12,35 @@
 #'Either "F-measure" or "Binder" (see Details). Default is "F-measure".
 #'
 #'@param gs optionnal vector of length \code{n} containing the gold standard 
-#'partition of the \code{n} observations to compare to the point estimate
+#'partition of the \code{n} observations to compare to the point estimate. Default is \code{NULL}.
 #'
-#'@param ... further arguments passed to or from other methods
+#'@param posterior_approx logical flag indicating whether the posterior approximation of the posterior should be computed.
+#'Default is \code{FALSE}.
+#'
+#'@param tol tolerance value used for assessing convergence of the EM used to get the MAP or MLE 
+#'for the parametric posterior approximation. Default is \code{2}.
+#'
+#'@param maxit maximum number of iterations for the EM used to get the MAP or MLE for the parametric 
+#'posterior approximation. Default is \code{50}.
+#'
+#'@param dist a character string indicating what parametric distribution is used. Either \code{"Normal"}, 
+#'\code{"skewNormal"} or \code{"skewStudent"}. Currently implemented for \code{"Normal"} only. 
+#'Default is \code{"Normal"}.
+#'
+#'@param lambda lambda a nonnegative tunning parameter allowing further control over the distance
+#'function. Default is \code{0}.
+#'
+#'@param a a nonnegative constant indicating the unit cost for each
+#'the first kind of pairwise misclassification. Default is \code{1}.
+#'
+#'@param  b a nonnegative constant indicating the unit cost for each
+#'the other kind of pairwise misclassification. Default is \code{1}.
 #'
 #'@return a \code{list}: 
 #'  \itemize{
-#'      \item{\code{burnin}:}{an integer passing along the \code{burnin} argument}
-#'      \item{\code{thin}:}{an integer passing along the \code{thin} argument}
-#'      \item{\code{lossFn}:}{a character string passing along the \code{lossFn} argument}
+#'      \item{\code{burnin}:}{ an integer passing along the \code{burnin} argument}
+#'      \item{\code{thin}:}{ an integer passing along the \code{thin} argument}
+#'      \item{\code{lossFn}:}{ a character string passing along the \code{lossFn} argument}
 #'      \item{\code{point_estim}:}{}
 #'      \item{\code{loss}:}{}
 #'      \item{\code{index_estim}:}{}
@@ -42,10 +62,21 @@
 #'@seealso \link{similarityMat}
 #'
 
-summary.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measure",
-                              posterior_approx=FALSE, tol=2, maxit=50,dist="Normal",lambda=0,a=1,b=1){
+summary.DPMMclust <- function(object, ...){
   
-  x_invar <- burn.DPMMclust(x, burnin = burnin, thin=thin, dist=dist)
+  if(is.null(burnin)){burnin=0}
+  if(is.null(thin)){thin=1}
+  if(is.null(gs)){gs=NULL}
+  if(is.null(lossFn)){lossFn="F-measure"}
+  if(is.null(posterior_approx)){posterior_approx=FALSE}
+  if(is.null(tol)){tol=2}
+  if(is.null(maxit)){maxit=50}
+  if(is.null(dist)){dist="Normal"}
+  if(is.null(lambda)){lambda=0}
+  if(is.null(a)){a=0}
+  if(is.null(b)){b=0}
+  
+  x_invar <- burn.DPMMclust(object, burnin = burnin, thin=thin, dist=dist)
   
   
   
@@ -103,7 +134,7 @@ summary.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measure",
 #' Methods for a summary of a 'DPMMclust' object
 #'@rdname methods.summaryDPMMclust
 #'@aliases print.summaryDPMMclust, plot.summaryDPMMclust
-#'@param s a \code{summaryDPMMclust} object
+#'@param x a \code{summaryDPMMclust} object
 #'@param hm logical flag to plot the heatmap of the similarity matrix. 
 #'Default is \code{FALSE}.
 #'@param nbsim_densities the number of simulated observations to be used
@@ -111,60 +142,60 @@ summary.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measure",
 #'@param ... further arguments passed to or from other methods
 #'@author Boris Hejblum
 #'@export
-print.summaryDPMMclust <- function(s,...){
+print.summaryDPMMclust <- function(x, ...){
   
-  cat(class(s), "object with", s$nb_mcmcit, "MCMC iterations:\n")
+  cat(class(x), "object with", x$nb_mcmcit, "MCMC iterations:\n")
   cat(rep("-",40),"\n", sep="")
   cat(rep("-",40),"\n", sep="")
   cat("Burnin =", s$burnin, "iterations\n\n")
-  cat("Point estimate of the partition with a ", s$clust_distrib," mixture:\n", sep="")
-  t<-table(s$point_estim$c_est)
-  t2print <- paste(formatC(as.vector(t/length(s$point_estim$c_est)), 
+  cat("Point estimate of the partition with a ", x$clust_distrib," mixture:\n", sep="")
+  t<-table(x$point_estim$c_est)
+  t2print <- paste(formatC(as.vector(t/length(x$point_estim$c_est)), 
                            digits=2),"%", sep="")
   names(t2print) <- names(t)
   print(t2print, quote=F)
-  cat("\nLoss of the point estimate partition:", s$loss, "\n")
+  cat("\nLoss of the point estimate partition:", x$loss, "\n")
   cat(rep("-",40),"\n", sep="")
   
 }
 
 #'@export
 #'@rdname methods.summaryDPMMclust
-plot.summaryDPMMclust <- function(s, hm=FALSE, nbsim_densities=5000, gg.add=list(theme_bw()),...){
-  if(length(s$logposterior_list[[1]])>1){
-    plot_ConvDPM(s, shift=s$burnin)
+plot.summaryDPMMclust <- function(x, hm=FALSE, nbsim_densities=5000, gg.add=list(theme_bw()), ...){
+  if(length(x$logposterior_list[[1]])>1){
+    plot_ConvDPM(x, shift=x$burnin)
   }
-  ind <- s$index_estim
+  ind <- x$index_estim
   
   
   cat("Plotting point estimate (may take a few sec)... ")
-  if(s$clust_distrib=="Normal"){
-    plot_DPM(z=s$data,
-             c=s$point_estim$c_est, 
-             i=ind+s$burnin, 
-             alpha=s$alpha[ind], 
-             U_SS=s$U_SS_list[[ind]], 
+  if(x$clust_distrib=="Normal"){
+    plot_DPM(z=x$data,
+             c=x$point_estim$c_est, 
+             i=ind+x$burnin, 
+             alpha=x$alpha[ind], 
+             U_SS=x$U_SS_list[[ind]], 
              ellipses=TRUE,
              gg.add=gg.add,
              ...
     )
-  }else if(s$clust_distrib=="skewNormal"){
-    plot_DPMsn(z=s$data,
-               c=s$point_estim$c_est, 
-               i=ind+s$burnin, 
-               alpha=s$alpha[ind], 
-               U_SS=s$U_SS_list[[ind]], 
+  }else if(x$clust_distrib=="skewNormal"){
+    plot_DPMsn(z=x$data,
+               c=x$point_estim$c_est, 
+               i=ind+x$burnin, 
+               alpha=x$alpha[ind], 
+               U_SS=x$U_SS_list[[ind]], 
                ellipses=TRUE,
                gg.add= gg.add,
                nbsim_dens=nbsim_densities,
                ...
     )
-  }else if(s$clust_distrib=="skewT"){
-    plot_DPMst(z=s$data,
-               c=s$point_estim$c_est, 
-               i=ind+s$burnin, 
-               alpha=s$alpha[ind], 
-               U_SS=s$U_SS_list[[ind]], 
+  }else if(x$clust_distrib=="skewT"){
+    plot_DPMst(z=x$data,
+               c=x$point_estim$c_est, 
+               i=ind+x$burnin, 
+               alpha=x$alpha[ind], 
+               U_SS=x$U_SS_list[[ind]], 
                ellipses=TRUE,
                gg.add=gg.add,
                nbsim_dens=nbsim_densities,
@@ -176,13 +207,13 @@ plot.summaryDPMMclust <- function(s, hm=FALSE, nbsim_densities=5000, gg.add=list
   
   if(hm){
     cat("Plotting heatmap of similarity (may take a few min)...\n")
-    if(is.null(s$point_estim$similarity)){
+    if(is.null(x$point_estim$similarity)){
       stop("In order to plot the similarity matrix, the 'Binder' loss function should be used")
     }
-    tree <- fastcluster::hclust(dist(s$point_estim$similarity, method = "euclidean"), 
+    tree <- fastcluster::hclust(dist(x$point_estim$similarity, method = "euclidean"), 
                                 method = "complete")
     ord_index <- tree$order
-    pheatmap::pheatmap(s$point_estim$similarity[ord_index, ord_index], scale="none", border_color=NA,
+    pheatmap::pheatmap(x$point_estim$similarity[ord_index, ord_index], scale="none", border_color=NA,
                        color=colorRampPalette(c("#F7FBFF", "#DEEBF7", "#C6DBEF", 
                                                 #"#9ECAE1", "#FEB24C", 
                                                 "#FD8D3C", "#BD0026", "#800026"))(200), 

@@ -9,10 +9,8 @@
 #'@param thin the spacing at which MCMC iterations are kept. 
 #'Default is \code{1}, i.e. no thining.
 #'
-#'@param gs optionnal vector of length \code{n} containing the gold standard 
-#'partition of the \code{n} observations to compare to the point estimate.
-#'
-#'@param ... further arguments passed to or from other methods.
+#'@param dist a character string indicating what parametric distribution is used. Either \code{"Normal"}, \code{"Skew-Normal"} or \code{"Skew-t"}. 
+#'Currently implemented for \code{"Normal"} only. Default is \code{"Normal"}.
 #'
 #'@return a \code{DPMMclust} object minus the burnt iterations
 #'

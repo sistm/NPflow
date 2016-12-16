@@ -1,13 +1,16 @@
 #' @author Boris Hejblum
 #'
+#'@import ggplot2
+#'@importFrom ellipse ellipse
+#'@importFrom stats cov2cor cov
+#'@import reshape2
+#'
 #' @export
 
 plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
                      dims2plot=1:nrow(z),
                      ellipses=ifelse(length(dims2plot)<3,TRUE,FALSE),
                      gg.add=list(theme())){ 
-  library(ellipse)
-  library(reshape2)
   
   
   z <- z[dims2plot,]
@@ -53,10 +56,8 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
   expK <- ifelse(is.numeric(alpha), round(alpha*(digamma(alpha+n)-digamma(alpha))), NA)
   alpha2print <- ifelse(is.numeric(alpha), formatC(alpha, digits=2), alpha)
   
-  library(ellipse)
-  
   if(p>2){
-    zDplot <- melt(cbind.data.frame("ID"=as.character(1:n), 
+    zDplot <- reshape2::melt(cbind.data.frame("ID"=as.character(1:n), 
                                     t(z),
                                     "Cluster"=zClusters
     ),
@@ -78,7 +79,7 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
         zDplotfull, zDplottemp)
     }
     
-    UDplot <- melt(cbind.data.frame(t(U_mu2plot),
+    UDplot <- reshape2::melt(cbind.data.frame(t(U_mu2plot),
                                     "Cluster"=factor(as.character(fullCl), 
                                                      levels=as.character(fullCl), 
                                                      ordered=TRUE)
@@ -106,9 +107,9 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
     #             for(dy in 1:p){
     #                 for(g in 1:length(fullCl)){
     #                     glabel <- levels(zClusters)[g]
-    #                     U_corr2plot_g <- cov2cor(U_Sigma2plot[c(dx,dy),c(dx,dy),g])
+    #                     U_corr2plot_g <- stats::cov2cor(U_Sigma2plot[c(dx,dy),c(dx,dy),g])
     #                     ellipse95 <- rbind(ellipse95, 
-    #                                cbind(as.data.frame(ellipse(U_corr2plot_g, 
+    #                                cbind(as.data.frame(ellipse::ellipse(U_corr2plot_g, 
     #                                                            scale=sqrt(diag(U_Sigma2plot[c(dx,dy),c(dx,dy),g])), 
     #                                                            centre=U_mu2plot[c(dx,dy),g])),
     #                                      Cluster=as.character(glabel), 
@@ -121,11 +122,11 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
     
     p <- (ggplot(zDplotfull) 
           + facet_grid(dimensionY~dimensionX, scales="free")
-          + geom_point(aes(x=X, y=Y, colour=Cluster, order=Cluster), 
+          + geom_point(aes_string(x="X", y="Y", colour="Cluster"), #order=Cluster), 
                        data=zDplotfull, alpha=1, size=2/(0.3*log(n)))
           #               + geom_polygon(aes(x=x, y=y, fill=Cluster, colour=Cluster, order=Cluster), 
           #                              data=ellipse95, size=0.5, linetype=2, colour="black", alpha=.3)
-          + geom_point(aes(x=X, y=Y, fill=Cluster, order=Cluster),
+          + geom_point(aes_string(x="X", y="Y", fill="Cluster"), #order=Cluster),
                        data=UDplotfull, shape=22, size=5/(0.3*log(n)))
           + ggtitle(paste(n, " obs.",
                           "\niteration ", i, " : ", 
@@ -158,9 +159,9 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
     
     p <- (ggplot(z2plot) 
           
-          + geom_point(aes(x=D1, y=D2, colour=Cluster, order=Cluster), 
+          + geom_point(aes_string(x="D1", y="D2", colour="Cluster"), #order=Cluster), 
                        data=z2plot)
-          + geom_point(aes(x=D1, y=D2, fill=Cluster, order=Cluster),
+          + geom_point(aes_string(x="D1", y="D2", fill="Cluster"), #order=Cluster),
                        data=U2plot, shape=22, size=5)
           + ggtitle(paste(n, " obs.",
                           "\niteration ", i, " : ", 
@@ -173,10 +174,10 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
       ellipse95 <- data.frame()
       for(g in 1:length(fullCl)){
         glabel <- levels(zClusters)[g]
-        U_corr2plot_g <- cov2cor(U_Sigma2plot[,,g])
+        U_corr2plot_g <- stats::cov2cor(U_Sigma2plot[,,g])
         # diag(1/sqrt(diag(U_Sigma2plot[,,g])))%*%U_Sigma2plot[,,g]%*%diag(1/sqrt(diag(U_Sigma2plot[,,g])))
         ellipse95 <- rbind(ellipse95, 
-                           cbind(as.data.frame(ellipse(U_corr2plot_g, 
+                           cbind(as.data.frame(ellipse::ellipse(U_corr2plot_g, 
                                                        scale=sqrt(diag(U_Sigma2plot[,,g])), 
                                                        centre=U_mu2plot[,g],
                                                        level=0.95)),
@@ -191,9 +192,9 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
                                (U_SS2plot[[glabel]]$nu
                                 -ncol(U_SS2plot[[glabel]]$lambda)-1)
         )
-        U_corr2plot_g <- cov2cor(U_Sigma2plot_esp)
+        U_corr2plot_g <- stats::cov2cor(U_Sigma2plot_esp)
         ellipse95_esp <- rbind(ellipse95_esp, 
-                               cbind(as.data.frame(ellipse(U_corr2plot_g, 
+                               cbind(as.data.frame(ellipse::ellipse(U_corr2plot_g, 
                                                            scale=sqrt(diag(U_Sigma2plot_esp)), 
                                                            centre=U_mu2plot[,g],
                                                            level=0.95)),
@@ -207,11 +208,11 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
         
         #empirical covariance
         if(length(which(z2plot$Cluster==glabel))>1){
-          U_Sigma2plot_obs <- cov(z2plot[which(z2plot$Cluster==glabel), c(1,2)])
-          U_corr2plot_g <- cov2cor(U_Sigma2plot_obs)
+          U_Sigma2plot_obs <- stats::cov(z2plot[which(z2plot$Cluster==glabel), c(1,2)])
+          U_corr2plot_g <- stats::cov2cor(U_Sigma2plot_obs)
           
           ellipse95_obs <- rbind(ellipse95_obs, 
-                                 cbind(as.data.frame(ellipse(U_corr2plot_g, 
+                                 cbind(as.data.frame(ellipse::ellipse(U_corr2plot_g, 
                                                              scale=sqrt(diag(U_Sigma2plot_obs)), 
                                                              centre=U_mu2plot[,g],
                                                              level=0.95)),
@@ -222,11 +223,11 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
       
       #             
       p <- (p
-            + geom_polygon(aes(x=x, y=y, fill=Cluster, colour=Cluster, order=Cluster, linetype="2"), 
+            + geom_polygon(aes_(x=quote(x), y=quote(y), fill=quote(Cluster), colour=quote(Cluster), linetype="2"), #order=Cluster), 
                            data=ellipse95, size=0.5, colour="black", alpha=.15)
-            + geom_polygon(aes(x=x, y=y, fill=Cluster, colour=Cluster, order=Cluster, linetype="3"), 
+            + geom_polygon(aes_(x=quote(x), y=quote(y), fill=quote(Cluster), colour=quote(Cluster), linetype="3"), #order=Cluster), 
                            data=ellipse95_esp, size=0.5, colour="black", alpha=.15)
-            + geom_polygon(aes(x=D1, y=D2, fill=Cluster, colour=Cluster, order=Cluster, linetype="1"), 
+            + geom_polygon(aes_(x=quote(D1), y=quote(D2), fill=quote(Cluster), colour=quote(Cluster), linetype="1"), #order=Cluster), 
                            data=ellipse95_obs, size=0.25, colour="black", alpha=.15)
             + scale_linetype_manual(values=c(1,2,3), 
                                     labels=c("observed", "sampled", "expected"), 

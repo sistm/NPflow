@@ -43,11 +43,11 @@ cytoScatter <- function(cytomatrix, dims2plot=c(1,2),
                 zDplotfull, zDplottemp)
         }
         
-        p <- (ggplot(zDplotfull, aes(x=X, y=Y)) 
+        p <- (ggplot(zDplotfull, aes_string(x="X", y="Y")) 
               + facet_grid(dimensionY~dimensionX, scales="free")
               + geom_point(colour="blue",
                            data=zDplotfull, alpha=1, size=2/(0.3*log(n)))
-              + stat_density2d(aes(fill = ..level..), alpha=0.8, geom="polygon")  
+              + stat_density2d(aes_string(fill = "..level.."), alpha=0.8, geom="polygon")  
               + scale_fill_gradientn(colours=c("blue","green", "yellow", "red"), 
                                      name="Density")
               + theme_bw()
@@ -74,11 +74,11 @@ cytoScatter <- function(cytomatrix, dims2plot=c(1,2),
             p <- ggplot(data2plot, aes_string(x=xname, y=yname))
         }else{
             colnames(data2plot) <- c("X", "Y")
-            p <- ggplot(data2plot, aes_string(x=X, y=Y))
+            p <- ggplot(data2plot, aes_string(x="X", y="Y"))
         }
         
         p <- (p + geom_point(size=2/(0.3*log(n)), colour="blue")  
-              + stat_density2d(aes(fill = ..level..), alpha=0.8, geom="polygon")  
+              + stat_density2d(aes_string(fill = "..level.."), alpha=0.8, geom="polygon")  
               + scale_fill_gradientn(colours=c("blue","green", "yellow", "red"), 
                                      name="Density")
               + theme_bw()

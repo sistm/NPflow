@@ -43,12 +43,11 @@
 #'
 #'@examples
 #' rm(list=ls())
-#' library(ggplot2)
 #' 
 #' #Number of data
 #' n <- 2000
-#' set.seed(123)
 #' set.seed(1234)
+#' #set.seed(123)
 #' #set.seed(4321)
 #' 
 #' 
@@ -131,8 +130,6 @@
 #'
 #'
 DPMGibbsSkewN_EB <- function (z, hyperG0, a, b, N, doPlot=TRUE, plotevery=1, diagVar=TRUE, ...){
-    
-    if(doPlot){library(ggplot2)}
     
     p <- dim(z)[1]
     n <- dim(z)[2]

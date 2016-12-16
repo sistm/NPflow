@@ -59,112 +59,123 @@
 
 
 mmsNiWlogpdf <- function(U_xi, U_psi, U_Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_df0){
-
-    loglik <- function(xi, psi, Sigma, xi0, psi0, B0, Lambda0, nu0){
-        d <- length(xi)
-        mu <- c(xi,psi)
-        mu0 <- c(xi0, psi0)
-        Sigmainv <- solve(Sigma)
-        resl <- (-d/2*log(2*pi)
-                 -(nu0 + d + 1)/2*log(det(Sigma))
-                 -nu0*d/2*log(2)
-                 +nu0/2*log(det(Lambda0))
-                 -lgamma_mv(nu0/2, p=d) 
-                 -1/2*log(det(kronecker(B0, Sigma)))
-                 -1/2*sum(diag(Lambda0%*%Sigmainv))
-                 -1/2*t(mu-mu0)%*%kronecker(solve(B0), Sigmainv)%*%(mu-mu0)
-        )
-        #resl <- exp(resl)
-    }
-    ml <- function(xi, psi, Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_df0){
-        resml <- mapply(FUN = loglik, 
-                        xi0 = U_xi0, psi0 = U_psi0, B0 = U_B0,
-                        Lambda0 = U_Sigma0, nu0 = U_df0,
-                        MoreArgs=list(xi, psi, Sigma))
-#         constnorm <- sum(resml)
-#         if(constnorm>0){
-#             resml <- resml/constnorm
-#         }
-        return(resml)
-    }
-    
-    mml <- function(U_xi, U_psi, U_Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_df0){
-        resmml <- mapply(FUN = ml, 
-                        xi = U_xi, psi = U_psi, Sigma = U_Sigma,
-                        MoreArgs=list(U_xi0, U_psi0, U_B0, U_Sigma0, U_df0))
-    }
-    
-    res <- mml(U_xi, U_psi, U_Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_df0)
-    return(res)
-    
+  
+  loglik <- function(xi, psi, Sigma, xi0, psi0, B0, Lambda0, nu0){
+    d <- length(xi)
+    mu <- c(xi,psi)
+    mu0 <- c(xi0, psi0)
+    Sigmainv <- solve(Sigma)
+    resl <- (-d/2*log(2*pi)
+             -(nu0 + d + 1)/2*log(det(Sigma))
+             -nu0*d/2*log(2)
+             +nu0/2*log(det(Lambda0))
+             -lgamma_mv(nu0/2, p=d) 
+             -1/2*log(det(kronecker(B0, Sigma)))
+             -1/2*sum(diag(Lambda0%*%Sigmainv))
+             -1/2*t(mu-mu0)%*%kronecker(solve(B0), Sigmainv)%*%(mu-mu0)
+    )
+    #resl <- exp(resl)
+  }
+  ml <- function(xi, psi, Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_df0){
+    resml <- mapply(FUN = loglik, 
+                    xi0 = U_xi0, psi0 = U_psi0, B0 = U_B0,
+                    Lambda0 = U_Sigma0, nu0 = U_df0,
+                    MoreArgs=list(xi, psi, Sigma))
+    #         constnorm <- sum(resml)
+    #         if(constnorm>0){
+    #             resml <- resml/constnorm
+    #         }
+    return(resml)
+  }
+  
+  mml <- function(U_xi, U_psi, U_Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_df0){
+    resmml <- mapply(FUN = ml, 
+                     xi = U_xi, psi = U_psi, Sigma = U_Sigma,
+                     MoreArgs=list(U_xi0, U_psi0, U_B0, U_Sigma0, U_df0))
+  }
+  
+  res <- mml(U_xi, U_psi, U_Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_df0)
+  return(res)
+  
 }
 
 msNiWlogpdf <- function(xi, psi, Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_df0){
-    
-    loglik <- function(xi, psi, Sigma, xi0, psi0, B0, Lambda0, nu0){
-        d <- length(xi)
-        mu <- c(xi,psi)
-        mu0 <- c(xi0, psi0)
-        Sigmainv <- solve(Sigma)
-        resl <- (-d/2*log(2*pi)
-                 -(nu0 + d + 1)/2*log(det(Sigma))
-                 -nu0*d/2*log(2)
-                 +nu0/2*log(det(Lambda0))
-                 -lgamma_mv(nu0/2, p=d) 
-                 -1/2*log(det(kronecker(B0, Sigma)))
-                 -1/2*sum(diag(Lambda0%*%Sigmainv))
-                 -1/2*t(mu-mu0)%*%kronecker(solve(B0), Sigmainv)%*%(mu-mu0)
-        )
-        #resl <- exp(resl)
-    }
-    
-
-        res <- mapply(FUN = loglik, 
-                        xi0 = U_xi0, psi0 = U_psi0, B0 = U_B0,
-                        Lambda0 = U_Sigma0, nu0 = U_df0,
-                        MoreArgs=list(xi, psi, Sigma))
-    
-    res <- ml(U_xi, U_psi, U_Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_df0)
-    return(res)
-    
+  
+  loglik <- function(xi, psi, Sigma, xi0, psi0, B0, Lambda0, nu0){
+    d <- length(xi)
+    mu <- c(xi,psi)
+    mu0 <- c(xi0, psi0)
+    Sigmainv <- solve(Sigma)
+    resl <- (-d/2*log(2*pi)
+             -(nu0 + d + 1)/2*log(det(Sigma))
+             -nu0*d/2*log(2)
+             +nu0/2*log(det(Lambda0))
+             -lgamma_mv(nu0/2, p=d) 
+             -1/2*log(det(kronecker(B0, Sigma)))
+             -1/2*sum(diag(Lambda0%*%Sigmainv))
+             -1/2*t(mu-mu0)%*%kronecker(solve(B0), Sigmainv)%*%(mu-mu0)
+    )
+    #resl <- exp(resl)
+  }
+  
+  
+  res <- mapply(FUN = loglik, 
+                xi0 = U_xi0, psi0 = U_psi0, B0 = U_B0,
+                Lambda0 = U_Sigma0, nu0 = U_df0,
+                MoreArgs=list(xi, psi, Sigma))
+  
+  ml <- function(xi, psi, Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_df0){
+    resml <- mapply(FUN = loglik, 
+                    xi0 = U_xi0, psi0 = U_psi0, B0 = U_B0,
+                    Lambda0 = U_Sigma0, nu0 = U_df0,
+                    MoreArgs=list(xi, psi, Sigma))
+    #         constnorm <- sum(resml)
+    #         if(constnorm>0){
+    #             resml <- resml/constnorm
+    #         }
+    return(resml)
+  }
+  res <- ml(U_xi, U_psi, U_Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_df0)
+  return(res)
+  
 }
 
 sNiWlogpdf <- function(xi, psi, Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_df0){
-    
-    loglik <- function(xi, psi, Sigma, xi0, psi0, B0, Lambda0, nu0){
-        d <- length(xi)
-        mu <- c(xi,psi)
-        mu0 <- c(xi0, psi0)
-        Sigmainv <- solve(Sigma)
-        resl <- (-d/2*log(2*pi)
-                 -(nu0 + d + 1)/2*log(det(Sigma))
-                 -nu0*d/2*log(2)
-                 +nu0/2*log(det(Lambda0))
-                 -lgamma_mv(nu0/2, p=d) 
-                 -1/2*log(det(kronecker(B0, Sigma)))
-                 -1/2*sum(diag(Lambda0%*%Sigmainv))
-                 -1/2*t(mu-mu0)%*%kronecker(solve(B0), Sigmainv)%*%(mu-mu0)
-        )
-        #resl <- exp(resl)
-    }
-    
-    res <- loglik(xi, psi, Sigma, xi0 = U_xi0, psi0 = U_psi0, B0 = U_B0,
-                  Lambda0 = U_Sigma0, nu0 = U_df0
+  
+  loglik <- function(xi, psi, Sigma, xi0, psi0, B0, Lambda0, nu0){
+    d <- length(xi)
+    mu <- c(xi,psi)
+    mu0 <- c(xi0, psi0)
+    Sigmainv <- solve(Sigma)
+    resl <- (-d/2*log(2*pi)
+             -(nu0 + d + 1)/2*log(det(Sigma))
+             -nu0*d/2*log(2)
+             +nu0/2*log(det(Lambda0))
+             -lgamma_mv(nu0/2, p=d) 
+             -1/2*log(det(kronecker(B0, Sigma)))
+             -1/2*sum(diag(Lambda0%*%Sigmainv))
+             -1/2*t(mu-mu0)%*%kronecker(solve(B0), Sigmainv)%*%(mu-mu0)
     )
-    
-    return(res)
-    
+    #resl <- exp(resl)
+  }
+  
+  res <- loglik(xi, psi, Sigma, xi0 = U_xi0, psi0 = U_psi0, B0 = U_B0,
+                Lambda0 = U_Sigma0, nu0 = U_df0
+  )
+  
+  return(res)
+  
 }
 
 gamma_mv <- function(x,p){
-    pi^(p*(p-1)/4)*prod(gamma(x+(1-1:p)/2))
+  pi^(p*(p-1)/4)*prod(gamma(x+(1-1:p)/2))
 }
 
 #'@export
 lgamma_mv <- function(x,p){
-    (p*(p-1)/4)*log(pi) + sum(lgamma(x+(1-1:p)/2))
+  (p*(p-1)/4)*log(pi) + sum(lgamma(x+(1-1:p)/2))
 }
 
 digamma_mv <- function(x,p){
-    sum(digamma(x+(1-1:p)/2))
+  sum(digamma(x+(1-1:p)/2))
 }

@@ -34,7 +34,6 @@
 #'
 #'@examples
 #' rm(list=ls())
-#' library(ggplot2)
 #' #Number of data
 #' n <- 500
 #' #n <- 2000
@@ -170,8 +169,6 @@ DPMGibbsN <- function (z, hyperG0, a, b, N, doPlot=TRUE,
                        nbclust_init=30, plotevery=1,
                        diagVar=TRUE, verbose=TRUE,
                        ...){
-  
-  if(doPlot){library(ggplot2)}
   
   p <- nrow(z)
   n <- ncol(z)

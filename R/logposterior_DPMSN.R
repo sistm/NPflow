@@ -1,3 +1,4 @@
+#'@importFrom stats dgamma
 logposterior_DPMSN <- function(z, xi, psi, Sigma, B, hyper, c, m, alpha, n, a, b, diagVar){
     res <- NA
     
@@ -20,7 +21,7 @@ logposterior_DPMSN <- function(z, xi, psi, Sigma, B, hyper, c, m, alpha, n, a, b
             }else{
                 betas <- apply(X=Sigma[,,indfull], MARGIN=3, diag)
                 beta0 <- diag(hyperG0$lambda)
-                S <- apply(betas, MARGIN=2, function(b){sum(dgamma(x=b,shape=hyperG0$nu, 
+                S <- apply(betas, MARGIN=2, function(b){sum(stats::dgamma(x=b,shape=hyperG0$nu, 
                                                                    rate=1/beta0, log=TRUE))})
                 log_prior_NNiW <- sum(unlist(S))
             }
@@ -37,13 +38,13 @@ logposterior_DPMSN <- function(z, xi, psi, Sigma, B, hyper, c, m, alpha, n, a, b
         }else{
             betas <- lapply(Sigma[as.character(indfull)], diag)
             beta0 <- diag(hyperG0$lambda)
-            S <- lapply(betas, function(b){sum(dgamma(x=b,shape=hyperG0$nu, 
+            S <- lapply(betas, function(b){sum(stats::dgamma(x=b,shape=hyperG0$nu, 
                                                       rate=1/beta0, log=TRUE))})
             log_prior_NNiW <- sum(unlist(S))
         }
     }
     
-    log_prior_alpha <- dgamma(alpha, shape=a, scale=1/b, log=TRUE)
+    log_prior_alpha <- stats::dgamma(alpha, shape=a, scale=1/b, log=TRUE)
     
     log_clustering <- sum(c(lgamma(alpha), K*log(alpha), lgamma(mfull),-lgamma(alpha+n)))
     

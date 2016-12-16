@@ -42,7 +42,6 @@
 #'
 #'@examples
 #' rm(list=ls())
-#' library(ggplot2)
 #' 
 #' #Number of data
 #' n <- 1000
@@ -163,8 +162,6 @@ DPMGibbsSkewT_Prior <- function (z, prior, hyperG0, a, b, N, nbclust_init,
                               doPlot=TRUE, plotevery=1, 
                               diagVar=TRUE, verbose=TRUE,
                               ...){
-    
-    if(doPlot){library(ggplot2)}
     
     p <- dim(z)[1]
     n <- dim(z)[2]

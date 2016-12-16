@@ -45,7 +45,6 @@
 #'
 #'@examples
 #' rm(list=ls())
-#' library(ggplot2)
 #' 
 #' #Number of data
 #' n <- 2000
@@ -350,8 +349,6 @@ DPMGibbsSkewN <- function (z, hyperG0, a, b, N, doPlot=TRUE,
                            nbclust_init=30, plotevery=1, 
                            diagVar=TRUE, verbose=TRUE,
                            ...){
-    
-    if(doPlot){library(ggplot2)}
     
     p <- dim(z)[1]
     n <- dim(z)[2]
