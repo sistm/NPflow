@@ -11,4 +11,3 @@ rNNiW(SufStat, diagVar)
 For internal use only.
 }
 \keyword{internal}
-

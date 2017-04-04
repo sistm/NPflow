@@ -29,9 +29,6 @@ a \code{list}:
 \description{
 Get a point estimate of the partition using the Binder loss function.
 }
-\author{
-Francois Caron, Boris Hejblum
-}
 \references{
 F Caron, YW Teh, TB Murphy, Bayesian nonparametric Plackett-Luce
 models for the analysis of preferences for college degree programmes,
@@ -45,4 +42,6 @@ Gene Expression and Proteomics}, K-A Do, P Muller, M Vannucci
 \seealso{
 \code{\link{similarityMat}} \code{\link{similarityMatC}}
 }
-
+\author{
+Francois Caron, Boris Hejblum
+}

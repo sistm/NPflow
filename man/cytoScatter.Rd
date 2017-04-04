@@ -63,4 +63,3 @@ for(k in 1:n){
 cytoScatter(z)
 
 }
-

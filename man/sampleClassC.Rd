@@ -22,4 +22,3 @@ of column vectors, each containing the sampling probabilities
 for their respective draw
 }
 \keyword{internal}
-

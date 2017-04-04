@@ -35,6 +35,6 @@ C++ implementation of multivariate Normal inverse Wishart probability density fu
 \references{
 Hejblum BP, Alkhassim C, Gottardo R, Caron F, Thiebaut R, Sequential Dirichlet
 Process Mixtures of Multivariate Skew t-distributions for Model-based Clustering
-of Flow Cytometry Data, in preparation.
+of Flow Cytometry Data, submitted.
+arxiv ID: 1702.04407 \url{https://arxiv.org/abs/1702.04407v2}
 }
-

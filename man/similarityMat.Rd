@@ -25,4 +25,3 @@ Computes the coclustering (or similarity) matrix
 \author{
 Boris Hejblum
 }
-

@@ -3,15 +3,15 @@ citHeader("To cite NPflow in publications, please use:")
 citEntry(entry = "Article",
    title  = "Sequential Dirichlet Process Mixtures of Multivariate Skew t-distributions for Model-based Clustering of Flow Cytometry Data",
    author = c(person("Boris P Hejblum"), person("Chariff Alkhassim"), person("Raphael Gottardo"), person("Fran\\c{c}ois Caro"), person("Rodolphe Thi\\'ebaut")),
-   journal = "in preparation",
-   year   = "2016",
+   journal = "submitted",
+   year   = "2017",
    volume = "",
    number = "",
    pages  = "",
    doi    = "",
-   url    = "",
-   note   = "R package version 0.4.0",
-   textVersion = "Hejblum BP, Alkhassim C, Gottardo R, Caron F and Thiebaut R (2016) Sequential Dirichlet Process Mixtures of Multivariate Skew t-distributions for Model-based Clustering of Flow Cytometry Data. In preparation."
+   url    = "https://arxiv.org/abs/1702.04407v2",
+   note   = "R package version 0.12.0",
+   textVersion = "Hejblum BP, Alkhassim C, Gottardo R, Caron F and Thiebaut R (2017) Sequential Dirichlet Process Mixtures of Multivariate Skew t-distributions for Model-based Clustering of Flow Cytometry Data. submitted. Arxiv ID: 1702.04407. https://arxiv.org/abs/1702.04407v2"
 )
 
 citFooter("We have invested a lot of time and effort in implementing NPflow, ", "please cite it when using it for data analysis or research.")

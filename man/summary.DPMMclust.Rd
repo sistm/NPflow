@@ -44,10 +44,9 @@ Summary methods for \code{DPMMclust} objects.
 The cost of a point estimate partition is calculated using either a pairwise
 coincidence loss function (Binder), or 1-Fmeasure (F-measure).
 }
-\author{
-Boris Hejblum
-}
 \seealso{
 \code{\link{similarityMat}} \code{\link{similarityMatC}}
 }
-
+\author{
+Boris Hejblum
+}

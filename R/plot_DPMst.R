@@ -114,11 +114,11 @@ plot_DPMst <- function(z, c, i="", alpha="?", U_SS,
 
         p <- (ggplot(zDplotfull)
               + facet_grid(dimensionY~dimensionX, scales="free")
-              + geom_point(aes_string(x="X", y="Y", colour="Cluster", order="Cluster"),
+              + geom_point(aes_string(x="X", y="Y", colour="Cluster"),
                            data=zDplotfull, alpha=1, size=2/(0.3*log(n)))
-              #               + geom_polygon(aes_string(x="X", y="Y", fill="Cluster", colour="Cluster", order="Cluster"),
+              #               + geom_polygon(aes_string(x="X", y="Y", fill="Cluster", colour="Cluster"),
               #                              data=ellipse95, size=0.5, linetype=2, colour="black", alpha=.3)
-              + geom_point(aes_string(x="X", y="Y", colour="Cluster", order="Cluster"),
+              + geom_point(aes_string(x="X", y="Y", colour="Cluster"),
                            data=UDplotfull, shape=22, size=5/(0.3*log(n)))
               + ggtitle(paste(n, " obs.",
                               "\niteration ", i, " : ",
@@ -146,7 +146,7 @@ plot_DPMst <- function(z, c, i="", alpha="?", U_SS,
 
         if(!nice){
             p <- (ggplot(z2plot)
-                  + geom_point(aes_string(x="D1", y="D2", colour="Cluster", order="Cluster", fill="Cluster"), alpha=0.7,
+                  + geom_point(aes_string(x="D1", y="D2", colour="Cluster", fill="Cluster"), alpha=0.7,
                                data=z2plot, size=2/(0.3*log(n)))
                   + scale_alpha_continuous(guide=FALSE)
                   + scale_fill_discrete(guide=FALSE)
@@ -167,7 +167,7 @@ plot_DPMst <- function(z, c, i="", alpha="?", U_SS,
 
         }else{
             p <- (ggplot(z2plot)
-                  + geom_point(aes_string(x="D1", y="D2", colour="Cluster", order="Cluster", shape="Cluster", fill="Cluster"), alpha=0.65,
+                  + geom_point(aes_string(x="D1", y="D2", colour="Cluster", shape="Cluster", fill="Cluster"), alpha=0.65,
                                data=z2plot, size=2)
                   + scale_alpha_continuous(guide=FALSE)
             )
@@ -215,11 +215,11 @@ plot_DPMst <- function(z, c, i="", alpha="?", U_SS,
                   + scale_colour_discrete(guide=guide_legend(override.aes = list(size = 4, alpha=0.8, linetype=0)))
             )
         }else{
-          p <- (p + geom_point(aes_string(x="D1", y="D2", fill="Cluster", order="Cluster", shape="Center"),
+          p <- (p + geom_point(aes_string(x="D1", y="D2", fill="Cluster", shape="Center"),
                                data=zmean2plot, size=5)
-                + geom_point(aes_string(x="D1", y="D2", fill="Cluster", order="Cluster", shape="Center"),
+                + geom_point(aes_string(x="D1", y="D2", fill="Cluster", shape="Center"),
                              data=U2plot, size=5)
-                + geom_point(aes_string(x="D1", y="D2", fill="Cluster", order="Cluster", shape="Center"),
+                + geom_point(aes_string(x="D1", y="D2", fill="Cluster", shape="Center"),
                              data=xi2plot, size=5)
                 + scale_shape_manual(values=c(24,22,23),
                                      breaks=c("observed mean", "sampled mean", "xi param"),

@@ -153,15 +153,15 @@ F2 <- FmeasureC(pred=s2$point_estim$c_est, ref=c)
 F2
 }
 }
-\author{
-Boris Hejblum, Chariff Alkhassim
-}
 \references{
 Hejblum BP, Alkhassim C, Gottardo R, Caron F, Thiebaut R, Sequential Dirichlet
 Process Mixtures of Multivariate Skew t-distributions for Model-based Clustering
-of Flow Cytometry Data, in preparation.
+of Flow Cytometry Data, submitted.
+arxiv ID: 1702.04407 \url{https://arxiv.org/abs/1702.04407v2}
 }
 \seealso{
 \code{\link{postProcess.DPMMclust}} \code{\link{DPMGibbsN}}
 }
-
+\author{
+Boris Hejblum, Chariff Alkhassim
+}

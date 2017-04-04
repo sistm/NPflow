@@ -40,4 +40,3 @@ C++ implementation of multivariate skew normal likelihood function for multiple 
 \author{
 Boris Hejblum
 }
-

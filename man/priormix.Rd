@@ -80,4 +80,3 @@ hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
 \seealso{
 summary.DPMMclust
 }
-

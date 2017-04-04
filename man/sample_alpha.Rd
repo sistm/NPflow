@@ -97,4 +97,3 @@ Technical Report, Duke University, 1992.
 MD Escobar, M West, Bayesian Density Estimation and Inference Using Mixtures
 \emph{Journal of the American Statistical Association}, 90(430):577-588, 1995.
 }
-

@@ -150,10 +150,9 @@ nbclust_init <- 30
 
 
 }
-\author{
-Boris Hejblum
-}
 \seealso{
 \code{\link{DPMGibbsN}}
 }
-
+\author{
+Boris Hejblum
+}

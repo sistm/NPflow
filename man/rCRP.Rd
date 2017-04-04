@@ -94,4 +94,3 @@ MCMCy1 <- DPMGibbsSkewT(z=GvHD_sims$data[,1:N],
 }
 
 }
-

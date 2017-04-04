@@ -25,4 +25,3 @@ NuMatParC(c,d)
 \author{
 Boris Hejblum, Chariff Alkhassim
 }
-

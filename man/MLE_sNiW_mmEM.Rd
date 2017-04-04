@@ -82,4 +82,3 @@ mle <- MLE_sNiW_mmEM(xi_list, psi_list, S_list, hyperG0, K=2)
 \author{
 Boris Hejblum, Chariff Alkhassim
 }
-

@@ -14,4 +14,3 @@ lgamma_mv(x, p)
 \description{
 Multivariate log gamma function
 }
-

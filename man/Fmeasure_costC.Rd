@@ -33,4 +33,3 @@ Fmeasure_costC(sapply(c2, "["))
 }
 
 }
-

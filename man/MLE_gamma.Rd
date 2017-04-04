@@ -24,4 +24,3 @@ mle <- MLE_gamma(g_list)
 mle
 
 }
-

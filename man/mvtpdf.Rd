@@ -36,4 +36,3 @@ mvtpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1),
 )
 
 }
-

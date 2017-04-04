@@ -117,19 +117,20 @@ summary.DPMMclust <- function(object, burnin=0, thin=1, gs=NULL, lossFn="F-measu
 #'@export
 print.summaryDPMMclust <- function(x,...){
   
-  cat(class(x), "object with", x$nb_mcmcit, "MCMC iterations:\n")
-  cat(rep("-",40),"\n", sep="")
-  cat(rep("-",40),"\n", sep="")
-  cat("Burnin =", x$burnin, "iterations\n\n")
+  cat(class(x), "object with", x$nb_mcmcit, "observations sampled from the posterior:\n")
+  cat(rep("-", 72), "\n", sep="")
+  #cat(rep("-",40),"\n", sep="")
+  cat("Burnin:", x$burnin, "MCMC iterations discarded\n\n")
   cat("Point estimate of the partition with a ", x$clust_distrib," mixture:\n", sep="")
   t<-table(x$point_estim$c_est)
   t2print <- paste(formatC(as.vector(t/length(x$point_estim$c_est)),
                            digits=2),"%", sep="")
   names(t2print) <- names(t)
   print(t2print, quote=F)
-  cat("\nLoss of the point estimate partition:", x$loss, "\n")
-  cat(rep("-",40),"\n", sep="")
-  
+  if(!is.na(x$loss)){
+    cat("\nLoss of the point estimate partition compared to the reference clustering provided:", x$loss, "\n")
+    cat(rep("-",40),"\n", sep="")
+  }
 }
 
 

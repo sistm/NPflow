@@ -32,10 +32,9 @@ mvnpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1),
 )
 
 }
-\author{
-Boris P. Hejblum
-}
 \seealso{
 mvnpdf, mmvnpdfC
 }
-
+\author{
+Boris P. Hejblum
+}

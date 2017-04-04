@@ -51,9 +51,6 @@ Note that he current implementation only allows Gaussian components.
 The modified Binder loss function takes into account the distance between
 mixture components using #'the  Bhattacharyya distance.
 }
-\author{
-Chariff Alkhassim
-}
 \references{
 JW Lau, PJ Green, Bayesian Model-Based Clustering Procedures,
 \emph{Journal of Computational and Graphical Statistics}, 16(3):526-558, 2007.
@@ -64,4 +61,6 @@ DA Binder, Bayesian cluster analysis, \emph{Biometrika} 65(1):31-38, 1978.
 \code{\link{similarityMat}} \code{\link{similarityMatC}}
 \code{\link{similarityMat_nocostC}}
 }
-
+\author{
+Chariff Alkhassim
+}

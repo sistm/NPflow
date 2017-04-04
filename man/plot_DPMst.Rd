@@ -41,4 +41,3 @@ Plot of a Dirichlet process mixture of skew t-distribution partition
 \author{
 Boris Hejblum
 }
-

@@ -18,4 +18,3 @@ the computed trace
 C++ implementation of residual trace computation step used when sampling the scale
 }
 \keyword{internal}
-

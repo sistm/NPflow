@@ -76,4 +76,3 @@ mmsNiWlogpdf(U_xi=xi_list, U_psi=psi_list, U_Sigma=S_list,
             U_Sigma0=list(hyperG0$lambda), U_df0=list(hyperG0$nu))
 
 }
-

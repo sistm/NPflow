@@ -9,10 +9,14 @@ Documentation
 
 NPflow is a R package which performs Bayesian estimation for Dirichlet process mixture of skew t-distributions.
 It is especially oriented towards flow-cytometry data preprocessing applications.
-On top of the CRAN help pdf-file, the following article explains what NPflow is about:
+
+The main function of the package is DPMpost().
+
+On top of the CRAN help pdf-file, the following article explains what NPflow is about and how it works:
 Hejblum BP, Alkhassim C, Gottardo R, Caron F, Thiebaut R, Sequential Dirichlet
-Process Mixtures of Multivariate Skew t-distributions for Model-based Clustering
-of Flow Cytometry Data, in preparation.
+Process Mixtures of Multivariate Skew t-distributions for Model-based Clustering of Flow Cytometry Data, submitted.
+arxiv ID: 1702.04407 
+https://arxiv.org/abs/1702.04407v2
 
 
-   -- Boris Hejblum
+    -- Boris Hejblum

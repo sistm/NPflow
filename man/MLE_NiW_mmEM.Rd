@@ -84,4 +84,3 @@ hyperG0[["kappa"]]
 hyperG02[["kappa"]]
 mle$U_kappa
 }
-

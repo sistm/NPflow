@@ -38,4 +38,3 @@ C++ implementation of multivariate Normal probability density function for multi
 \author{
 Boris Hejblum
 }
-

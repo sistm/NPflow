@@ -45,10 +45,9 @@ a mixture distribution of the posterior locations
 The cost of a point estimate partition is calculated using either a pairwise
 coincidence loss function (Binder), or 1-Fmeasure (F-measure).
 }
-\author{
-Boris Hejblum
-}
 \seealso{
 \code{\link{similarityMat}} \code{\link{summary.DPMMclust}}
 }
-
+\author{
+Boris Hejblum
+}

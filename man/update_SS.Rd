@@ -17,4 +17,3 @@ update_SS(z, S, hyperprior = NULL)
 For internal use only.
 }
 \keyword{internal}
-

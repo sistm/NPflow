@@ -21,4 +21,3 @@ vclust2mcoclustC(cc)
 \author{
 Chariff Alkhassim
 }
-

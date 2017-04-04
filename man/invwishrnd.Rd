@@ -15,4 +15,3 @@ invwishrnd(n, lambda)
 For internal use only.
 }
 \keyword{internal}
-

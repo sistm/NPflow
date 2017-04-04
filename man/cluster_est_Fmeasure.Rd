@@ -29,10 +29,9 @@ a \code{list}:
 \description{
 Get a point estimate of the partition using the F-measure as the cost function.
 }
-\author{
-Francois Caron, Boris Hejblum
-}
 \seealso{
 \code{\link{similarityMat}}
 }
-
+\author{
+Francois Caron, Boris Hejblum
+}

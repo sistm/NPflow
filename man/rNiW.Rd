@@ -11,4 +11,3 @@ rNiW(hyper, diagVar)
 For internal use only.
 }
 \keyword{internal}
-

@@ -77,28 +77,22 @@
 #'
 #'@references Hejblum BP, Alkhassim C, Gottardo R, Caron F, Thiebaut R, Sequential Dirichlet
 #'Process Mixtures of Multivariate Skew t-distributions for Model-based Clustering
-#'of Flow Cytometry Data, in preparation.
+#'of Flow Cytometry Data, submitted.
+#'arxiv ID: 1702.04407 \url{https://arxiv.org/abs/1702.04407v2}
 #'
 #'@export
 #'
 #'@examples
-#' rm(list=ls())
-#' library(ggplot2)
-#' library(truncnorm)
+#'#rm(list=ls())
+#'set.seed(123)
 #'
-#' #Number of data
-#' n <- 2000
-#' set.seed(123)
-#' set.seed(4321)
+#'# Exemple in 2 dimensions
 #'
-#'
-#' d <- 2
-#' ncl <- 4
-#'
-#' # Sample data
-#'
+#' # Generate data:
+#' n <- 2000 # number of data points
+#' d <- 2 # dimensions
+#' ncl <- 4 # number of true clusters
 #' sdev <- array(dim=c(d,d,ncl))
-#'
 #' xi <- matrix(nrow=d, ncol=ncl, c(-1.5, 1.5, 1.5, 1.5, 2, -2.5, -2.5, -3))
 #' psi <- matrix(nrow=d, ncol=4, c(0.3, -0.7, -0.8, 0, 0.3, -0.7, 0.2, 0.9))
 #' nu <- c(100,25,8,5)
@@ -107,8 +101,6 @@
 #' sdev[, ,2] <- matrix(nrow=d, ncol=d, c(0.1, 0, 0, 0.3))
 #' sdev[, ,3] <- matrix(nrow=d, ncol=d, c(0.3, 0, 0, 0.2))
 #' sdev[, ,4] <- .3*diag(2)
-#'
-#'
 #' c <- rep(0,n)
 #' w <- rep(1,n)
 #' z <- matrix(0, nrow=d, ncol=n)
@@ -117,10 +109,9 @@
 #'  w[k] <- rgamma(1, shape=nu[c[k]]/2, rate=nu[c[k]]/2)
 #'  z[,k] <- xi[, c[k]] + psi[, c[k]]*rtruncnorm(n=1, a=0, b=Inf, mean=0, sd=1/sqrt(w[k])) +
 #'                (sdev[, , c[k]]/sqrt(w[k]))%*%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
-#'  #cat(k, "/", n, " observations simulated\n", sep="")
 #' }
 #'
-#' # Set parameters of G0
+#' # Define hyperprior
 #' hyperG0 <- list()
 #' hyperG0[["b_xi"]] <- rowMeans(z)
 #' hyperG0[["b_psi"]] <- rep(0,d)
@@ -130,9 +121,18 @@
 #' hyperG0[["nu"]] <- d+1
 #' hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
 #'
-#'  # hyperprior on the Scale parameter of DPM
-#'  a <- 0.0001
-#'  b <- 0.0001
+#'
+#'\dontrun{
+#'  MCMCsample_st <- DPMpost(data=z, hyperG0=hyperG0, N=2000,
+#'                           distrib="skewt",
+#'                           gg.add=list(ggplot2::theme_bw(),
+#'                           ggplot2::guides(shape=ggplot2::guide_legend(override.aes = list(fill="grey45"))))
+#'  )
+#'  s <- summary(MCMCsample_st, burnin = 1600, thin=5, lossFn = "Binder")
+#'  s
+#'  plot(s)
+#'  #plot(s, hm=TRUE)
+#'}
 #'
 #'
 #'
@@ -157,18 +157,6 @@
 #'        + theme_bw()
 #'        + scale_colour_discrete(guide=guide_legend(override.aes = list(size = 6, shape=22))))
 #'  pp #pdf(height=7, width=7.5)
-#'
-#'\dontrun{
-#'  MCMCsample_st <- DPMpost(data=z, hyperG0=hyperG0, N=2000,
-#'                           distrib="skewt",
-#'                           gg.add=list(theme_bw(),
-#'                           guides(shape=guide_legend(override.aes = list(fill="grey45"))))
-#'  )
-#'  s <- summary(MCMCsample_st, burnin = 1500, thin=5, lossFn = "Binder")
-#'  s
-#'  plot(s)
-#'  #plot(s, hm=TRUE) #pdf(height=8.5, width=10.5) #png(height=700, width=720)
-#'}
 #'
 #'
 #'

@@ -78,4 +78,3 @@ p
 \seealso{
 mvnpdf, mmvsnpdfC
 }
-

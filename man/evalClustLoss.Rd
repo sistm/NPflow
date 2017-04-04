@@ -33,9 +33,6 @@ Evaluate the loss of a point estimate of the partition compared to a gold standa
 The cost of a point estimate partition is calculated using either a pairwise
 coincidence loss function (Binder), or 1-Fmeasure (F-measure).
 }
-\author{
-Boris Hejblum
-}
 \references{
 J.W. Lau & P.J. Green. Bayesian Model-Based Clustering
 Procedures, Journal of Computational and Graphical Statistics,
@@ -49,4 +46,6 @@ Gene Expression and Proteomics, K.-A. Do, P. Muller, M. Vannucci
 \seealso{
 \code{\link{similarityMat}}, \code{\link{cluster_est_binder}}
 }
-
+\author{
+Boris Hejblum
+}

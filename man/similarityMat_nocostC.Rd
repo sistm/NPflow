@@ -30,4 +30,3 @@ microbenchmark(similarityMat(c3), similarityMat_nocostC(c3), times=2L)
 cat("package 'microbenchmark' not available\\n")
 }
 }
-

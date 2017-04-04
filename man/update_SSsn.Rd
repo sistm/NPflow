@@ -19,4 +19,3 @@ update_SSsn(z, S, ltn, hyperprior = NULL)
 For internal use only.
 }
 \keyword{internal}
-

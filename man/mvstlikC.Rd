@@ -42,4 +42,3 @@ C++ implementation of multivariate skew t likelihood function for multiple input
 \author{
 Boris Hejblum
 }
-

@@ -32,4 +32,3 @@ matrix of densities of dimension K x n
 \description{
 multivariate Normal inverse Wishart probability density function for multiple inputs
 }
-

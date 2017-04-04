@@ -26,4 +26,3 @@ Default is \code{1}, i.e. no thining.}
 \description{
 Convergence diagnostic plots
 }
-

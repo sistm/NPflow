@@ -50,4 +50,3 @@ mvsnpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1),
 \seealso{
 mvtpdf, mvsnpdf, mmvstpdfC, mvstlikC
 }
-

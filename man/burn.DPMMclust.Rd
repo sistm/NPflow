@@ -22,10 +22,9 @@ a \code{DPMMclust} object minus the burnt iterations
 \description{
 Utility function for burning MCMC iteration from a \code{DPMMclust} object.
 }
-\author{
-Boris Hejblum
-}
 \seealso{
 \code{\link{summary.DPMMclust}}
 }
-
+\author{
+Boris Hejblum
+}

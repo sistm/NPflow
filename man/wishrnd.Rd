@@ -15,4 +15,3 @@ wishrnd(n, Sigma)
 For internal use only.
 }
 \keyword{internal}
-

@@ -59,4 +59,3 @@ cat("package 'microbenchmark' not available\\n")
 \author{
 Boris Hejblum
 }
-

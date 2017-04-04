@@ -51,4 +51,3 @@ microbenchmark(mvnpdf(x=matrix(c(rep(1.96,2),rep(0,2)), nrow=2, ncol=2),
 cat("package 'microbenchmark' not available\\n")
 }
 }
-

@@ -48,4 +48,3 @@ Plot of a Dirichlet process mixture of gaussian distribution partition
 \author{
 Boris Hejblum
 }
-

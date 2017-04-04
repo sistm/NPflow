@@ -139,11 +139,11 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
 
     p <- (ggplot(zDplotfull)
           + facet_grid(dimensionY~dimensionX, scales="free")
-          + geom_point(aes_string(x="X", y="Y", colour="Cluster", order="Cluster"),
+          + geom_point(aes_string(x="X", y="Y", colour="Cluster"),
                        data=zDplotfull, alpha=1, size=2/(0.3*log(n)))
-          #               + geom_polygon(aes(x=x, y=y, fill=Cluster, colour=Cluster, order=Cluster),
+          #               + geom_polygon(aes(x=x, y=y, fill=Cluster, colour=Cluster),
           #                              data=ellipse95, size=0.5, linetype=2, colour="black", alpha=.3)
-          + geom_point(aes_string(x="X", y="Y", fill="Cluster", order="Cluster"),
+          + geom_point(aes_string(x="X", y="Y", fill="Cluster"),
                        data=UDplotfull, shape=22, size=5/(0.3*log(n)))
           + ggtitle(paste(n, " obs.",
                           "\niteration ", i, " : ",
@@ -175,9 +175,9 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
 
     p <- (ggplot(z2plot)
 
-          + geom_point(aes_string(x="D1", y="D2", colour="Cluster", order="Cluster"),
+          + geom_point(aes_string(x="D1", y="D2", colour="Cluster"),
                        data=z2plot)
-          + geom_point(aes_string(x="D1", y="D2", fill="Cluster", order="Cluster"),
+          + geom_point(aes_string(x="D1", y="D2", fill="Cluster"),
                        data=U2plot, shape=22, size=5)
           + ggtitle(paste(n, " obs.",
                           "\niteration ", i, " : ",
@@ -243,7 +243,7 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
                                cbind.data.frame(ellipse95_esp, "type"="expected"))
 
       p <- (p
-            + geom_polygon(aes_string(x="x", y="y", fill="Cluster", colour="Cluster", order="Cluster", linetype="type"),
+            + geom_polygon(aes_string(x="x", y="y", fill="Cluster", colour="Cluster", linetype="type"),
                            data=ellipses95_data, alpha=.15)
             + scale_linetype_manual(values=c(1,2,3),
                                     labels=c("observed", "sampled", "expected"),
@@ -258,7 +258,7 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
     #                                       D2=tapply(X=z2plot[,2], INDEX=z2plot$Cluster, FUN=mean)
     #         )
     #         zmean2plot <- cbind.data.frame(zmean2plot, Cluster=rownames(zmean2plot))
-    #         p <- (p + geom_point(aes_string(x="D1", y="D2", fill="Cluster", order="Cluster", shape="24"),
+    #         p <- (p + geom_point(aes_string(x="D1", y="D2", fill="Cluster", shape="24"),
     #                              data=zmean2plot, size=5)
     #               + scale_shape_manual(values=c(24,22),
     #                                    labels=c("observed", "sampled"),

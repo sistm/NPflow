@@ -24,4 +24,3 @@ update_SSst(z, S, ltn, scale, df, hyperprior = NULL)
 For internal use only.
 }
 \keyword{internal}
-

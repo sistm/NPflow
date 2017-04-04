@@ -39,4 +39,3 @@ Plot of a Dirichlet process mixture of skew normal distribution partition
 \author{
 Boris Hejblum
 }
-

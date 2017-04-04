@@ -2,8 +2,8 @@
 % Please edit documentation in R/MAP_sNiW_mmEM.R
 \name{MAP_sNiW_mmEM}
 \alias{MAP_sNiW_mmEM}
-\alias{MAP_sNiW_mmEM_vague}
 \alias{MAP_sNiW_mmEM_weighted}
+\alias{MAP_sNiW_mmEM_vague}
 \title{EM MAP for mixture of sNiW}
 \usage{
 MAP_sNiW_mmEM(xi_list, psi_list, S_list, hyperG0, init = NULL, K,
@@ -115,4 +115,3 @@ map <- MAP_sNiW_mmEM(xi_list, psi_list, S_list, hyperG0, K=2, tol=0.1)
 \author{
 Boris Hejblum, Chariff Alkhassim
 }
-

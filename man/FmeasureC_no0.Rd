@@ -27,4 +27,3 @@ N Aghaeepour, G Finak, H Hoos, TR Mosmann, RR Brinkman, R Gottardo,
 RH Scheuermann, Critical assessment of automated flow cytometry data analysis
 techniques, \emph{Nature Methods}, 10(3):228-38, 2013.
 }
-
