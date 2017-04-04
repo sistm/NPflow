@@ -124,9 +124,9 @@
 #'
 #'\dontrun{
 #'  MCMCsample_st <- DPMpost(data=z, hyperG0=hyperG0, N=2000,
-#'                           distrib="skewt",
-#'                           gg.add=list(ggplot2::theme_bw(),
-#'                           ggplot2::guides(shape=ggplot2::guide_legend(override.aes = list(fill="grey45"))))
+#'    distrib="skewt",
+#'    gg.add=list(ggplot2::theme_bw(),
+#'       ggplot2::guides(shape=ggplot2::guide_legend(override.aes = list(fill="grey45"))))
 #'  )
 #'  s <- summary(MCMCsample_st, burnin = 1600, thin=5, lossFn = "Binder")
 #'  s

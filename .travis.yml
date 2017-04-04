@@ -1,6 +1,10 @@
 language: R
+
 cache: packages
-r: devel
+
+r: 
+- release
+- devel
 
 r_github_packages:
 - hadley/ggplot2
@@ -14,5 +18,7 @@ r_packages:
 - pheatmap
 - ellipse
 - truncnorm
+
+r_build_args: "--html"
 
 r_check_args: "--as-cran --timings"

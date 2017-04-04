@@ -1,6 +1,5 @@
 .Rproj.user
 .Rhistory
-.Rbuildignore
 *.Rproj
 *.db
 *.RData
