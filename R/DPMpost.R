@@ -123,6 +123,8 @@
 #'
 #'
 #'\dontrun{
+#'  cytoScatter(z)
+#'
 #'  MCMCsample_st <- DPMpost(data=z, hyperG0=hyperG0, N=2000,
 #'    distrib="skewt",
 #'    gg.add=list(ggplot2::theme_bw(),
@@ -131,13 +133,10 @@
 #'  s <- summary(MCMCsample_st, burnin = 1600, thin=5, lossFn = "Binder")
 #'  s
 #'  plot(s)
-#'  #plot(s, hm=TRUE)
-#'}
-#'
-#'
-#'
-#'  ## Data
-#'  ########
+#'  #plot(s, hm=TRUE) # this can take a few sec...
+#'  
+#'  
+#'  # more data plotting:
 #'  library(ggplot2)
 #'  p <- (ggplot(data.frame("X"=z[1,], "Y"=z[2,]), aes(x=X, y=Y))
 #'        + geom_point()
@@ -145,7 +144,7 @@
 #'        +xlab("D1")
 #'        +ylab("D2")
 #'        +theme_bw())
-#'  p #pdf(height=8.5, width=8.5)
+#'  p
 #'
 #'  c2plot <- factor(c)
 #'  levels(c2plot) <- c("4", "1", "3", "2")
@@ -156,9 +155,8 @@
 #'        + ylab("D2")
 #'        + theme_bw()
 #'        + scale_colour_discrete(guide=guide_legend(override.aes = list(size = 6, shape=22))))
-#'  pp #pdf(height=7, width=7.5)
-#'
-#'
+#'  pp
+#'}
 #'
 #'
 #'
