@@ -109,7 +109,7 @@
 #'                  
 #'  plot_ConvDPM(MCMCsample, from=2)
 #'  
-#'  s <- summary(MCMCsample, burnin = 10, thin=2, posterior_approx=FALSE, K=0,dist="Normal",
+#'  s <- summary(MCMCsample, burnin = 10, thin=2, posterior_approx=FALSE,dist="Normal",
 #'  lossFn = "MBinderN",lambda=0,a=1,b=1)
 #'  
 #'  F <- FmeasureC(pred=s$point_estim$c_est, ref=c)

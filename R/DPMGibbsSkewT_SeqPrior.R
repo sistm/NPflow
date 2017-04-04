@@ -109,7 +109,7 @@
 #'  MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=2000, 
 #'                                 doPlot=TRUE, plotevery=250,
 #'                                 nbclust_init, diagVar=FALSE)
-#'  s <- summary(MCMCsample_st, burnin = 1500, thin=2, posterior_approx=TRUE, K=4)
+#'  s <- summary(MCMCsample_st, burnin = 1500, thin=2, posterior_approx=TRUE)
 #'  F <- FmeasureC(pred=s$point_estim$c_est, ref=c)
 #'  
 #' for(k in 1:n){

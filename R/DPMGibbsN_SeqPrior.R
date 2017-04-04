@@ -110,7 +110,7 @@
 #' MCMCsample <- DPMGibbsN(z, hyperG0, a, b, N=2000, doPlot, nbclust_init, 
 #'                         plotevery=200, diagVar=FALSE)
 #' 
-#' s <- summary(MCMCsample, posterior_approx=TRUE, burnin = 1750, thin=2 ,K=4)
+#' s <- summary(MCMCsample, posterior_approx=TRUE, burnin = 1750, thin=2)
 #' F1 <- FmeasureC(pred=s$point_estim$c_est, ref=c)
 #' F1
 #' 
