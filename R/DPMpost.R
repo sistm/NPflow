@@ -248,7 +248,7 @@ DPMpost <- function (data, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
 ){
 
   if(ncores>1){
-    if(ncores < parallel::detectCores()){
+    if(ncores > parallel::detectCores()){
       stop("Number of requested cores is higher than what is available")
     }
   }
