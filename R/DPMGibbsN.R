@@ -329,12 +329,11 @@ DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
       obs_j <- which(c==j)
       #cat("cluster ", j, ":\n")
       if(use_variance_hyperprior){
-        U_SS[[j]] <- update_SS(z=z[, obs_j,drop=FALSE], S=hyperG0, hyperprior = list("Sigma"=U_Sigma[,,j]))
+        U_SS[[j]] <- update_SS(z=z[, obs_j, drop=FALSE], S=hyperG0, hyperprior = list("Sigma"=U_Sigma[,,j]))
       }else{
-        U_SS[[j]] <- update_SS(z=z[, obs_j,drop=FALSE], S=hyperG0)
+        U_SS[[j]] <- update_SS(z=z[, obs_j, drop=FALSE], S=hyperG0)
       }
       NiW <- rNiW(U_SS[[j]], diagVar=diagVar)
-      
       U_mu[, j] <- NiW[["mu"]]
       U_SS[[j]][["mu"]] <- NiW[["mu"]]
       

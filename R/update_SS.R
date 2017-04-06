@@ -19,7 +19,7 @@ update_SS <- function(z, S, hyperprior=NULL){
   kappa0 <- S[["kappa"]]
   nu0 <- S[["nu"]]
   lambda0 <- S[["lambda"]]
-  if(length(dim(z))>1 & dim(z)[2]>1 ){
+  if(length(dim(z))>1 & dim(z)[2]>1){
     n <- ncol(z)
     zbar <- apply(X=z, MARGIN=1, FUN=mean)
 
@@ -47,14 +47,14 @@ update_SS <- function(z, S, hyperprior=NULL){
 
     nu1 <- nu0 + 1
 
-    mu1 <- kappa0/(kappa0 + 1)*mu0 + 1/(kappa0 + 1)*z
+    mu1 <- (kappa0/(kappa0 + 1)*mu0 + 1/(kappa0 + 1)*z)[,1]
 
     if(!is.null(hyperprior)){
       #g0 <- ncol(lambda0) + 5
       g0 <- nu0
       lambda0 <- wishrnd(n=nu0+g0, Sigma=solve(solve(lambda0)+solve(hyperprior[["Sigma"]])))
     }
-    lambda1 <- lambda0 + kappa0/(kappa0 + 1)*tcrossprod(z - mu0)
+    lambda1 <- lambda0 + kappa0/(kappa0 + 1)*tcrossprod(z[,1] - mu0)
   }
 
   S_up[["mu"]] <- mu1
