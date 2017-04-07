@@ -1,9 +1,10 @@
 News about the R package NPflow:
 --------------------------------
 
-Main changes in Version 0.12.1 (2017-04-06):
+Main changes in Version 0.12.2 (2017-04-06):
 * Bug fix: parallel settings did not work in DPMpost (thanks to Mike Jiang for noticing this)
 * Bug fix: parallel settings did not work in DPMpost
+* updated documentation
 
 Main changes in Version 0.12.0 (2017-04-04):
 * compiled functions registration

@@ -392,7 +392,8 @@ mvnlikC <- function(x, c, clustval, mu, sigma, loglik = TRUE) {
     .Call('NPflow_mvnlikC', PACKAGE = 'NPflow', x, c, clustval, mu, sigma, loglik)
 }
 
-#' C++ implementation of multivariate normal likelihood function for multiple inputs
+#' C++ implementation of multivariate normal probability density function for 
+#' multiple inputs
 #'
 #'Based on the implementation from Nino Hardt and Dicko Ahmadou
 #'http://gallery.rcpp.org/articles/dmvnorm_arma/
