@@ -169,55 +169,7 @@
 #'                                              plotevery=25, gg.add=list(theme_bw(),
 #'                                 guides(shape=guide_legend(override.aes = list(fill="grey45")))))
 #'  plot_ConvDPM(MCMCsample_sn_par, from=2)
-#'
-#'  postalpha <- data.frame("alpha"=MCMCsample_sn_par$alpha[50:500],
-#'                          "distribution" = factor(rep("posterior",500-49),
-#'                          levels=c("prior", "posterior")))
-#'  p <- (ggplot(postalpha, aes(x=alpha))
-#'        + geom_histogram(aes(y=..density..), binwidth=.1,
-#'                         colour="black", fill="white")
-#'        + geom_density(alpha=.2, fill="blue")
-#'        + ggtitle("Posterior distribution of alpha\n")
-#'        # Ignore NA values for mean
-#'        # Overlay with transparent density plot
-#'        + geom_vline(aes(xintercept=mean(alpha, na.rm=T)),
-#'                     color="red", linetype="dashed", size=1)
-#'      )
-#'  p
-#'
-#'  p <- (ggplot(drop=FALSE, alpha=.6)
-#'        + geom_density(aes(x=alpha, fill=distribution),
-#'                       color=NA, alpha=.6,
-#'                       data=prioralpha)
-#'        + geom_density(aes(x=alpha, fill=distribution),
-#'                       color=NA, alpha=.6,
-#'                       data=postalpha)
-#'        + ggtitle("Prior and posterior distributions of alpha\n")
-#'        + scale_fill_discrete(drop=FALSE)
-#'      )
-#'  p
 #'}
-#'
-#'# k-means
-#'#########
-#'
-#'  plot(x=z[1,], y=z[2,], col=kmeans(t(z), centers=4)$cluster,
-#'       xlab = "d = 1", ylab= "d = 2", main="k-means with K=4 clusters")
-#'
-#'  KM <- kmeans(t(z), centers=4)
-#'  dataKM <- data.frame("X"=z[1,], "Y"=z[2,],
-#'                     "Cluster"=as.character(KM$cluster))
-#'  dataCenters <- data.frame("X"=KM$centers[,1],
-#'                            "Y"=KM$centers[,2],
-#'                            "Cluster"=rownames(KM$centers))
-#'
-#'  p <- (ggplot(dataKM)
-#'        + geom_point(aes(x=X, y=Y, col=Cluster))
-#'        + geom_point(aes(x=X, y=Y, fill=Cluster, order=Cluster),
-#'                     data=dataCenters, shape=22, size=5)
-#'        + scale_colour_discrete(name="Cluster")
-#'        + ggtitle("K-means with K=4 clusters\n"))
-#'  p
 #'
 #'
 #'
@@ -249,21 +201,8 @@ DPMGibbsSkewN_parallel <- function (Ncpus, type_connec,
     U_Sigma = array(0, dim=c(p, p, n))
     U_B = array(0, dim=c(2, 2, n))
 
-    par_ind <- list()
-    temp_ind <- 0
-    if(Ncpus>1){
-      nb_simult <- floor(n%/%(Ncpus))
-      for(i in 1:(Ncpus-1)){
-        par_ind[[i]] <- temp_ind + 1:nb_simult
-        temp_ind <- temp_ind + nb_simult
-      }
-      par_ind[[Ncpus]] <- (temp_ind+1):n
-    }
-    else{
-      cat("Only 1 core specified\n=> non-parallel version of the algorithm would be more efficient",
-          file=monitorfile, append = TRUE)
-      nb_simult <- n
-      par_ind[[Ncpus]] <- (temp_ind+1):n
+    if(Ncpus<2){
+      warning("Only 1 core specified\n=> non-parallel version of the algorithm would be more efficient")
     }
 
     # U_SS is a list where each U_SS[[k]] contains the sufficient
@@ -365,8 +304,7 @@ DPMGibbsSkewN_parallel <- function (Ncpus, type_connec,
                                              U_xi=U_xi,
                                              U_psi=U_psi,
                                              U_Sigma=U_Sigma,
-                                             diagVar=diagVar,
-                                             parallel_index=par_ind)
+                                             diagVar=diagVar)
         m <- slice[["m"]]
         c <- slice[["c"]]
         weights_list[[i]] <- slice[["weights"]]

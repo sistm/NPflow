@@ -1,10 +1,10 @@
 #'@keywords internal
 #'@author Boris Hejblum
 #'@importFrom stats rbeta rgamma runif
+#'@import itertools
 sliceSampler_skewT_SeqPrior_parallel <- function(Ncpus, c, m, alpha, z, priorG1,
                                                  U_xi, U_psi, U_Sigma,
-                                                 U_df, scale, diagVar,
-                                                 parallel_index){
+                                                 U_df, scale, diagVar){
 
 
     maxCl <- length(m) #maximum number of clusters
@@ -62,12 +62,13 @@ sliceSampler_skewT_SeqPrior_parallel <- function(Ncpus, c, m, alpha, z, priorG1,
     U_Sigma_full <- lapply(fullCl_ind, function(j) U_Sigma[, ,j])
     U_df_full <- sapply(fullCl_ind, function(j) U_df[j])
     if(length(fullCl_ind)>1){
-        c <- foreach::"%dopar%"(foreach::foreach(i=1:Ncpus, .combine='c'),
+        iter <- itertools::isplitIndices(ncol(z), chunks=Ncpus)
+        c <- foreach::"%dopar%"(foreach::foreach(i=iter, .combine='c'),
                                 {
-            l <- mmvstpdfC(x=z[, parallel_index[[i]]], xi=U_xi_full, psi=U_psi_full, sigma=U_Sigma_full, df=U_df_full, Log=FALSE)
-            u_mat <- t(sapply(w[fullCl_ind], function(x){as.numeric(u[parallel_index[[i]]] < x)}))
-            prob_mat <- u_mat * l
-            fullCl_ind[sampleClassC(prob_mat)]
+            l <- mmvstpdfC(x=z[, i, drop=FALSE], xi=U_xi_full, psi=U_psi_full, sigma=U_Sigma_full, df=U_df_full, Log=TRUE)
+            u_mat <- t(sapply(w[fullCl_ind], function(x){as.numeric(u[i] < x)}))
+            prob_mat_log <- log(u_mat) + l
+            fullCl_ind[sampleClassC(probMat = prob_mat_log, Log=TRUE)]
         })
     }else{
         c <- rep(fullCl_ind, maxCl)

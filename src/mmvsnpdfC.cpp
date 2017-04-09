@@ -15,7 +15,7 @@ const double log2pi2 = log(2.0 * M_PI)/2.0;
 //'@param sigma list of length K of variance-covariance matrices,
 //'each of dimensions \code{p x p}.
 //'@param Log logical flag for returning the log of the probability density
-//'function. Defaults is \code{TRUE}.
+//'function. Default is \code{TRUE}.
 //'@return matrix of densities of dimension \code{K x n}.
 //'
 //'@author Boris Hejblum

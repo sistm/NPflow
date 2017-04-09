@@ -25,7 +25,7 @@ extern SEXP NPflow_mvnpdfC(SEXP, SEXP, SEXP, SEXP);
 extern SEXP NPflow_mvsnlikC(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP NPflow_mvstlikC(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP NPflow_NuMatParC(SEXP, SEXP);
-extern SEXP NPflow_sampleClassC(SEXP);
+extern SEXP NPflow_sampleClassC(SEXP, SEXP);
 extern SEXP NPflow_similarityMat_nocostC(SEXP);
 extern SEXP NPflow_similarityMatC(SEXP);
 extern SEXP NPflow_traceEpsC(SEXP, SEXP);
@@ -46,7 +46,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"NPflow_mvsnlikC",              (DL_FUNC) &NPflow_mvsnlikC,              7},
   {"NPflow_mvstlikC",              (DL_FUNC) &NPflow_mvstlikC,              8},
   {"NPflow_NuMatParC",             (DL_FUNC) &NPflow_NuMatParC,             2},
-  {"NPflow_sampleClassC",          (DL_FUNC) &NPflow_sampleClassC,          1},
+  {"NPflow_sampleClassC",          (DL_FUNC) &NPflow_sampleClassC,          2},
   {"NPflow_similarityMat_nocostC", (DL_FUNC) &NPflow_similarityMat_nocostC, 1},
   {"NPflow_similarityMatC",        (DL_FUNC) &NPflow_similarityMatC,        1},
   {"NPflow_traceEpsC",             (DL_FUNC) &NPflow_traceEpsC,             2},

@@ -13,7 +13,7 @@ DPMGibbsSkewT_parallel(Ncpus, type_connec, z, hyperG0, a = 1e-04, b = 1e-04,
 \item{Ncpus}{the number of processors available}
 
 \item{type_connec}{The type of connection between the processors. Supported
-cluster types are \code{"SOCK"}, \code{"FORK"}, \code{"MPI"}, and
+cluster types are \code{"PSOCK"}, \code{"FORK"}, \code{"SOCK"}, \code{"MPI"}, and
 \code{"NWS"}. See also \code{\link[parallel:makeCluster]{makeCluster}}.}
 
 \item{z}{data matrix \code{d x n} with \code{d} dimensions in rows
@@ -73,7 +73,7 @@ associated to partition \code{c[[j]]}}
       at each MCMC iterations}
      \item{\code{data}:}{the data matrix \code{d x n} with \code{d} dimensions in rows
 and \code{n} observations in columns}
-     \item{\code{nb_mcmcit}:}{the number of MCMC itertations}
+     \item{\code{nb_mcmcit}:}{the number of MCMC iterations}
      \item{\code{clust_distrib}:}{the parametric distribution of the mixture component - \code{"skewt"}}
      \item{\code{hyperG0}:}{the prior on the cluster location}
  }

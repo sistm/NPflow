@@ -63,12 +63,12 @@ sliceSampler_skewT <- function(c, m, alpha, z, hyperG0, U_xi, U_psi,
     }
 
     if(length(fullCl_ind)>1){
-        l <- mmvstpdfC(x=z, xi=U_xi_full, psi=U_psi_full, sigma=U_Sigma_full, df=U_df_full, Log = FALSE)
+        l <- mmvstpdfC(x=z, xi=U_xi_full, psi=U_psi_full, sigma=U_Sigma_full, df=U_df_full, Log = TRUE)
         u_mat <- t(sapply(w[fullCl_ind], function(x){as.numeric(u < x)}))
-        prob_mat <- u_mat * l
+        prob_mat_log <- log(u_mat) + l
 
         #fast C++ code
-        c <- fullCl_ind[sampleClassC(prob_mat)]
+        c <- fullCl_ind[sampleClassC(probMat = prob_mat_log, Log=TRUE)]
         #         #slow C++ code
         #         c <- fullCl_ind[sampleClassC_bis(prob_mat)]
         #         #vectorized R code
@@ -107,13 +107,13 @@ sliceSampler_skewT <- function(c, m, alpha, z, hyperG0, U_xi, U_psi,
 
     ltn <- numeric(maxCl) # latent truncated normal variables
     for (k in which(m_new!=0)){
-        obs_k <- which(c==k)
+        obs_k <- c==k
         siginv <- solve(U_Sigma[, , k])
         psi <- U_psi[,k, drop=FALSE]
         A_k <-  1/(1 + (crossprod(psi, siginv)%*%psi))
         a_ik <- (tcrossprod(A_k, psi)%*%siginv%*%(z[,obs_k, drop=FALSE]-U_xi[,k]))
         A_k <- A_k/scale[obs_k]
-        ltn[obs_k] <- rtruncnorm(length(obs_k), a=0, b=Inf, mean = a_ik, sd = sqrt(A_k))
+        ltn[obs_k] <- rtruncnorm(sum(obs_k), a=0, b=Inf, mean = a_ik, sd = sqrt(A_k))
     }
 
     return(list("c"=c, "m"=m_new, "weights"=w, "latentTrunc"=ltn,

@@ -227,13 +227,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // sampleClassC
-IntegerVector sampleClassC(arma::mat probMat);
-RcppExport SEXP NPflow_sampleClassC(SEXP probMatSEXP) {
+IntegerVector sampleClassC(arma::mat probMat, bool Log);
+RcppExport SEXP NPflow_sampleClassC(SEXP probMatSEXP, SEXP LogSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::mat >::type probMat(probMatSEXP);
-    rcpp_result_gen = Rcpp::wrap(sampleClassC(probMat));
+    Rcpp::traits::input_parameter< bool >::type Log(LogSEXP);
+    rcpp_result_gen = Rcpp::wrap(sampleClassC(probMat, Log));
     return rcpp_result_gen;
 END_RCPP
 }

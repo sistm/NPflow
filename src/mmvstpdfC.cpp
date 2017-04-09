@@ -92,7 +92,7 @@ NumericMatrix mmvstpdfC(arma::mat x,
         mat Rinv = inv(trimatu(chol(omega)));
         mat smallomega = diagmat(sqrt(diagvec(omega)));
         vec alphnum = smallomega*omegaInv*psitemp;
-        mat alphtemp =sqrt(1-trans(psitemp)*omegaInv*psitemp);
+        mat alphtemp = sqrt(1-trans(psitemp)*omegaInv*psitemp);
         vec alphden = rep(alphtemp(0,0), alphnum.size());
         vec alph = alphnum/alphden;
         double logSqrtDetvarcovM = sum(log(Rinv.diag()));
@@ -107,11 +107,11 @@ NumericMatrix mmvstpdfC(arma::mat x,
             double part1 = log(2.0) + (-(dftemp + p)/2.0)*log(1.0 + quadform/dftemp) + a + logSqrtDetvarcovM ;
             //double part1 = 2*pow((1 + quadform/dftemp),(-(dftemp + p)/2))*exp(a+logSqrtDetvarcovM);
             mat quant = trans(alph)*diagmat(1/sqrt(diagvec(omega)))*x_i*sqrt((dftemp + p)/(dftemp + Qy));
-            double part2 = ::Rf_pt(quant(0,0), (dftemp + p) , 1, 0);
+            double part2 = ::Rf_pt(quant(0,0), (dftemp + p) , 1, 1);
             if (!Log) {
-                y(k,i) = exp(part1)*part2;
+                y(k,i) = exp(part1 + part2);
             } else{
-                y(k,i) = part1 + log(part2);
+                y(k,i) = part1 + part2;
             }
         }
     }

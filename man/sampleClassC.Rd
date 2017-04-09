@@ -6,11 +6,15 @@
 of column vectors, each containing the sampling probabilities
 for their respective draw}
 \usage{
-sampleClassC(probMat)
+sampleClassC(probMat, Log = FALSE)
 }
 \arguments{
 \item{probMat}{a numeric matrix of dim \code{k x n} of containing column vectors of sampling
 probabilities for each class \code{k}.}
+
+\item{Log}{a logical flag indicating wether the providede \code{probMat} is on the log scale
+or natural probability scale. Default is \code{FALSE} in which case it is considered on the natural
+probability scale.}
 }
 \value{
 a vector of integer of length \code{n} containing the multinomial draws for each

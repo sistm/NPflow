@@ -3,7 +3,7 @@
 #'@param Ncpus the number of processors available
 #'
 #'@param type_connec The type of connection between the processors. Supported
-#'cluster types are \code{"SOCK"}, \code{"FORK"}, \code{"MPI"}, and
+#'cluster types are \code{"PSOCK"}, \code{"FORK"}, \code{"SOCK"}, \code{"MPI"}, and
 #'\code{"NWS"}. See also \code{\link[parallel:makeCluster]{makeCluster}}.
 #'
 #'@param z data matrix \code{d x n} with \code{d} dimensions in rows
@@ -63,7 +63,7 @@
 #'       at each MCMC iterations}
 #'      \item{\code{data}:}{the data matrix \code{d x n} with \code{d} dimensions in rows
 #'and \code{n} observations in columns}
-#'      \item{\code{nb_mcmcit}:}{the number of MCMC itertations}
+#'      \item{\code{nb_mcmcit}:}{the number of MCMC iterations}
 #'      \item{\code{clust_distrib}:}{the parametric distribution of the mixture component - \code{"skewt"}}
 #'      \item{\code{hyperG0}:}{the prior on the cluster location}
 #'  }
@@ -214,22 +214,9 @@ DPMGibbsSkewT_parallel <- function (Ncpus, type_connec,
     U_df = rep(10,n)
     U_B = array(0, dim=c(2, 2, n))
     U_nu <- rep(p,n)
-
-    par_ind <- list()
-    temp_ind <- 0
-    if(Ncpus>1){
-        nb_simult <- floor(n%/%(Ncpus))
-        for(i in 1:(Ncpus-1)){
-            par_ind[[i]] <- temp_ind + 1:nb_simult
-            temp_ind <- temp_ind + nb_simult
-        }
-        par_ind[[Ncpus]] <- (temp_ind+1):n
-    }
-    else{
-        cat("Only 1 core specified\n=> non-parallel version of the algorithm would be more efficient",
-            file=monitorfile, append = TRUE)
-        nb_simult <- n
-        par_ind[[Ncpus]] <- (temp_ind+1):n
+    
+    if(Ncpus<2){
+        warning("Only 1 core specified\n=> non-parallel version of the algorithm would be more efficient")
     }
 
     # U_SS is a list where each U_SS[[k]] contains the sufficient
@@ -333,8 +320,7 @@ DPMGibbsSkewT_parallel <- function (Ncpus, type_connec,
                                                  U_psi=U_psi,
                                                  U_Sigma=U_Sigma,
                                                  U_df=U_df,
-                                                 scale=sc, diagVar,
-                                                 parallel_index=par_ind)
+                                                 scale=sc, diagVar)
             m <- slice[["m"]]
             c <- slice[["c"]]
             weights_list[[i]] <- slice[["weights"]]

@@ -123,10 +123,6 @@ hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
  a <- 0.0001
  b <- 0.0001
 
- # do some plots
- doPlot <- TRUE
- nbclust_init <- 30
-
 
 
  ## Data
@@ -171,108 +167,15 @@ hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
 \dontrun{
  # Gibbs sampler for Dirichlet Process Mixtures
  ##############################################
- MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=2000,
-                                doPlot, nbclust_init, plotevery=100,
-                                gg.add=list(theme_bw(),
-                                 guides(shape=guide_legend(override.aes = list(fill="grey45")))),
+ MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=1500,
+                                doPlot=TRUE, nbclust_init=30, plotevery=100,
                                diagVar=FALSE)
- s <- summary(MCMCsample_st, burnin = 900, thin=2, lossFn = "Binder")
+ s <- summary(MCMCsample_st, burnin = 1000, thin=10, lossFn = "Binder")
  print(s)
  plot(s, hm=TRUE) #pdf(height=8.5, width=10.5) #png(height=700, width=720)
  plot_ConvDPM(MCMCsample_st, from=2)
  #cluster_est_binder(MCMCsample_st$mcmc_partitions[900:1000])
-
- postalpha <- data.frame("alpha"=s$alpha,
-                         "distribution" = factor(rep("posterior",length(s$alpha)),
-                         levels=c("prior", "posterior")))
-
- postK <- data.frame("K"=sapply(lapply(postalpha$alpha, "["),
-                                function(x){sum(x/(x+0:(n-1)))}))
-
- p <- (ggplot(postalpha, aes(x=alpha))
-       + geom_histogram(aes(y=..density..), binwidth=.1,
-                        colour="black", fill="white")
-       + geom_density(alpha=.2, fill="blue")
-       + ggtitle("Posterior distribution of alpha\\n")
-       # Ignore NA values for mean
-       # Overlay with transparent density plot
-       + geom_vline(aes(xintercept=mean(alpha, na.rm=TRUE)),
-                    color="red", linetype="dashed", size=1)
-     )
- p
-
- p <- (ggplot(postK, aes(x=K))
-       + geom_histogram(aes(y=..density..),
-                        colour="black", fill="white")
-       + geom_density(alpha=.2, fill="blue")
-       + ggtitle("Posterior distribution of predicted K\\n")
-       # Ignore NA values for mean
-       # Overlay with transparent density plot
-       + geom_vline(aes(xintercept=mean(K, na.rm=TRUE)),
-                    color="red", linetype="dashed", size=1)
-       #+ scale_x_continuous(breaks=c(0:6)*2, minor_breaks=c(0:6)*2+1)
-       + scale_x_continuous(breaks=c(1:12))
-     )
- p
-
- p <- (ggplot(drop=FALSE, alpha=.6)
-       + geom_density(aes(x=alpha, fill=distribution),
-                      color=NA, alpha=.6,
-                      data=postalpha)
-       + geom_density(aes(x=alpha, fill=distribution),
-                      color=NA, alpha=.6,
-                      data=prioralpha)
-       + ggtitle("Prior and posterior distributions of alpha\\n")
-       + scale_fill_discrete(drop=FALSE)
-       + theme_bw()
-     )
- p
-
- postK <- data.frame("K"=sapply(lapply(s$mcmc_partitions, unique), length))
- (ggplot(postK, aes(x=K))
-       + geom_histogram(aes(y=..density..),
-                        colour="black", fill="grey45", binwidth=1)
-       + ggtitle("Posterior distribution of K\\n")
-       # Ignore NA values for mean
-       # Overlay with transparent density plot
-       + geom_vline(aes(xintercept=mean(K, na.rm=TRUE)),
-                    color="red", linetype="dashed", size=1)
-       + theme_bw()
-       + scale_x_continuous(breaks=c(3:11))
-       + xlim(3,11)
-     )
 }
-
-
-
-
- # k-means
-
- plot(x=z[1,], y=z[2,], col=kmeans(t(z), centers=4)$cluster,
-      xlab = "d = 1", ylab= "d = 2", main="k-means with K=4 clusters")
-
- KM <- kmeans(t(z), centers=4)
- KMclust <- factor(KM$cluster)
- levels(KMclust) <- c("2", "4", "1", "3")
- dataKM <- data.frame("X"=z[1,], "Y"=z[2,],
-                    "Cluster"=as.character(KMclust))
- dataCenters <- data.frame("X"=KM$centers[,1],
-                           "Y"=KM$centers[,2],
-                           "Cluster"=c("2", "4", "1", "3"))
-
- p <- (ggplot(dataKM)
-       + geom_point(aes(x=X, y=Y, col=Cluster))
-       + geom_point(aes(x=X, y=Y, fill=Cluster, order=Cluster),
-                    data=dataCenters, shape=22, size=5)
-       + scale_colour_discrete(name="Cluster", guide=guide_legend(override.aes=list(size=6,
-                                                                                    shape=22)))
-       + ggtitle("K-means with K=4 clusters\\n")
-       + theme_bw()
- )
- p
-
-
-
 
 }
 \references{

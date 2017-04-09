@@ -170,21 +170,8 @@ DPMGibbsN_parallel <- function (Ncpus, type_connec,
     U_B = array(0, dim=c(2, 2, n))
     U_nu <- rep(p,n)
     
-    par_ind <- list()
-    temp_ind <- 0
-    if(Ncpus>1){
-      nb_simult <- floor(n%/%(Ncpus))
-      for(i in 1:(Ncpus-1)){
-        par_ind[[i]] <- temp_ind + 1:nb_simult
-        temp_ind <- temp_ind + nb_simult
-      }
-      par_ind[[Ncpus]] <- (temp_ind+1):n
-    }
-    else{
-      cat("Only 1 core specified\n=> non-parallel version of the algorithm would be more efficient",
-          file=monitorfile, append = TRUE)
-      nb_simult <- n
-      par_ind[[Ncpus]] <- (temp_ind+1):n
+    if(Ncpus<2){
+      warning("Only 1 core specified\n=> non-parallel version of the algorithm would be more efficient")
     }
     
     
@@ -310,8 +297,7 @@ DPMGibbsN_parallel <- function (Ncpus, type_connec,
       )
       slice <- sliceSampler_N_parallel(Ncpus=Ncpus, c=c, m=m, alpha=alpha[i],
                                        z=z, hyperG0=hyperG0,
-                                       U_mu=U_mu, U_Sigma=U_Sigma, diagVar=diagVar,
-                                       parallel_index=par_ind)
+                                       U_mu=U_mu, U_Sigma=U_Sigma, diagVar=diagVar)
       
       m <- slice[["m"]]
       c <- slice[["c"]]

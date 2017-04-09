@@ -1,7 +1,8 @@
 #'@keywords internal
 #'@author Boris Hejblum
 #'@importFrom stats rbeta rgamma runif
-sliceSampler_N_parallel <- function(Ncpus, c, m, alpha, z, hyperG0, U_mu, U_Sigma, diagVar, parallel_index){
+#'@import itertools
+sliceSampler_N_parallel <- function(Ncpus, c, m, alpha, z, hyperG0, U_mu, U_Sigma, diagVar){
 
     maxCl <- length(m) #maximum number of clusters
     ind <- which(m!=0) #indexes of non empty clusters
@@ -53,15 +54,16 @@ sliceSampler_N_parallel <- function(Ncpus, c, m, alpha, z, hyperG0, U_mu, U_Sigm
     if(length(fullCl_ind)>1){
         U_mu_full <- sapply(fullCl_ind, function(j) U_mu[, j])
         U_Sigma_full <- lapply(fullCl_ind, function(j) U_Sigma[, ,j])
-
+        
+        iter <- itertools::isplitIndices(ncol(z), chunks=Ncpus)
         c <- foreach::"%dopar%"(foreach::foreach(i=1:Ncpus, .combine='c'),
                                 {
-            l <- mmvnpdfC(x=z[, parallel_index[[i]]], mean=U_mu_full, varcovM=U_Sigma_full, Log = FALSE)
-            u_mat <- t(sapply(w[fullCl_ind], function(x){as.numeric(u[parallel_index[[i]]] < x)}))
-            prob_mat <- u_mat * l
+            l <- mmvnpdfC(x=z[, i, drop=FALSE], mean=U_mu_full, varcovM=U_Sigma_full, Log = TRUE)
+            u_mat <- t(sapply(w[fullCl_ind], function(x){as.numeric(u[i] < x)}))
+            prob_mat_log <- log(u_mat) + l
 
             #fast C++ code
-            c <- fullCl_ind[sampleClassC(prob_mat)]
+            c <- fullCl_ind[sampleClassC(probMat = prob_mat_log, Log=TRUE)]
             #         #slow C++ code
             #         c <- fullCl_ind[sampleClassC_bis(prob_mat)]
             #         #vectorized R code

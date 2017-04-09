@@ -218,7 +218,7 @@ mmvnpdfC <- function(x, mean, varcovM, Log = TRUE) {
 #'@param sigma list of length K of variance-covariance matrices,
 #'each of dimensions \code{p x p}.
 #'@param Log logical flag for returning the log of the probability density
-#'function. Defaults is \code{TRUE}.
+#'function. Default is \code{TRUE}.
 #'@return matrix of densities of dimension \code{K x n}.
 #'
 #'@author Boris Hejblum
@@ -491,6 +491,10 @@ mvstlikC <- function(x, c, clustval, xi, psi, sigma, df, loglik = TRUE) {
 #'@param probMat a numeric matrix of dim \code{k x n} of containing column vectors of sampling
 #'probabilities for each class \code{k}.
 #'
+#'@param Log a logical flag indicating wether the providede \code{probMat} is on the log scale
+#'or natural probability scale. Default is \code{FALSE} in which case it is considered on the natural
+#'probability scale.
+#'
 #'@return a vector of integer of length \code{n} containing the multinomial draws for each
 #'observation, i.e. the class allocation.
 #'
@@ -498,8 +502,8 @@ mvstlikC <- function(x, c, clustval, xi, psi, sigma, df, loglik = TRUE) {
 #'
 #'@export
 #'
-sampleClassC <- function(probMat) {
-    .Call('NPflow_sampleClassC', PACKAGE = 'NPflow', probMat)
+sampleClassC <- function(probMat, Log = FALSE) {
+    .Call('NPflow_sampleClassC', PACKAGE = 'NPflow', probMat, Log)
 }
 
 #' C++ implementation

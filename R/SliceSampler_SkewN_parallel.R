@@ -1,10 +1,10 @@
 #'@keywords internal
 #'@author Boris Hejblum
 #'@importFrom stats rbeta rgamma runif
+#'@import itertools
 sliceSampler_SkewN_parallel <- function(Ncpus, c, m, alpha, z, hyperG0,
                                         U_xi, U_psi, U_Sigma,
-                                        diagVar,
-                                        parallel_index){
+                                        diagVar){
 
     maxCl <- length(m) #maximum number of clusters
     ind <- which(m!=0) # indexes of non empty clusters
@@ -59,15 +59,16 @@ sliceSampler_SkewN_parallel <- function(Ncpus, c, m, alpha, z, hyperG0,
         U_xi_full <- sapply(fullCl_ind, function(j) U_xi[, j])
         U_psi_full <- sapply(fullCl_ind, function(j) U_psi[, j])
         U_Sigma_full <- lapply(fullCl_ind, function(j) U_Sigma[, ,j])
-
-        c <- foreach::"%dopar%"(foreach::foreach(i=1:Ncpus, .combine='c'),
+        
+        iter <- itertools::isplitIndices(ncol(z), chunks=Ncpus)
+        c <- foreach::"%dopar%"(foreach::foreach(i=iter, .combine='c'),
                                 {
-            l <- mmvsnpdfC(z[, parallel_index[[i]]], xi=U_xi_full, sigma=U_Sigma_full, psi=U_psi_full, Log=FALSE)
-            u_mat <- t(sapply(w[fullCl_ind], function(x){as.numeric(u[parallel_index[[i]]] < x)}))
-            prob_mat <- u_mat * l
+            l <- mmvsnpdfC(z[, i, drop=FALSE], xi=U_xi_full, sigma=U_Sigma_full, psi=U_psi_full, Log=TRUE)
+            u_mat <- t(sapply(w[fullCl_ind], function(x){as.numeric(u[i] < x)}))
+            prob_mat_log <- log(u_mat) + l
 
             #fast C++ code
-            c <- fullCl_ind[sampleClassC(prob_mat)]
+            c <- fullCl_ind[sampleClassC(probMat = prob_mat_log, Log=TRUE)]
             #         #slow C++ code
             #         c <- fullCl_ind[sampleClassC_bis(prob_mat)]
             #         #vectorized R code

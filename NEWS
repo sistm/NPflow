@@ -1,14 +1,16 @@
 News about the R package NPflow:
 --------------------------------
 
-Main changes in Version 0.12.2 (2017-04-06):
+Main changes in Version 0.13.0 (2017-04-10):
+* Use of itertools package for parallel computations
+* Use of log-scale probabilities in slice-samplers fr improved precision
 * Bug fix: parallel settings did not work in DPMpost (thanks to Mike Jiang for noticing this)
 * Bug fix: parallel settings did not work in DPMpost
-* updated documentation
+* Updated documentation
 
-Main changes in Version 0.12.0 (2017-04-04):
-* compiled functions registration
-* updated help and citation info
+Main changes in Version 0.12.0 (2017-04-04) - this is only a minor release:
+* Compiled functions registration
+* Updated help and citation info
 
 Main changes in Version 0.10.0 (2016-05-02):
 * Optimization of the log-posterior computation for normal and skew normal distributions

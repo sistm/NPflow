@@ -171,55 +171,7 @@ library(ggplot2)
                                              plotevery=25, gg.add=list(theme_bw(),
                                 guides(shape=guide_legend(override.aes = list(fill="grey45")))))
  plot_ConvDPM(MCMCsample_sn_par, from=2)
-
- postalpha <- data.frame("alpha"=MCMCsample_sn_par$alpha[50:500],
-                         "distribution" = factor(rep("posterior",500-49),
-                         levels=c("prior", "posterior")))
- p <- (ggplot(postalpha, aes(x=alpha))
-       + geom_histogram(aes(y=..density..), binwidth=.1,
-                        colour="black", fill="white")
-       + geom_density(alpha=.2, fill="blue")
-       + ggtitle("Posterior distribution of alpha\\n")
-       # Ignore NA values for mean
-       # Overlay with transparent density plot
-       + geom_vline(aes(xintercept=mean(alpha, na.rm=T)),
-                    color="red", linetype="dashed", size=1)
-     )
- p
-
- p <- (ggplot(drop=FALSE, alpha=.6)
-       + geom_density(aes(x=alpha, fill=distribution),
-                      color=NA, alpha=.6,
-                      data=prioralpha)
-       + geom_density(aes(x=alpha, fill=distribution),
-                      color=NA, alpha=.6,
-                      data=postalpha)
-       + ggtitle("Prior and posterior distributions of alpha\\n")
-       + scale_fill_discrete(drop=FALSE)
-     )
- p
 }
-
-# k-means
-#########
-
- plot(x=z[1,], y=z[2,], col=kmeans(t(z), centers=4)$cluster,
-      xlab = "d = 1", ylab= "d = 2", main="k-means with K=4 clusters")
-
- KM <- kmeans(t(z), centers=4)
- dataKM <- data.frame("X"=z[1,], "Y"=z[2,],
-                    "Cluster"=as.character(KM$cluster))
- dataCenters <- data.frame("X"=KM$centers[,1],
-                           "Y"=KM$centers[,2],
-                           "Cluster"=rownames(KM$centers))
-
- p <- (ggplot(dataKM)
-       + geom_point(aes(x=X, y=Y, col=Cluster))
-       + geom_point(aes(x=X, y=Y, fill=Cluster, order=Cluster),
-                    data=dataCenters, shape=22, size=5)
-       + scale_colour_discrete(name="Cluster")
-       + ggtitle("K-means with K=4 clusters\\n"))
- p
 
 
 

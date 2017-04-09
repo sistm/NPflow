@@ -19,7 +19,7 @@ distributions for which the density probability has to be evaluated.}
 each of dimensions \code{p x p}.}
 
 \item{Log}{logical flag for returning the log of the probability density
-function. Defaults is \code{TRUE}.}
+function. Default is \code{TRUE}.}
 }
 \value{
 matrix of densities of dimension \code{K x n}.
