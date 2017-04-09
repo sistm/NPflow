@@ -1,7 +1,6 @@
 #'@keywords internal
 #'@author Boris Hejblum
 #'@importFrom stats rbeta rgamma runif
-#'@import itertools
 sliceSampler_skewT_SeqPrior_parallel <- function(Ncpus, c, m, alpha, z, priorG1,
                                                  U_xi, U_psi, U_Sigma,
                                                  U_df, scale, diagVar){

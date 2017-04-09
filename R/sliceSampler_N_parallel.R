@@ -1,7 +1,6 @@
 #'@keywords internal
 #'@author Boris Hejblum
 #'@importFrom stats rbeta rgamma runif
-#'@import itertools
 sliceSampler_N_parallel <- function(Ncpus, c, m, alpha, z, hyperG0, U_mu, U_Sigma, diagVar){
 
     maxCl <- length(m) #maximum number of clusters

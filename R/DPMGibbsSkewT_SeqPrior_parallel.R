@@ -179,6 +179,12 @@ DPMGibbsSkewT_SeqPrior_parallel <- function (Ncpus, type_connec,
 
   dpmclus <- NULL
 
+  if(!requireNamespace("itertools", quietly=TRUE)){
+    stop("Package 'itertools' is not available.\n  -> Try running 'install.packages(\"itertools\")'\n   or use non parallel version of the function: 'DPMGibbsN'")
+  }else{
+    requireNamespace("itertools", quietly=TRUE)
+  }
+  
   if(!requireNamespace("doParallel", quietly=TRUE)){
     stop("Package 'doParallel' is not available.\n  -> Try running 'install.packages(\"doParallel\")'\n   or use non parallel version of the function: 'DPMGibbsN'")
   }else{
