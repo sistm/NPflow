@@ -167,7 +167,7 @@ print.summaryDPMMclust <- function(x,...){
 #'@export
 plot.summaryDPMMclust <- function(x, hm=FALSE, nbsim_densities=5000, 
                                   hm_subsample=NULL, hm_order_by_clust=TRUE, 
-                                  gg.add=list(theme_bw()),...){
+                                  gg.add=list(theme_bw()), ...){
   
   if(length(x$logposterior_list[[1]])>1){
     plot_ConvDPM(x, shift=x$burnin, thin=x$thin)
@@ -182,7 +182,7 @@ plot.summaryDPMMclust <- function(x, hm=FALSE, nbsim_densities=5000,
              i=ind+x$burnin,
              alpha=x$alpha[ind],
              U_SS=x$U_SS_list[[ind]],
-             ellipses=TRUE,
+             # ellipses=TRUE,
              gg.add=gg.add,
              ...
     )
@@ -192,7 +192,7 @@ plot.summaryDPMMclust <- function(x, hm=FALSE, nbsim_densities=5000,
                i=ind+x$burnin,
                alpha=x$alpha[ind],
                U_SS=x$U_SS_list[[ind]],
-               ellipses=TRUE,
+               # ellipses=TRUE,
                gg.add= gg.add,
                nbsim_dens=nbsim_densities,
                ...
@@ -203,7 +203,7 @@ plot.summaryDPMMclust <- function(x, hm=FALSE, nbsim_densities=5000,
                i=ind+x$burnin,
                alpha=x$alpha[ind],
                U_SS=x$U_SS_list[[ind]],
-               ellipses=TRUE,
+               # ellipses=TRUE,
                gg.add=gg.add,
                nbsim_dens=nbsim_densities,
                nice=TRUE,
