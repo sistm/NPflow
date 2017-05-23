@@ -22,6 +22,8 @@ r_packages:
 - pheatmap
 - ellipse
 - truncnorm
+- tibble
+- lazyeval
 
 r_build_args: "--html"
 
