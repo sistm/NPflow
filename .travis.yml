@@ -24,6 +24,10 @@ r_packages:
 - truncnorm
 - tibble
 - lazyeval
+- foreach
+- doParallel
+- itertools
+- microbenchmark
 
 r_build_args: "--html"
 
