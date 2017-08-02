@@ -1,6 +1,5 @@
 #include <RcppArmadillo.h>
 #include "lgamma_mvC.h"
-
 using namespace Rcpp;
 using namespace arma;
 

@@ -1,5 +1,4 @@
 #include <Rcpp.h>
-
 using namespace Rcpp;
 
 // C++ implementation of the logarithm of the gamma function
