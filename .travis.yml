@@ -29,8 +29,8 @@ r_packages:
 - itertools
 - microbenchmark
 - scales
-- viridisLite
+- viridis
 
-r_build_args: "--html"
+r_build_args: "--as-cran"
 
 r_check_args: "--as-cran --timings"
