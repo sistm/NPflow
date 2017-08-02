@@ -1,7 +1,7 @@
 language: R
 cache: packages
 warnings_are_errors: true
-sudo: true
+sudo: false
 
 matrix:
   include:
@@ -15,7 +15,7 @@ matrix:
       osx_image: xcode9
       r: release
       env:
-        - MATRIX_EVAL="brew update && brew install --with-toolchain llvm && CC=clang-4.0 && CXX=clang++-4.0"
+        - MATRIX_EVAL="brew update && brew install --with-clang --ignore-dependencies llvm && CC=clang-4.0 && CXX=clang++-4.0"
       before_install:
         - eval "${MATRIX_EVAL}"
       
