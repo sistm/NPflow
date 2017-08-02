@@ -12,7 +12,7 @@ matrix:
       r: devel
       
     - os: osx
-      osx_image: xcode8.3
+      osx_image: xcode9
       r: release
       env:
         - MATRIX_EVAL="brew update && brew install --with-toolchain llvm && CC=clang-4.0 && CXX=clang++-4.0"
@@ -20,7 +20,7 @@ matrix:
         - eval "${MATRIX_EVAL}"
       
     - os: osx
-      osx_image: xcode8.3
+      osx_image: xcode9
       r: devel
       env:
         - MATRIX_EVAL="brew update && brew install --with-toolchain llvm && CC=clang-4.0 && CXX=clang++-4.0"
