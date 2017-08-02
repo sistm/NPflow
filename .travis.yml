@@ -28,6 +28,8 @@ r_packages:
 - doParallel
 - itertools
 - microbenchmark
+- scales
+- viridisLite
 
 r_build_args: "--html"
 
