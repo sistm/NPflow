@@ -14,7 +14,7 @@
 #'FmeasureC(pred, ref)
 #'
 FmeasureC <- function(pred, ref) {
-    .Call('NPflow_FmeasureC', PACKAGE = 'NPflow', pred, ref)
+    .Call(`_NPflow_FmeasureC`, pred, ref)
 }
 
 #' C++ implementation of the F-measure computation without the ref classe 0
@@ -38,7 +38,7 @@ FmeasureC <- function(pred, ref) {
 #'FmeasureC_no0(pred, ref)
 #'
 FmeasureC_no0 <- function(pred, ref) {
-    .Call('NPflow_FmeasureC_no0', PACKAGE = 'NPflow', pred, ref)
+    .Call(`_NPflow_FmeasureC_no0`, pred, ref)
 }
 
 #' Multiple cost computations with Fmeasure as the loss function
@@ -68,44 +68,7 @@ FmeasureC_no0 <- function(pred, ref) {
 #'}
 #'
 Fmeasure_costC <- function(c) {
-    .Call('NPflow_Fmeasure_costC', PACKAGE = 'NPflow', c)
-}
-
-#' C++ implementation of similarity matrix computation using precomputed distances
-#'
-#'
-#'@param c an MCMC partitions of length \code{n}.
-#'
-#'@param d a symmetric \code{n x n} matrix containing distances
-#'between each group distributions.
-#'
-#'@author Boris Hejblum, Chariff Alkhassim
-#'
-#'@export
-#'
-#'@examples
-#'c <- c(1,1,2,3,2,3)
-#'d <- matrix(runif(length(c)^2),length(c))
-#'NuMatParC(c,d)
-#'
-#'
-NuMatParC <- function(c, d) {
-    .Call('NPflow_NuMatParC', PACKAGE = 'NPflow', c, d)
-}
-
-#' C++ implementation of residual trace computation step used when sampling the scale
-#'
-#'@param eps a numeric matrix where each column contains the centered and unskewed observations
-#'@param sigma a numeric covariance matrix
-#'
-#'@return the computed trace
-#'
-#'@keywords internal
-#'
-#'@export
-#'
-traceEpsC <- function(eps, sigma) {
-    .Call('NPflow_traceEpsC', PACKAGE = 'NPflow', eps, sigma)
+    .Call(`_NPflow_Fmeasure_costC`, c)
 }
 
 #' C++ implementation of multivariate Normal inverse Wishart probability density function for multiple inputs
@@ -133,7 +96,7 @@ traceEpsC <- function(eps, sigma) {
 #'
 #'
 mmNiWpdfC <- function(Mu, Sigma, U_Mu0, U_Kappa0, U_Nu0, U_Sigma0, Log = TRUE) {
-    .Call('NPflow_mmNiWpdfC', PACKAGE = 'NPflow', Mu, Sigma, U_Mu0, U_Kappa0, U_Nu0, U_Sigma0, Log)
+    .Call(`_NPflow_mmNiWpdfC`, Mu, Sigma, U_Mu0, U_Kappa0, U_Nu0, U_Sigma0, Log)
 }
 
 #' C++ implementation of multivariate structured Normal inverse Wishart probability density function for multiple inputs
@@ -164,7 +127,7 @@ mmNiWpdfC <- function(Mu, Sigma, U_Mu0, U_Kappa0, U_Nu0, U_Sigma0, Log = TRUE) {
 #'@export
 #'
 mmsNiWpdfC <- function(xi, psi, Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_df0, Log = TRUE) {
-    .Call('NPflow_mmsNiWpdfC', PACKAGE = 'NPflow', xi, psi, Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_df0, Log)
+    .Call(`_NPflow_mmsNiWpdfC`, xi, psi, Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_df0, Log)
 }
 
 #' C++ implementation of multivariate Normal probability density function for multiple inputs
@@ -205,7 +168,7 @@ mmsNiWpdfC <- function(xi, psi, Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_df0, Log
 #' cat("package 'microbenchmark' not available\n")
 #'}
 mmvnpdfC <- function(x, mean, varcovM, Log = TRUE) {
-    .Call('NPflow_mmvnpdfC', PACKAGE = 'NPflow', x, mean, varcovM, Log)
+    .Call(`_NPflow_mmvnpdfC`, x, mean, varcovM, Log)
 }
 
 #' C++ implementation of multivariate skew Normal probability density function for multiple inputs
@@ -253,7 +216,7 @@ mmvnpdfC <- function(x, mean, varcovM, Log = TRUE) {
 #' cat("package 'microbenchmark' not available\n")
 #'}
 mmvsnpdfC <- function(x, xi, psi, sigma, Log = TRUE) {
-    .Call('NPflow_mmvsnpdfC', PACKAGE = 'NPflow', x, xi, psi, sigma, Log)
+    .Call(`_NPflow_mmvsnpdfC`, x, xi, psi, sigma, Log)
 }
 
 #' C++ implementation of multivariate Normal probability density function for multiple inputs
@@ -321,7 +284,7 @@ mmvsnpdfC <- function(x, xi, psi, sigma, Log = TRUE) {
 #' cat("package 'microbenchmark' not available\n")
 #'}
 mmvstpdfC <- function(x, xi, psi, sigma, df, Log = TRUE) {
-    .Call('NPflow_mmvstpdfC', PACKAGE = 'NPflow', x, xi, psi, sigma, df, Log)
+    .Call(`_NPflow_mmvstpdfC`, x, xi, psi, sigma, df, Log)
 }
 
 #' C++ implementation of multivariate Normal probability density function for multiple inputs
@@ -363,7 +326,7 @@ mmvstpdfC <- function(x, xi, psi, sigma, df, Log = TRUE) {
 #' cat("package 'microbenchmark' not available\n")
 #'}
 mmvtpdfC <- function(x, mean, varcovM, df, Log = TRUE) {
-    .Call('NPflow_mmvtpdfC', PACKAGE = 'NPflow', x, mean, varcovM, df, Log)
+    .Call(`_NPflow_mmvtpdfC`, x, mean, varcovM, df, Log)
 }
 
 #' C++ implementation of multivariate Normal probability density function for multiple inputs
@@ -389,7 +352,7 @@ mmvtpdfC <- function(x, mean, varcovM, df, Log = TRUE) {
 #'@author Boris Hejblum
 #'
 mvnlikC <- function(x, c, clustval, mu, sigma, loglik = TRUE) {
-    .Call('NPflow_mvnlikC', PACKAGE = 'NPflow', x, c, clustval, mu, sigma, loglik)
+    .Call(`_NPflow_mvnlikC`, x, c, clustval, mu, sigma, loglik)
 }
 
 #' C++ implementation of multivariate normal probability density function for 
@@ -426,7 +389,7 @@ mvnlikC <- function(x, c, clustval, mu, sigma, loglik = TRUE) {
 #'}
 #'
 mvnpdfC <- function(x, mean, varcovM, Log = TRUE) {
-    .Call('NPflow_mvnpdfC', PACKAGE = 'NPflow', x, mean, varcovM, Log)
+    .Call(`_NPflow_mvnpdfC`, x, mean, varcovM, Log)
 }
 
 #' C++ implementation of multivariate skew normal likelihood function for multiple inputs
@@ -453,7 +416,7 @@ mvnpdfC <- function(x, mean, varcovM, Log = TRUE) {
 #'@author Boris Hejblum
 #'
 mvsnlikC <- function(x, c, clustval, xi, psi, sigma, loglik = TRUE) {
-    .Call('NPflow_mvsnlikC', PACKAGE = 'NPflow', x, c, clustval, xi, psi, sigma, loglik)
+    .Call(`_NPflow_mvsnlikC`, x, c, clustval, xi, psi, sigma, loglik)
 }
 
 #' C++ implementation of multivariate skew t likelihood function for multiple inputs
@@ -481,7 +444,29 @@ mvsnlikC <- function(x, c, clustval, xi, psi, sigma, loglik = TRUE) {
 #'@author Boris Hejblum
 #'
 mvstlikC <- function(x, c, clustval, xi, psi, sigma, df, loglik = TRUE) {
-    .Call('NPflow_mvstlikC', PACKAGE = 'NPflow', x, c, clustval, xi, psi, sigma, df, loglik)
+    .Call(`_NPflow_mvstlikC`, x, c, clustval, xi, psi, sigma, df, loglik)
+}
+
+#' C++ implementation of similarity matrix computation using precomputed distances
+#'
+#'
+#'@param c an MCMC partitions of length \code{n}.
+#'
+#'@param d a symmetric \code{n x n} matrix containing distances
+#'between each group distributions.
+#'
+#'@author Boris Hejblum, Chariff Alkhassim
+#'
+#'@export
+#'
+#'@examples
+#'c <- c(1,1,2,3,2,3)
+#'d <- matrix(runif(length(c)^2),length(c))
+#'NuMatParC(c,d)
+#'
+#'
+NuMatParC <- function(c, d) {
+    .Call(`_NPflow_NuMatParC`, c, d)
 }
 
 #' C++ implementation of the multinomial sampling from a matrix
@@ -503,28 +488,7 @@ mvstlikC <- function(x, c, clustval, xi, psi, sigma, df, loglik = TRUE) {
 #'@export
 #'
 sampleClassC <- function(probMat, Log = FALSE) {
-    .Call('NPflow_sampleClassC', PACKAGE = 'NPflow', probMat, Log)
-}
-
-#' C++ implementation
-#'
-#'
-#'@param cc a matrix whose columns each represents a (MCMC) partition
-#'
-#'@export
-#'
-#'@examples
-#'c <- list(c(1,1,2,3,2,3), c(1,1,1,2,3,3),c(2,2,1,1,1,1))
-#'similarityMatC(sapply(c, "["))
-#'
-#'c2 <- list()
-#'for(i in 1:10){
-#'     c2 <- c(c2, list(rmultinom(n=1, size=200, prob=rexp(n=200))))
-#'}
-#'similarityMatC(sapply(c2, "["))
-#'
-similarityMatC <- function(cc) {
-    .Call('NPflow_similarityMatC', PACKAGE = 'NPflow', cc)
+    .Call(`_NPflow_sampleClassC`, probMat, Log)
 }
 
 #' C++ implementation
@@ -552,7 +516,43 @@ similarityMatC <- function(cc) {
 #' cat("package 'microbenchmark' not available\n")
 #'}
 similarityMat_nocostC <- function(cc) {
-    .Call('NPflow_similarityMat_nocostC', PACKAGE = 'NPflow', cc)
+    .Call(`_NPflow_similarityMat_nocostC`, cc)
+}
+
+#' C++ implementation
+#'
+#'
+#'@param cc a matrix whose columns each represents a (MCMC) partition
+#'
+#'@export
+#'
+#'@examples
+#'c <- list(c(1,1,2,3,2,3), c(1,1,1,2,3,3),c(2,2,1,1,1,1))
+#'similarityMatC(sapply(c, "["))
+#'
+#'c2 <- list()
+#'for(i in 1:10){
+#'     c2 <- c(c2, list(rmultinom(n=1, size=200, prob=rexp(n=200))))
+#'}
+#'similarityMatC(sapply(c2, "["))
+#'
+similarityMatC <- function(cc) {
+    .Call(`_NPflow_similarityMatC`, cc)
+}
+
+#' C++ implementation of residual trace computation step used when sampling the scale
+#'
+#'@param eps a numeric matrix where each column contains the centered and unskewed observations
+#'@param sigma a numeric covariance matrix
+#'
+#'@return the computed trace
+#'
+#'@keywords internal
+#'
+#'@export
+#'
+traceEpsC <- function(eps, sigma) {
+    .Call(`_NPflow_traceEpsC`, eps, sigma)
 }
 
 #' C++ implementation
@@ -570,6 +570,6 @@ similarityMat_nocostC <- function(cc) {
 #'
 #'
 vclust2mcoclustC <- function(c) {
-    .Call('NPflow_vclust2mcoclustC', PACKAGE = 'NPflow', c)
+    .Call(`_NPflow_vclust2mcoclustC`, c)
 }
 
