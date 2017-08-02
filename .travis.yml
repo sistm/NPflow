@@ -13,20 +13,17 @@ matrix:
       
     - os: osx
       r: release
-      before_install:
-        - brew update
-        - brew install llvm
       env:
-        - MATRIX_EVAL="CC=clang-4.0 && CXX=clang++-4.0"
-
+        - MATRIX_EVAL="brew update && brew install --with-toolchain llvm && CC=clang-4.0 && CXX=clang++-4.0"
+      before_install:
+        - eval "${MATRIX_EVAL}"
       
     - os: osx
       r: devel
-      before_install:
-        - brew update
-        - brew install llvm
       env:
-        - MATRIX_EVAL="CC=clang-4.0 && CXX=clang++-4.0"
+        - MATRIX_EVAL="brew update && brew install --with-toolchain llvm && CC=clang-4.0 && CXX=clang++-4.0"
+      before_install:
+        - eval "${MATRIX_EVAL}"
 
 r_github_packages:
 - hadley/scales
