@@ -10,15 +10,7 @@ matrix:
     
     - os: linux
       r: devel
-      
-    - os: osx
-      osx_image: xcode9
-      r: release
-      env:
-        - MATRIX_EVAL="brew update && brew install --with-clang --ignore-dependencies llvm && CC=clang-4.0 && CXX=clang++-4.0"
-      before_install:
-        - eval "${MATRIX_EVAL}"
-      
+
     - os: osx
       r: devel
 
