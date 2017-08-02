@@ -1,5 +1,8 @@
 # News about the `NPflow` R package
 
+### Main changes in Version 0.13.1 (2017-08-02) --- *this is only a minor release*:
+* updated documentation and compiling standards
+
 
 ### Main changes in Version 0.13.0 (2017-04-10):
 * use of `itertools` package for parallel computations

@@ -10,3 +10,4 @@
 *.dll
 Rprof.out
 defaultmonitor.txt
+cran-comment

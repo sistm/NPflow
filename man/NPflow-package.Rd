@@ -22,7 +22,7 @@ The main function in this package is \code{\link{DPMpost}}.
 \references{
 Hejblum BP, Alkhassim C, Gottardo R, Caron F, Thiebaut R, Sequential Dirichlet
 Process Mixtures of Multivariate Skew t-distributions for Model-based Clustering
-of Flow Cytometry Data, 2017, submitted, \href{https://arxiv.org/abs/1702.04407v2}{arxiv:1702.04407}.
+of Flow Cytometry Data, 2017, \emph{submitted}. \href{https://arxiv.org/abs/1702.04407v2}{arxiv:1702.04407}
 }
 \author{
 Boris P. Hejblum, Chariff Alkhassim, Francois Caron
