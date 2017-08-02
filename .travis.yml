@@ -7,10 +7,12 @@ r:
 - release
 - devel
 
-os:
-- linux
-- osx
-  osx_image: xcode9
+matrix:
+  include:
+    - os: linux
+    
+    - os: osx
+      osx_image: xcode9
 
 r_github_packages:
 - hadley/scales
