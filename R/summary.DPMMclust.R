@@ -155,8 +155,8 @@ print.summaryDPMMclust <- function(x,...){
 
 
 #'@rdname methods.summaryDPMMclust
-#'@param gg.add a list of instructions to add to the ggplot2 instruction.
-#'See \code{\link[ggplot2]{+.gg}}. Default is \code{list(theme())}, which adds nothing to the plot.
+#'@param gg.add a list of instructions to add to the ggplot2 instruction (see 
+#'\code{\link[ggplot2]{gg-add}}). Default is \code{list(theme())}, which adds nothing to the plot.
 #'@param hm_subsample a integer designating the number of observations to use when plotting the heatmap. 
 #'Used only if \code{hm} is \code{TRUE}. #'Default is \code{NULL} in which no subsampling is done and 
 #'all observations are plotted.

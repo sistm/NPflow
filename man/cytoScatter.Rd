@@ -26,7 +26,7 @@ of length 2Default is the data range.}
 \item{ylim}{a vector of length 2 to specify the y-axis limits. Only used if \code{dims2plot} is
 of length 2. Default is the data range.}
 
-\item{gg.add}{A list of instructions to add to the ggplot2 instruction.  See \code{\link[ggplot2]{+.gg}}.
+\item{gg.add}{A list of instructions to add to the ggplot2 instruction (see \code{\link[ggplot2]{gg-add}}).
 Default is \code{list(theme())}, which adds nothing.
 to the plot.}
 }

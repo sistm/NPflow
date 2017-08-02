@@ -31,8 +31,8 @@ all observations are plotted.}
 \item{hm_order_by_clust}{logical flag indicating whether observations should be ordered according to
 the point estimate first. Used only if \code{hm} is \code{TRUE}. Default is \code{TRUE}.}
 
-\item{gg.add}{a list of instructions to add to the ggplot2 instruction.
-See \code{\link[ggplot2]{+.gg}}. Default is \code{list(theme())}, which adds nothing to the plot.}
+\item{gg.add}{a list of instructions to add to the ggplot2 instruction (see 
+\code{\link[ggplot2]{gg-add}}). Default is \code{list(theme())}, which adds nothing to the plot.}
 }
 \description{
 Methods for a summary of a 'DPMMclust' object

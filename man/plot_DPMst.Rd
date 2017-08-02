@@ -27,7 +27,7 @@ Default is all of them.}
 \item{ellipses}{a logical flag indicating whethe ellipses should be drawn around clusters. Default
 is \code{TRUE} if only 2 dimensions are plotted, \code{FALSE} otherwise.}
 
-\item{gg.add}{A list of instructions to add to the ggplot2 instruction. See \code{\link[ggplot2]{+.gg}}.
+\item{gg.add}{A list of instructions to add to the ggplot2 instruction (see \code{\link[ggplot2]{gg-add}}).
 Default is \code{list(theme())}, which adds nothing to the plot.}
 
 \item{nbsim_dens}{number of simulated points used for computing clusters density contours in 2D

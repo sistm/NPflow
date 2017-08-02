@@ -19,7 +19,7 @@
 #'is \code{TRUE} if only 2 dimensions are plotted, \code{FALSE} otherwise.
 #'
 #'@param gg.add
-#'A list of instructions to add to the ggplot2 instruction. See \code{\link[ggplot2]{+.gg}}.
+#'A list of instructions to add to the ggplot2 instruction (see \code{\link[ggplot2]{gg-add}}).
 #'Default is \code{list(theme())}, which adds nothing to the plot.
 #'
 #'@param nbsim_dens number of simulated points used for computing clusters density contours in 2D

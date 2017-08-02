@@ -30,8 +30,9 @@
 #'@param ellipses a logical flag indicating whethe ellipses should be drawn around clusters. Default
 #'is \code{TRUE} if only 2 dimensions are plotted, \code{FALSE} otherwise.
 #'
-#'@param gg.add a list of instructions to add to the ggplot2 instruction.
-#'See \code{\link[ggplot2]{+.gg}}. Default is \code{list(theme())}, which adds nothing to the plot.
+#'@param gg.add a list of instructions to add to the ggplot2 instruction (see 
+#'\code{\link[ggplot2]{gg-add}}). Default is \code{list(theme())}, which adds 
+#'nothing to the plot.
 #'
 #'
 #'@author Boris Hejblum
