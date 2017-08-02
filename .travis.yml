@@ -11,6 +11,7 @@ os:
 - osx
 
 r_github_packages:
+- hadley/scales
 - hadley/ggplot2
 
 r_packages:
@@ -28,7 +29,6 @@ r_packages:
 - doParallel
 - itertools
 - microbenchmark
-- scales
 - viridis
 
 r_build_args: "--as-cran"
