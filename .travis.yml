@@ -1,7 +1,7 @@
 language: R
 cache: packages
 warnings_are_errors: true
-sudo: false
+sudo: true
 
 matrix:
   include:
@@ -20,12 +20,7 @@ matrix:
         - eval "${MATRIX_EVAL}"
       
     - os: osx
-      osx_image: xcode9
       r: devel
-      env:
-        - MATRIX_EVAL="brew update && brew install --with-toolchain llvm && CC=clang-4.0 && CXX=clang++-4.0"
-      before_install:
-        - eval "${MATRIX_EVAL}"
 
 r_github_packages:
 - hadley/scales
