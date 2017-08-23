@@ -1,2 +1,6 @@
 PKG_CXXFLAGS = $(SHLIB_OPENMP_CXXFLAGS) 
 PKG_LIBS = $(SHLIB_OPENMP_CFLAGS) $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS)
+strippedLib: $(SHLIB)
+	if test -e "/usr/bin/strip"; then /usr/bin/strip -S $(SHLIB); /usr/bin/strip -S $(OBJECTS); fi
+
+.phony: strippedLib
