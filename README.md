@@ -3,7 +3,7 @@
 `NPflow`
 ========
 
-[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/NPflow)](https://cran.r-project.org/package=NPflow) [![Travis-CI Build Status](https://travis-ci.org/borishejblum/NPflow.svg?branch=CRANrelease)](https://travis-ci.org/borishejblum/NPflow) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/borishejblum/NPflow?branch=master&svg=true)](https://ci.appveyor.com/project/borishejblum/NPflow) [![Downloads](https://cranlogs.r-pkg.org/badges/NPflow?color=blue)](https://www.r-pkg.org/pkg/NPflow)
+[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/NPflow)](https://cran.r-project.org/package=NPflow) [![Travis-CI Build Status](https://travis-ci.org/borishejblum/NPflow.svg?branch=CRANrelease)](https://travis-ci.org/borishejblum/NPflow) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/borishejblum/NPflow?branch=CRANrelease&svg=true)](https://ci.appveyor.com/project/borishejblum/NPflow) [![Downloads](https://cranlogs.r-pkg.org/badges/NPflow?color=blue)](https://www.r-pkg.org/pkg/NPflow)
 
 Overview
 --------
