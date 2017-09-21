@@ -29,7 +29,7 @@ Or to get the development version from [GitHub](https://github.com/borishejblum/
 
 ``` r
 #install.packages("devtools")
-devtools::install_github("borishejblum/NPflow")
+devtools::install_github("borishejblum/NPflow", ref="CRANrelease")
 ```
 
 -- Boris Hejblum

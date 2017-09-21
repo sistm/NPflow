@@ -13,12 +13,13 @@ matrix:
       dist: trusty
       r: devel
       
+    - os: osx
+      r: devel
+      
   allow_failures:
     - os: osx
       r: release
 
-    - os: osx
-      r: devel
 
 r_github_packages:
 - hadley/scales
