@@ -55,7 +55,7 @@ sliceSampler_N_parallel <- function(Ncpus, c, m, alpha, z, hyperG0, U_mu, U_Sigm
         U_Sigma_full <- lapply(fullCl_ind, function(j) U_Sigma[, ,j])
         
         iter <- itertools::isplitIndices(ncol(z), chunks=Ncpus)
-        c <- foreach::"%dopar%"(foreach::foreach(i=1:Ncpus, .combine='c'),
+        c <- foreach::"%dopar%"(foreach::foreach(i=iter, .combine='c'),
                                 {
             l <- mmvnpdfC(x=z[, i, drop=FALSE], mean=U_mu_full, varcovM=U_Sigma_full, Log = TRUE)
             u_mat <- t(sapply(w[fullCl_ind], function(x){as.numeric(u[i] < x)}))
