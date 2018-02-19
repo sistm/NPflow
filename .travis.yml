@@ -14,11 +14,11 @@ matrix:
       r: devel
       
     - os: osx
-      r: devel
+      r: release
 
 allow_failures:
     - os: osx
-      r: release
+      r: devel
 
 r_packages:
 - Rcpp
