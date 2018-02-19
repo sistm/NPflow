@@ -31,7 +31,8 @@ const double log2pi2 = log(2.0 * M_PI)/2.0;
 //'
 //'if(require(microbenchmark)){
 //' library(microbenchmark)
-//' microbenchmark(mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE),
+//' microbenchmark(dnorm(1.96),
+//'                mvnpdf(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE),
 //'                mvnpdfC(x=matrix(1.96), mean=0, varcovM=diag(1), Log=FALSE),
 //'                times=10000L)
 //'}else{
