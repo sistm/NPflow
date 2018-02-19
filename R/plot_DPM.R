@@ -153,7 +153,7 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
                           " (alpha = ", alpha2print, ")",
                           sep=""))
           + scale_fill_discrete(guide=FALSE)
-          + scale_colour_discrete(guide=guide_legend(override.aes = list(size = 6)))
+          + guides(colour = guide_legend(override.aes = list(size = 6)))
     )
   }else{
     z2plot <- cbind.data.frame("D1"=z[1,],"D2"=z[2,],"Cluster"=zClusters)
