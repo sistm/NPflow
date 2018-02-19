@@ -40,13 +40,15 @@ update_SSsn <- function(z, S, ltn, hyperprior=NULL){
     nu1 <- nu0 + n #c
 
 
-    eps2 <- tcrossprod(z[,1] - b_xi - ltn[1]*b_psi)
-
-    if(n>1){
-        for (i in 2:n){
-            eps2 <- eps2 + tcrossprod(z[,i] - b_xi - ltn[i]*b_psi)
-        }
-    }
+    # eps2 <- tcrossprod(z[,1] - b_xi - ltn[1]*b_psi)
+    # if(n>1){
+    #     for (i in 2:n){
+    #         eps2 <- eps2 + tcrossprod(z[,i] - b_xi - ltn[i]*b_psi)
+    #     }
+    # }
+    # optimized computation :
+    eps2 <- tcrossprod((z - b_xi) - sapply(ltn, function(x){x*b_psi}))
+    
 
     #conjugate hyperprior on lambda: whishart distribution
     if(!is.null(hyperprior)){

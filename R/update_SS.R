@@ -28,11 +28,13 @@ update_SS <- function(z, S, hyperprior=NULL){
     nu1 <- nu0 + n
 
     mu1 <- n/(kappa0 + n)*zbar + kappa0/(kappa0 + n)*mu0
-
-    varz <- tcrossprod(z[,1]-zbar)
-    for(j in 2:n){
-      varz <- varz + tcrossprod(z[,j]-zbar)
-    }
+    
+    # varz <- tcrossprod(z[,1]-zbar)
+    # for(j in 2:n){
+    #   varz <- varz + tcrossprod(z[,j]-zbar)
+    # } 
+    # the same computation is achievable though varz <- tcrossprod(z-zbar)
+    varz <- tcrossprod(z-zbar)
     if(!is.null(hyperprior)){
       #g0 <- ncol(lambda0) + 5
       g0 <- nu0
