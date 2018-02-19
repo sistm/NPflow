@@ -74,6 +74,7 @@ Slice Sampling of Dirichlet Process Mixture of Gaussian distibutions
 \examples{
 
 rm(list=ls())
+library(NPflow)
 #Number of data
 n <- 1500
 # Sample data

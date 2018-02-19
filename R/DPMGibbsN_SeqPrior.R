@@ -73,6 +73,7 @@
 #'@examples
 #'
 #'rm(list=ls())
+#'library(NPflow)
 #'#Number of data
 #'n <- 1500
 #'# Sample data

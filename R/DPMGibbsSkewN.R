@@ -161,7 +161,7 @@
 #'  ##############################################
 #'
 #'  MCMCsample_sn <- DPMGibbsSkewN(z, hyperG0, a, b, N=2500,
-#'                                 doPlot, nbclust_init, plotevery=100,
+#'                                 doPlot, nbclust_init, plotevery=200,
 #'                                 gg.add=list(theme_bw(),
 #'                                  guides(shape=guide_legend(override.aes = list(fill="grey45")))),
 #'                                diagVar=FALSE)
