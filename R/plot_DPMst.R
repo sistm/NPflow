@@ -167,7 +167,7 @@ plot_DPMst <- function(z, c, i="", alpha="?", U_SS,
       
     }else{
       p <- (ggplot(z2plot)
-            + geom_point(aes_string(x="D1", y="D2", colour="Cluster", shape="Cluster", fill="Cluster"), alpha=min(0.7, max(0.7*10/n^0.4, 0.15)),
+            + geom_point(aes_string(x="D1", y="D2", colour="Cluster", shape="Cluster", fill="Cluster"), alpha=min(0.9, max(0.9*6/n^0.28, 0.2)),
                          data=z2plot, size=2)
             + scale_alpha_continuous(guide=FALSE)
       )
