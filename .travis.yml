@@ -13,10 +13,11 @@ matrix:
       dist: trusty
       r: devel
       
+allow_failures:
+      
     - os: osx
       r: release
 
-allow_failures:
     - os: osx
       r: devel
 
