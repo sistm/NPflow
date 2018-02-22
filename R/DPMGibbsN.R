@@ -297,14 +297,13 @@ DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
   if(verbose){
     cat(i, "/", N, " samplings:\n", sep="")
     cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="")
+    cl2print <- unique(c)
+    cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
   }
   
   if(doPlot){
     plot_DPM(z=z, U_mu=U_mu, U_Sigma=U_Sigma,
              c=c, i=i, alpha=alpha[[i]], U_SS=U_SS, ...)
-  }else if(verbose){
-    cl2print <- unique(c)
-    cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
   }
   
   
@@ -361,9 +360,6 @@ DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
     if(doPlot && i/plotevery==floor(i/plotevery)){
       plot_DPM(z=z, U_mu=U_mu, U_Sigma=U_Sigma, c=c, i=i,
                alpha=alpha[i], U_SS=U_SS, ...)
-    }else{
-      cl2print <- unique(c)
-      cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
     }
     
   }
