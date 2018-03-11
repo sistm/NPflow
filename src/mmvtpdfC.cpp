@@ -81,8 +81,3 @@ NumericMatrix mmvtpdfC(const NumericMatrix & x,
     return y;
 
 }
-
-
-
-
-

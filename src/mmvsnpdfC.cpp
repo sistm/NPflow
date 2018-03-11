@@ -97,4 +97,3 @@ NumericMatrix mmvsnpdfC(const arma::mat & x,
     return y;
 
 }
-
