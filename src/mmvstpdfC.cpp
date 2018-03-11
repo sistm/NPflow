@@ -69,12 +69,12 @@ using namespace arma;
 //' cat("package 'microbenchmark' not available\n")
 //'}
 // [[Rcpp::export]]
-NumericMatrix mmvstpdfC(arma::mat x,
-                        arma::mat xi,
-                        arma::mat psi,
-                        List sigma,
-                        NumericVector df,
-                        bool Log=true){
+NumericMatrix mmvstpdfC(const arma::mat & x,
+                        const arma::mat & xi,
+                        const arma::mat & psi,
+                        const List & sigma,
+                        const NumericVector & df,
+                        const bool & Log=true){
 
     int p = x.n_rows;
     int n = x.n_cols;

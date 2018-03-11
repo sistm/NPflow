@@ -22,7 +22,7 @@ using namespace arma;
 //'similarityMatC(sapply(c2, "["))
 //'
 // [[Rcpp::export]]
-List similarityMatC(arma::mat cc){
+List similarityMatC(const arma::mat & cc){
 
     int N = cc.n_cols;
     int n = cc.n_rows;

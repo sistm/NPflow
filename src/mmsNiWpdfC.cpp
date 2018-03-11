@@ -35,15 +35,15 @@ using namespace arma;
 //'@export
 //'
 // [[Rcpp::export]]
-NumericMatrix mmsNiWpdfC(arma::mat xi,
-                         arma::mat psi,
-                         List Sigma,
-                         arma::mat U_xi0,
-                         arma::mat U_psi0,
-                         List U_B0,
-                         List U_Sigma0,
-                         NumericVector U_df0,
-                         bool Log=true){
+NumericMatrix mmsNiWpdfC(const arma::mat & xi,
+                         const arma::mat & psi,
+                         const List & Sigma,
+                         const arma::mat & U_xi0,
+                         const arma::mat & U_psi0,
+                         const List & U_B0,
+                         const List & U_Sigma0,
+                         const NumericVector & U_df0,
+                         const bool & Log=true){
 
     int d = xi.n_rows;
     int n = xi.n_cols;

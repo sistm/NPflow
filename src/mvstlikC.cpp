@@ -29,14 +29,14 @@ using namespace arma;
 //'@author Boris Hejblum
 //'
 // [[Rcpp::export]]
-List mvstlikC(arma::mat x,
-              arma::vec c,
-              arma::vec clustval,
-              arma::mat xi,
-              arma::mat psi,
-              List sigma,
-              NumericVector df,
-              bool loglik=true){
+List mvstlikC(const arma::mat & x,
+              const arma::vec & c,
+              const arma::vec & clustval,
+              const arma::mat & xi,
+              const arma::mat & psi,
+              const List & sigma,
+              const NumericVector & df,
+              const bool & loglik=true){
 
   int p = x.n_rows;
   int n = x.n_cols;

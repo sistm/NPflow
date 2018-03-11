@@ -43,11 +43,11 @@ using namespace arma;
 //' cat("package 'microbenchmark' not available\n")
 //'}
 // [[Rcpp::export]]
-NumericMatrix mmvtpdfC(NumericMatrix x,
-                       NumericMatrix mean,
-                       List varcovM,
-                       NumericVector df,
-                       bool Log=true){
+NumericMatrix mmvtpdfC(const NumericMatrix & x,
+                       const NumericMatrix & mean,
+                       const List & varcovM,
+                       const NumericVector & df,
+                       const bool & Log=true){
 
     mat xx = as<mat>(x);
     mat m = as<mat>(mean);

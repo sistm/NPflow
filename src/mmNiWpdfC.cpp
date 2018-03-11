@@ -30,13 +30,13 @@ using namespace arma;
 //'
 //'
 // [[Rcpp::export]]
-NumericMatrix mmNiWpdfC(arma::mat Mu,
-                        List Sigma,
-                        arma::mat U_Mu0,
-                        NumericVector U_Kappa0,
-                        NumericVector U_Nu0,
-                        List U_Sigma0,
-                        bool Log=true){
+NumericMatrix mmNiWpdfC(const arma::mat & Mu,
+                        const List & Sigma,
+                        const arma::mat & U_Mu0,
+                        const NumericVector & U_Kappa0,
+                        const NumericVector & U_Nu0,
+                        const List & U_Sigma0,
+                        const bool & Log=true){
 
   int d = Mu.n_rows;
   int n = Mu.n_cols;

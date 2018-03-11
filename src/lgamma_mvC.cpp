@@ -2,7 +2,7 @@
 using namespace Rcpp;
 
 // C++ implementation of the logarithm of the gamma function
-double lgamma_mvC(double x, double p){
+double lgamma_mvC(const double & x, const double & p){
 
   double res = (p*(p-1.0)/4.0)*log(M_PI);
 

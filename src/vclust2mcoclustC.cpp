@@ -19,7 +19,7 @@ using namespace arma;
 //'
 //'
 // [[Rcpp::export]]
-List vclust2mcoclustC(NumericVector c){
+List vclust2mcoclustC(const NumericVector & c){
 
   int n = c.size();
 

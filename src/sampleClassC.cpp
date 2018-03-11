@@ -23,8 +23,8 @@ using namespace arma;
 //'@export
 //'
 // [[Rcpp::export]]
-IntegerVector sampleClassC(arma::mat probMat,
-                           bool Log=false){
+IntegerVector sampleClassC(const arma::mat & probMat,
+                           const bool & Log=false){
 
     int n = probMat.n_cols;
     IntegerVector c(n);

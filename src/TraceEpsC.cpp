@@ -16,8 +16,8 @@ using namespace arma;
 //'@export
 //'
 // [[Rcpp::export]]
-NumericVector traceEpsC(arma::mat eps,
-                        arma::mat sigma){
+NumericVector traceEpsC(const arma::mat & eps,
+                        const arma::mat & sigma){
 
     int n =eps.n_cols;
     vec tra(n);

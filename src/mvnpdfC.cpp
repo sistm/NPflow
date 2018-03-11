@@ -40,10 +40,10 @@ const double log2pi2 = log(2.0 * M_PI)/2.0;
 //'}
 //'
 // [[Rcpp::export]]
-NumericVector mvnpdfC(NumericMatrix x,
-                      NumericVector mean,
-                      NumericMatrix varcovM,
-                      bool Log=true){
+NumericVector mvnpdfC(const NumericMatrix & x,
+                      const NumericVector & mean,
+                      const NumericMatrix & varcovM,
+                      const bool & Log=true){
 
   mat xx = as<mat>(x);
   colvec m = as<colvec>(mean);

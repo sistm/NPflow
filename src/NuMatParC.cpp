@@ -23,7 +23,7 @@ using namespace arma;
 //'
 //'
 // [[Rcpp::export]]
-List NuMatParC(NumericVector c, arma::mat d){
+List NuMatParC(const NumericVector & c, const arma::mat & d){
 
   int n = c.size();
 

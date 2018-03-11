@@ -5,6 +5,6 @@
 
 using namespace Rcpp;
 
-double lgamma_mvC(double x, double p);
+double lgamma_mvC(const double & x, const double & p);
 
 #endif

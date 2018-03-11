@@ -20,7 +20,7 @@ using namespace arma;
 //'FmeasureC(pred, ref)
 //'
 // [[Rcpp::export]]
-double FmeasureC(NumericVector pred, NumericVector ref){
+double FmeasureC(const NumericVector & pred, const NumericVector & ref){
 
   vec K = unique(pred);
   K = sort(K);
@@ -87,7 +87,7 @@ double FmeasureC(NumericVector pred, NumericVector ref){
 //'FmeasureC_no0(pred, ref)
 //'
 // [[Rcpp::export]]
-double FmeasureC_no0(NumericVector pred, NumericVector ref){
+double FmeasureC_no0(const NumericVector & pred, const NumericVector & ref){
 
   vec K = unique(pred);
   K = sort(K);
@@ -162,7 +162,7 @@ double FmeasureC_no0(NumericVector pred, NumericVector ref){
 //'}
 //'
 // [[Rcpp::export]]
-List Fmeasure_costC(arma::mat c){
+List Fmeasure_costC(const arma::mat & c){
 
   int N = c.n_cols;
   //int n = c.n_rows;

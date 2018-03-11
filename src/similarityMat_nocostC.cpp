@@ -29,7 +29,7 @@ using namespace arma;
 //' cat("package 'microbenchmark' not available\n")
 //'}
 // [[Rcpp::export]]
-List similarityMat_nocostC(arma::mat cc){
+List similarityMat_nocostC(const arma::mat & cc){
 
   int N = cc.n_cols;
   int n = cc.n_rows;

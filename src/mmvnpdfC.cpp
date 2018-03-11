@@ -43,10 +43,10 @@ const double log2pi2 = log(2.0 * M_PI)/2.0;
 //' cat("package 'microbenchmark' not available\n")
 //'}
 // [[Rcpp::export]]
-NumericMatrix mmvnpdfC(arma::mat x,
-                       arma::mat mean,
-                       List varcovM,
-                       bool Log=true){
+NumericMatrix mmvnpdfC(const arma::mat & x,
+                       const arma::mat & mean,
+                       const List & varcovM,
+                       const bool & Log=true){
 
     int p = x.n_rows;
     int n = x.n_cols;
