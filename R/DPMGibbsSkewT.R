@@ -3,7 +3,29 @@
 #'@param z data matrix \code{d x n} with \code{d} dimensions in rows
 #'and \code{n} observations in columns.
 #'
-#'@param hyperG0 prior mixing distribution.
+#'@param hyperG0 parameters of the prior mixing distribution in a \code{list} with the following named components:
+#'\itemize{
+#'  \item{\code{"b_xi"}:  a vector of length \code{d} with the mean location prior parameter. 
+#'  Can be set as the empirical mean of the data in an Empircal Bayes fashion.}
+#'  \item{\code{"b_psi"}: a vector of length \code{d} with the skewness location prior 
+#'  parameter. Can be set as 0 a priori.}
+#'  \item{\code{"kappa"}: a strictly positive number part of the inverse-Wishart 
+#'  component of the prior on the variance matrix. Can be set as very small (e.g. 
+#'  0.001) a priori.}
+#'  \item{\code{"D_xi"}: hyperprior controlling the information in $\xi$ (the larger
+#'  the less information is carried). 100 is a reasonnable value, based on 
+#'  Fruhwirth-Schnatter et al., Biostatistics, 2010.}
+#'  \item{\code{"D_psi"}: hyperprior controlling the information in $\psi$ (the larger
+#'  the less information is carried). 100 is a reasonnable value, based on 
+#'  Fruhwirth-Schnatter et al., Biostatistics, 2010}
+#'  \item{\code{"nu"}: a prior number on the degrees of freedom of the $t$ component that must be
+#'  strictly greater than \code{d}. Can be set as \code{d + 1} for instance.}
+#'  \item{\code{"lambda"}: a \code{d x d} symmetric definitive positive matrix 
+#'  part of the inverse-Wishart component of the prior on the variance matrix. 
+#'  Can be set as the diagonal of empirical variance of the data in an Empircal 
+#'  Bayes fashion divided by a factor 3 according to Fruhwirth-Schnatter et al., 
+#'  Biostatistics, 2010.}
+#'}
 #'
 #'@param a shape hyperparameter of the Gamma prior
 #'on the concentration parameter of the Dirichlet Process. Default is \code{0.0001}.
@@ -39,22 +61,22 @@
 #'
 #'@return a object of class \code{DPMclust} with the following attributes:
 #'  \itemize{
-#'      \item{\code{mcmc_partitions}:}{ a list of length \code{N}. Each
+#'      \item{\code{mcmc_partitions}: }{ a list of length \code{N}. Each
 #'       element \code{mcmc_partitions[n]} is a vector of length
 #'       \code{n} giving the partition of the \code{n} observations.}
-#'      \item{\code{alpha}:}{a vector of length \code{N}. \code{cost[j]} is the cost
+#'      \item{\code{alpha}: }{a vector of length \code{N}. \code{cost[j]} is the cost
 #' associated to partition \code{c[[j]]}}
-#'       \item{\code{U_SS_list}:}{a list of length \code{N} containing the lists of
+#'       \item{\code{U_SS_list}: }{a list of length \code{N} containing the lists of
 #'       sufficient statistics for all the mixture components at each MCMC iteration}
-#'      \item{\code{weights_list}:}{a list of length \code{N} containing the weights of each
+#'      \item{\code{weights_list}: }{a list of length \code{N} containing the weights of each
 #'      mixture component for each MCMC iterations}
-#'      \item{\code{logposterior_list}:}{a list of length \code{N} containing the logposterior values
+#'      \item{\code{logposterior_list}: }{a list of length \code{N} containing the logposterior values
 #'       at each MCMC iterations}
-#'      \item{\code{data}:}{the data matrix \code{d x n} with \code{d} dimensions in rows
+#'      \item{\code{data}: }{the data matrix \code{d x n} with \code{d} dimensions in rows
 #'and \code{n} observations in columns}
-#'      \item{\code{nb_mcmcit}:}{the number of MCMC itertations}
-#'      \item{\code{clust_distrib}:}{the parametric distribution of the mixture component - \code{"skewt"}}
-#'      \item{\code{hyperG0}:}{the prior on the cluster location}
+#'      \item{\code{nb_mcmcit}: }{the number of MCMC itertations}
+#'      \item{\code{clust_distrib}: }{the parametric distribution of the mixture component - \code{"skewt"}}
+#'      \item{\code{hyperG0}: }{the prior on the cluster location}
 #'  }
 #'
 #'@author Boris Hejblum
@@ -63,6 +85,10 @@
 #'Process Mixtures of Multivariate Skew t-distributions for Model-based Clustering
 #'of Flow Cytometry Data, submitted.
 #'arxiv ID: 1702.04407 \url{https://arxiv.org/abs/1702.04407v2}
+#'
+#'@references Fruwirth-Schnatter S, Pyne S, Bayesian inference for finite mixtures 
+#'of univariate and multivariate skew-normal and skew-t distributions, Biostatistics,
+#'2010.
 #'
 #'@export
 #'
