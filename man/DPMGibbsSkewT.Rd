@@ -21,13 +21,13 @@ and \code{n} observations in columns.}
  \item{\code{"kappa"}: a strictly positive number part of the inverse-Wishart 
  component of the prior on the variance matrix. Can be set as very small (e.g. 
  0.001) a priori.}
- \item{\code{"D_xi"}: hyperprior controlling the information in $\xi$ (the larger
+ \item{\code{"D_xi"}: hyperprior controlling the information in \eqn{\xi} (the larger
  the less information is carried). 100 is a reasonnable value, based on 
  Fruhwirth-Schnatter et al., Biostatistics, 2010.}
- \item{\code{"D_psi"}: hyperprior controlling the information in $\psi$ (the larger
+ \item{\code{"D_psi"}: hyperprior controlling the information in \eqn{\psi} (the larger
  the less information is carried). 100 is a reasonnable value, based on 
  Fruhwirth-Schnatter et al., Biostatistics, 2010}
- \item{\code{"nu"}: a prior number on the degrees of freedom of the $t$ component that must be
+ \item{\code{"nu"}: a prior number on the degrees of freedom of the \eqn{t} component that must be
  strictly greater than \code{d}. Can be set as \code{d + 1} for instance.}
  \item{\code{"lambda"}: a \code{d x d} symmetric definitive positive matrix 
  part of the inverse-Wishart component of the prior on the variance matrix. 
