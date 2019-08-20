@@ -1,8 +1,9 @@
 citHeader("To cite NPflow in publications, please use:")
 
-citEntry(entry = "Article",
+bibentry(bibtype = "Article",
    title  = "Sequential Dirichlet Process Mixtures of Multivariate Skew t-distributions for Model-based Clustering of Flow Cytometry Data",
-   author = c(person("Boris P Hejblum"), person("Chariff Alkhassim"), person("Raphael Gottardo"), person("Fran\\c{c}ois Caro"), person("Rodolphe Thi\\'ebaut")),
+   author = c(person(c("Boris", "P"), "Hejblum"), person("Chariff", "Alkhassim"), person("Raphael", "Gottardo"),
+   person("Fran{\\c c}ois", "Caron"), person("Rodolphe", "Thi{\\'e}baut")),
    journal = "The Annals of Applied Statistics",
    year   = "2019",
    volume = "13",
