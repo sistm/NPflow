@@ -22,10 +22,10 @@ Process. Default is \code{0.0001}. If \code{0}, then the concentration is fixed 
 
 \item{N}{number of MCMC iterations.}
 
-\item{doPlot}{logical flag indicating wether to plot MCMC iteration or not. Default to
+\item{doPlot}{logical flag indicating whether to plot MCMC iteration or not. Default to
 \code{TRUE}.}
 
-\item{nbclust_init}{number of clusters at initialisation. Default to 30 (or less if there are less
+\item{nbclust_init}{number of clusters at initialization. Default to 30 (or less if there are less
 than 30 observations).}
 
 \item{plotevery}{an integer indicating the interval between plotted iterations when \code{doPlot}
@@ -38,7 +38,7 @@ diagonal matrix, or as a full matrix. Default is \code{TRUE} (diagonal variance)
 for the variance parameter. Default is \code{TRUE} which decrease the impact of the variance prior
 on the posterior. \code{FALSE} is useful for using an informative prior.}
 
-\item{verbose}{logical flag indicating wether partition info is written in the console at each
+\item{verbose}{logical flag indicating whether partition info is written in the console at each
 MCMC iteration.}
 
 \item{...}{additional arguments to be passed to \code{\link{plot_DPM}}. Only used if \code{doPlot}
@@ -64,7 +64,7 @@ associated to partition \code{c[[j]]}}
       at each MCMC iterations}
      \item{\code{data}:}{ the data matrix \code{d x n} with \code{d} dimensions in rows
 and \code{n} observations in columns.}
-     \item{\code{nb_mcmcit}:}{ the number of MCMC itertations}
+     \item{\code{nb_mcmcit}:}{ the number of MCMC iterations}
      \item{\code{clust_distrib}:}{the parametric distribution of the mixture component - \code{"gaussian"}}
      \item{\code{hyperG0}:}{the prior on the cluster location}
  }
@@ -144,10 +144,10 @@ for(k in 1:n){
  p
 
 
-
+if(interactive()){
  # Gibbs sampler for Dirichlet Process Mixtures
  ##############################################
-\dontrun{
+
  MCMCsample <- DPMGibbsN(z, hyperG0, a, b, N=500, doPlot, nbclust_init, plotevery=100,
                          gg.add=list(theme_bw(),
                                  guides(shape=guide_legend(override.aes = list(fill="grey45")))),

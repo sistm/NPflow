@@ -2,7 +2,7 @@
 % Please edit documentation in R/DPMGibbsSkewT_SeqPrior_parallel.R
 \name{DPMGibbsSkewT_SeqPrior_parallel}
 \alias{DPMGibbsSkewT_SeqPrior_parallel}
-\title{Slice Sampling of Dirichlet Process Mixture of skew  Students's t-distibutions}
+\title{Slice Sampling of Dirichlet Process Mixture of skew Student's t-distributions}
 \usage{
 DPMGibbsSkewT_SeqPrior_parallel(Ncpus, type_connec, z, prior_inform,
   hyperG0, N, nbclust_init, add.vagueprior = TRUE,
@@ -25,26 +25,26 @@ and \code{n} observations in columns.}
 
 \item{N}{number of MCMC iterations.}
 
-\item{nbclust_init}{number of clusters at initialisation.
+\item{nbclust_init}{number of clusters at initialization.
 Default to 30 (or less if there are less than 30 observations).}
 
-\item{add.vagueprior}{logical flag indicating wether a non informative component should
+\item{add.vagueprior}{logical flag indicating whether a non informative component should
 be added to the informative prior. Default is \code{TRUE}.}
 
 \item{weightnoninfo}{a real between 0 and 1 giving the weights of the non informative component
 in the prior.}
 
-\item{doPlot}{logical flag indicating wether to plot MCMC iteration or not.
+\item{doPlot}{logical flag indicating whether to plot MCMC iteration or not.
 Default to \code{TRUE}.}
 
 \item{plotevery}{an integer indicating the interval between plotted iterations when \code{doPlot}
 is \code{TRUE}.}
 
-\item{diagVar}{logical flag indicating wether the variance of each cluster is
+\item{diagVar}{logical flag indicating whether the variance of each cluster is
 estimated as a diagonal matrix, or as a full matrix.
 Default is \code{TRUE} (diagonal variance).}
 
-\item{verbose}{logical flag indicating wether partition info is
+\item{verbose}{logical flag indicating whether partition info is
 written in the console at each MCMC iteration.}
 
 \item{monitorfile}{a writable \link{connections} or a character string naming a file to write into,
@@ -70,13 +70,13 @@ associated to partition \code{c[[j]]}}
       at each MCMC iterations}
      \item{\code{data}:}{the data matrix \code{d x n} with \code{d} dimensions in rows
 and \code{n} observations in columns}
-     \item{\code{nb_mcmcit}:}{the number of MCMC itertations}
+     \item{\code{nb_mcmcit}:}{the number of MCMC iterations}
      \item{\code{clust_distrib}:}{the parametric distribution of the mixture component - \code{"skewt"}}
      \item{\code{hyperG0}:}{the prior on the cluster location}
  }
 }
 \description{
-Slice Sampling of Dirichlet Process Mixture of skew  Students's t-distibutions
+Slice Sampling of Dirichlet Process Mixture of skew Student's t-distributions
 }
 \examples{
 rm(list=ls())
@@ -143,7 +143,7 @@ hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
        +theme_bw())
  q
 
-\dontrun{
+if(interactive()){
  MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=2000,
                                 doPlot=TRUE, plotevery=250,
                                 nbclust_init,

@@ -76,5 +76,5 @@ p
 
 }
 \seealso{
-mvnpdf, mmvsnpdfC
+\code{\link{mvnpdf}}, \code{\link{mmvsnpdfC}}
 }

@@ -13,7 +13,7 @@
 #'@param Log logical flag for returning the log of the probability density
 #'function. Defaults is \code{TRUE}.
 #'
-#'@seealso mvnpdf, mmvnpdfC
+#'@seealso \code{\link{mvnpdf}}, \code{\link{mmvnpdfC}}
 #'
 #'@author Boris P. Hejblum
 #'

@@ -33,7 +33,7 @@ mvnpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1),
 
 }
 \seealso{
-mvnpdf, mmvnpdfC
+\code{\link{mvnpdf}}, \code{\link{mmvnpdfC}}
 }
 \author{
 Boris P. Hejblum

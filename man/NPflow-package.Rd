@@ -7,7 +7,7 @@
 \title{Bayesian Nonparametrics for Automatic Gating of Flow Cytometry data}
 \description{
 Dirichlet process mixture of multivariate normal, skew normal or skew t-distributions
-modeling oriented towards flow-cytometry data prep-rocessing applications.
+modeling oriented towards flow-cytometry data pre-processing applications.
 }
 \details{
 \tabular{ll}{

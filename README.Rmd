@@ -29,10 +29,10 @@ The main function of the package is `DPMpost()`.
 
 The method implemented in this package is detailed in the following article:
 
-> Hejblum BP, Alkhassim C, Gottardo R, Caron F and Thiebaut R (2019) 
+> Hejblum BP, Alkhassim C, Gottardo R, Caron F and Thiebaut R (2019).
 Sequential Dirichlet Process Mixtures of Multivariate Skew t-distributions for 
-Model-based Clustering of Flow Cytometry Data. The Annals of Applied Statistics, 
-13(1): 638-660. 
+Model-based Clustering of Flow Cytometry Data. *The Annals of Applied Statistics*, 
+**13**(1):638-660. 
 [<doi: 10.1214/18-AOAS1209>](https://doi.org/10.1214/18-AOAS1209) 
 [<arXiv: 1702.04407>](https://arxiv.org/abs/1702.04407)
 

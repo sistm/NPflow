@@ -8,7 +8,7 @@
 #'@param U_Sigma a list of length n of observed covariance matrices, each of dimension p x p
 #'@param U_xi0 a list of length K of mean vector parameters for sNiW, each of dimension p
 #'@param U_psi0 a list of length K of mean vector parameters for sNiW, each of dimension p
-#'@param U_B0 a list of length K of sturcturing matrix parameters for sNiW, each of dimension 2 x 2
+#'@param U_B0 a list of length K of structuring matrix parameters for sNiW, each of dimension 2 x 2
 #'@param U_Sigma0 a list of length K of covariance matrix parameters for sNiW, each of dimension p x p
 #'@param U_df0 a list of length K of degrees of freedom parameters for sNiW, each of dimension p x p
 #'@export

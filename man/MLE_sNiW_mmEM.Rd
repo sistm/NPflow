@@ -31,7 +31,7 @@ Default is \code{100}.}
 \item{tol}{real number giving the tolerance for the stopping of the EM algorithm.
 Default is \code{0.1}.}
 
-\item{doPlot}{a logical flag indicating wether the algorithm progression should be plotted. Default is \code{TRUE}.}
+\item{doPlot}{a logical flag indicating whether the algorithm progression should be plotted. Default is \code{TRUE}.}
 
 \item{verbose}{logical flag indicating whether plot should be drawn. Default is \code{TRUE}.}
 }

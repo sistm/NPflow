@@ -12,16 +12,16 @@
 #'Either "F-measure" or "Binder" (see Details). Default is "F-measure".
 #'
 #'@param a only relevant if \code{lossFn} is "Binder". Penalty for wrong
-#'coclustering in \code{c} compared to code{gs}. Defaults is 1.
+#'co-clustering in \code{c} compared to code{gs}. Defaults is 1.
 #'
 #'@param b only relevant if \code{lossFn} is "Binder". Penalty for missed
-#'coclustering in \code{c} compared to code{gs}. Defaults is 1.
+#'co-clustering in \code{c} compared to code{gs}. Defaults is 1.
 #'
 #'@return the cost of the point estimate \code{c} in regard of the
 #'gold standard \code{gs} for a given loss function.
 #'
 #'@details The cost of a point estimate partition is calculated using either a pairwise
-#' coincidence loss function (Binder), or 1-Fmeasure (F-measure).
+#'coincidence loss function (Binder), or 1-Fmeasure (F-measure).
 #'
 #'
 #'@author Boris Hejblum

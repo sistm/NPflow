@@ -16,7 +16,7 @@ of the skew parameters psi.}
 \item{S_list}{a list of length \code{N} whose elements are observed variance-covariance matrices
 of dimension \code{d x d}.}
 
-\item{doPlot}{a logical flag indicating wether the algorithm progression should be plotted.
+\item{doPlot}{a logical flag indicating whether the algorithm progression should be plotted.
 Default is \code{TRUE}.}
 }
 \description{

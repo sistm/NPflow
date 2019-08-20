@@ -39,7 +39,7 @@ Default is \code{100}.}
 \item{tol}{real number giving the tolerance for the stopping of the EM algorithm.
 Default is \code{0.1}.}
 
-\item{doPlot}{a logical flag indicating wether the algorithm progression should be plotted.
+\item{doPlot}{a logical flag indicating whether the algorithm progression should be plotted.
 Default is \code{TRUE}.}
 
 \item{verbose}{logical flag indicating whether plot should be drawn. Default is \code{TRUE}.}
@@ -55,7 +55,7 @@ Normal inverse Wishart distributed observations with an EM algorithm
 \code{MAP_sNiW_mmEM} provides an estimation for the MAP of mixtures of
 Normal inverse Wishart distributed observations. \code{MAP_sNiW_mmEM_vague} provides
 an estimates incorporating a vague component in the mixture.
-\code{MAP_sNiW_mmEM_weighted} provides a weigthed version of the algorithm.
+\code{MAP_sNiW_mmEM_weighted} provides a weighted version of the algorithm.
 }
 \examples{
 set.seed(1234)

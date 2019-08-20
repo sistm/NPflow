@@ -4,7 +4,7 @@ using namespace arma;
 
 // [[Rcpp::depends(RcppArmadillo)]]
 
-//' C++ implementation of similarity matrix computation using precomputed distances
+//' C++ implementation of similarity matrix computation using pre-computed distances
 //'
 //'
 //'@param c an MCMC partitions of length \code{n}.

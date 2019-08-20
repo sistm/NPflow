@@ -23,7 +23,7 @@ clusters}
 \item{sigma}{list of length \code{K} of variance-covariance matrices,
 each of dimensions \code{p x p}.}
 
-\item{loglik}{logical flag or returning the log-likelihood intead of the likelihood.
+\item{loglik}{logical flag or returning the log-likelihood instead of the likelihood.
 Default is \code{TRUE}.}
 }
 \value{

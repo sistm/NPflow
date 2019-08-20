@@ -19,7 +19,7 @@
 #'@param Log logical flag for returning the log of the probability density
 #'function. Defaults is \code{TRUE}.
 #'
-#'@seealso mvtpdf, mvsnpdf, mmvstpdfC, mvstlikC
+#'@seealso \code{\link{mvtpdf}}, \code{\link{mvsnpdf}}, \code{\link{mmvstpdfC}}, \code{\link{mvstlikC}}
 #'
 #'@importFrom stats pt
 #'

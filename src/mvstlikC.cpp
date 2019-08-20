@@ -17,7 +17,7 @@ using namespace arma;
 //'@param sigma list of length \code{K} of variance-covariance matrices,
 //'each of dimensions \code{p x p}.
 //'@param df vector of length \code{K} of degree of freedom parameters.
-//'@param loglik logical flag or returning the log-likelihood intead of the likelihood.
+//'@param loglik logical flag or returning the log-likelihood instead of the likelihood.
 //'Default is \code{TRUE}.
 //'@return a list:
 //'\itemize{

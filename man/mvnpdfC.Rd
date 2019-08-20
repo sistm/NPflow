@@ -22,7 +22,7 @@ vector of densities
 }
 \description{
 Based on the implementation from Nino Hardt and Dicko Ahmadou
-http://gallery.rcpp.org/articles/dmvnorm_arma/
+\url{http://gallery.rcpp.org/articles/dmvnorm_arma/}
 (accessed in August 2014)
 }
 \examples{

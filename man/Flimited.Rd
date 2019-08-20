@@ -14,7 +14,7 @@ Flimited(n_small_clst, pred, ref)
 \item{ref}{vector of a reference partition}
 }
 \description{
-A limited version of F-measure that only takes into accout small clusters
+A limited version of F-measure that only takes into account small clusters
 }
 \examples{
 pred <- c(rep(1, 5),rep(2, 8),rep(3,10))

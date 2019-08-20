@@ -23,7 +23,7 @@ Default is \code{0.0001}. If \code{0} then the concentration is fixed and this f
 returns \code{a}.}
 }
 \description{
-Sampler udating the concentration parameter of a Dirichlet process given
+Sampler updating the concentration parameter of a Dirichlet process given
 the number of observations and a Gamma(\code{a}, \code{b}) prior, following the augmentation
 strategy of West, and of Escobar and West.
 }

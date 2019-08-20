@@ -11,7 +11,7 @@
 #'@param lossFn character string specifying the loss function to be used.
 #'Either "F-measure" or "Binder" (see Details). Default is "F-measure".
 #'
-#'@param gs optionnal vector of length \code{n} containing the gold standard
+#'@param gs optional vector of length \code{n} containing the gold standard
 #'partition of the \code{n} observations to compare to the point estimate.
 #'
 #'@param K integer giving the number of mixture components. Default is \code{10}.

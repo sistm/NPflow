@@ -26,7 +26,7 @@
 #'@param tol real number giving the tolerance for the stopping of the EM algorithm.
 #'Default is \code{0.1}.
 #'
-#'@param doPlot a logical flag indicating wether the algorithm progression should be plotted. Default is \code{TRUE}.
+#'@param doPlot a logical flag indicating whether the algorithm progression should be plotted. Default is \code{TRUE}.
 #'
 #'@param verbose logical flag indicating whether plot should be drawn. Default is \code{TRUE}.
 #'
@@ -97,7 +97,7 @@ MLE_sNiW_mmEM <- function(xi_list, psi_list, S_list, hyperG0, K, init=NULL, maxi
   U_df <- list() #numeric(K)
 
 
-  #initialisation
+  #initialization
   if(is.null(init)){
     for(k in 1:K){
       #sampling the cluster parameters
@@ -282,7 +282,7 @@ MLE_sNiW_mmEM <- function(xi_list, psi_list, S_list, hyperG0, K, init=NULL, maxi
 #'@param tol real number giving the tolerance for the stopping of the EM algorithm.
 #'Default is \code{0.1}.
 #'
-#'@param doPlot a logical flag indicating wether the algorithm progression should be plotted. Default is \code{TRUE}.
+#'@param doPlot a logical flag indicating whether the algorithm progression should be plotted. Default is \code{TRUE}.
 #'
 #'@rdname MLE_NiW_mmEM
 #'
@@ -361,7 +361,7 @@ MLE_NiW_mmEM <- function(mu_list, S_list, hyperG0, K, maxit=100, tol=1e-1, doPlo
   U_nu<-list()
   U_kappa<-list()
 
-  #initialisation
+  #initialization
   weights <- rep(1/K, K)
   for(k in 1:K){
     #sampling the cluster parameters

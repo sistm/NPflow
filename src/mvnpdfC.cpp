@@ -9,7 +9,7 @@ const double log2pi2 = log(2.0 * M_PI)/2.0;
 //' multiple inputs
 //'
 //'Based on the implementation from Nino Hardt and Dicko Ahmadou
-//'http://gallery.rcpp.org/articles/dmvnorm_arma/
+//'\url{http://gallery.rcpp.org/articles/dmvnorm_arma/}
 //'(accessed in August 2014)
 //'
 //'@param x data matrix

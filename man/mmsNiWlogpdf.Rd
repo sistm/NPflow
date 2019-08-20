@@ -17,7 +17,7 @@ mmsNiWlogpdf(U_xi, U_psi, U_Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_df0)
 
 \item{U_psi0}{a list of length K of mean vector parameters for sNiW, each of dimension p}
 
-\item{U_B0}{a list of length K of sturcturing matrix parameters for sNiW, each of dimension 2 x 2}
+\item{U_B0}{a list of length K of structuring matrix parameters for sNiW, each of dimension 2 x 2}
 
 \item{U_Sigma0}{a list of length K of covariance matrix parameters for sNiW, each of dimension p x p}
 

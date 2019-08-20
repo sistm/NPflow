@@ -43,7 +43,7 @@
 #' q
 #'#q + stat_density2d(alpha=0.15, geom="polygon")
 #'
-#'\dontrun{
+#'if(interactive()){
 #' MCMCy1 <- DPMGibbsSkewT(z=GvHD_sims$data[,1:N],
 #'                         hyperG0$NNiW, a=0.0001, b=0.0001, N=5000,
 #'                         doPlot=TRUE, nbclust_init=64, plotevery=500,
