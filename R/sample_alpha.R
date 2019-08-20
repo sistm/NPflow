@@ -1,6 +1,6 @@
 #'Sampler for the concentration parameter of a Dirichlet process
 #'
-#'Sampler udating the concentration parameter of a Dirichlet process given
+#'Sampler updating the concentration parameter of a Dirichlet process given
 #'the number of observations and a Gamma(\code{a}, \code{b}) prior, following the augmentation
 #'strategy of West, and of Escobar and West.
 #'

@@ -21,7 +21,7 @@ a \code{list}:
      \item{\code{cost}:}{ a vector of length \code{N}. \code{cost[j]} is the cost
      associated to partition \code{c[[j]]}}
      \item{\code{similarity}:}{  matrix of size \code{n x n}. Similarity matrix
-     (see \link{similarityMat})}
+     (see \code{\link{similarityMat}})}
      \item{\code{opt_ind}:}{ the index of the optimal partition
      among the MCMC iterations.}
  }

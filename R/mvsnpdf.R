@@ -16,7 +16,7 @@
 #'@param Log logical flag for returning the log of the probability density
 #'function. Defaults is \code{TRUE}.
 #'
-#'@seealso mvnpdf, mmvsnpdfC
+#'@seealso \code{\link{mvnpdf}}, \code{\link{mmvsnpdfC}}
 #'
 #'@importFrom stats pnorm
 #'

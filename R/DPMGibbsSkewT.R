@@ -1,4 +1,4 @@
-#'Slice Sampling of Dirichlet Process Mixture of skew Students's t-distibutions
+#'Slice Sampling of Dirichlet Process Mixture of skew Student's t-distributions
 #'
 #'@param z data matrix \code{d x n} with \code{d} dimensions in rows
 #'and \code{n} observations in columns.
@@ -6,17 +6,17 @@
 #'@param hyperG0 parameters of the prior mixing distribution in a \code{list} with the following named components:
 #'\itemize{
 #'  \item{\code{"b_xi"}:  a vector of length \code{d} with the mean location prior parameter. 
-#'  Can be set as the empirical mean of the data in an Empircal Bayes fashion.}
+#'  Can be set as the empirical mean of the data in an Empirical Bayes fashion.}
 #'  \item{\code{"b_psi"}: a vector of length \code{d} with the skewness location prior 
 #'  parameter. Can be set as 0 a priori.}
 #'  \item{\code{"kappa"}: a strictly positive number part of the inverse-Wishart 
 #'  component of the prior on the variance matrix. Can be set as very small (e.g. 
 #'  0.001) a priori.}
 #'  \item{\code{"D_xi"}: hyperprior controlling the information in \eqn{\xi} (the larger
-#'  the less information is carried). 100 is a reasonnable value, based on 
+#'  the less information is carried). 100 is a reasonable value, based on 
 #'  Fruhwirth-Schnatter et al., Biostatistics, 2010.}
 #'  \item{\code{"D_psi"}: hyperprior controlling the information in \eqn{\psi} (the larger
-#'  the less information is carried). 100 is a reasonnable value, based on 
+#'  the less information is carried). 100 is a reasonable value, based on 
 #'  Fruhwirth-Schnatter et al., Biostatistics, 2010}
 #'  \item{\code{"nu"}: a prior number on the degrees of freedom of the \eqn{t} component that must be
 #'  strictly greater than \code{d}. Can be set as \code{d + 1} for instance.}
@@ -36,16 +36,16 @@
 #'
 #'@param N number of MCMC iterations.
 #'
-#'@param doPlot logical flag indicating wether to plot MCMC iteration or not.
+#'@param doPlot logical flag indicating whether to plot MCMC iteration or not.
 #'Default to \code{TRUE}.
 #'
 #'@param plotevery an integer indicating the interval between plotted iterations when \code{doPlot}
 #'is \code{TRUE}.
 #'
-#'@param nbclust_init number of clusters at initialisation.
+#'@param nbclust_init number of clusters at initialization.
 #'Default to 30 (or less if there are less than 30 observations).
 #'
-#'@param diagVar logical flag indicating wether the variance of each cluster is
+#'@param diagVar logical flag indicating whether the variance of each cluster is
 #'estimated as a diagonal matrix, or as a full matrix.
 #'Default is \code{TRUE} (diagonal variance).
 #'
@@ -74,7 +74,7 @@
 #'       at each MCMC iterations}
 #'      \item{\code{data}: }{the data matrix \code{d x n} with \code{d} dimensions in rows
 #'and \code{n} observations in columns}
-#'      \item{\code{nb_mcmcit}: }{the number of MCMC itertations}
+#'      \item{\code{nb_mcmcit}: }{the number of MCMC iterations}
 #'      \item{\code{clust_distrib}: }{the parametric distribution of the mixture component - \code{"skewt"}}
 #'      \item{\code{hyperG0}: }{the prior on the cluster location}
 #'  }
@@ -87,7 +87,7 @@
 #'13(1): 638-660. <doi: 10.1214/18-AOAS1209> <arXiv: 1702.04407> 
 #'\url{https://arxiv.org/abs/1702.04407} \url{https://doi.org/10.1214/18-AOAS1209}
 #'
-#'@references Fruwirth-Schnatter S, Pyne S, Bayesian inference for finite mixtures 
+#'@references Fruhwirth-Schnatter S, Pyne S, Bayesian inference for finite mixtures 
 #'of univariate and multivariate skew-normal and skew-t distributions, Biostatistics,
 #'2010.
 #'
@@ -187,7 +187,7 @@
 #'
 #'
 #'
-#'\dontrun{
+#'if(interactive()){
 #'  # Gibbs sampler for Dirichlet Process Mixtures
 #'  ##############################################
 #'  MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=1500,
@@ -239,7 +239,7 @@ DPMGibbsSkewT <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
   ltn <- rtruncnorm(n, a=0, b=Inf, mean=0, sd=1) # latent truncated normal
   sc <- rep(1,n)
   
-  # Initialisation----
+  # Initialization----
   # each observation is assigned to a different cluster
   # or to 1 of the 50 initial clusters if there are more than
   # 50 observations

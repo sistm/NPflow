@@ -14,13 +14,13 @@
 #'
 #'@param N number of MCMC iterations.
 #'
-#'@param doPlot logical flag indicating wether to plot MCMC iteration or not. Default to
+#'@param doPlot logical flag indicating whether to plot MCMC iteration or not. Default to
 #' \code{TRUE}.
 #'
 #'@param plotevery an integer indicating the interval between plotted iterations when \code{doPlot}
 #' is \code{TRUE}.
 #'
-#'@param nbclust_init number of clusters at initialisation. Default to 30 (or less if there are less
+#'@param nbclust_init number of clusters at initialization. Default to 30 (or less if there are less
 #'  than 30 observations).
 #'
 #'@param diagVar logical flag indicating whether the variance of each cluster is estimated as a
@@ -30,7 +30,7 @@
 #'for the variance parameter. Default is \code{TRUE} which decrease the impact of the variance prior
 #'on the posterior. \code{FALSE} is useful for using an informative prior.
 #'
-#'@param verbose logical flag indicating wether partition info is written in the console at each
+#'@param verbose logical flag indicating whether partition info is written in the console at each
 #'  MCMC iteration.
 #'
 #'@param ... additional arguments to be passed to \code{\link{plot_DPM}}. Only used if \code{doPlot}
@@ -55,7 +55,7 @@
 #'       at each MCMC iterations}
 #'      \item{\code{data}:}{ the data matrix \code{d x n} with \code{d} dimensions in rows
 #'and \code{n} observations in columns.}
-#'      \item{\code{nb_mcmcit}:}{ the number of MCMC itertations}
+#'      \item{\code{nb_mcmcit}:}{ the number of MCMC iterations}
 #'      \item{\code{clust_distrib}:}{the parametric distribution of the mixture component - \code{"gaussian"}}
 #'      \item{\code{hyperG0}:}{the prior on the cluster location}
 #'  }
@@ -136,10 +136,10 @@
 #'  p
 #'
 #'
-#'
+#'if(interactive()){
 #'  # Gibbs sampler for Dirichlet Process Mixtures
 #'  ##############################################
-#'\dontrun{
+#'
 #'  MCMCsample <- DPMGibbsN(z, hyperG0, a, b, N=500, doPlot, nbclust_init, plotevery=100,
 #'                          gg.add=list(theme_bw(),
 #'                                  guides(shape=guide_legend(override.aes = list(fill="grey45")))),
@@ -242,7 +242,7 @@ DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
   c <-numeric(n)
   # initial number of clusters
   
-  # Initialisation----
+  # Initialization----
   # each observation is assigned to a different cluster
   # or to 1 of the 50 initial clusters if there are more than
   # 50 observations

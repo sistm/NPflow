@@ -12,10 +12,10 @@
 #'@param lossFn character string specifying the loss function to be used.
 #'Either "F-measure" or "Binder" (see Details). Default is "F-measure".
 #'
-#'@param gs optionnal vector of length \code{n} containing the gold standard
+#'@param gs optional vector of length \code{n} containing the gold standard
 #'partition of the \code{n} observations to compare to the point estimate
 #'
-#'@param posterior_approx logical flag wether a parametric approximation of the posterior should be
+#'@param posterior_approx logical flag whether a parametric approximation of the posterior should be
 #'computed. Default is \code{FALSE}
 #'
 #'@param ... further arguments passed to or from other methods
@@ -29,10 +29,10 @@
 #'      \item{\code{lossFn}:}{ a character string passing along the \code{lossFn} argument}
 #'      \item{\code{clust_distrib}:}{ a character string passing along the \code{clust_distrib} argument }
 #'      \item{\code{point_estim}:}{ a \code{list} containing: \itemize{
-#'          \item{c_est:}{ a vector of length \code{n}containing the point estimated clustering for each observations}
-#'          \item{cost:}{ a vector of length \code{m} containing the cost of each sampled partition}
-#'          \item{Fmeas:}{ if \code{lossFn} is \code{'F-measure'}, the \code{m x m} matrix of total F-measures for each pair of sampled partitions}
-#'          \item{opt_ind:}{ the index of the point estimate partition among the \code{m} sampled}
+#'          \item{\code{c_est}:}{ a vector of length \code{n}containing the point estimated clustering for each observations}
+#'          \item{\code{cost}:}{ a vector of length \code{m} containing the cost of each sampled partition}
+#'          \item{\code{Fmeas}:}{ if \code{lossFn} is \code{'F-measure'}, the \code{m x m} matrix of total F-measures for each pair of sampled partitions}
+#'          \item{\code{opt_ind}:}{ the index of the point estimate partition among the \code{m} sampled}
 #'      }}
 #'      \item{\code{loss}:}{ the loss for the point estimate. \code{NA} if \code{lossFn} is not \code{'Binder'}}
 #'      \item{\code{param_posterior}:}{ a list containing the parametric approximation of the posterior,
@@ -124,7 +124,7 @@ summary.DPMMclust <- function(object, burnin=0, thin=1, gs=NULL, lossFn="F-measu
 }
 
 
-#' Methods for a summary of a 'DPMMclust' object
+#' Methods for a summary of a \code{DPMMclust} object
 #'@rdname methods.summaryDPMMclust
 #'@aliases summaryDPMMclust print.summaryDPMMclust plot.summaryDPMMclust
 #'@param x a \code{summaryDPMMclust} object.
@@ -155,7 +155,7 @@ print.summaryDPMMclust <- function(x,...){
 
 
 #'@rdname methods.summaryDPMMclust
-#'@param gg.add a list of instructions to add to the ggplot2 instruction (see 
+#'@param gg.add a list of instructions to add to the \code{ggplot2} instruction (see 
 #'\code{\link[ggplot2]{gg-add}}). Default is \code{list(theme())}, which adds nothing to the plot.
 #'@param hm_subsample a integer designating the number of observations to use when plotting the heatmap. 
 #'Used only if \code{hm} is \code{TRUE}. #'Default is \code{NULL} in which no subsampling is done and 

@@ -3,7 +3,7 @@
 \name{rNNiW}
 \alias{rNNiW}
 \title{Sample from a normal inverse Wishart distribution
-whose parameter are given by the structure SufStat}
+whose parameter are given by the structure \code{SufStat}}
 \usage{
 rNNiW(SufStat, diagVar)
 }

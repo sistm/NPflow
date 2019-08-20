@@ -6,7 +6,7 @@
 #'the cluster allocation of observation \code{i=1...n} at iteration
 #'\code{j=1...N}.
 #'
-#'@param logposterior vector of logposterior correponding to each
+#'@param logposterior vector of logposterior corresponding to each
 #'partition from \code{c} used to break ties when minimizing the cost function
 #'
 #'@return a \code{list}:
@@ -15,7 +15,7 @@
 #'      \item{\code{cost}:}{ a vector of length \code{N}. \code{cost[j]} is the cost
 #'      associated to partition \code{c[[j]]}}
 #'      \item{\code{similarity}:}{  matrix of size \code{n x n}. Similarity matrix
-#'      (see \link{similarityMat})}
+#'      (see \code{\link{similarityMat}})}
 #'      \item{\code{opt_ind}:}{ the index of the optimal partition
 #'      among the MCMC iterations.}
 #'  }

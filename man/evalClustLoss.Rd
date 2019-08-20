@@ -17,10 +17,10 @@ partition of the  \code{n} observations.}
 Either "F-measure" or "Binder" (see Details). Default is "F-measure".}
 
 \item{a}{only relevant if \code{lossFn} is "Binder". Penalty for wrong
-coclustering in \code{c} compared to code{gs}. Defaults is 1.}
+co-clustering in \code{c} compared to code{gs}. Defaults is 1.}
 
 \item{b}{only relevant if \code{lossFn} is "Binder". Penalty for missed
-coclustering in \code{c} compared to code{gs}. Defaults is 1.}
+co-clustering in \code{c} compared to code{gs}. Defaults is 1.}
 }
 \value{
 the cost of the point estimate \code{c} in regard of the

@@ -9,7 +9,7 @@ priormix(sDPMclust, nu0add = 5)
 \arguments{
 \item{sDPMclust}{an object of class \code{summary.DPMMclust}}
 
-\item{nu0add}{an additionnal value integer added to hyperprior parameter nu
+\item{nu0add}{an additional value integer added to hyperprior parameter nu
 (increase to avoid non positive definite matrix sampling)}
 }
 \description{
@@ -69,14 +69,14 @@ hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
 
  nbclust_init <- 30
 
-\dontrun{
+if(interactive()){
  MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=2000, doPlot=FALSE,
                                 nbclust_init, diagVar=FALSE)
  s <- summary(MCMCsample_st, burnin = 1500, thin=5, posterior_approx=TRUE)
  pmix <- priormix(s)
- }
+}
 
 }
 \seealso{
-summary.DPMMclust
+\code{summary.DPMMclust}
 }

@@ -7,7 +7,7 @@
 ### Main changes in Version 0.13.0 (2017-04-10):
 * use of `itertools` package for parallel computations
 * use of log-scale probabilities in slice-samplers for improved precision in computation
-* *bug fix*: parallel settings did not work in DPMpost (thanks to **Mike Jiang** for noticing this)
+* *bug fix*: parallel settings did not work in `DPMpost` (thanks to **Mike Jiang** for noticing this)
 * updated documentation
 
 

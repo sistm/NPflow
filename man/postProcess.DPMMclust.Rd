@@ -16,7 +16,7 @@ postProcess.DPMMclust(x, burnin = 0, thin = 1, gs = NULL,
 \item{thin}{integer giving the spacing at which MCMC iterations are kept.
 Default is \code{1}, i.e. no thining.}
 
-\item{gs}{optionnal vector of length \code{n} containing the gold standard
+\item{gs}{optional vector of length \code{n} containing the gold standard
 partition of the \code{n} observations to compare to the point estimate.}
 
 \item{lossFn}{character string specifying the loss function to be used.

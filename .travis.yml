@@ -11,6 +11,7 @@ matrix:
     - os: linux
       r: devel
       
+  allow_failures:
     - os: osx
       r: release
 
@@ -33,11 +34,11 @@ r_packages:
 - itertools
 - microbenchmark
 - viridis
+-covr
 
 r_github_packages:
 - hadley/scales
 - hadley/ggplot2
-- jimhester/covr
 
 after_success:
   - Rscript -e 'covr::codecov(type ="all")'

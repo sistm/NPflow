@@ -1,6 +1,6 @@
 #'Compute a limited F-measure
 #'
-#'A limited version of F-measure that only takes into accout small clusters
+#'A limited version of F-measure that only takes into account small clusters
 #'
 #'@param n_small_clst an integer for limit size of the small cluster
 #'
