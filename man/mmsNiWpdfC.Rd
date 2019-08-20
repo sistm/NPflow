@@ -4,7 +4,8 @@
 \alias{mmsNiWpdfC}
 \title{C++ implementation of multivariate structured Normal inverse Wishart probability density function for multiple inputs}
 \usage{
-mmsNiWpdfC(xi, psi, Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_df0, Log = TRUE)
+mmsNiWpdfC(xi, psi, Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_df0,
+  Log = TRUE)
 }
 \arguments{
 \item{xi}{data matrix of dimensions \code{p x n} where columns contain the observed
@@ -39,8 +40,9 @@ matrix of densities of dimension \code{K x n}
 C++ implementation of multivariate structured Normal inverse Wishart probability density function for multiple inputs
 }
 \references{
-Hejblum BP, Alkhassim C, Gottardo R, Caron F, Thiebaut R, Sequential Dirichlet
-Process Mixtures of Multivariate Skew t-distributions for Model-based Clustering
-of Flow Cytometry Data, submitted.
-arxiv ID: 1702.04407 \url{https://arxiv.org/abs/1702.04407v2}
+Hejblum BP, Alkhassim C, Gottardo R, Caron F and Thiebaut R (2019) 
+Sequential Dirichlet Process Mixtures of Multivariate Skew t-distributions for 
+Model-based Clustering of Flow Cytometry Data. The Annals of Applied Statistics, 
+13(1): 638-660. <doi: 10.1214/18-AOAS1209>. <arXiv: 1702.04407>. 
+\url{https://arxiv.org/abs/1702.04407} \url{https://doi.org/10.1214/18-AOAS1209}
 }
