@@ -5,9 +5,10 @@
 \title{Slice Sampling of the Dirichlet Process Mixture Model
 with a prior on alpha}
 \usage{
-DPMGibbsN_parallel(Ncpus, type_connec, z, hyperG0, a = 1e-04, b = 1e-04, N,
-  doPlot = TRUE, nbclust_init = 30, plotevery = N/10, diagVar = TRUE,
-  use_variance_hyperprior = TRUE, verbose = TRUE, monitorfile = "", ...)
+DPMGibbsN_parallel(Ncpus, type_connec, z, hyperG0, a = 1e-04,
+  b = 1e-04, N, doPlot = TRUE, nbclust_init = 30, plotevery = N/10,
+  diagVar = TRUE, use_variance_hyperprior = TRUE, verbose = TRUE,
+  monitorfile = "", ...)
 }
 \arguments{
 \item{Ncpus}{the number of processors available}

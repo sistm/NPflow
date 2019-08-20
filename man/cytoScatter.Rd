@@ -5,7 +5,8 @@
 \title{Scatterplot of flow cytometry data}
 \usage{
 cytoScatter(cytomatrix, dims2plot = c(1, 2), gating = NULL,
-  scale_log = FALSE, xlim = NULL, ylim = NULL, gg.add = list(theme()))
+  scale_log = FALSE, xlim = NULL, ylim = NULL,
+  gg.add = list(theme()))
 }
 \arguments{
 \item{cytomatrix}{a \code{p x n} data matrix, of \code{n} cell observations measured over \code{p}

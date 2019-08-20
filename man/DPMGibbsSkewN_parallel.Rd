@@ -4,10 +4,10 @@
 \alias{DPMGibbsSkewN_parallel}
 \title{Parallel Implementation of Slice Sampling of Dirichlet Process Mixture of skew Normals}
 \usage{
-DPMGibbsSkewN_parallel(Ncpus, type_connec, z, hyperG0, a = 1e-04, b = 1e-04,
-  N, doPlot = FALSE, nbclust_init = 30, plotevery = N/10,
-  diagVar = TRUE, use_variance_hyperprior = TRUE, verbose = FALSE,
-  monitorfile = "", ...)
+DPMGibbsSkewN_parallel(Ncpus, type_connec, z, hyperG0, a = 1e-04,
+  b = 1e-04, N, doPlot = FALSE, nbclust_init = 30,
+  plotevery = N/10, diagVar = TRUE, use_variance_hyperprior = TRUE,
+  verbose = FALSE, monitorfile = "", ...)
 }
 \arguments{
 \item{Ncpus}{the number of processors available}
@@ -178,10 +178,11 @@ library(ggplot2)
 
 }
 \references{
-Hejblum BP, Alkhassim C, Gottardo R, Caron F, Thiebaut R, Sequential Dirichlet
-Process Mixtures of Multivariate Skew t-distributions for Model-based Clustering
-of Flow Cytometry Data, submitted.
-arxiv ID: 1702.04407 \url{https://arxiv.org/abs/1702.04407v2}
+Hejblum BP, Alkhassim C, Gottardo R, Caron F and Thiebaut R (2019) 
+Sequential Dirichlet Process Mixtures of Multivariate Skew t-distributions for 
+Model-based Clustering of Flow Cytometry Data. The Annals of Applied Statistics, 
+13(1): 638-660. <doi: 10.1214/18-AOAS1209> <arXiv: 1702.04407> 
+\url{https://arxiv.org/abs/1702.04407} \url{https://doi.org/10.1214/18-AOAS1209}
 }
 \author{
 Boris Hejblum
