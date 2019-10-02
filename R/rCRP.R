@@ -88,23 +88,23 @@
 #'}
 #'
 rCRP <- function(n=1000, alpha=2, hyperG0, verbose=TRUE){
-
+    
     d <- length(hyperG0$NNiW[[1]])
     theta <- list()
     cluster <- numeric(n)
     z <- matrix(NA, ncol=n, nrow=d)
-
+    
     for (c in 1:n){
         p0 <- alpha/(c-1+alpha)
         u <- runif(n=1, min = 0, max = 1)
-
+        
         if (u<p0){
             # Accept: sample new value
             # cat("acceptation:", u, "<", p0, "\n")
             cluster[c] <- max(cluster)+1
             theta[[cluster[c]]] <- rNNiW(hyperG0$NNiW, diagVar=FALSE)
             theta[[cluster[c]]][["nu"]] <- 1 + rgamma(n=1, shape = 2, rate=1/10)
-
+            
         }else{
             # Reject: sample old value
             # cat("rejection:", u, ">=", p0, "\n")
@@ -117,11 +117,11 @@ rCRP <- function(n=1000, alpha=2, hyperG0, verbose=TRUE){
         eps <- matrix(rnorm(d), ncol=d)%*%chol(theta[[cluster[c]]]$S/w)
         z[1,c] <- theta[[cluster[c]]]$xi[1]+theta[[cluster[c]]]$psi[1]*ltnz+eps[,1]
         z[2,c] <- theta[[cluster[c]]]$xi[2]+theta[[cluster[c]]]$psi[2]*ltnz+eps[,2]
-
+        
         if(verbose){
-            cat(c,"/", n," sim\n", sep="")
+            message(c,"/", n," sim\n", sep="")
         }
     }
-
+    
     return(list("theta"=theta, "cluster"=as.factor(cluster), "data"=z))
 }

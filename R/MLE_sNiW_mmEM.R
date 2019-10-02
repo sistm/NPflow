@@ -233,8 +233,8 @@ MLE_sNiW_mmEM <- function(xi_list, psi_list, S_list, hyperG0, K, init=NULL, maxi
     #     cat("it ", i, ": loglik = ", loglik[i+1],"\n\n", sep="")
     if(abs(loglik[i+1]-loglik[i])<tol){break}
     if(verbose){
-      cat("it ", i, ": loglik = ", loglik[i+1],"\n", sep="")
-      cat("weights:", weights, "\n\n")
+      message("it ", i, ": loglik = ", loglik[i+1],"\n", sep="")
+      message("weights:", weights, "\n\n")
     }
 
     if(doPlot){

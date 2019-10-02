@@ -30,10 +30,10 @@
 
 cluster_est_Fmeasure <- function(c, logposterior){
 
-    cat("Estimating posterior F-measures matrix...\n(this may take some time, complexity in O(n^2))\n")
+    message("Estimating posterior F-measures matrix...\n(this may take some time, complexity in O(n^2))\n")
     cmat <- sapply(c, "[")
     tempC <- Fmeasure_costC(cmat)
-    cat("DONE!\n")
+    message("DONE!\n")
 
     Fmeas <- tempC$Fmeas
     cost <- tempC$cost

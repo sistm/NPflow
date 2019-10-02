@@ -201,7 +201,7 @@ DPMGibbsN_parallel <- function (Ncpus, type_connec,
       par_ind[[Ncpus]] <- (temp_ind+1):n
     }
     else{
-      cat("Only 1 core specified\n=> non-parallel version of the algorithm would be more efficient",
+      message("Only 1 core specified\n=> non-parallel version of the algorithm would be more efficient",
           file=monitorfile, append = TRUE)
       nb_simult <- n
       par_ind[[Ncpus]] <- (temp_ind+1):n
@@ -279,10 +279,10 @@ DPMGibbsN_parallel <- function (Ncpus, type_connec,
                                                 hyper=hyperG0, c=c, m=m, alpha=alpha[i], n=n, a=a, b=b, diagVar)
     
     if(verbose){
-      cat(i, "/", N, " samplings:\n", sep="")
-      cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="")
+      message(i, "/", N, " samplings:\n", sep="")
+      message("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="")
       cl2print <- unique(c)
-      cat("  ",length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
+      message("  ",length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
     }
     
     if(doPlot){
@@ -290,7 +290,7 @@ DPMGibbsN_parallel <- function (Ncpus, type_connec,
                m=m, c=c, i=i, alpha=alpha[length(alpha)], U_SS=U_SS, ...)
     }else if(verbose){
       cl2print <- unique(c)
-      cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
+      message(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
     }
     
     
@@ -343,10 +343,10 @@ DPMGibbsN_parallel <- function (Ncpus, type_connec,
                                                   hyper=hyperG0, c=c, m=m, alpha=alpha[i], n=n, a=a, b=b, diagVar)
       
       if(verbose){
-        cat(i, "/", N, " samplings:\n", sep="")
-        cat("  logposterior = ", sum(logposterior_list[[i]]) , "\n", sep="")
+        message(i, "/", N, " samplings:\n", sep="")
+        message("  logposterior = ", sum(logposterior_list[[i]]) , "\n", sep="")
         cl2print <- unique(c)
-        cat("  ",length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
+        message("  ",length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
       }
       
       if(doPlot && i/plotevery==floor(i/plotevery)){

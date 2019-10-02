@@ -300,10 +300,10 @@ DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
                                               hyper=hyperG0, c=c, m=m, alpha=alpha[i], n=n, a=a, b=b, diagVar)
   
   if(verbose){
-    cat(i, "/", N, " samplings:\n", sep="")
-    cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="")
+    message(i, "/", N, " samplings:\n", sep="")
+    message("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="")
     cl2print <- unique(c)
-    cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
+    message(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
   }
   
   if(doPlot){
@@ -317,7 +317,7 @@ DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
     #TODO WARNING here
     # We need to discuss whether alpha needs to be updated with respect to n or sum(obs_weights)...
     alpha <- c(alpha, sample_alpha(alpha_old = alpha[i-1], n = n,
-                                  K = nbClust, a = a, b = b))
+                                   K = nbClust, a = a, b = b))
     
     slice <- sliceSampler_N(c=c, m=m, alpha=alpha[i],
                             z=z, hyperG0=hyperG0,
@@ -358,10 +358,10 @@ DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
                                                 hyper=hyperG0, c=c, m=m, alpha=alpha[i], n=n, a=a, b=b, diagVar)
     
     if(verbose){
-      cat(i, "/", N, " samplings:\n", sep="")
-      cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="")
+      message(i, "/", N, " samplings:\n", sep="")
+      message("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="")
       cl2print <- unique(c)
-      cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
+      message(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
     }
     
     if(doPlot && i/plotevery==floor(i/plotevery)){

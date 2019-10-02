@@ -175,7 +175,7 @@ plot.summaryDPMMclust <- function(x, hm=FALSE, nbsim_densities=5000,
   
   ind <- x$index_estim
   
-  cat("Plotting point estimate (may take a few sec)... ")
+  message("Plotting point estimate (may take a few sec)... ")
   if(x$clust_distrib=="gaussian"){
     plot_DPM(z=x$data,
              c=x$point_estim$c_est,
@@ -210,18 +210,18 @@ plot.summaryDPMMclust <- function(x, hm=FALSE, nbsim_densities=5000,
                ...
     )
   }
-  cat("DONE!\n")
+  message("DONE!\n")
   
   if(hm){
     
     if(is.null(x$point_estim$similarity)){
       warning("\nThe similarity matrix makes more sense when using the 'Binder' loss function...")
-      cat("Estimating posterior similarity matrix (this may take some time, complexity in O(n^2))...")
+      message("Estimating posterior similarity matrix (this may take some time, complexity in O(n^2))...")
       x$point_estim$similarity <- similarityMat_nocostC(do.call(cbind, x$mcmc_partitions))$similarity
-      cat("Done!\n")
+      message("Done!\n")
     }
     
-    cat("Plotting heatmap of similarity (may take a few min):\n")
+    message("Plotting heatmap of similarity (may take a few min):\n")
     if(!is.null(hm_subsample)){
       if(length(hm_subsample)>1){
         select <- hm_subsample
@@ -234,7 +234,7 @@ plot.summaryDPMMclust <- function(x, hm=FALSE, nbsim_densities=5000,
     
     
     if(hm_order_by_clust){
-      cat(" computing pairwise distances...")
+      message(" computing pairwise distances...")
       prop <- table(x$point_estim$c_est)
       clusters_ordered <- names(prop)[order(prop, decreasing=TRUE)]
       
@@ -249,16 +249,16 @@ plot.summaryDPMMclust <- function(x, hm=FALSE, nbsim_densities=5000,
           ord_index[[k]] <- index
         }
       }
-      cat("DONE!\n ordering samples now...")
+      message("DONE!\n ordering samples now...")
       ord_final <- do.call(c, ord_index)
-      cat("DONE!\n")
+      message("DONE!\n")
     }else{
-      cat(" computing pairwise distances...")
+      message(" computing pairwise distances...")
       dist_mat <- stats::dist(x$point_estim$similarity, method = "euclidean")
-      cat("DONE!\n ordering samples now...")
+      message("DONE!\n ordering samples now...")
       tree <- fastcluster::hclust(dist_mat, method = "complete")
       ord_final <- tree$order
-      cat("DONE!\n")
+      message("DONE!\n")
     }
     
     my_annot_row <- cbind.data.frame("Clustering from point estimate"=factor(x$point_estim$c_est))
@@ -275,6 +275,6 @@ plot.summaryDPMMclust <- function(x, hm=FALSE, nbsim_densities=5000,
                        annotation_col = my_annot_row[ord_final, , drop=FALSE],
                        annotation_names_col = FALSE,
                        main="Posterior similarity matrix\n")
-    cat("Almost over, wait for plot rendering now...\n\n")
+    message("Almost over, wait for plot rendering now...\n\n")
   }
 }

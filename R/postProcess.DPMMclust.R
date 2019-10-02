@@ -104,7 +104,7 @@ postProcess.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measur
                                                hyperG0 = MAPprior, K=K,
                                                init=EM_init[[j]],verbose=FALSE,...)
 
-        cat("EM ", j,chr_str, "\n", sep="")
+        message("EM ", j,chr_str, "\n", sep="")
       }
       param_post <- param_post_list[[which.max(sapply(lapply(param_post_list, "[[", "loglik"), FUN=max))]]
 
@@ -157,7 +157,7 @@ postProcess.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measur
     for (j in 1:EM_init_nb){
 
       param_post_list[[j]] <- MLE_NiW_mmEM(mu_list, S_list, x_invar$hyperG0, K, maxit=100, tol=1E-1, doPlot=TRUE)
-      cat("EM ", j, "/10 computed", "\n", sep="")
+      message("EM ", j, "/10 computed", "\n", sep="")
     }
     param_post <- param_post_list[[which.max(sapply(lapply(param_post_list, "[[", "loglik"), FUN=max))]]
 

@@ -86,10 +86,10 @@ cluster_est_binder <- function(c, logposterior){
     #             cost[i] <- sum(abs(vclust2mcoclust(c[[i]])-similarity))
     #         }
     #
-    cat("Estimating posterior similarity matrix...\n(this may take some time, complexity in O(n^2))\n")
+    message("Estimating posterior similarity matrix...\n(this may take some time, complexity in O(n^2))\n")
     cmat <- sapply(c, "[")
     tempC <- similarityMatC(cmat)
-    cat("DONE!\n")
+    message("DONE!\n")
 
     similarity <- tempC$similarity
     cost <- tempC$cost

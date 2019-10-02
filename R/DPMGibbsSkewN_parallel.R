@@ -285,12 +285,12 @@ DPMGibbsSkewN_parallel <- function (Ncpus, type_connec,
       plot_DPMsn(z=z, c=c, i=i, alpha=alpha[i], U_SS=U_SS_list[[i]], ellipses=TRUE, ...)
     }
     if(verbose){
-      cat(i, "/", N, " samplings:\n", sep="",
+      message(i, "/", N, " samplings:\n", sep="",
           file=monitorfile, append = TRUE)
-      cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="",
+      message("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="",
           file=monitorfile, append = TRUE)
       cl2print <- unique(c)
-      cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n",
+      message(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n",
           file=monitorfile, append = TRUE)
     }
 
@@ -355,12 +355,12 @@ DPMGibbsSkewN_parallel <- function (Ncpus, type_connec,
           plot_DPMsn(z=z, c=c, i=i, alpha=alpha[i], U_SS=U_SS_list[[i]], ellipses=TRUE, ...)
         }
         if(verbose){
-          cat(i, "/", N, " samplings:\n", sep="",
+          message(i, "/", N, " samplings:\n", sep="",
               file=monitorfile, append = TRUE)
-          cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="",
+          message("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="",
               file=monitorfile, append = TRUE)
           cl2print <- unique(c)
-          cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n",
+          message(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n",
               file=monitorfile, append = TRUE)
         }
       }

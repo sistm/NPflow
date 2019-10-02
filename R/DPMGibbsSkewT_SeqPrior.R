@@ -271,10 +271,10 @@ DPMGibbsSkewT_SeqPrior <- function (z, prior_inform, hyperG0, N, nbclust_init,
         plot_DPMst(z=z, c=c, i=i, alpha=alpha[i], U_SS=U_SS_list[[i]], ellipses=TRUE, ...)
     }
     if(verbose){
-        cat(i, "/", N, " samplings:\n", sep="")
-        cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="")
+        message(i, "/", N, " samplings:\n", sep="")
+        message("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="")
         cl2print <- unique(c)
-        cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
+        message(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
     }
 
 
@@ -436,10 +436,10 @@ DPMGibbsSkewT_SeqPrior <- function (z, prior_inform, hyperG0, N, nbclust_init,
                 plot_DPMst(z=z, c=c, i=i, alpha=alpha[i], U_SS=U_SS_list[[i]], ellipses=TRUE, ...)
             }
             if(verbose){
-                cat(i, "/", N, " samplings:\n", sep="")
-                cat("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="")
+                message(i, "/", N, " samplings:\n", sep="")
+                message("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="")
                 cl2print <- unique(c)
-                cat(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
+                message(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
             }
         }
     }

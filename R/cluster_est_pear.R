@@ -29,12 +29,11 @@
 #'@seealso \code{\link{similarityMat}} \code{\link{similarityMatC}}
 #'
 
-cluster_est_pear <- function(c)
-{
-  cat("Estimating posterior similarity matrix...\n(this may take some time, complexity in O(n^2))\n")
+cluster_est_pear <- function(c){
+  message("Estimating posterior similarity matrix...\n(this may take some time, complexity in O(n^2))\n")
   cmat <- sapply(c, "[")
   tempC <- similarityMatC(cmat)
-  cat("DONE!\n")
+  message("DONE!\n")
 
   similarity <- tempC$similarity
 

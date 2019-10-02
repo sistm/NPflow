@@ -206,8 +206,8 @@ MAP_sNiW_mmEM<- function(xi_list, psi_list, S_list, hyperG0, init=NULL, K, maxit
     }
 
     if(verbose){
-      cat("it ", i, ": loglik = ", loglik[i+1],"\n", sep="")
-      cat("weights:", weights, "\n\n")
+      message("it ", i, ": loglik = ", loglik[i+1],"\n", sep="")
+      message("weights:", weights, "\n\n")
     }
 
     if(doPlot){
@@ -352,8 +352,8 @@ MAP_sNiW_mmEM_weighted<- function(xi_list, psi_list, S_list, obsweight_list,
 
 
     if(verbose){
-      cat("it ", i, ": loglik = ", loglik[i+1],"\n", sep="")
-      cat("weights:", weights, "\n\n")
+      message("it ", i, ": loglik = ", loglik[i+1],"\n", sep="")
+      message("weights:", weights, "\n\n")
     }
 
     if(is.na(loglik[i+1]) | is.nan(loglik[i+1]) | is.infinite(loglik[i+1])){
@@ -563,8 +563,8 @@ MAP_sNiW_mmEM_vague <- function(xi_list, psi_list, S_list,
     }
 
     if(verbose){
-      cat("it ", i, ": loglik = ", loglik[i+1],"\n", sep="")
-      cat("weights:", weights, "\n\n")
+      message("it ", i, ": loglik = ", loglik[i+1],"\n", sep="")
+      message("weights:", weights, "\n\n")
     }
     if(abs(loglik[i+1]-loglik[i])<tol){break}
 
