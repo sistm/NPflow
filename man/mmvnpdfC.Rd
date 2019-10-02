@@ -4,7 +4,7 @@
 \alias{mmvnpdfC}
 \title{C++ implementation of multivariate Normal probability density function for multiple inputs}
 \usage{
-mmvnpdfC(x, mean, varcovM, Log = TRUE)
+mmvnpdfC(x, mean, varcovM, obs_weights, Log = TRUE)
 }
 \arguments{
 \item{x}{data matrix of dimension \code{p x n}, \code{p} being the dimension of the

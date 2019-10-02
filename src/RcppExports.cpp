@@ -102,16 +102,17 @@ BEGIN_RCPP
 END_RCPP
 }
 // mmvnpdfC
-NumericMatrix mmvnpdfC(const arma::mat& x, const arma::mat& mean, const List& varcovM, const bool& Log);
-RcppExport SEXP _NPflow_mmvnpdfC(SEXP xSEXP, SEXP meanSEXP, SEXP varcovMSEXP, SEXP LogSEXP) {
+NumericMatrix mmvnpdfC(const arma::mat& x, const arma::mat& mean, const List& varcovM, const arma::rowvec& obs_weights, const bool& Log);
+RcppExport SEXP _NPflow_mmvnpdfC(SEXP xSEXP, SEXP meanSEXP, SEXP varcovMSEXP, SEXP obs_weightsSEXP, SEXP LogSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const arma::mat& >::type x(xSEXP);
     Rcpp::traits::input_parameter< const arma::mat& >::type mean(meanSEXP);
     Rcpp::traits::input_parameter< const List& >::type varcovM(varcovMSEXP);
+    Rcpp::traits::input_parameter< const arma::rowvec& >::type obs_weights(obs_weightsSEXP);
     Rcpp::traits::input_parameter< const bool& >::type Log(LogSEXP);
-    rcpp_result_gen = Rcpp::wrap(mmvnpdfC(x, mean, varcovM, Log));
+    rcpp_result_gen = Rcpp::wrap(mmvnpdfC(x, mean, varcovM, obs_weights, Log));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -280,7 +281,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_NPflow_traceEpsC", (DL_FUNC) &_NPflow_traceEpsC, 2},
     {"_NPflow_mmNiWpdfC", (DL_FUNC) &_NPflow_mmNiWpdfC, 7},
     {"_NPflow_mmsNiWpdfC", (DL_FUNC) &_NPflow_mmsNiWpdfC, 9},
-    {"_NPflow_mmvnpdfC", (DL_FUNC) &_NPflow_mmvnpdfC, 4},
+    {"_NPflow_mmvnpdfC", (DL_FUNC) &_NPflow_mmvnpdfC, 5},
     {"_NPflow_mmvsnpdfC", (DL_FUNC) &_NPflow_mmvsnpdfC, 5},
     {"_NPflow_mmvstpdfC", (DL_FUNC) &_NPflow_mmvstpdfC, 6},
     {"_NPflow_mmvtpdfC", (DL_FUNC) &_NPflow_mmvtpdfC, 5},

@@ -32,6 +32,9 @@
 #'
 #'@param verbose logical flag indicating whether partition info is written in the console at each
 #'  MCMC iteration.
+#'  
+#'@param obs_weights an optional vector for weighting observations in likelihood computation. 
+#'Default is \code{rep(1, ncol(z))} which means all observations have the same weight. 
 #'
 #'@param ... additional arguments to be passed to \code{\link{plot_DPM}}. Only used if \code{doPlot}
 #'  is \code{TRUE}.
@@ -114,10 +117,10 @@
 #'  ## Data
 #'  ########
 #'  library(ggplot2)
-#'  p <- (ggplot(data.frame("X"=z[1,], "Y"=z[2,]), aes(x=X, y=Y))
-#'        + geom_point()
-#'        + ggtitle("Toy example Data"))
-#'  p
+#'  ggplot(data.frame("X"=z[1,], "Y"=z[2,]), aes(x=X, y=Y)) +
+#'        geom_point() +
+#'        ggtitle("Toy example Data")
+#'  
 #'
 #'
 #'  ## alpha priors plots
@@ -133,7 +136,6 @@
 #'                  ",", b, ")\n", sep=""))
 #'        + theme_bw()
 #'       )
-#'  p
 #'
 #'
 #'if(interactive()){
@@ -212,6 +214,7 @@
 DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
                        nbclust_init=30, plotevery=N/10,
                        diagVar=TRUE, use_variance_hyperprior=TRUE, verbose=TRUE,
+                       obs_weights = NULL,
                        ...){
   
   p <- nrow(z)
@@ -252,7 +255,8 @@ DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
     for (k in 1:n){
       c[k] <- k
       #cat("cluster ", k, ":\n")
-      U_SS[[k]] <- update_SS(z=z[, k, drop=FALSE], S=hyperG0, hyperprior = NULL)
+      U_SS[[k]] <- update_SS(z=z[, k, drop=FALSE], S=hyperG0, hyperprior = NULL, 
+                             obs_weights = obs_weights[k])
       NiW <- rNiW(U_SS[[k]], diagVar=diagVar)
       
       U_mu[, k] <- NiW[["mu"]]
@@ -269,7 +273,8 @@ DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
     for (k in unique(c)){
       obs_k <- which(c==k)
       #cat("cluster ", k, ":\n")
-      U_SS[[k]] <- update_SS(z=z[, obs_k,drop=FALSE], S=hyperG0)
+      U_SS[[k]] <- update_SS(z=z[, obs_k,drop=FALSE], S=hyperG0, 
+                             obs_weights = obs_weights[obs_k])
       NiW <- rNiW(U_SS[[k]], diagVar=diagVar)
       
       U_mu[, k] <- NiW[["mu"]]
@@ -309,13 +314,15 @@ DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
   
   for(i in 2:N){
     nbClust <- length(unique(c))
-    alpha <- c(alpha,sample_alpha(alpha_old=alpha[i-1], n=n,
-                                  K=nbClust, a=a, b=b))
+    #TODO WARNING here
+    # We need to discuss whether alpha needs to be updated with respect to n or sum(obs_weights)...
+    alpha <- c(alpha, sample_alpha(alpha_old = alpha[i-1], n = n,
+                                  K = nbClust, a = a, b = b))
     
     slice <- sliceSampler_N(c=c, m=m, alpha=alpha[i],
                             z=z, hyperG0=hyperG0,
                             U_mu=U_mu, U_Sigma=U_Sigma,
-                            diagVar=diagVar)
+                            diagVar=diagVar, obs_weights = obs_weights)
     m <- slice[["m"]]
     c <- slice[["c"]]
     weights_list[[i]] <- slice[["weights"]]

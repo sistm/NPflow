@@ -206,8 +206,8 @@ mmsNiWpdfC <- function(xi, psi, Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_df0, Log
 #'}else{
 #' cat("package 'microbenchmark' not available\n")
 #'}
-mmvnpdfC <- function(x, mean, varcovM, Log = TRUE) {
-    .Call(`_NPflow_mmvnpdfC`, x, mean, varcovM, Log)
+mmvnpdfC <- function(x, mean, varcovM, obs_weights, Log = TRUE) {
+    .Call(`_NPflow_mmvnpdfC`, x, mean, varcovM, obs_weights, Log)
 }
 
 #' C++ implementation of multivariate skew Normal probability density function for multiple inputs

@@ -46,6 +46,7 @@ const double log2pi2 = log(2.0 * M_PI)/2.0;
 NumericMatrix mmvnpdfC(const arma::mat & x,
                        const arma::mat & mean,
                        const List & varcovM,
+                       const arma::rowvec & obs_weights,
                        const bool & Log=true){
 
     int p = x.n_rows;
@@ -53,6 +54,7 @@ NumericMatrix mmvnpdfC(const arma::mat & x,
     int K = mean.n_cols;
     NumericMatrix y(K,n);
     double constant = - p*log2pi2;
+    rowvec wsr = sqrt(obs_weights);
 
     for(int k=0; k < K; k++){
         mat Rinv = inv(trimatu(chol(as<arma::mat>(varcovM[k]))));
@@ -61,10 +63,10 @@ NumericMatrix mmvnpdfC(const arma::mat & x,
         colvec mtemp = mean.col(k);
 
         for (int i=0; i < n; i++) {
-            colvec x_i = x.col(i) - mtemp;
+            colvec x_i = (x.col(i) - mtemp) * wsr(i);
             rowvec xRinv = trans(x_i)*Rinv;
             //vec xRinv = solve(trimatl(R.t()), x_i);
-            double quadform = sum(xRinv%xRinv);
+            double quadform = sum(xRinv % xRinv);
             if (!Log) {
                 y(k,i) = exp(-0.5*quadform + logSqrtDetvarcovM + constant);
             } else{

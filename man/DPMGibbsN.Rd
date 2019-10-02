@@ -6,7 +6,8 @@
 \usage{
 DPMGibbsN(z, hyperG0, a = 1e-04, b = 1e-04, N, doPlot = TRUE,
   nbclust_init = 30, plotevery = N/10, diagVar = TRUE,
-  use_variance_hyperprior = TRUE, verbose = TRUE, ...)
+  use_variance_hyperprior = TRUE, verbose = TRUE, obs_weights = NULL,
+  ...)
 }
 \arguments{
 \item{z}{data matrix \code{d x n} with \code{d} dimensions in rows and \code{n} observations in
@@ -40,6 +41,9 @@ on the posterior. \code{FALSE} is useful for using an informative prior.}
 
 \item{verbose}{logical flag indicating whether partition info is written in the console at each
 MCMC iteration.}
+
+\item{obs_weights}{an optional vector for weighting observations in likelihood computation. 
+Default is \code{rep(1, ncol(z))} which means all observations have the same weight.}
 
 \item{...}{additional arguments to be passed to \code{\link{plot_DPM}}. Only used if \code{doPlot}
 is \code{TRUE}.}
@@ -122,10 +126,10 @@ for(k in 1:n){
  ## Data
  ########
  library(ggplot2)
- p <- (ggplot(data.frame("X"=z[1,], "Y"=z[2,]), aes(x=X, y=Y))
-       + geom_point()
-       + ggtitle("Toy example Data"))
- p
+ ggplot(data.frame("X"=z[1,], "Y"=z[2,]), aes(x=X, y=Y)) +
+       geom_point() +
+       ggtitle("Toy example Data")
+ 
 
 
  ## alpha priors plots
@@ -141,7 +145,6 @@ for(k in 1:n){
                  ",", b, ")\\n", sep=""))
        + theme_bw()
       )
- p
 
 
 if(interactive()){
