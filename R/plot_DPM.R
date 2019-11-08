@@ -69,15 +69,15 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
     U_Sigma2plot <- array(0, dim=c(p, p, length(fullCl)))
     for(i in 1:length(fullCl)){
       k <- as.character(fullCl[i])
-      U_mu2plot[,i] <- U_mu[[k]][dims2plot]
+      U_mu2plot[, i, drop=FALSE] <- U_mu[[k]][dims2plot, drop=FALSE]
       colnames(U_mu2plot) <- fullCl
       rownames(U_mu2plot) <- rownames(z)
-      U_Sigma2plot[, , i] <- U_Sigma[[k]][dims2plot, dims2plot]
+      U_Sigma2plot[, , i, drop=FALSE] <- U_Sigma[[k]][dims2plot, dims2plot, drop=FALSE]
     }
   }else{
     U_mu2plot <- U_mu[, fullCl]
     rownames(U_mu2plot) <- rownames(z)
-    U_Sigma2plot <- U_Sigma[, , fullCl]
+    U_Sigma2plot <- U_Sigma[, , fullCl, drop=FALSE]
   }
   U_SS2plot <- U_SS
   zClusters <- factor(c, levels=as.character(fullCl), ordered=TRUE)
@@ -108,11 +108,10 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
     lev <- as.character(1:length(levels(zDplot$dimensionX)))
     for(l in 2:length(lev)){
       move <- which(as.numeric(zDplot$dimensionX)<l)
-      zDplottemp <- rbind.data.frame(zDplot[-move,], zDplot[move,])
+      zDplottemp <- rbind.data.frame(zDplot[-move, , drop=FALSE], zDplot[move, , drop=FALSE])
       zDplottemp$Y <- zDplot$X
       zDplottemp$dimensionY <- zDplot$dimensionX
-      zDplotfull <- rbind.data.frame(
-        zDplotfull, zDplottemp)
+      zDplotfull <- rbind.data.frame(zDplotfull, zDplottemp)
     }
 
     UDplot <- reshape2::melt(cbind.data.frame(t(U_mu2plot),
@@ -131,7 +130,7 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
     lev <- levels(UDplotfull$dimensionX)
     for(l in 2:length(lev)){
       move <- which(as.numeric(UDplotfull$dimensionX)<l)
-      UDplottemp <- rbind.data.frame(UDplotfull[-move,], UDplotfull[move,])
+      UDplottemp <- rbind.data.frame(UDplotfull[-move, , drop=FALSE], UDplotfull[move, , drop=FALSE])
       UDplottemp$Y <- UDplotfull$X
       UDplottemp$dimensionY <- UDplotfull$dimensionX
       UDplotfull <- rbind.data.frame(
@@ -195,8 +194,8 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
         # diag(1/sqrt(diag(U_Sigma2plot[,,g])))%*%U_Sigma2plot[,,g]%*%diag(1/sqrt(diag(U_Sigma2plot[,,g])))
         ellipse95 <- rbind(ellipse95,
                            cbind(as.data.frame(ellipse(U_corr2plot_g,
-                                                       scale=sqrt(diag(U_Sigma2plot[,,g])),
-                                                       centre=U_mu2plot[,g],
+                                                       scale=sqrt(diag(U_Sigma2plot[, , g])),
+                                                       centre=U_mu2plot[, g],
                                                        level=0.95)),
                                  Cluster=as.character(glabel)
                            ))
@@ -213,7 +212,7 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
         ellipse95_esp <- rbind(ellipse95_esp,
                                cbind(as.data.frame(ellipse(U_corr2plot_g,
                                                            scale=sqrt(diag(U_Sigma2plot_esp)),
-                                                           centre=U_mu2plot[,g],
+                                                           centre=U_mu2plot[, g, drop=FALSE],
                                                            level=0.95)),
                                      Cluster=as.character(glabel)
                                ))
@@ -231,28 +230,43 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
           ellipse95_obs <- rbind(ellipse95_obs,
                                  cbind(as.data.frame(ellipse(U_corr2plot_g,
                                                              scale=sqrt(diag(U_Sigma2plot_obs)),
-                                                             centre=U_mu2plot[,g],
+                                                             centre=U_mu2plot[, g, drop=FALSE],
                                                              level=0.95)),
                                        Cluster=as.character(glabel)
                                  ))
         }
       }
-      colnames(ellipse95_obs)[1:2] <- c("x", "y")
-
-      ellipses95_data <- rbind.data.frame(cbind.data.frame(ellipse95_obs, "type"="observed"),
-                               cbind.data.frame(ellipse95, "type"="sampled"),
-                               cbind.data.frame(ellipse95_esp, "type"="expected"))
-
-      p <- (p
-            + geom_polygon(aes_string(x="x", y="y", fill="Cluster", colour="Cluster", linetype="type"),
-                           data=ellipses95_data, alpha=.15)
-            + scale_linetype_manual(values=c(1,2,3),
-                                    labels=c("observed", "sampled", "expected"),
-                                    name="Variances")
-            + guides(alpha="none",
-                     linetype=guide_legend(override.aes = list(colour="black")),
-                     fill=guide_legend(override.aes = list(alpha=1)))
-      )
+      
+      if(nrow(ellipse95_obs)>0){
+        colnames(ellipse95_obs)[1:2] <- c("x", "y")
+        ellipses95_data <- rbind.data.frame(cbind.data.frame(ellipse95_obs, "type"="observed"),
+                                            cbind.data.frame(ellipse95, "type"="sampled"),
+                                            cbind.data.frame(ellipse95_esp, "type"="expected"))
+        p <- (p
+              + geom_polygon(aes_string(x="x", y="y", fill="Cluster", colour="Cluster", linetype="type"),
+                             data=ellipses95_data, alpha=.15)
+              + scale_linetype_manual(values=c(1,2,3),
+                                      labels=c("observed", "sampled", "expected"),
+                                      name="Variances")
+              + guides(alpha="none",
+                       linetype=guide_legend(override.aes = list(colour="black")),
+                       fill=guide_legend(override.aes = list(alpha=1)))
+        )
+      }
+      else{
+        ellipses95_data <- rbind.data.frame(cbind.data.frame(ellipse95, "type"="sampled"),
+                                            cbind.data.frame(ellipse95_esp, "type"="expected"))
+        p <- (p
+              + geom_polygon(aes_string(x="x", y="y", fill="Cluster", colour="Cluster", linetype="type"),
+                             data=ellipses95_data, alpha=.15)
+              + scale_linetype_manual(values=c(1,2),
+                                      labels=c("sampled", "expected"),
+                                      name="Variances")
+              + guides(alpha="none",
+                       linetype=guide_legend(override.aes = list(colour="black")),
+                       fill=guide_legend(override.aes = list(alpha=1)))
+        )
+      }
     }
     #         #empirical mean of the clusters
     #         zmean2plot<- cbind.data.frame(D1=tapply(X=z2plot[,1], INDEX=z2plot$Cluster, FUN=mean),

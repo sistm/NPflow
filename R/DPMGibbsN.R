@@ -16,6 +16,9 @@
 #'
 #'@param doPlot logical flag indicating whether to plot MCMC iteration or not. Default to
 #' \code{TRUE}.
+#' 
+#'@param plotinit logical flag indicating whether to plot the initialisation clusters 
+#'or not. Default to \code{FALSE}.
 #'
 #'@param plotevery an integer indicating the interval between plotted iterations when \code{doPlot}
 #' is \code{TRUE}.
@@ -211,7 +214,7 @@
 #'
 #'
 
-DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
+DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE, plotinit=FALSE,
                        nbclust_init=30, plotevery=N/10,
                        diagVar=TRUE, use_variance_hyperprior=TRUE, verbose=TRUE,
                        obs_weights = NULL,
@@ -306,7 +309,7 @@ DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
     message("  logposterior = ", sum(logposterior_list[[i]]), "\n")
   }
   
-  if(doPlot){
+  if(doPlot & plotinit){
     plot_DPM(z=z, U_mu=U_mu, U_Sigma=U_Sigma,
              c=c, i=i, alpha=alpha[[i]], U_SS=U_SS, ...)
   }

@@ -5,9 +5,9 @@
 \title{Slice Sampling of the Dirichlet Process Mixture Model with a prior on alpha}
 \usage{
 DPMGibbsN(z, hyperG0, a = 1e-04, b = 1e-04, N, doPlot = TRUE,
-  nbclust_init = 30, plotevery = N/10, diagVar = TRUE,
-  use_variance_hyperprior = TRUE, verbose = TRUE, obs_weights = NULL,
-  ...)
+  plotinit = FALSE, nbclust_init = 30, plotevery = N/10,
+  diagVar = TRUE, use_variance_hyperprior = TRUE, verbose = TRUE,
+  obs_weights = NULL, ...)
 }
 \arguments{
 \item{z}{data matrix \code{d x n} with \code{d} dimensions in rows and \code{n} observations in
@@ -25,6 +25,9 @@ Process. Default is \code{0.0001}. If \code{0}, then the concentration is fixed 
 
 \item{doPlot}{logical flag indicating whether to plot MCMC iteration or not. Default to
 \code{TRUE}.}
+
+\item{plotinit}{logical flag indicating whether to plot the initialisation clusters 
+or not. Default to \code{FALSE}.}
 
 \item{nbclust_init}{number of clusters at initialization. Default to 30 (or less if there are less
 than 30 observations).}
