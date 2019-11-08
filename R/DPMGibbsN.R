@@ -300,10 +300,10 @@ DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
                                               hyper=hyperG0, c=c, m=m, alpha=alpha[i], n=n, a=a, b=b, diagVar)
   
   if(verbose){
-    message(i, "/", N, " samplings:\n", sep="")
-    message("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="")
+    message(i, "/", N, " samplings: ", sep="")
     cl2print <- unique(c)
-    message(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
+    message("  ", length(cl2print), " clusters: '", paste(cl2print[order(cl2print)], collapse="', '"), "'")
+    message("  logposterior = ", sum(logposterior_list[[i]]), "\n")
   }
   
   if(doPlot){
@@ -358,10 +358,10 @@ DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
                                                 hyper=hyperG0, c=c, m=m, alpha=alpha[i], n=n, a=a, b=b, diagVar)
     
     if(verbose){
-      message(i, "/", N, " samplings:\n", sep="")
-      message("  logposterior = ", sum(logposterior_list[[i]]), "\n", sep="")
+      message(i, "/", N, " samplings: ", sep="")
       cl2print <- unique(c)
-      message(length(cl2print), "clusters:", cl2print[order(cl2print)], "\n\n")
+      message("  ", length(cl2print), " clusters: '", paste(cl2print[order(cl2print)], collapse="', '"), "'")
+      message("  logposterior = ", sum(logposterior_list[[i]]), "\n")
     }
     
     if(doPlot && i/plotevery==floor(i/plotevery)){
