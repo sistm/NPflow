@@ -62,5 +62,5 @@ DA Binder, Bayesian cluster analysis, \emph{Biometrika} 65(1):31-38, 1978.
 \code{\link{similarityMat_nocostC}}
 }
 \author{
-Chariff Alkhassim
+Chariff Alkhassim, Boris Hejblum
 }

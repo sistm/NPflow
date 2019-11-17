@@ -42,7 +42,7 @@
 #'  }
 #'
 #'
-#'@author Chariff Alkhassim
+#'@author Chariff Alkhassim, Boris Hejblum
 #'
 #'
 #'@references JW Lau, PJ Green, Bayesian Model-Based Clustering Procedures,
@@ -61,38 +61,39 @@ cluster_est_Mbinder_norm <- function(c, Mu, Sigma, lambda = 0, a = 1, b = a, log
     theta_grid <- NULL
     uni<-unique(c)
     theta_mat<-matrix(0,max(uni),max(uni))
-    for (i in uni)
-    {
-      theta_grid<- rbind(theta_grid, cbind(i,uni))
+    for (i in uni){
+      theta_grid <- rbind(theta_grid, cbind(i,uni))
     }
-    theta_grid<-theta_grid[-which(theta_grid[,1]==theta_grid[,2]),]
-    theta_grid<-unique(t(apply(theta_grid,1,FUN=sort)))
-    # Number of iterations is the binomial coefficients n=2, k=total number of centers/partition.
-    for (i in 1:nrow(theta_grid)){
-      mu1<-Mu[,theta_grid[i,1]]
-      mu2<-Mu[,theta_grid[i,2]]
-      Sigma1<-Sigma[,,theta_grid[i,1]]
-      Sigma2<-Sigma[,,theta_grid[i,2]]
-      S_bar<-(Sigma1+Sigma2)/2
-      if (!det(S_bar)){
-        stop("check if each group has its center") # If this occurs then error is in DPMGibbsN
+    theta_grid <- theta_grid[-which(theta_grid[,1, drop=FALSE]==theta_grid[, 2, drop=FALSE]), , drop=FALSE]
+    if(nrow(theta_grid)>0){
+      theta_grid <- unique(t(apply(theta_grid, 1, FUN=sort)))
+      # Number of iterations is the binomial coefficients n=2, k=total number of centers/partition.
+      for (i in 1:nrow(theta_grid)){
+        mu1<-Mu[,theta_grid[i, 1, drop=FALSE]]
+        mu2<-Mu[,theta_grid[i, 2, drop=FALSE]]
+        Sigma1<-Sigma[, , theta_grid[i, 1, drop=FALSE]]
+        Sigma2<-Sigma[, , theta_grid[i, 2, drop=FALSE]]
+        S_bar<-(Sigma1 + Sigma2)/2
+        if (!det(S_bar)){
+          stop("check if each group has its center") # If this occurs then error is in DPMGibbsN
+        }
+        temp<-((((t(mu1-mu2)%*%solve(S_bar)%*%(mu1-mu2))/8)+
+                  .5*log(det(S_bar)/sqrt(det(Sigma1)*det(Sigma2)))))
+        theta_mat[theta_grid[i, 1 ],theta_grid[i, 2 ]]<-(1-exp(-lambda*temp))
       }
-      temp<-((((t(mu1-mu2)%*%solve(S_bar)%*%(mu1-mu2))/8)+
-                .5*log(det(S_bar)/sqrt(det(Sigma1)*det(Sigma2)))))
-      theta_mat[theta_grid[i,1],theta_grid[i,2]]<-(1-exp(-lambda*temp))
     }
     return(theta_mat)
   }
 
-  len_c<-length(c)
+  len_c <- length(c)
 
-  NuMat_res<-0
+  NuMat_res <- 0
   for (i in 1:len_c){
-    NuMat_res<-NuMat_res+
-      NuMatParC(c[[i]], Bhattacharyya(Mu[[i]],Sigma[[i]],lambda,c[[i]]))$NuMatParC
+    NuMat_res <- NuMat_res +
+      NuMatParC(c[[i]], Bhattacharyya(Mu[[i]], Sigma[[i]], lambda, c[[i]]))$NuMatParC
   }
-  NuMat_res<-NuMat_res/len_c
-  similarityMat_res<-similarityMat_nocostC(sapply(c, "["))$similarity
+  NuMat_res < -NuMat_res/len_c
+  similarityMat_res <- similarityMat_nocostC(sapply(c, "["))$similarity
 
   cost<-numeric(len_c)
   for (i in 1:len_c){
