@@ -75,7 +75,7 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
       U_Sigma2plot[, , i, drop=FALSE] <- U_Sigma[[k]][dims2plot, dims2plot, drop=FALSE]
     }
   }else{
-    U_mu2plot <- U_mu[, fullCl]
+    U_mu2plot <- U_mu[, fullCl, drop=FALSE]
     rownames(U_mu2plot) <- rownames(z)
     U_Sigma2plot <- U_Sigma[, , fullCl, drop=FALSE]
   }
