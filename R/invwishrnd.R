@@ -11,7 +11,6 @@
 #'@export
 #'
 #'
-invwishrnd <- function(n, lambda, lambda_solved){
-  S <- solve(wishrnd(n = n, Sigma = lambda_solved))
-  return(S)
+invwishrnd <- function(n, lambda_solved){
+  return(solve(wishrnd(n = n, Sigma = lambda_solved)))
 }

@@ -21,6 +21,7 @@ update_SS <- function(z, S, hyperprior=NULL, obs_weights = NULL){
   kappa0 <- S[["kappa"]]
   nu0 <- S[["nu"]]
   lambda0 <- S[["lambda"]]
+  lambda0_solved <- S[["lambda_solved"]]
   
   if(length(dim(z))>1 & dim(z)[2]>1){
     
@@ -47,13 +48,17 @@ update_SS <- function(z, S, hyperprior=NULL, obs_weights = NULL){
       #g0 <- ncol(lambda0) + 5
       g0 <- nu0
       lambda0 <- wishrnd(n = nu0 + g0, 
-                         Sigma = solve( solve(lambda0) + solve(hyperprior[["Sigma"]]) )
+                         Sigma = solve(lambda0_solved + solve(hyperprior[["Sigma"]]) )
       )
     }
     lambda1 <- (lambda0 + kappa0*n/(kappa0 + n)*tcrossprod(zbar - mu0) + unscvarz)
     #cat("lambda0 =", lambda0/(nu1-3), "\n")
     #cat("lambda1 =", lambda1/(nu1-3), "\n")
     #cat("varz =", varz/(nu1-3), "\n")
+    lambda1_solved <- try(solve(lambda1), silent=TRUE)
+    if(inherits(S, "try-error")){
+      lambda1_solved <- solve((lambda1 + diag(p)))
+    }
     
   }else{
     kappa1 <- kappa0 + 1
@@ -64,16 +69,21 @@ update_SS <- function(z, S, hyperprior=NULL, obs_weights = NULL){
       #g0 <- ncol(lambda0) + 5
       g0 <- nu0
       lambda0 <- wishrnd(n = nu0 + g0, 
-                         Sigma = solve( solve(lambda0) + solve(hyperprior[["Sigma"]]) )
+                         Sigma = solve(lambda0_solved + solve(hyperprior[["Sigma"]]) )
       )
     }
     lambda1 <- lambda0 + kappa0/(kappa0 + 1)*tcrossprod(z[,1] - mu0)
+    lambda1_solved <- try(solve(lambda1), silent=TRUE)
+    if(inherits(S, "try-error")){
+      lambda1_solved <- solve((lambda1 + diag(p)))
+    }
   }
   
   S_up[["mu"]] <- mu1
   S_up[["kappa"]] <- kappa1
   S_up[["nu"]] <- nu1
   S_up[["lambda"]] <- lambda1
+  S_up[["lambda_solved"]] <- lambda1_solved
   
   return(S_up)
 }

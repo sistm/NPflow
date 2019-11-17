@@ -18,6 +18,7 @@ rNiW <- function(hyper, diagVar){
   nu0 = hyper[["nu"]]
   lambda0 = hyper[["lambda"]]
   if(is.null(hyper[["lambda_solved"]])){
+    warning("'lambda_solved' should have already been defined in DPMGibbs...")
     lambda0_solved <- try(solve(lambda0), silent = TRUE)
     if(inherits(lambda0_solved, "try-error")){
       lambda0_solved <-  solve(lambda0 + diag(ncol(lambda)))
@@ -31,7 +32,7 @@ rNiW <- function(hyper, diagVar){
     betas <- diag(lambda0)
     S <- diag(1/stats::rgamma(n = length(mu0), shape = nu0, rate = betas))
   }else{
-    S = invwishrnd(n = nu0, lambda = lambda0, lambda_solved = lambda0_solved)
+    S = invwishrnd(n = nu0, lambda_solved = lambda0_solved)
   }
 
   # Sample mu from a normal distribution
