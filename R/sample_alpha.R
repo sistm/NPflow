@@ -1,4 +1,4 @@
-#'Sampler for the concentration parameter of a Dirichlet process
+#'Gibbs sampler for the concentration parameter of a Dirichlet process
 #'
 #'Sampler updating the concentration parameter of a Dirichlet process given
 #'the number of observations and a Gamma(\code{a}, \code{b}) prior, following the augmentation
@@ -45,11 +45,12 @@
 #' alphas <- numeric(N)
 #' alphas[1] <- alpha_init
 #' for (i in 2:N){
-#'  alphas[i] <- sample_alpha(alpha_old = alphas[i-1], n=n, K=K, a=a, b=b)
+#'  alphas[i] <- sample_alpha(alpha_old = alphas[i-1], n=n, K=K, a=a, b=b)["alpha"]
 #' }
 #'
 #' postalphas <- alphas[floor(N/2):N]
 #' alphaMMSE <- mean(postalphas)
+#' alphaMed <- median(postalphas)
 #' alphaMAP <- density(postalphas)$x[which.max(density(postalphas)$y)]
 #'
 #' expK <- sum(alphaMMSE/(alphaMMSE+0:(n-1)))
@@ -92,23 +93,41 @@
 #'
 
 sample_alpha <- function(alpha_old, n, K, a=0.0001, b=0.0001){
-
-  if(b > 0){
-    # Sample scale factor in Dirichlet Process
-    x <- stats::rbeta(n=1, shape1=alpha_old + 1, shape2=n)
-    temp <- (a+K-1) / (n*(b-log(x)))
-    pi <- temp/(1+temp)
-    u <- stats::runif(1)
-    if (u<pi){
-        alpha_new  <-  stats::rgamma(n=1, shape=a + K, scale=1/(b - log(x)))
-    } else{
-      alpha_new <-  stats::rgamma(n=1, shape=a + K - 1, scale=1/(b - log(x)))
+  
+  
+    if(b > 0){
+      # Sample scale factor in Dirichlet Process
+      x <- stats::rbeta(n = 1, shape1 = alpha_old+1, shape2 = n)
+      temp <- (a + K - 1) / (n*(b - log(x)))
+      pi <- temp/(1+temp)
+      u <- stats::runif(1)
+      if (u<pi){
+        alpha_new <- stats::rgamma(n = 1, shape = a+K, rate = b-log(x))
+        alpha_new_log <- log(alpha_new)
+      }else{
+        if(K>1){
+          alpha_new <-  stats::rgamma(n = 1, shape = a+K-1, rate = b-log(x))
+          alpha_new_log <- log(alpha_new)
+        }else{
+          alpha_new_log <- rgamma_ss(n = 1, shape = a, rate = b-log(x), do.log = TRUE)
+          alpha_new <- exp(alpha_new_log)
+        }
+      }
+      
+    }else if(b==0){
+      alpha_new=a
+      
+    }else{
+      warning("b cannot be negative. This should not happen.\nTry to increase hyper-parameter 'b'")
+      alpha_new <- alpha_old
     }
-    return(alpha_new)
-  }else if(b==0){
-    alpha_new=a
-  }else{
-    print("b cannot be negative")
-  }
+  
+  
+  # if(alpha_new < 10^-300){
+  #   alpha_new <- 10^-300
+  # }
+  
+  return(c("alpha" = alpha_new, "log_alpha" = alpha_new_log))
+  
 }
 

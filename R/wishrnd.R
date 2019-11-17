@@ -16,12 +16,11 @@ wishrnd <- function(n, Sigma){
 
   p <- nrow(Sigma)
   p2 <- ncol(Sigma)
-
   if(p!=p2){
     stop('Error : Matrix not square\n')
   }
-
-  x <- matrix(rnorm(n=n*p), nrow=n, ncol=p)%*%chol(Sigma)
+  
+  x <- matrix(rnorm(n = n*p), nrow=n, ncol=p) %*% chol(Sigma)
   W <- crossprod(x)
 
   return(W)

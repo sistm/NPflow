@@ -1,6 +1,6 @@
 #'@keywords internal
 #'@importFrom stats dgamma
-logposterior_DPMG <- function(z, mu, Sigma, hyper, c, m, alpha, n, a, b, diagVar){
+logposterior_DPMG <- function(z, mu, Sigma, hyper, c, m, alpha, log_alpha, n, a, b, diagVar){
   
   res <- NA
   
@@ -31,8 +31,8 @@ logposterior_DPMG <- function(z, mu, Sigma, hyper, c, m, alpha, n, a, b, diagVar
   
   if(!diagVar){
     log_prior_NiW <-  sum(dNiW(lapply(indfull, function(j) mu[, j]),
-                                 U_Sigma_full,
-                                 hyperprior=hyper, log=TRUE))
+                               U_Sigma_full,
+                               hyperprior=hyper, log=TRUE))
   }else{
     betas <- lapply(U_Sigma_full, diag)
     beta0 <- diag(hyper$lambda)
@@ -42,10 +42,15 @@ logposterior_DPMG <- function(z, mu, Sigma, hyper, c, m, alpha, n, a, b, diagVar
   }
   
   
+  lgamma_alpha <- lgamma(alpha)
   
-  log_prior_alpha <- stats::dgamma(alpha, shape=a, scale=1/b, log=TRUE)
+  #cat("truth: ", lgamma_alpha, "\napprox:", lgamma(1 + exp(log_alpha)) - log_alpha, "\n")
+  if(is.infinite(lgamma_alpha) | is.nan(lgamma_alpha)){
+    lgamma_alpha <- lgamma(1 + exp(log_alpha)) - log_alpha
+  }
+  log_prior_alpha <- a*log(b) - lgamma(a) + (a-1)*lgamma_alpha - alpha*b
   
-  log_clustering <- sum(c(lgamma(alpha), K*log(alpha), lgamma(mfull),-lgamma(alpha+n)))
+  log_clustering <- sum(c(lgamma_alpha, K*log_alpha, lgamma(mfull), -lgamma(alpha+n)))
   
   
   

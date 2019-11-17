@@ -4,7 +4,7 @@
 \alias{invwishrnd}
 \title{Sample from a inverse-Wishart distribution}
 \usage{
-invwishrnd(n, lambda)
+invwishrnd(n, lambda, lambda_solved)
 }
 \arguments{
 \item{n}{degrees of freedom}

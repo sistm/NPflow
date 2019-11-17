@@ -2,7 +2,7 @@
 % Please edit documentation in R/sample_alpha.R
 \name{sample_alpha}
 \alias{sample_alpha}
-\title{Sampler for the concentration parameter of a Dirichlet process}
+\title{Gibbs sampler for the concentration parameter of a Dirichlet process}
 \usage{
 sample_alpha(alpha_old, n, K, a = 1e-04, b = 1e-04)
 }
@@ -44,11 +44,12 @@ b <- a
 alphas <- numeric(N)
 alphas[1] <- alpha_init
 for (i in 2:N){
- alphas[i] <- sample_alpha(alpha_old = alphas[i-1], n=n, K=K, a=a, b=b)
+ alphas[i] <- sample_alpha(alpha_old = alphas[i-1], n=n, K=K, a=a, b=b)["alpha"]
 }
 
 postalphas <- alphas[floor(N/2):N]
 alphaMMSE <- mean(postalphas)
+alphaMed <- median(postalphas)
 alphaMAP <- density(postalphas)$x[which.max(density(postalphas)$y)]
 
 expK <- sum(alphaMMSE/(alphaMMSE+0:(n-1)))

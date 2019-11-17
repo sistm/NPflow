@@ -226,6 +226,8 @@ DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE, plotinit=
   U_Sigma = array(0, dim=c(p, p, n))
   listU_mu<-list()
   listU_Sigma<-list()
+  alpha <- numeric(N)
+  log_alpha <- numeric(N)
   
   # U_SS is a list where each U_SS[[k]] contains the sufficient
   # statistics associated to cluster k
@@ -246,7 +248,13 @@ DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE, plotinit=
   
   m <- numeric(n) # number of obs in each clusters
   c <-numeric(n)
-  # initial number of clusters
+  
+  
+  hyperG0[["lambda_solved"]] <- try(solve(hyperG0[["lambda"]]), silent = TRUE)
+  if(inherits(hyperG0[["lambda_solved"]], "try-error")){
+    hyperG0[["lambda_solved"]] = solve(hyperG0[["lambda"]] + diag(ncol(hyperG0[["lambda"]])))
+  }
+  
   
   # Initialization----
   # each observation is assigned to a different cluster
@@ -293,14 +301,16 @@ DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE, plotinit=
   listU_mu[[i]]<-U_mu
   listU_Sigma[[i]]<-U_Sigma
   
-  alpha <- c(log(n))
+  alpha[i] <- c(log(n))
+  log_alpha[i] <- log(c(log(n)))
   U_SS_list[[i]] <- U_SS
   c_list[[i]] <- c
   weights_list[[i]] <- numeric(length(m))
   weights_list[[i]][unique(c)] <- table(c)/length(c)
   
   logposterior_list[[i]] <- logposterior_DPMG(z, mu=U_mu, Sigma=U_Sigma,
-                                              hyper=hyperG0, c=c, m=m, alpha=alpha[i], n=n, a=a, b=b, diagVar)
+                                              hyper=hyperG0, c=c, m=m, alpha=alpha[i], 
+                                              log_alpha=log_alpha[i], n=n, a=a, b=b, diagVar)
   
   if(verbose){
     message(i, "/", N, " samplings: ", sep="")
@@ -319,8 +329,9 @@ DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE, plotinit=
     nbClust <- length(unique(c))
     #TODO WARNING here
     # We need to discuss whether alpha needs to be updated with respect to n or sum(obs_weights)...
-    alpha <- c(alpha, sample_alpha(alpha_old = alpha[i-1], n = n,
-                                   K = nbClust, a = a, b = b))
+    alpha_all <- sample_alpha(alpha_old = alpha[i-1], n = n, K = nbClust, a = a, b = b)
+    alpha[i] <- alpha_all["alpha"]
+    log_alpha[i] <- alpha_all["log_alpha"]
     
     slice <- sliceSampler_N(c=c, m=m, alpha=alpha[i],
                             z=z, hyperG0=hyperG0,
@@ -358,7 +369,8 @@ DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE, plotinit=
     U_SS_list[[i]] <- U_SS[which(m!=0)]
     c_list[[i]] <- c
     logposterior_list[[i]] <- logposterior_DPMG(z, mu=U_mu, Sigma=U_Sigma,
-                                                hyper=hyperG0, c=c, m=m, alpha=alpha[i], n=n, a=a, b=b, diagVar)
+                                                hyper=hyperG0, c=c, m=m, alpha=alpha[i], 
+                                                log_alpha=log_alpha[i], n=n, a=a, b=b, diagVar)
     
     if(verbose){
       message(i, "/", N, " samplings: ", sep="")
@@ -382,18 +394,19 @@ DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE, plotinit=
   #                 "clust_distrib"="Normal",
   #                 "hyperG0"=hyperG0))
   dpmclus <- list("mcmc_partitions" = c_list,
-                  "alpha"=alpha,
+                  "alpha" = alpha,
+                  "log_alpha" = log_alpha,
                   #                 "U_mu" = U_mu,
                   #                 "U_Sigma" = U_Sigma,
-                  "listU_mu"=listU_mu,
-                  "listU_Sigma"=listU_Sigma,
-                  "U_SS_list"=U_SS_list,
-                  "weights_list"=weights_list,
-                  "logposterior_list"=logposterior_list,
-                  "data"=z,
-                  "nb_mcmcit"=N,
-                  "clust_distrib"="gaussian",
-                  "hyperG0"=hyperG0)
+                  "listU_mu" = listU_mu,
+                  "listU_Sigma" = listU_Sigma,
+                  "U_SS_list" = U_SS_list,
+                  "weights_list" = weights_list,
+                  "logposterior_list" = logposterior_list,
+                  "data" = z,
+                  "nb_mcmcit" = N,
+                  "clust_distrib" = "gaussian",
+                  "hyperG0" = hyperG0)
   class(dpmclus) <- "DPMMclust"
   return(dpmclus)
 }
