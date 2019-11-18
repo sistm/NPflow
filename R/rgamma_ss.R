@@ -19,7 +19,7 @@
 #'
 #'@keywords internal
 #'
-#'@reference Liu, C., Martin, R., & Syring, N. (2017). Efficient simulation 
+#'@references Liu, C., Martin, R., & Syring, N. (2017). Efficient simulation 
 #'from a gamma distribution with small shape parameter. 
 #'Computational Statistics, 32(4), 1767–1775. 
 #'https://doi.org/10.1007/s00180-016-0692-0
