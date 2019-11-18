@@ -23,7 +23,7 @@ sliceSampler_skewT_SeqPrior_parallel <- function(Ncpus, c, m, alpha, z, priorG1,
 
 
     # Sample the latent u
-    u  <- stats::runif(maxCl)*w[c]
+    u  <- stats::runif(length(c))*w[c]
     u_star <- min(u)
 
     # Sample the remaining weights that are needed with stick-breaking

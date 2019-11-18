@@ -20,7 +20,7 @@ sliceSampler_N_SeqPrior<- function(c, m, alpha, z, priorG1, U_mu, U_Sigma, diagV
 
 
   # Sample the latent u
-  u  <- stats::runif(maxCl)*w[c]
+  u  <- stats::runif(length(c))*w[c]
   u_star <- min(u)
 
   # Sample the remaining weights that are needed with stick-breaking
