@@ -1,5 +1,5 @@
 
-#'Slice Sampling of Dirichlet Process Mixture of Gaussian distibutions
+#'Slice Sampling of Dirichlet Process Mixture of Gaussian distributions
 #'
 #'@param z data matrix \code{d x n} with \code{d} dimensions in rows
 #'and \code{n} observations in columns.
@@ -11,26 +11,26 @@
 #'
 #'@param N number of MCMC iterations.
 #'
-#'@param doPlot logical flag indicating wether to plot MCMC iteration or not.
+#'@param doPlot logical flag indicating whether to plot MCMC iteration or not.
 #'Default to \code{TRUE}.
 #'
 #'@param plotevery an integer indicating the interval between plotted iterations when \code{doPlot}
 #'is \code{TRUE}.
 #'
-#'@param nbclust_init number of clusters at initialisation.
+#'@param nbclust_init number of clusters at initialization.
 #'Default to 30 (or less if there are less than 30 observations).
 #'
-#'@param add.vagueprior logical flag indicating wether a non informative component should
+#'@param add.vagueprior logical flag indicating whether a non informative component should
 #' be added to the informative prior. Default is \code{TRUE}.
 #'
 #'@param weightnoninfo a real between 0 and 1 giving the weights of the non informative component
 #'in the prior.
 #'
-#'@param diagVar logical flag indicating wether the variance of each cluster is
+#'@param diagVar logical flag indicating whether the variance of each cluster is
 #'estimated as a diagonal matrix, or as a full matrix.
 #'Default is \code{TRUE} (diagonal variance).
 #'
-#'@param verbose logical flag indicating wether partition info is
+#'@param verbose logical flag indicating whether partition info is
 #'written in the console at each MCMC iteration.
 #'
 #'@param ... additional arguments to be passed to \code{\link{plot_DPM}}.
@@ -54,7 +54,7 @@
 #'       at each MCMC iterations}
 #'      \item{\code{data}:}{ the data matrix \code{d x n} with \code{d} dimensions in rows
 #'and \code{n} observations in columns.}
-#'      \item{\code{nb_mcmcit}:}{ the number of MCMC itertations}
+#'      \item{\code{nb_mcmcit}:}{ the number of MCMC iterations}
 #'      \item{\code{clust_distrib}:}{ the parametric distribution of the mixture component - \code{"gaussian"}}
 #'      \item{\code{hyperG0}:}{ the prior on the cluster location}
 #'  }
@@ -63,10 +63,11 @@
 #'
 #'@seealso \code{\link{postProcess.DPMMclust}} \code{\link{DPMGibbsN}}
 #'
-#'@references Hejblum BP, Alkhassim C, Gottardo R, Caron F, Thiebaut R, Sequential Dirichlet
-#'Process Mixtures of Multivariate Skew t-distributions for Model-based Clustering
-#'of Flow Cytometry Data, submitted.
-#'arxiv ID: 1702.04407 \url{https://arxiv.org/abs/1702.04407v2}
+#'@references Hejblum BP, Alkhassim C, Gottardo R, Caron F and Thiebaut R (2019) 
+#'Sequential Dirichlet Process Mixtures of Multivariate Skew t-distributions for 
+#'Model-based Clustering of Flow Cytometry Data. The Annals of Applied Statistics, 
+#'13(1): 638-660. <doi: 10.1214/18-AOAS1209> <arXiv: 1702.04407> 
+#'\url{https://arxiv.org/abs/1702.04407} \url{https://doi.org/10.1214/18-AOAS1209}
 #'
 #'@export
 #'
@@ -124,10 +125,10 @@
 #'p
 #'
 #'
-#'
+#'if(interactive()){
 #' # Gibbs sampler for Dirichlet Process Mixtures
 #' ##############################################
-#' \dontrun{
+#'
 #' MCMCsample <- DPMGibbsN(z, hyperG0, a, b, N=1500, doPlot, nbclust_init, plotevery=200,
 #'                         gg.add=list(theme_bw(),
 #'                                  guides(shape=guide_legend(override.aes = list(fill="grey45")))),
@@ -218,7 +219,7 @@ DPMGibbsN_SeqPrior <- function (z, prior_inform, hyperG0, N, nbclust_init,
   #         b <- 0.00001
 
 
-  # Initialisation----
+  # Initialization----
   # each observation is assigned to cluster
   i <- 1
   c <- sample(1:nbclust_init, size=n, replace=TRUE)

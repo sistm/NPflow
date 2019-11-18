@@ -66,7 +66,7 @@ double FmeasureC(const NumericVector & pred, const NumericVector & ref){
 }
 
 
-//' C++ implementation of the F-measure computation without the ref classe 0
+//' C++ implementation of the F-measure computation without the reference class 0
 //'
 //' Aghaeepour in FlowCAP 1 ignore the reference class labeled "0"
 //'
@@ -135,16 +135,16 @@ double FmeasureC_no0(const NumericVector & pred, const NumericVector & ref){
 }
 
 
-//' Multiple cost computations with Fmeasure as the loss function
+//' Multiple cost computations with the F-measure as the loss function
 //'
-//'C++ implementation of multiple cost computations with Fmeasure as the loss
+//'C++ implementation of multiple cost computations with the F-measure as the loss
 //'function using the Armadillo library
 //'
 //'@param c a matrix where each column is one MCMC partition
 //'
 //'@return a list with the following elements:
 //'\itemize{
-//'  \item{Fmeas}{TODO}
+//'  \item{\code{Fmeas:}}{ TODO}
 //'}
 //'@export
 //'
@@ -153,12 +153,12 @@ double FmeasureC_no0(const NumericVector & pred, const NumericVector & ref){
 //'c <- list(c(1,1,2,3,2,3), c(1,1,1,2,3,3),c(2,2,1,1,1,1))
 //'#Fmeasure_costC(sapply(c, "["))
 //'
-//'\dontrun{
-//'c2 <- list()
-//'for(i in 1:100){
+//'if(interactive()){
+//' c2 <- list()
+//' for(i in 1:100){
 //'     c2 <- c(c2, list(rmultinom(n=1, size=2000, prob=rexp(n=2000))))
-//'}
-//'Fmeasure_costC(sapply(c2, "["))
+//' }
+//' Fmeasure_costC(sapply(c2, "["))
 //'}
 //'
 // [[Rcpp::export]]

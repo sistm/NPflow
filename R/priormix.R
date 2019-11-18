@@ -2,10 +2,10 @@
 #'
 #'@param sDPMclust an object of class \code{summary.DPMMclust}
 #'
-#'@param nu0add an additionnal value integer added to hyperprior parameter nu
+#'@param nu0add an additional value integer added to hyperprior parameter nu
 #'(increase to avoid non positive definite matrix sampling)
 #'
-#'@seealso summary.DPMMclust
+#'@seealso \code{summary.DPMMclust}
 #'
 #'@export
 #'
@@ -63,12 +63,12 @@
 #'
 #'  nbclust_init <- 30
 #'
-#'\dontrun{
+#'if(interactive()){
 #'  MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=2000, doPlot=FALSE,
 #'                                 nbclust_init, diagVar=FALSE)
 #'  s <- summary(MCMCsample_st, burnin = 1500, thin=5, posterior_approx=TRUE)
 #'  pmix <- priormix(s)
-#'  }
+#'}
 #'
 
 priormix <- function(sDPMclust, nu0add=5){

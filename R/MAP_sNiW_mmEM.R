@@ -6,7 +6,7 @@
 #'@details \code{MAP_sNiW_mmEM} provides an estimation for the MAP of mixtures of
 #'Normal inverse Wishart distributed observations. \code{MAP_sNiW_mmEM_vague} provides
 #'an estimates incorporating a vague component in the mixture.
-#'\code{MAP_sNiW_mmEM_weighted} provides a weigthed version of the algorithm.
+#'\code{MAP_sNiW_mmEM_weighted} provides a weighted version of the algorithm.
 #'
 #'@param xi_list a list of length \code{n}, each element is a vector of size \code{d}
 #'containing the argument \code{xi} of the corresponding allocated cluster.
@@ -31,7 +31,7 @@
 #'@param tol real number giving the tolerance for the stopping of the EM algorithm.
 #'Default is \code{0.1}.
 #'
-#'@param doPlot a logical flag indicating wether the algorithm progression should be plotted.
+#'@param doPlot a logical flag indicating whether the algorithm progression should be plotted.
 #'Default is \code{TRUE}.
 #'
 #'@param verbose logical flag indicating whether plot should be drawn. Default is \code{TRUE}.
@@ -77,7 +77,7 @@ MAP_sNiW_mmEM<- function(xi_list, psi_list, S_list, hyperG0, init=NULL, K, maxit
   )/2
 
 
-  #initialisation
+  #initialization
 
 
   if(is.null(init)){
@@ -271,7 +271,7 @@ MAP_sNiW_mmEM_weighted<- function(xi_list, psi_list, S_list, obsweight_list,
   )/2
 
 
-  #initialisation
+  #initialization
   weights <- rep(1/K, K)
   for(k in 1:K){
     #sampling the cluster parameters
@@ -480,7 +480,7 @@ MAP_sNiW_mmEM_vague <- function(xi_list, psi_list, S_list,
   )/2
 
 
-  #initialisation
+  #initialization
   weights <- rep(1/K, K)
   for(k in 1:K){
     #sampling the cluster parameters

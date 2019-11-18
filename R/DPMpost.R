@@ -1,4 +1,4 @@
-#'Posterior estimation for Dirichlet process mixture of multivariate (potentially skew) distibutions models
+#'Posterior estimation for Dirichlet process mixture of multivariate (potentially skew) distributions models
 #'
 #'Partially collapse slice Gibbs sampling for Dirichlet process mixture of multivariate
 #'normal, skew normal or skew t distributions.
@@ -25,20 +25,20 @@
 #'
 #'@param N number of MCMC iterations.
 #'
-#'@param doPlot logical flag indicating wether to plot MCMC iteration or not.
+#'@param doPlot logical flag indicating whether to plot MCMC iteration or not.
 #'Default to \code{TRUE}.
 #'
-#'@param nbclust_init number of clusters at initialisation.
+#'@param nbclust_init number of clusters at initialization.
 #'Default to 30 (or less if there are less than 30 observations).
 #'
 #'@param plotevery an integer indicating the interval between plotted iterations when \code{doPlot}
 #'  is \code{TRUE}.
 #'
-#'@param diagVar logical flag indicating wether the variance of each cluster is
+#'@param diagVar logical flag indicating whether the variance of each cluster is
 #'estimated as a diagonal matrix, or as a full matrix.
 #'Default is \code{TRUE} (diagonal variance).
 #'
-#'@param verbose logical flag indicating wether partition info is
+#'@param verbose logical flag indicating whether partition info is
 #'written in the console at each MCMC iteration.
 #'
 #'@param distrib the distribution used for the clustering. Current possibilities are
@@ -71,16 +71,18 @@
 #'       at each MCMC iterations}
 #'      \item{\code{data}:}{ the data matrix \code{d x n} with \code{d} dimensions in rows
 #'and \code{n} observations in columns}
-#'      \item{\code{nb_mcmcit}:}{ the number of MCMC itertations}
+#'      \item{\code{nb_mcmcit}:}{ the number of MCMC iterations}
 #'      \item{\code{clust_distrib}:}{ the parametric distribution of the mixture component}
 #'      \item{\code{hyperG0}:}{ the prior on the cluster location}
 #'  }
 #'
 #'@author Boris Hejblum
 #'
-#'@references Hejblum BP, Alkhassim C, Gottardo R, Caron F, Thiebaut R, Sequential Dirichlet
-#'Process Mixtures of Multivariate Skew t-distributions for Model-based Clustering
-#'of Flow Cytometry Data, 2017, \emph{submitted}. \href{https://arxiv.org/abs/1702.04407v2}{arxiv:1702.04407}
+#'@references Hejblum BP, Alkhassim C, Gottardo R, Caron F and Thiebaut R (2019) 
+#'Sequential Dirichlet Process Mixtures of Multivariate Skew t-distributions for 
+#'Model-based Clustering of Flow Cytometry Data. The Annals of Applied Statistics, 
+#'13(1): 638-660. <doi: 10.1214/18-AOAS1209> <arXiv: 1702.04407> 
+#'\url{https://arxiv.org/abs/1702.04407} \url{https://doi.org/10.1214/18-AOAS1209}
 #'
 #'@export
 #'
@@ -124,7 +126,7 @@
 #' hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
 #'
 #'
-#'\dontrun{
+#'if(interactive()){
 #' # Plot data
 #' cytoScatter(z)
 #' 
@@ -197,7 +199,7 @@
 #' hyperG0[["lambda"]] <- diag(d)
 #' 
 #' 
-#'\dontrun{
+#'if(interactive()){
 #' # Plot data
 #' cytoScatter(z)
 #' 
@@ -271,7 +273,7 @@ DPMpost <- function (data, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
                     "gaussian"=DPMGibbsN_SeqPrior(data, informPrior, hyperG0, N,
                                                   nbclust_init, doPlot=doPlot, plotevery=plotevery,
                                                   diagVar=diagVar, verbose=verbose, ...),
-                    "skewnorm"=stop("Skew normal ditributions with informative prior is not implemented yet.\n",
+                    "skewnorm"=stop("Skew normal distributions with informative prior is not implemented yet.\n",
                                     "Contact the maintainer if you would like to see this feature implemented.\n",
                                     "In the meantime, try the skew t distribution with 'skewt' which is a generalization ",
                                     "of the skew normal distribution."),
@@ -283,7 +285,7 @@ DPMpost <- function (data, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
   }else{
     if(is.null(informPrior)){
       if(distrib=="skewnorm"){
-        warning("Parallel implementation with skew normal ditributions is not available yet.\n",
+        warning("Parallel implementation with skew normal distributions is not available yet.\n",
                 "Contact the maintainer if you would like to see this feature implemented.\n",
                 "In the meantime, the non-parallel implementation is being run instead")
       }
@@ -298,14 +300,14 @@ DPMpost <- function (data, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
                                                    verbose, ...)
       )
     }else{
-      warning("Parallel implementation with an informative prior for gaussian ditributions is not available yet.\n",
+      warning("Parallel implementation with an informative prior for gaussian distributions is not available yet.\n",
               "Contact the maintainer if you would like to see this feature implemented.\n",
               "In the meantime, the non-parallel implementation is being run instead.")
       res <- switch(distrib,
                     "gaussian"=DPMGibbsN_SeqPrior(data, informPrior, hyperG0, N,
                                                   nbclust_init, doPlot=doPlot, plotevery=plotevery,
                                                   diagVar=diagVar, verbose=verbose, ...),
-                    "skewnorm"=stop("Skew normal ditributions with informative prior is not implemented yet.\n",
+                    "skewnorm"=stop("Skew normal distributions with informative prior is not implemented yet.\n",
                                     "Contact the maintainer if you would like to see this feature implemented.\n",
                                     "In the meantime, try the skew t distribution with 'skewt' which is a generalization ",
                                     "of the skew normal distribution."),

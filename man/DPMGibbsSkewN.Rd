@@ -2,7 +2,7 @@
 % Please edit documentation in R/DPMGibbsSkewN.R
 \name{DPMGibbsSkewN}
 \alias{DPMGibbsSkewN}
-\title{Slice Sampling of Dirichlet Process Mixture of skew normal ditributions}
+\title{Slice Sampling of Dirichlet Process Mixture of skew normal distributions}
 \usage{
 DPMGibbsSkewN(z, hyperG0, a = 1e-04, b = 1e-04, N, doPlot = TRUE,
   nbclust_init = 30, plotevery = N/10, diagVar = TRUE,
@@ -23,16 +23,16 @@ then the concentration is fixed set to \code{a}.}
 
 \item{N}{number of MCMC iterations.}
 
-\item{doPlot}{logical flag indicating wether to plot MCMC iteration or not.
+\item{doPlot}{logical flag indicating whether to plot MCMC iteration or not.
 Default to \code{TRUE}.}
 
-\item{nbclust_init}{number of clusters at initialisation.
+\item{nbclust_init}{number of clusters at initialization.
 Default to 30 (or less if there are less than 30 observations).}
 
 \item{plotevery}{an integer indicating the interval between plotted iterations when \code{doPlot}
 is \code{TRUE}.}
 
-\item{diagVar}{logical flag indicating wether the variance of a cluster is a diagonal matrice.
+\item{diagVar}{logical flag indicating whether the variance of a cluster is a diagonal matrix.
 Default is \code{FALSE} (full matrix).}
 
 \item{use_variance_hyperprior}{logical flag indicating whether a hyperprior is added 
@@ -60,13 +60,13 @@ associated to partition \code{c[[j]]}}
       at each MCMC iterations}
      \item{\code{data}:}{the data matrix \code{d x n} with \code{d} dimensions in rows
 and \code{n} observations in columns}
-     \item{\code{nb_mcmcit}:}{the number of MCMC itertations}
+     \item{\code{nb_mcmcit}:}{the number of MCMC iterations}
      \item{\code{clust_distrib}:}{the parametric distribution of the mixture component - \code{"skewnorm"}}
      \item{\code{hyperG0}:}{the prior on the cluster location}
  }
 }
 \description{
-Slice Sampling of Dirichlet Process Mixture of skew normal ditributions
+Slice Sampling of Dirichlet Process Mixture of skew normal distributions
 }
 \examples{
 rm(list=ls())
@@ -160,7 +160,7 @@ hyperG0[["lambda"]] <- diag(d)
  p
 
 
-\dontrun{
+if(interactive()){
  # Gibbs sampler for Dirichlet Process Mixtures
  ##############################################
 
@@ -386,10 +386,11 @@ for(k in 1:n){
 
 }
 \references{
-Hejblum BP, Alkhassim C, Gottardo R, Caron F, Thiebaut R, Sequential Dirichlet
-Process Mixtures of Multivariate Skew t-distributions for Model-based Clustering
-of Flow Cytometry Data, submitted.
-arxiv ID: 1702.04407 \url{https://arxiv.org/abs/1702.04407v2}
+Hejblum BP, Alkhassim C, Gottardo R, Caron F and Thiebaut R (2019) 
+Sequential Dirichlet Process Mixtures of Multivariate Skew t-distributions for 
+Model-based Clustering of Flow Cytometry Data. The Annals of Applied Statistics, 
+13(1): 638-660. <doi: 10.1214/18-AOAS1209> <arXiv: 1702.04407> 
+\url{https://arxiv.org/abs/1702.04407} \url{https://doi.org/10.1214/18-AOAS1209}
 }
 \author{
 Boris Hejblum

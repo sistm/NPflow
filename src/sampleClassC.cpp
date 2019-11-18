@@ -11,7 +11,7 @@ using namespace arma;
 //'@param probMat a numeric matrix of dim \code{k x n} of containing column vectors of sampling
 //'probabilities for each class \code{k}.
 //'
-//'@param Log a logical flag indicating wether the providede \code{probMat} is on the log scale
+//'@param Log a logical flag indicating whether the provided \code{probMat} is on the log scale
 //'or natural probability scale. Default is \code{FALSE} in which case it is considered on the natural
 //'probability scale.
 //'

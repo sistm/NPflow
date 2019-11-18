@@ -2,7 +2,7 @@
 % Please edit documentation in R/similarityMat.R
 \name{similarityMat}
 \alias{similarityMat}
-\title{Computes the coclustering (or similarity) matrix}
+\title{Computes the co-clustering (or similarity) matrix}
 \usage{
 similarityMat(c, step = 1)
 }
@@ -11,7 +11,7 @@ similarityMat(c, step = 1)
 the cluster allocation of observation \code{i=1...n} at iteration 
 \code{j=1...N}.}
 
-\item{step}{provide coclustering every \code{step} iterations.
+\item{step}{provide co-clustering every \code{step} iterations.
 Default is 1.}
 }
 \value{
@@ -20,7 +20,7 @@ is the proportion of MCMC iterations where observation \code{i} and
 observations \code{j} are allocated to the same cluster.
 }
 \description{
-Computes the coclustering (or similarity) matrix
+Computes the co-clustering (or similarity) matrix
 }
 \author{
 Boris Hejblum

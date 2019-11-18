@@ -6,15 +6,12 @@ sudo: false
 matrix:
   include:
     - os: linux
-      dist: trusty
       r: release
     
     - os: linux
-      dist: trusty
       r: devel
       
-allow_failures:
-      
+  allow_failures:
     - os: osx
       r: release
 
@@ -37,11 +34,11 @@ r_packages:
 - itertools
 - microbenchmark
 - viridis
+-covr
 
 r_github_packages:
 - hadley/scales
 - hadley/ggplot2
-- jimhester/covr
 
 after_success:
   - Rscript -e 'covr::codecov(type ="all")'

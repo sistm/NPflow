@@ -1,4 +1,4 @@
-#'Parallel Implementation of Slice Sampling of Dirichlet Process Mixture of skew Normals
+#'Parallel Implementation of Slice Sampling of Dirichlet Process Mixture of skew normal distributions
 #'
 #'If the \code{monitorfile} argument is a character string naming a file to
 #'write into, in the case of a new file that does not exist yet, such a new
@@ -24,16 +24,16 @@
 #'
 #'@param N number of MCMC iterations.
 #'
-#'@param doPlot logical flag indicating wether to plot MCMC iteration or not.
+#'@param doPlot logical flag indicating whether to plot MCMC iteration or not.
 #'Default to \code{TRUE}.
 #'
 #'@param plotevery an integer indicating the interval between plotted iterations when \code{doPlot}
 #'is \code{TRUE}.
 #'
-#'@param nbclust_init number of clusters at initialisation.
+#'@param nbclust_init number of clusters at initialization.
 #'Default to 30 (or less if there are less than 30 observations).
 #'
-#'@param diagVar logical flag indicating wether the variance of each cluster is
+#'@param diagVar logical flag indicating whether the variance of each cluster is
 #'estimated as a diagonal matrix, or as a full matrix.
 #'Default is \code{TRUE} (diagonal variance).
 #'
@@ -41,7 +41,7 @@
 #'for the variance parameter. Default is \code{TRUE} which decrease the impact of the variance prior
 #'on the posterior. \code{FALSE} is useful for using an informative prior.
 #'
-#'@param verbose logical flag indicating wether partition info is
+#'@param verbose logical flag indicating whether partition info is
 #'written in the console at each MCMC iteration.
 #'
 #'@param monitorfile
@@ -66,7 +66,7 @@
 #'       at each MCMC iterations}
 #'      \item{\code{data}:}{the data matrix \code{d x n} with \code{d} dimensions in rows
 #'and \code{n} observations in columns}
-#'      \item{\code{nb_mcmcit}:}{the number of MCMC itertations}
+#'      \item{\code{nb_mcmcit}:}{the number of MCMC iterations}
 #'      \item{\code{clust_distrib}:}{the parametric distribution of the mixture component - \code{"skewnorm"}}
 #'      \item{\code{hyperG0}:}{the prior on the cluster location}
 #'  }
@@ -75,10 +75,11 @@
 #'
 #'@export
 #'
-#'@references Hejblum BP, Alkhassim C, Gottardo R, Caron F, Thiebaut R, Sequential Dirichlet
-#'Process Mixtures of Multivariate Skew t-distributions for Model-based Clustering
-#'of Flow Cytometry Data, submitted.
-#'arxiv ID: 1702.04407 \url{https://arxiv.org/abs/1702.04407v2}
+#'@references Hejblum BP, Alkhassim C, Gottardo R, Caron F and Thiebaut R (2019) 
+#'Sequential Dirichlet Process Mixtures of Multivariate Skew t-distributions for 
+#'Model-based Clustering of Flow Cytometry Data. The Annals of Applied Statistics, 
+#'13(1): 638-660. <doi: 10.1214/18-AOAS1209> <arXiv: 1702.04407> 
+#'\url{https://arxiv.org/abs/1702.04407} \url{https://doi.org/10.1214/18-AOAS1209}
 #'
 #'@examples
 #' rm(list=ls())
@@ -162,14 +163,14 @@
 #'
 #'  # Gibbs sampler for Dirichlet Process Mixtures
 #'  ##############################################
-#'  \dontrun{
-#'  MCMCsample_sn_par <- DPMGibbsSkewN_parallel(Ncpus=parallel::detectCores()-1,
-#'                                              type_connec="SOCK", z, hyperG0,
-#'                                              a, b, N=5000, doPlot, nbclust_init,
-#'                                              plotevery=25, gg.add=list(theme_bw(),
+#'  if(interactive()){
+#'   MCMCsample_sn_par <- DPMGibbsSkewN_parallel(Ncpus=parallel::detectCores()-1,
+#'                                               type_connec="SOCK", z, hyperG0,
+#'                                               a, b, N=5000, doPlot, nbclust_init,
+#'                                               plotevery=25, gg.add=list(theme_bw(),
 #'                                 guides(shape=guide_legend(override.aes = list(fill="grey45")))))
-#'  plot_ConvDPM(MCMCsample_sn_par, from=2)
-#'}
+#'   plot_ConvDPM(MCMCsample_sn_par, from=2)
+#'  }
 #'
 #'
 #'
@@ -227,7 +228,7 @@ DPMGibbsSkewN_parallel <- function (Ncpus, type_connec,
     c <- numeric(n) # cluster label of ech observation
     ltn <- rtruncnorm(n, a=0, b=Inf, mean=0, sd=1) # latent truncated normal
 
-    # Initialisation----
+    # Initialization----
     # each observation is assigned to a different cluster
     # or to 1 of the 50 initial clusters if there are more than
     # 50 observations

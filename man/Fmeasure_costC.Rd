@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{Fmeasure_costC}
 \alias{Fmeasure_costC}
-\title{Multiple cost computations with Fmeasure as the loss function}
+\title{Multiple cost computations with the F-measure as the loss function}
 \usage{
 Fmeasure_costC(c)
 }
@@ -12,11 +12,11 @@ Fmeasure_costC(c)
 \value{
 a list with the following elements:
 \itemize{
- \item{Fmeas}{TODO}
+ \item{\code{Fmeas:}}{ TODO}
 }
 }
 \description{
-C++ implementation of multiple cost computations with Fmeasure as the loss
+C++ implementation of multiple cost computations with the F-measure as the loss
 function using the Armadillo library
 }
 \examples{
@@ -24,7 +24,7 @@ library(NPflow)
 c <- list(c(1,1,2,3,2,3), c(1,1,1,2,3,3),c(2,2,1,1,1,1))
 #Fmeasure_costC(sapply(c, "["))
 
-\dontrun{
+if(interactive()){
 c2 <- list()
 for(i in 1:100){
     c2 <- c(c2, list(rmultinom(n=1, size=2000, prob=rexp(n=2000))))

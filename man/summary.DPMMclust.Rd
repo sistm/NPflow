@@ -15,13 +15,13 @@
 \item{thin}{integer giving the spacing at which MCMC iterations are kept.
 Default is \code{1}, i.e. no thining.}
 
-\item{gs}{optionnal vector of length \code{n} containing the gold standard
+\item{gs}{optional vector of length \code{n} containing the gold standard
 partition of the \code{n} observations to compare to the point estimate}
 
 \item{lossFn}{character string specifying the loss function to be used.
 Either "F-measure" or "Binder" (see Details). Default is "F-measure".}
 
-\item{posterior_approx}{logical flag wether a parametric approximation of the posterior should be
+\item{posterior_approx}{logical flag whether a parametric approximation of the posterior should be
 computed. Default is \code{FALSE}}
 
 \item{...}{further arguments passed to or from other methods}
@@ -36,10 +36,10 @@ a \code{list} containing the following elements:
      \item{\code{lossFn}:}{ a character string passing along the \code{lossFn} argument}
      \item{\code{clust_distrib}:}{ a character string passing along the \code{clust_distrib} argument }
      \item{\code{point_estim}:}{ a \code{list} containing: \itemize{
-         \item{c_est:}{ a vector of length \code{n}containing the point estimated clustering for each observations}
-         \item{cost:}{ a vector of length \code{m} containing the cost of each sampled partition}
-         \item{Fmeas:}{ if \code{lossFn} is \code{'F-measure'}, the \code{m x m} matrix of total F-measures for each pair of sampled partitions}
-         \item{opt_ind:}{ the index of the point estimate partition among the \code{m} sampled}
+         \item{\code{c_est}:}{ a vector of length \code{n}containing the point estimated clustering for each observations}
+         \item{\code{cost}:}{ a vector of length \code{m} containing the cost of each sampled partition}
+         \item{\code{Fmeas}:}{ if \code{lossFn} is \code{'F-measure'}, the \code{m x m} matrix of total F-measures for each pair of sampled partitions}
+         \item{\code{opt_ind}:}{ the index of the point estimate partition among the \code{m} sampled}
      }}
      \item{\code{loss}:}{ the loss for the point estimate. \code{NA} if \code{lossFn} is not \code{'Binder'}}
      \item{\code{param_posterior}:}{ a list containing the parametric approximation of the posterior,

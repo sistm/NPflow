@@ -13,7 +13,7 @@
 #'@param S_list a list of length \code{N} whose elements are observed variance-covariance matrices
 #'of dimension \code{d x d}.
 #'
-#'@param doPlot a logical flag indicating wether the algorithm progression should be plotted.
+#'@param doPlot a logical flag indicating whether the algorithm progression should be plotted.
 #'Default is \code{TRUE}.
 #'
 #'@importFrom stats uniroot

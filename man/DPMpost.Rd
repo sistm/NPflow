@@ -2,7 +2,7 @@
 % Please edit documentation in R/DPMpost.R
 \name{DPMpost}
 \alias{DPMpost}
-\title{Posterior estimation for Dirichlet process mixture of multivariate (potentially skew) distibutions models}
+\title{Posterior estimation for Dirichlet process mixture of multivariate (potentially skew) distributions models}
 \usage{
 DPMpost(data, hyperG0, a = 1e-04, b = 1e-04, N, doPlot = TRUE,
   nbclust_init = 30, plotevery = floor(N/10), diagVar = TRUE,
@@ -24,20 +24,20 @@ then the concentration is fixed set to \code{a}.}
 
 \item{N}{number of MCMC iterations.}
 
-\item{doPlot}{logical flag indicating wether to plot MCMC iteration or not.
+\item{doPlot}{logical flag indicating whether to plot MCMC iteration or not.
 Default to \code{TRUE}.}
 
-\item{nbclust_init}{number of clusters at initialisation.
+\item{nbclust_init}{number of clusters at initialization.
 Default to 30 (or less if there are less than 30 observations).}
 
 \item{plotevery}{an integer indicating the interval between plotted iterations when \code{doPlot}
 is \code{TRUE}.}
 
-\item{diagVar}{logical flag indicating wether the variance of each cluster is
+\item{diagVar}{logical flag indicating whether the variance of each cluster is
 estimated as a diagonal matrix, or as a full matrix.
 Default is \code{TRUE} (diagonal variance).}
 
-\item{verbose}{logical flag indicating wether partition info is
+\item{verbose}{logical flag indicating whether partition info is
 written in the console at each MCMC iteration.}
 
 \item{distrib}{the distribution used for the clustering. Current possibilities are
@@ -71,7 +71,7 @@ associated to partition \code{c[[j]]}}
       at each MCMC iterations}
      \item{\code{data}:}{ the data matrix \code{d x n} with \code{d} dimensions in rows
 and \code{n} observations in columns}
-     \item{\code{nb_mcmcit}:}{ the number of MCMC itertations}
+     \item{\code{nb_mcmcit}:}{ the number of MCMC iterations}
      \item{\code{clust_distrib}:}{ the parametric distribution of the mixture component}
      \item{\code{hyperG0}:}{ the prior on the cluster location}
  }
@@ -127,7 +127,7 @@ hyperG0[["nu"]] <- d+1
 hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
 
 
-\dontrun{
+if(interactive()){
 # Plot data
 cytoScatter(z)
 
@@ -200,7 +200,7 @@ hyperG0[["nu"]] <- d+2
 hyperG0[["lambda"]] <- diag(d)
 
 
-\dontrun{
+if(interactive()){
 # Plot data
 cytoScatter(z)
 
@@ -244,9 +244,11 @@ MCMCsample_n <- DPMpost(data=z, hyperG0=hyperG0, N=2000,
 
 }
 \references{
-Hejblum BP, Alkhassim C, Gottardo R, Caron F, Thiebaut R, Sequential Dirichlet
-Process Mixtures of Multivariate Skew t-distributions for Model-based Clustering
-of Flow Cytometry Data, 2017, \emph{submitted}. \href{https://arxiv.org/abs/1702.04407v2}{arxiv:1702.04407}
+Hejblum BP, Alkhassim C, Gottardo R, Caron F and Thiebaut R (2019) 
+Sequential Dirichlet Process Mixtures of Multivariate Skew t-distributions for 
+Model-based Clustering of Flow Cytometry Data. The Annals of Applied Statistics, 
+13(1): 638-660. <doi: 10.1214/18-AOAS1209> <arXiv: 1702.04407> 
+\url{https://arxiv.org/abs/1702.04407} \url{https://doi.org/10.1214/18-AOAS1209}
 }
 \seealso{
 \code{\link{summary.DPMMclust}}

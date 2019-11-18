@@ -9,7 +9,7 @@
 #'@param gating an optional vector of length \code{n} indicating a known gating of the cells to be 
 #'displayed. Default is \code{NULL} in which case no gating is displayed.
 #'
-#'@param scale_log a logical Flag indicating wether the data should be plotted on the log scale.
+#'@param scale_log a logical Flag indicating whether the data should be plotted on the log scale.
 #'Default is \code{FALSE}.
 #'
 #'@param xlim a vector of length 2 to specify the x-axis limits. Only used if \code{dims2plot} is
@@ -19,7 +19,7 @@
 #'of length 2. Default is the data range.
 #'
 #'@param gg.add
-#'A list of instructions to add to the ggplot2 instruction (see \code{\link[ggplot2]{gg-add}}).
+#'A list of instructions to add to the \code{ggplot2} instruction (see \code{\link[ggplot2]{gg-add}}).
 #'Default is \code{list(theme())}, which adds nothing.
 #'to the plot.
 #'

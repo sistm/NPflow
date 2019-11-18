@@ -14,7 +14,7 @@ Flimited(n_small_clst, pred, ref)
 \item{ref}{vector of a reference partition}
 }
 \description{
-A limited version of F-measure that only takes into accout small clusters
+A limited version of F-measure that only takes into account small clusters
 }
 \examples{
 pred <- c(rep(1, 5),rep(2, 8),rep(3,10))
@@ -24,8 +24,9 @@ Flimited(6, pred, ref)
 
 }
 \references{
-Hejblum BP, Alkhassim C, Gottardo R, Caron F, Thiebaut R, Sequential Dirichlet
-Process Mixtures of Multivariate Skew t-distributions for Model-based Clustering
-of Flow Cytometry Data, submitted.
-arxiv ID: 1702.04407 \url{https://arxiv.org/abs/1702.04407v2}
+Hejblum BP, Alkhassim C, Gottardo R, Caron F and Thiebaut R (2019) 
+Sequential Dirichlet Process Mixtures of Multivariate Skew t-distributions for 
+Model-based Clustering of Flow Cytometry Data. The Annals of Applied Statistics, 
+13(1): 638-660. <doi: 10.1214/18-AOAS1209> <arXiv: 1702.04407> 
+\url{https://arxiv.org/abs/1702.04407} \url{https://doi.org/10.1214/18-AOAS1209}
 }

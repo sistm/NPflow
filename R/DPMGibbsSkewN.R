@@ -1,4 +1,4 @@
-#'Slice Sampling of Dirichlet Process Mixture of skew normal ditributions
+#'Slice Sampling of Dirichlet Process Mixture of skew normal distributions
 #'
 #'@param z data matrix \code{d x n} with \code{d} dimensions in rows
 #'and \code{n} observations in columns.
@@ -14,16 +14,16 @@
 #'
 #'@param N number of MCMC iterations.
 #'
-#'@param doPlot logical flag indicating wether to plot MCMC iteration or not.
+#'@param doPlot logical flag indicating whether to plot MCMC iteration or not.
 #'Default to \code{TRUE}.
 #'
 #'@param plotevery an integer indicating the interval between plotted iterations when \code{doPlot}
 #'is \code{TRUE}.
 #'
-#'@param nbclust_init number of clusters at initialisation.
+#'@param nbclust_init number of clusters at initialization.
 #'Default to 30 (or less if there are less than 30 observations).
 #'
-#'@param diagVar logical flag indicating wether the variance of a cluster is a diagonal matrice.
+#'@param diagVar logical flag indicating whether the variance of a cluster is a diagonal matrix.
 #'Default is \code{FALSE} (full matrix).
 #'
 #'@param use_variance_hyperprior logical flag indicating whether a hyperprior is added 
@@ -50,7 +50,7 @@
 #'       at each MCMC iterations}
 #'      \item{\code{data}:}{the data matrix \code{d x n} with \code{d} dimensions in rows
 #'and \code{n} observations in columns}
-#'      \item{\code{nb_mcmcit}:}{the number of MCMC itertations}
+#'      \item{\code{nb_mcmcit}:}{the number of MCMC iterations}
 #'      \item{\code{clust_distrib}:}{the parametric distribution of the mixture component - \code{"skewnorm"}}
 #'      \item{\code{hyperG0}:}{the prior on the cluster location}
 #'  }
@@ -59,10 +59,11 @@
 #'
 #'@export
 #'
-#'@references Hejblum BP, Alkhassim C, Gottardo R, Caron F, Thiebaut R, Sequential Dirichlet
-#'Process Mixtures of Multivariate Skew t-distributions for Model-based Clustering
-#'of Flow Cytometry Data, submitted.
-#'arxiv ID: 1702.04407 \url{https://arxiv.org/abs/1702.04407v2}
+#'@references Hejblum BP, Alkhassim C, Gottardo R, Caron F and Thiebaut R (2019) 
+#'Sequential Dirichlet Process Mixtures of Multivariate Skew t-distributions for 
+#'Model-based Clustering of Flow Cytometry Data. The Annals of Applied Statistics, 
+#'13(1): 638-660. <doi: 10.1214/18-AOAS1209> <arXiv: 1702.04407> 
+#'\url{https://arxiv.org/abs/1702.04407} \url{https://doi.org/10.1214/18-AOAS1209}
 #'
 #'@examples
 #' rm(list=ls())
@@ -156,7 +157,7 @@
 #'  p
 #'
 #'
-#'\dontrun{
+#'if(interactive()){
 #'  # Gibbs sampler for Dirichlet Process Mixtures
 #'  ##############################################
 #'
@@ -412,7 +413,7 @@ DPMGibbsSkewN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE,
   c <- numeric(n) # cluster label of ech observation
   ltn <- rtruncnorm(n, a=0, b=Inf, mean=0, sd=1) # latent truncated normal
   
-  # Initialisation----
+  # Initialization----
   # each observation is assigned to a different cluster
   # or to 1 of the 50 initial clusters if there are more than
   # 50 observations
