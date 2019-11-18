@@ -36,4 +36,4 @@ Description: Dirichlet process mixture of multivariate normal, skew normal or sk
              modeling oriented towards flow-cytometry data preprocessing applications.
 License: LGPL-3 | file LICENSE
 BugReports: https://github.com/borishejblum/NPflow/issues
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1

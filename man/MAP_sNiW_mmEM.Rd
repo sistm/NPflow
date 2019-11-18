@@ -9,11 +9,11 @@
 MAP_sNiW_mmEM(xi_list, psi_list, S_list, hyperG0, init = NULL, K,
   maxit = 100, tol = 0.1, doPlot = TRUE, verbose = TRUE)
 
-MAP_sNiW_mmEM_weighted(xi_list, psi_list, S_list, obsweight_list, hyperG0, K,
-  maxit = 100, tol = 0.1, doPlot = TRUE, verbose = TRUE)
+MAP_sNiW_mmEM_weighted(xi_list, psi_list, S_list, obsweight_list, hyperG0,
+  K, maxit = 100, tol = 0.1, doPlot = TRUE, verbose = TRUE)
 
-MAP_sNiW_mmEM_vague(xi_list, psi_list, S_list, hyperG0, K = 10, maxit = 100,
-  tol = 0.1, doPlot = TRUE, verbose = TRUE)
+MAP_sNiW_mmEM_vague(xi_list, psi_list, S_list, hyperG0, K = 10,
+  maxit = 100, tol = 0.1, doPlot = TRUE, verbose = TRUE)
 }
 \arguments{
 \item{xi_list}{a list of length \code{n}, each element is a vector of size \code{d}

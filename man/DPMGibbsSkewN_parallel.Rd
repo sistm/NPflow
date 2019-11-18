@@ -4,10 +4,10 @@
 \alias{DPMGibbsSkewN_parallel}
 \title{Parallel Implementation of Slice Sampling of Dirichlet Process Mixture of skew Normals}
 \usage{
-DPMGibbsSkewN_parallel(Ncpus, type_connec, z, hyperG0, a = 1e-04, b = 1e-04,
-  N, doPlot = FALSE, nbclust_init = 30, plotevery = N/10,
-  diagVar = TRUE, use_variance_hyperprior = TRUE, verbose = FALSE,
-  monitorfile = "", ...)
+DPMGibbsSkewN_parallel(Ncpus, type_connec, z, hyperG0, a = 1e-04,
+  b = 1e-04, N, doPlot = FALSE, nbclust_init = 30,
+  plotevery = N/10, diagVar = TRUE, use_variance_hyperprior = TRUE,
+  verbose = FALSE, monitorfile = "", ...)
 }
 \arguments{
 \item{Ncpus}{the number of processors available}

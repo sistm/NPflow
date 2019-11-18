@@ -4,10 +4,10 @@
 \alias{DPMGibbsSkewT_SeqPrior_parallel}
 \title{Slice Sampling of Dirichlet Process Mixture of skew  Students's t-distibutions}
 \usage{
-DPMGibbsSkewT_SeqPrior_parallel(Ncpus, type_connec, z, prior_inform, hyperG0, N,
-  nbclust_init, add.vagueprior = TRUE, weightnoninfo = NULL,
-  doPlot = FALSE, plotevery = N/10, diagVar = TRUE, verbose = TRUE,
-  monitorfile = "", ...)
+DPMGibbsSkewT_SeqPrior_parallel(Ncpus, type_connec, z, prior_inform,
+  hyperG0, N, nbclust_init, add.vagueprior = TRUE,
+  weightnoninfo = NULL, doPlot = FALSE, plotevery = N/10,
+  diagVar = TRUE, verbose = TRUE, monitorfile = "", ...)
 }
 \arguments{
 \item{Ncpus}{the number of processors available}
