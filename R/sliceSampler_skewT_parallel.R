@@ -21,7 +21,7 @@ sliceSampler_skewT_parallel <- function(Ncpus, c, m, alpha, z, hyperG0,
     #R is the rest, i.e. the weight for potential new clusters
 
     # Sample the latent u
-    u  <- stats::runif(maxCl)*w[c]
+    u  <- stats::runif(length(c))*w[c]
     u_star <- min(u)
 
     # Sample the remaining weights that are needed with stick-breaking

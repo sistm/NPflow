@@ -22,7 +22,7 @@ sliceSampler_skewT_SeqPrior <- function(c, m, alpha, z, priorG1, U_xi, U_psi,
 
 
     # Sample the latent u
-    u  <- stats::runif(maxCl)*w[c]
+    u  <- stats::runif(length(c))*w[c]
     u_star <- min(u)
 
     # Sample the remaining weights that are needed with stick-breaking
