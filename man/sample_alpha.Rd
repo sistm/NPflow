@@ -66,7 +66,7 @@ round(expK)
                         colour="black", fill="white")
        + geom_density(alpha=.2, fill="red")
        + ggtitle(paste("Prior distribution on alpha: Gamma(", a,
-                 ",", b, ")\\n", sep=""))
+                 ",", b, ")\n", sep=""))
       )
  p
 
@@ -77,7 +77,7 @@ postalpha.df <- data.frame("alpha"=postalphas,
        + geom_histogram(aes(y=..density..), binwidth=.1,
                         colour="black", fill="white")
        + geom_density(alpha=.2, fill="blue")
-       + ggtitle("Posterior distribution of alpha\\n")
+       + ggtitle("Posterior distribution of alpha\n")
        # Ignore NA values for mean
        # Overlay with transparent density plot
        + geom_vline(aes(xintercept=mean(alpha, na.rm=TRUE)),

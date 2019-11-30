@@ -4,8 +4,15 @@
 \alias{MLE_NiW_mmEM}
 \title{EM MLE for mixture of NiW}
 \usage{
-MLE_NiW_mmEM(mu_list, S_list, hyperG0, K, maxit = 100, tol = 0.1,
-  doPlot = TRUE)
+MLE_NiW_mmEM(
+  mu_list,
+  S_list,
+  hyperG0,
+  K,
+  maxit = 100,
+  tol = 0.1,
+  doPlot = TRUE
+)
 }
 \arguments{
 \item{mu_list}{a list of length \code{N} whose elements are observed vectors of length \code{d}

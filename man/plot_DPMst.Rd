@@ -4,9 +4,18 @@
 \alias{plot_DPMst}
 \title{Plot of a Dirichlet process mixture of skew t-distribution partition}
 \usage{
-plot_DPMst(z, c, i = "", alpha = "?", U_SS, dims2plot = 1:nrow(z),
+plot_DPMst(
+  z,
+  c,
+  i = "",
+  alpha = "?",
+  U_SS,
+  dims2plot = 1:nrow(z),
   ellipses = ifelse(length(dims2plot) < 3, TRUE, FALSE),
-  gg.add = list(theme()), nbsim_dens = 1000, nice = FALSE)
+  gg.add = list(theme()),
+  nbsim_dens = 1000,
+  nice = FALSE
+)
 }
 \arguments{
 \item{z}{data matrix \code{d x n} with \code{d} dimensions in rows

@@ -4,9 +4,20 @@
 \alias{DPMGibbsN_SeqPrior}
 \title{Slice Sampling of Dirichlet Process Mixture of Gaussian distributions}
 \usage{
-DPMGibbsN_SeqPrior(z, prior_inform, hyperG0, N, nbclust_init,
-  add.vagueprior = TRUE, weightnoninfo = NULL, doPlot = TRUE,
-  plotevery = N/10, diagVar = TRUE, verbose = TRUE, ...)
+DPMGibbsN_SeqPrior(
+  z,
+  prior_inform,
+  hyperG0,
+  N,
+  nbclust_init,
+  add.vagueprior = TRUE,
+  weightnoninfo = NULL,
+  doPlot = TRUE,
+  plotevery = N/10,
+  diagVar = TRUE,
+  verbose = TRUE,
+  ...
+)
 }
 \arguments{
 \item{z}{data matrix \code{d x n} with \code{d} dimensions in rows
@@ -92,7 +103,7 @@ z <- matrix(0, nrow=2, ncol=n)
 for(k in 1:n){
  c[k] = which(rmultinom(n=1, size=1, prob=p)!=0)
  z[,k] <- m[, c[k]] + sdev[, , c[k]]\%*\%matrix(rnorm(2, mean = 0, sd = 1), nrow=2, ncol=1)
- #cat(k, "/", n, " observations simulated\\n", sep="")
+ #cat(k, "/", n, " observations simulated\n", sep="")
 }
 
 d<-2

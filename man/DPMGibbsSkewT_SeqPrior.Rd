@@ -4,9 +4,20 @@
 \alias{DPMGibbsSkewT_SeqPrior}
 \title{Slice Sampling of Dirichlet Process Mixture of skew Student's t-distributions}
 \usage{
-DPMGibbsSkewT_SeqPrior(z, prior_inform, hyperG0, N, nbclust_init,
-  add.vagueprior = TRUE, weightnoninfo = NULL, doPlot = TRUE,
-  plotevery = N/10, diagVar = TRUE, verbose = TRUE, ...)
+DPMGibbsSkewT_SeqPrior(
+  z,
+  prior_inform,
+  hyperG0,
+  N,
+  nbclust_init,
+  add.vagueprior = TRUE,
+  weightnoninfo = NULL,
+  doPlot = TRUE,
+  plotevery = N/10,
+  diagVar = TRUE,
+  verbose = TRUE,
+  ...
+)
 }
 \arguments{
 \item{z}{data matrix \code{d x n} with \code{d} dimensions in rows
@@ -100,7 +111,7 @@ for(k in 1:n){
  w[k] <- rgamma(1, shape=nu[c[k]]/2, rate=nu[c[k]]/2)
  z[,k] <- xi[, c[k]] + psi[, c[k]]*rtruncnorm(n=1, a=0, b=Inf, mean=0, sd=1/sqrt(w[k])) +
                 (sdev[, , c[k]]/sqrt(w[k]))\%*\%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
- #cat(k, "/", n, " observations simulated\\n", sep="")
+ #cat(k, "/", n, " observations simulated\n", sep="")
 }
 
 # Set parameters of G0
@@ -144,7 +155,7 @@ for(k in 1:n){
  w[k] <- rgamma(1, shape=nu[c[k]]/2, rate=nu[c[k]]/2)
  z[,k] <- xi[, c[k]] + psi[, c[k]]*rtruncnorm(n=1, a=0, b=Inf, mean=0, sd=1/sqrt(w[k])) +
                 (sdev[, , c[k]]/sqrt(w[k]))\%*\%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
- cat(k, "/", n, " observations simulated\\n", sep="")
+ cat(k, "/", n, " observations simulated\n", sep="")
 }
  MCMCsample_st2 <- DPMGibbsSkewT_SeqPrior(z, prior=s$param_posterior,
                                           hyperG0, N=2000,

@@ -16,6 +16,7 @@ rNNiW<- function(SufStat, diagVar){
   B = SufStat[["B"]] # B
   nu0 = round(SufStat[["nu"]]) #c
   lambda0 = SufStat[["lambda"]] #C
+  lambda0_solved = SufStat[["lambda_solved"]]
 
   if(is.null(B)){
       B0 <- diag(c(SufStat[["D_xi"]], SufStat[["D_psi"]]))

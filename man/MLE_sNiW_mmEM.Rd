@@ -4,8 +4,18 @@
 \alias{MLE_sNiW_mmEM}
 \title{EM MLE for mixture of sNiW}
 \usage{
-MLE_sNiW_mmEM(xi_list, psi_list, S_list, hyperG0, K, init = NULL,
-  maxit = 100, tol = 0.1, doPlot = TRUE, verbose = TRUE)
+MLE_sNiW_mmEM(
+  xi_list,
+  psi_list,
+  S_list,
+  hyperG0,
+  K,
+  init = NULL,
+  maxit = 100,
+  tol = 0.1,
+  doPlot = TRUE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{xi_list}{a list of length \code{N} whose elements are observed vectors of length \code{d}
