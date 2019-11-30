@@ -57,7 +57,7 @@ update_SS <- function(z, S, hyperprior=NULL, obs_weights = NULL){
     #cat("varz =", varz/(nu1-3), "\n")
     lambda1_solved <- try(solve(lambda1), silent=TRUE)
     if(inherits(S, "try-error")){
-      lambda1_solved <- solve((lambda1 + diag(p)))
+      lambda1_solved <- solve((lambda1 + diag(ncol(lambda1))))
     }
     
   }else{
@@ -75,7 +75,7 @@ update_SS <- function(z, S, hyperprior=NULL, obs_weights = NULL){
     lambda1 <- lambda0 + kappa0/(kappa0 + 1)*tcrossprod(z[,1] - mu0)
     lambda1_solved <- try(solve(lambda1), silent=TRUE)
     if(inherits(S, "try-error")){
-      lambda1_solved <- solve((lambda1 + diag(p)))
+      lambda1_solved <- solve((lambda1 + diag(ncol(lambda1))))
     }
   }
   

@@ -30,7 +30,7 @@ rNNiW<- function(SufStat, diagVar){
       S <- diag(1/stats::rgamma(n=length(b0_xi), shape=nu0,
                          rate=betas))
   }else{
-      S = invwishrnd(n = nu0, lambda = lambda0)
+      S = invwishrnd(n = nu0, lambda_solved = lambda0_solved)
   }
 
   # Sample mu from a normal distribution

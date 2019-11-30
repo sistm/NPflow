@@ -21,7 +21,7 @@ rNiW <- function(hyper, diagVar){
     warning("'lambda_solved' should have already been defined in DPMGibbs...")
     lambda0_solved <- try(solve(lambda0), silent = TRUE)
     if(inherits(lambda0_solved, "try-error")){
-      lambda0_solved <-  solve(lambda0 + diag(ncol(lambda)))
+      lambda0_solved <-  solve(lambda0 + diag(ncol(lambda0)))
     }
   }else{
     lambda0_solved <- hyper[["lambda_solved"]]
