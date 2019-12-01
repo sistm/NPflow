@@ -418,6 +418,7 @@ MAP_sNiW_mmEM_weighted<- function(xi_list, psi_list, S_list, obsweight_list,
 #'hyperG0$D_psi <- 1
 #'hyperG0$nu <- 2
 #'hyperG0$lambda <- diag(c(0.25,0.35))
+#'hyperG0$lambda_solved <- diag(1/c(0.25,0.35))
 #'
 #'xi_list <- list()
 #'psi_list <- list()
@@ -441,6 +442,7 @@ MAP_sNiW_mmEM_weighted<- function(xi_list, psi_list, S_list, obsweight_list,
 #'hyperG02$D_psi <- 1
 #'hyperG02$nu <- 4
 #'hyperG02$lambda <- 0.5*diag(2)
+#'hyperG02$lambda_solved <- 1/0.5*diag(2)
 #'
 #'for(k in 201:400){
 #'  NNiW <- rNNiW(hyperG02, diagVar=FALSE)
