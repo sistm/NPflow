@@ -19,6 +19,9 @@
 #'Default is \code{0.0001}. If \code{0} then the concentration is fixed and this function
 #'returns \code{a}.
 #'
+#'@param obs_weights an optional vector for weighting observations in likelihood computation. 
+#'Default is \code{NULL} which means all observations have the same weight. 
+#'
 #'@details A Gamma prior is used.
 #'
 #'@references M West, Hyperparameter estimation in Dirichlet process mixture models,
@@ -92,8 +95,12 @@
 #'
 #'
 
-sample_alpha <- function(alpha_old, n, K, a=0.0001, b=0.0001){
+sample_alpha <- function(alpha_old, n, K, a=0.0001, b=0.0001, obs_weights = NULL){
   
+  
+    if(!is.null(obs_weights)){
+      n <- sum(obs_weights)
+    }
   
     if(b > 0){
       # Sample scale factor in Dirichlet Process

@@ -284,7 +284,7 @@ DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE, plotinit=
     for (k in unique(c)){
       obs_k <- which(c==k)
       #cat("cluster ", k, ":\n")
-      U_SS[[k]] <- update_SS(z=z[, obs_k,drop=FALSE], S=hyperG0, 
+      U_SS[[k]] <- update_SS(z=z[, obs_k, drop=FALSE], S=hyperG0, 
                              obs_weights = obs_weights[obs_k])
       NiW <- rNiW(U_SS[[k]], diagVar=diagVar)
       
@@ -294,8 +294,8 @@ DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE, plotinit=
       U_Sigma[, , k] <- NiW[["S"]]
       U_SS[[k]][["S"]] <- NiW[["S"]]
       
-      m[k] <- length(obs_k)
-      U_SS[[k]][["weight"]] <- m[k]/n
+      m[k] <- sum(obs_weights[obs_k])
+      U_SS[[k]][["weight"]] <- m[k]/sum(obs_weights)
     }
   }
   listU_mu[[i]]<-U_mu
@@ -329,7 +329,8 @@ DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE, plotinit=
     nbClust <- length(unique(c))
     #TODO WARNING here
     # We need to discuss whether alpha needs to be updated with respect to n or sum(obs_weights)...
-    alpha_all <- sample_alpha(alpha_old = alpha[i-1], n = n, K = nbClust, a = a, b = b)
+    alpha_all <- sample_alpha(alpha_old = alpha[i-1], n = n, K = nbClust, a = a, b = b, 
+                              obs_weights = obs_weights)
     alpha[i] <- alpha_all["alpha"]
     log_alpha[i] <- alpha_all["log_alpha"]
     
