@@ -4,7 +4,7 @@
 \alias{sample_alpha}
 \title{Gibbs sampler for the concentration parameter of a Dirichlet process}
 \usage{
-sample_alpha(alpha_old, n, K, a = 1e-04, b = 1e-04)
+sample_alpha(alpha_old, n, K, a = 1e-04, b = 1e-04, obs_weights = NULL)
 }
 \arguments{
 \item{alpha_old}{the current value of alpha}
@@ -21,6 +21,9 @@ Default is \code{0.0001}.}
 on the concentration parameter of the Dirichlet Process.
 Default is \code{0.0001}. If \code{0} then the concentration is fixed and this function
 returns \code{a}.}
+
+\item{obs_weights}{an optional vector for weighting observations in likelihood computation. 
+Default is \code{NULL} which means all observations have the same weight.}
 }
 \description{
 Sampler updating the concentration parameter of a Dirichlet process given

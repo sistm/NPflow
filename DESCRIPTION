@@ -37,4 +37,4 @@ Description: Dirichlet process mixture of multivariate normal, skew normal or sk
 License: LGPL-3 | file LICENSE
 BugReports: https://github.com/borishejblum/NPflow/issues
 Encoding: UTF-8
-RoxygenNote: 7.0.1
+RoxygenNote: 7.0.2
