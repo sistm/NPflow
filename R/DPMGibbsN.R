@@ -37,7 +37,10 @@
 #'  MCMC iteration.
 #'  
 #'@param obs_weights an optional vector for weighting observations in likelihood computation. 
-#'Default is \code{rep(1, ncol(z))} which means all observations have the same weight. 
+#'Default is \code{NULL} which means all observations have the same weight. 
+#'
+#'@param obs_withinss an optional list of within sum of squares matrices for observations variability. 
+#'Only used when \code{obs_weights} is not \code{NULL}. 
 #'
 #'@param ... additional arguments to be passed to \code{\link{plot_DPM}}. Only used if \code{doPlot}
 #'  is \code{TRUE}.
@@ -217,7 +220,7 @@
 DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE, plotinit=FALSE,
                        nbclust_init=30, plotevery=N/10,
                        diagVar=TRUE, use_variance_hyperprior=TRUE, verbose=TRUE,
-                       obs_weights = NULL,
+                       obs_weights = NULL, obs_withinss = NULL,
                        ...){
   
   p <- nrow(z)
@@ -267,7 +270,8 @@ DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE, plotinit=
       c[k] <- k
       #cat("cluster ", k, ":\n")
       U_SS[[k]] <- update_SS(z=z[, k, drop=FALSE], S=hyperG0, hyperprior = NULL, 
-                             obs_weights = obs_weights[k])
+                             obs_weights = obs_weights[k], 
+                             obs_withinss = obs_withinss[[k]])
       NiW <- rNiW(U_SS[[k]], diagVar=diagVar)
       
       U_mu[, k] <- NiW[["mu"]]
@@ -285,7 +289,8 @@ DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE, plotinit=
       obs_k <- which(c==k)
       #cat("cluster ", k, ":\n")
       U_SS[[k]] <- update_SS(z=z[, obs_k, drop=FALSE], S=hyperG0, 
-                             obs_weights = obs_weights[obs_k])
+                             obs_weights = obs_weights[obs_k], 
+                             obs_withinss = Reduce(`+`, obs_withinss[obs_k]))
       NiW <- rNiW(U_SS[[k]], diagVar=diagVar)
       
       U_mu[, k] <- NiW[["mu"]]
@@ -350,9 +355,14 @@ DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE, plotinit=
       obs_j <- which(c==j)
       #cat("cluster ", j, ":\n")
       if(use_variance_hyperprior){
-        U_SS[[j]] <- update_SS(z=z[, obs_j, drop=FALSE], S=hyperG0, hyperprior = list("Sigma"=U_Sigma[,,j]))
+        U_SS[[j]] <- update_SS(z=z[, obs_j, drop=FALSE], S=hyperG0, 
+                               hyperprior = list("Sigma"=U_Sigma[,,j]), 
+                               obs_weights = obs_weights[obs_j], 
+                               obs_withinss = Reduce(`+`, obs_withinss[obs_j]))
       }else{
-        U_SS[[j]] <- update_SS(z=z[, obs_j, drop=FALSE], S=hyperG0)
+        U_SS[[j]] <- update_SS(z=z[, obs_j, drop=FALSE], S=hyperG0, 
+                               obs_weights = obs_weights[obs_j], 
+                               obs_withinss = Reduce(`+`, obs_withinss[obs_j]))
       }
       NiW <- rNiW(U_SS[[j]], diagVar=diagVar)
       U_mu[, j] <- NiW[["mu"]]

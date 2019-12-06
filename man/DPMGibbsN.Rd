@@ -18,6 +18,7 @@ DPMGibbsN(
   use_variance_hyperprior = TRUE,
   verbose = TRUE,
   obs_weights = NULL,
+  obs_withinss = NULL,
   ...
 )
 }
@@ -58,7 +59,10 @@ on the posterior. \code{FALSE} is useful for using an informative prior.}
 MCMC iteration.}
 
 \item{obs_weights}{an optional vector for weighting observations in likelihood computation. 
-Default is \code{rep(1, ncol(z))} which means all observations have the same weight.}
+Default is \code{NULL} which means all observations have the same weight.}
+
+\item{obs_withinss}{an optional list of within sum of squares matrices for observations variability. 
+Only used when \code{obs_weights} is not \code{NULL}.}
 
 \item{...}{additional arguments to be passed to \code{\link{plot_DPM}}. Only used if \code{doPlot}
 is \code{TRUE}.}

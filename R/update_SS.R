@@ -15,7 +15,7 @@
 #'@export
 
 
-update_SS <- function(z, S, hyperprior=NULL, obs_weights = NULL){
+update_SS <- function(z, S, hyperprior=NULL, obs_weights = NULL, obs_withinss = NULL){
   S_up <- S
   mu0 <- S[["mu"]]
   kappa0 <- S[["kappa"]]
@@ -28,11 +28,11 @@ update_SS <- function(z, S, hyperprior=NULL, obs_weights = NULL){
     if(is.null(obs_weights)){
       n <- ncol(z)
       zbar <- apply(X=z, MARGIN=1, FUN=mean)
-      unscvarz <- tcrossprod(z-zbar)
+      unscvarz <- tcrossprod(z-zbar) 
     }else{
       n <- sum(obs_weights)
       zbar <- apply(X = z, MARGIN = 1, FUN = weighted.mean, w = obs_weights)
-      unscvarz <- crossprod(t(z-zbar)*sqrt(obs_weights))
+      unscvarz <- crossprod(sqrt(obs_weights)*t(z-zbar)) + obs_withinss #varinter + obs_withinvar
     }
     kappa1 <- kappa0 + n
     nu1 <- nu0 + n
@@ -57,7 +57,7 @@ update_SS <- function(z, S, hyperprior=NULL, obs_weights = NULL){
     #cat("lambda1 =", lambda1/(nu1-3), "\n")
     #cat("varz =", varz/(nu1-3), "\n")
     lambda1_solved <- try(solve(lambda1), silent=TRUE)
-    if(inherits(S, "try-error")){
+    if(inherits(lambda1_solved, "try-error")){
       lambda1_solved <- solve((lambda1 + diag(ncol(lambda1))))
     }
     
@@ -66,10 +66,12 @@ update_SS <- function(z, S, hyperprior=NULL, obs_weights = NULL){
       kappa1 <- kappa0 + 1
       nu1 <- nu0 + 1
       mu1 <- (kappa0/(kappa0 + 1)*mu0 + 1/(kappa0 + 1)*z)[, 1]
+      unscvarz <- 0
     }else{
       kappa1 <- kappa0 + obs_weights
       nu1 <- nu0 + obs_weights
       mu1 <- (kappa0/kappa1*mu0 + obs_weights/kappa1*z)[,1]
+      unscvarz <- obs_withinss
     }
     
     
@@ -80,9 +82,9 @@ update_SS <- function(z, S, hyperprior=NULL, obs_weights = NULL){
                          Sigma = solve(lambda0_solved + solve(hyperprior[["Sigma"]]) )
       )
     }
-    lambda1 <- lambda0 + kappa0/kappa1*tcrossprod(z[,1] - mu0)
+    lambda1 <- lambda0 + kappa0/kappa1*tcrossprod(z[,1] - mu0)# + obs_withinss
     lambda1_solved <- try(solve(lambda1), silent=TRUE)
-    if(inherits(S, "try-error")){
+    if(inherits(lambda1_solved, "try-error")){
       lambda1_solved <- solve((lambda1 + diag(ncol(lambda1))))
     }
   }

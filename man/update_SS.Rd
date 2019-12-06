@@ -4,7 +4,7 @@
 \alias{update_SS}
 \title{Return updated sufficient statistics S with new data matrix z}
 \usage{
-update_SS(z, S, hyperprior = NULL, obs_weights = NULL)
+update_SS(z, S, hyperprior = NULL, obs_weights = NULL, obs_withinss = NULL)
 }
 \arguments{
 \item{z}{data matrix}
