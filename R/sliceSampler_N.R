@@ -1,20 +1,23 @@
 #'@keywords internal
 #'@author Boris Hejblum
 #'@importFrom stats rbeta rgamma runif
-sliceSampler_N <- function(c, m, alpha, z, hyperG0, U_mu, U_Sigma, diagVar, obs_weights = NULL){
+sliceSampler_N <- function(c, m, alpha, z, hyperG0, U_mu, U_Sigma, diagVar, 
+                           obs_weights = NULL, obs_withinss = NULL){
     
     maxCl <- length(m) #maximum number of clusters
     ind <- which(m!=0) # indexes of non empty clusters
     
-    # Sample the weights, i.e. the frequency of each existing cluster from a Dirichlet:
-    # temp_1 ~ Gamma(m_1,1), ... , temp_K ~ Gamma(m_K,1)    # and sample the rest of the weigth for potential new clusters:
+    # Sample the weights, i.e. the frequency of each existing cluster 
+    # from a Dirichlet:
+    # temp_1 ~ Gamma(m_1,1), ... , temp_K ~ Gamma(m_K,1)  
+    # and sample the rest of the weight for potential new clusters:
     # temp_{K+1} ~ Gamma(alpha, 1)
     # then renormalise temp
     w <- numeric(maxCl)
     mw <- m
     magg <- aggregate(obs_weights, by=list(c), FUN=sum)
-    rownames(magg) <- magg[, 1] 
-    mw[ind] <- magg[as.character(ind), 2] 
+    rownames(magg) <- magg[, 1]
+    mw[ind] <- magg[as.character(ind), 2]
     temp <- stats::rgamma(n=(length(ind)+1), shape=c(mw[ind], alpha), scale = 1)
     temp_norm <- temp/sum(temp)
     w[ind] <- temp_norm[-length(temp_norm)]
@@ -28,7 +31,7 @@ sliceSampler_N <- function(c, m, alpha, z, hyperG0, U_mu, U_Sigma, diagVar, obs_
     # Sample the remaining weights that are needed with stick-breaking
     # i.e. the new clusters
     ind_new <- which(m==0) # potential new clusters
-    if(length(ind_new)>0){
+    if(length(ind_new) > 0){
         t <- 0 # the number of new non empty clusters
         while(R>u_star && (t<length(ind_new))){
             # sum(w)<1-min(u) <=> R>min(u) car R=1-sum(w)
@@ -58,7 +61,12 @@ sliceSampler_N <- function(c, m, alpha, z, hyperG0, U_mu, U_Sigma, diagVar, obs_
     if(length(fullCl_ind)>1){
         U_mu_full <- sapply(fullCl_ind, function(j) U_mu[, j])
         U_Sigma_list <- lapply(fullCl_ind, function(j) U_Sigma[, ,j])
-        l <- mmvnpdfC(z, mean=U_mu_full, varcovM=U_Sigma_list, Log = TRUE, obs_weights = obs_weights)
+        #lold <- mmvnpdfC(z, mean=U_mu_full, varcovM = U_Sigma_list, Log = TRUE, obs_weights = obs_weights)
+        l <- mmvnpdfC_summary(z, mean=U_mu_full,
+                              varcov_indiv = obs_withinss,
+                              varcovM = U_Sigma_list,
+                              obs_weights = obs_weights,
+                              Log = TRUE)
         u_mat <- t(sapply(w[fullCl_ind], function(x){as.numeric(u < x)}))
         prob_mat_log <- log(u_mat) + l
         

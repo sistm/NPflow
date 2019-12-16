@@ -17,7 +17,7 @@ wishrnd <- function(n, Sigma){
   p <- nrow(Sigma)
   p2 <- ncol(Sigma)
   if(p!=p2){
-    stop('Error : Matrix not square\n')
+    stop('scale parameter Sigma is not a square matrix')
   }
   
   x <- matrix(rnorm(n = n*p), nrow=n, ncol=p) %*% chol(Sigma)

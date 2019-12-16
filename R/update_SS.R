@@ -79,10 +79,10 @@ update_SS <- function(z, S, hyperprior=NULL, obs_weights = NULL, obs_withinss = 
       #g0 <- ncol(lambda0) + 5
       g0 <- nu0
       lambda0 <- wishrnd(n = nu0 + g0, 
-                         Sigma = solve(lambda0_solved + solve(hyperprior[["Sigma"]]) )
+                         Sigma = solve(lambda0_solved + solve(hyperprior[["Sigma"]]))
       )
     }
-    lambda1 <- lambda0 + kappa0/kappa1*tcrossprod(z[,1] - mu0)# + obs_withinss
+    lambda1 <- lambda0 + kappa0*obs_weights/kappa1*tcrossprod(z[,1] - mu0) + unscvarz
     lambda1_solved <- try(solve(lambda1), silent=TRUE)
     if(inherits(lambda1_solved, "try-error")){
       lambda1_solved <- solve((lambda1 + diag(ncol(lambda1))))

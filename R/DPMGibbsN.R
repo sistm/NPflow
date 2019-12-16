@@ -342,7 +342,8 @@ DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE, plotinit=
     slice <- sliceSampler_N(c=c, m=m, alpha=alpha[i],
                             z=z, hyperG0=hyperG0,
                             U_mu=U_mu, U_Sigma=U_Sigma,
-                            diagVar=diagVar, obs_weights = obs_weights)
+                            diagVar=diagVar, obs_weights = obs_weights,
+                            obs_withinss = obs_withinss)
     m <- slice[["m"]]
     c <- slice[["c"]]
     weights_list[[i]] <- slice[["weights"]]
@@ -364,7 +365,7 @@ DPMGibbsN <- function (z, hyperG0, a=0.0001, b=0.0001, N, doPlot=TRUE, plotinit=
                                obs_weights = obs_weights[obs_j], 
                                obs_withinss = Reduce(`+`, obs_withinss[obs_j]))
       }
-      NiW <- rNiW(U_SS[[j]], diagVar=diagVar)
+      NiW <- rNiW(U_SS[[j]], diagVar=diagVar)#, sum(obs_weights[obs_j]))
       U_mu[, j] <- NiW[["mu"]]
       U_SS[[j]][["mu"]] <- NiW[["mu"]]
       
