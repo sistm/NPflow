@@ -11,8 +11,6 @@
 #'@param thin the spacing at which MCMC iterations are kept.
 #'Default is \code{1}, i.e. no thining.
 #'
-#'@param ... further arguments passed to or from other methods.
-#'
 #'@return a \code{DPMMclust} object minus the burnt iterations
 #'
 #'@author Boris Hejblum

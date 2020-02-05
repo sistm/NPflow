@@ -13,8 +13,6 @@ burn.DPMMclust(x, burnin = 0, thin = 1)
 
 \item{thin}{the spacing at which MCMC iterations are kept.
 Default is \code{1}, i.e. no thining.}
-
-\item{...}{further arguments passed to or from other methods.}
 }
 \value{
 a \code{DPMMclust} object minus the burnt iterations
