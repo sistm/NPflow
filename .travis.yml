@@ -23,7 +23,6 @@ r_packages:
 - RcppArmadillo
 - fastcluster
 - reshape2
-- gplots
 - pheatmap
 - ellipse
 - truncnorm
@@ -34,7 +33,7 @@ r_packages:
 - itertools
 - microbenchmark
 - viridis
--covr
+- covr
 
 r_github_packages:
 - hadley/scales

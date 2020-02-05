@@ -59,8 +59,6 @@
 #'
 #'@importFrom pheatmap pheatmap
 #'
-#'@importFrom gplots heatmap.2
-#'
 #'@importFrom fastcluster hclust
 #'
 #'@seealso \code{\link{similarityMat}} \code{\link{similarityMatC}}
