@@ -48,6 +48,6 @@ microbenchmark(mvnpdf(x=matrix(c(rep(1.96,2),rep(0,2)), nrow=2, ncol=2),
                         varcovM=list(diag(2),10*diag(2), 20*diag(2)), Log=FALSE),
                times=1000L)
 }else{
-cat("package 'microbenchmark' not available\\n")
+cat("package 'microbenchmark' not available\n")
 }
 }

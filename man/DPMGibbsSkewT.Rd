@@ -4,9 +4,20 @@
 \alias{DPMGibbsSkewT}
 \title{Slice Sampling of Dirichlet Process Mixture of skew Student's t-distributions}
 \usage{
-DPMGibbsSkewT(z, hyperG0, a = 1e-04, b = 1e-04, N, doPlot = TRUE,
-  nbclust_init = 30, plotevery = N/10, diagVar = TRUE,
-  use_variance_hyperprior = TRUE, verbose = TRUE, ...)
+DPMGibbsSkewT(
+  z,
+  hyperG0,
+  a = 1e-04,
+  b = 1e-04,
+  N,
+  doPlot = TRUE,
+  nbclust_init = 30,
+  plotevery = N/10,
+  diagVar = TRUE,
+  use_variance_hyperprior = TRUE,
+  verbose = TRUE,
+  ...
+)
 }
 \arguments{
 \item{z}{data matrix \code{d x n} with \code{d} dimensions in rows
@@ -128,7 +139,7 @@ for(k in 1:n){
  w[k] <- rgamma(1, shape=nu[c[k]]/2, rate=nu[c[k]]/2)
  z[,k] <- xi[, c[k]] + psi[, c[k]]*rtruncnorm(n=1, a=0, b=Inf, mean=0, sd=1/sqrt(w[k])) +
                 (sdev[, , c[k]]/sqrt(w[k]))\%*\%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
- #cat(k, "/", n, " observations simulated\\n", sep="")
+ #cat(k, "/", n, " observations simulated\n", sep="")
 }
 
 # Set parameters of G0
@@ -162,7 +173,7 @@ hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
  levels(c2plot) <- c("4", "1", "3", "2")
  pp <- (ggplot(data.frame("X"=z[1,], "Y"=z[2,], "Cluster"=as.character(c2plot)))
        + geom_point(aes(x=X, y=Y, colour=Cluster, fill=Cluster))
-       #+ ggtitle("Slightly overlapping skew-normal simulation\\n")
+       #+ ggtitle("Slightly overlapping skew-normal simulation\n")
        + xlab("D1")
        + ylab("D2")
        + theme_bw()
@@ -180,7 +191,7 @@ hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
                         colour="black", fill="white")
        + geom_density(alpha=.2, fill="red")
        + ggtitle(paste("Prior distribution on alpha: Gamma(", a,
-                 ",", b, ")\\n", sep=""))
+                 ",", b, ")\n", sep=""))
       )
  p
 

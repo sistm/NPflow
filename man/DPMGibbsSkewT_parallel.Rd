@@ -4,10 +4,23 @@
 \alias{DPMGibbsSkewT_parallel}
 \title{Slice Sampling of Dirichlet Process Mixture of skew Student's t-distributions}
 \usage{
-DPMGibbsSkewT_parallel(Ncpus, type_connec, z, hyperG0, a = 1e-04,
-  b = 1e-04, N, doPlot = FALSE, nbclust_init = 30,
-  plotevery = N/10, diagVar = TRUE, use_variance_hyperprior = TRUE,
-  verbose = FALSE, monitorfile = "", ...)
+DPMGibbsSkewT_parallel(
+  Ncpus,
+  type_connec,
+  z,
+  hyperG0,
+  a = 1e-04,
+  b = 1e-04,
+  N,
+  doPlot = FALSE,
+  nbclust_init = 30,
+  plotevery = N/10,
+  diagVar = TRUE,
+  use_variance_hyperprior = TRUE,
+  verbose = FALSE,
+  monitorfile = "",
+  ...
+)
 }
 \arguments{
 \item{Ncpus}{the number of processors available}
@@ -113,7 +126,7 @@ for(k in 1:n){
  z[,k] <- (xi[, c[k]]
           + psi[, c[k]]*abs(rnorm(1))
           + sdev[, , c[k]]\%*\%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1))
- #cat(k, "/", n, " observations simulated\\n", sep="")
+ #cat(k, "/", n, " observations simulated\n", sep="")
 }
 
 # Set parameters of G0
@@ -151,7 +164,7 @@ library(ggplot2)
  levels(c2plot) <- c("3", "2", "4", "1")
  pp <- (ggplot(data.frame("X"=z[1,], "Y"=z[2,], "Cluster"=as.character(c2plot)))
        + geom_point(aes(x=X, y=Y, colour=Cluster, fill=Cluster))
-       + ggtitle("Slightly overlapping skew-normal simulation\\n")
+       + ggtitle("Slightly overlapping skew-normal simulation\n")
        + xlab("D1")
        + ylab("D2")
        + theme_bw()
@@ -169,7 +182,7 @@ library(ggplot2)
                         colour="black", fill="white")
        + geom_density(alpha=.2, fill="red")
        + ggtitle(paste("Prior distribution on alpha: Gamma(", a,
-                 ",", b, ")\\n", sep=""))
+                 ",", b, ")\n", sep=""))
       )
  p
 

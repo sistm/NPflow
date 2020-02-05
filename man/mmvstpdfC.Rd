@@ -74,7 +74,7 @@ microbenchmark(mvstpdf(x=matrix(rep(1.96,2), nrow=2, ncol=1),
                          sigma=list(diag(2)), df=10),
                times=1000L)
 }else{
-cat("package 'microbenchmark' not available\\n")
+cat("package 'microbenchmark' not available\n")
 }
 }
 \author{

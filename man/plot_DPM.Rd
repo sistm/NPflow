@@ -4,10 +4,19 @@
 \alias{plot_DPM}
 \title{Plot of a Dirichlet process mixture of gaussian distribution partition}
 \usage{
-plot_DPM(z, U_mu = NULL, U_Sigma = NULL, m, c, i, alpha = "?",
-  U_SS = NULL, dims2plot = 1:nrow(z),
+plot_DPM(
+  z,
+  U_mu = NULL,
+  U_Sigma = NULL,
+  m,
+  c,
+  i,
+  alpha = "?",
+  U_SS = NULL,
+  dims2plot = 1:nrow(z),
   ellipses = ifelse(length(dims2plot) < 3, TRUE, FALSE),
-  gg.add = list(theme()))
+  gg.add = list(theme())
+)
 }
 \arguments{
 \item{z}{data matrix \code{d x n} with \code{d} dimensions in rows

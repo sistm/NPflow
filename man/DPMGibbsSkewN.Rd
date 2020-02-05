@@ -4,9 +4,20 @@
 \alias{DPMGibbsSkewN}
 \title{Slice Sampling of Dirichlet Process Mixture of skew normal distributions}
 \usage{
-DPMGibbsSkewN(z, hyperG0, a = 1e-04, b = 1e-04, N, doPlot = TRUE,
-  nbclust_init = 30, plotevery = N/10, diagVar = TRUE,
-  use_variance_hyperprior = TRUE, verbose = TRUE, ...)
+DPMGibbsSkewN(
+  z,
+  hyperG0,
+  a = 1e-04,
+  b = 1e-04,
+  N,
+  doPlot = TRUE,
+  nbclust_init = 30,
+  plotevery = N/10,
+  diagVar = TRUE,
+  use_variance_hyperprior = TRUE,
+  verbose = TRUE,
+  ...
+)
 }
 \arguments{
 \item{z}{data matrix \code{d x n} with \code{d} dimensions in rows
@@ -99,7 +110,7 @@ for(k in 1:n){
  c[k] = which(rmultinom(n=1, size=1, prob=p)!=0)
  z[,k] <- xi[, c[k]] + psi[, c[k]]*abs(rnorm(1)) + sdev[, , c[k]]\%*\%matrix(rnorm(d, mean = 0,
                                                                        sd = 1), nrow=d, ncol=1)
- #cat(k, "/", n, " observations simulated\\n", sep="")
+ #cat(k, "/", n, " observations simulated\n", sep="")
 }
 
 # Set parameters of G0
@@ -137,7 +148,7 @@ hyperG0[["lambda"]] <- diag(d)
  levels(c2plot) <- c("3", "2", "4", "1")
  pp <- (ggplot(data.frame("X"=z[1,], "Y"=z[2,], "Cluster"=as.character(c2plot)))
        + geom_point(aes(x=X, y=Y, colour=Cluster, fill=Cluster))
-       + ggtitle("Slightly overlapping skew-normal simulation\\n")
+       + ggtitle("Slightly overlapping skew-normal simulation\n")
        + xlab("D1")
        + ylab("D2")
        + theme_bw()
@@ -155,7 +166,7 @@ hyperG0[["lambda"]] <- diag(d)
                         colour="black", fill="white")
        + geom_density(alpha=.2, fill="red")
        + ggtitle(paste("Prior distribution on alpha: Gamma(", a,
-                 ",", b, ")\\n", sep=""))
+                 ",", b, ")\n", sep=""))
       )
  p
 
@@ -202,7 +213,7 @@ if(interactive()){
                     data=dataCenters, shape=22, size=5)
        + scale_colour_discrete(name="Cluster",
                                guide=guide_legend(override.aes=list(size=6, shape=22)))
-       + ggtitle("K-means with K=4 clusters\\n")
+       + ggtitle("K-means with K=4 clusters\n")
        + theme_bw()
  )
  p
@@ -218,7 +229,7 @@ if(interactive()){
        + geom_histogram(aes(y=..density..), binwidth=.1,
                         colour="black", fill="white")
        + geom_density(alpha=.2, fill="blue")
-       + ggtitle("Posterior distribution of alpha\\n")
+       + ggtitle("Posterior distribution of alpha\n")
        # Ignore NA values for mean
        # Overlay with transparent density plot
        + geom_vline(aes(xintercept=mean(alpha, na.rm=T)),
@@ -230,7 +241,7 @@ if(interactive()){
        + geom_histogram(aes(y=..density..),
                         colour="black", fill="white")
        + geom_density(alpha=.2, fill="blue")
-       + ggtitle("Posterior distribution of predicted K\\n")
+       + ggtitle("Posterior distribution of predicted K\n")
        # Ignore NA values for mean
        # Overlay with transparent density plot
        + geom_vline(aes(xintercept=mean(K, na.rm=T)),
@@ -247,7 +258,7 @@ if(interactive()){
        + geom_density(aes(x=alpha, fill=distribution),
                       color=NA, alpha=.6,
                       data=prioralpha)
-       + ggtitle("Prior and posterior distributions of alpha\\n")
+       + ggtitle("Prior and posterior distributions of alpha\n")
        + scale_fill_discrete(drop=FALSE)
        + theme_bw()
        + xlim(0,100)
@@ -271,7 +282,7 @@ snd <- data.frame("Y"=y,"YY"=yy)
 p <- (ggplot(snd)+geom_density(aes(x=Y), fill="blue", alpha=.2)
      + theme_bw()
      + ylab("Density")
-     + ggtitle("Y~SN(0,1,10)\\n")
+     + ggtitle("Y~SN(0,1,10)\n")
      + xlim(-1,6)
      + ylim(0,0.8)
      )
@@ -280,7 +291,7 @@ p
 p <- (ggplot(snd)+geom_density(aes(x=YY), fill="blue", alpha=.2)
      + theme_bw()
      + ylab("Density")
-     + ggtitle("Y~ST(0,1,10,1.3)\\n")
+     + ggtitle("Y~ST(0,1,10,1.3)\n")
      + xlim(-2,40)
      + ylim(0,0.8)
      )
@@ -311,7 +322,7 @@ snd <- data.frame("X"=x)
 p <- (ggplot(snd)+geom_density(aes(x=X), fill="blue", alpha=.2)
      + theme_bw()
      + ylab("Density")
-     + ggtitle("X~SN(10)\\n")
+     + ggtitle("X~SN(10)\n")
      + xlim(-1.5,4)
      + ylim(0,1.6)
      )
@@ -323,7 +334,7 @@ snd <- data.frame("Y"=y)
 p <- (ggplot(snd)+geom_density(aes(x=Y), fill="blue", alpha=.2)
      + theme_bw()
      + ylab("Density")
-     + ggtitle("Y~SN(-1,1,10)\\n")
+     + ggtitle("Y~SN(-1,1,10)\n")
      + xlim(-1.5,4)
      + ylim(0,1.6)
      )
@@ -371,7 +382,7 @@ for(k in 1:n){
  c[k] = which(rmultinom(n=1, size=1, prob=p)!=0)
  z[,k] <- xi[, c[k]] + psi[, c[k]]*abs(rnorm(1)) + sdev[, , c[k]]\%*\%matrix(rnorm(d, mean = 0,
                                                                         sd = 1), nrow=d, ncol=1)
- cat(k, "/", n, " observations simulated\\n", sep="")
+ cat(k, "/", n, " observations simulated\n", sep="")
 }
 
  MCMCsample_sn_sep <- DPMGibbsSkewN(z, hyperG0, a, b, N=600,

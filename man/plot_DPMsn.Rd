@@ -4,9 +4,17 @@
 \alias{plot_DPMsn}
 \title{Plot of a Dirichlet process mixture of skew normal distribution partition}
 \usage{
-plot_DPMsn(z, c, i = "", alpha = "?", U_SS, dims2plot = 1:nrow(z),
+plot_DPMsn(
+  z,
+  c,
+  i = "",
+  alpha = "?",
+  U_SS,
+  dims2plot = 1:nrow(z),
   ellipses = ifelse(length(dims2plot) < 3, TRUE, FALSE),
-  gg.add = list(theme()), nbsim_dens = 1000)
+  gg.add = list(theme()),
+  nbsim_dens = 1000
+)
 }
 \arguments{
 \item{z}{data matrix \code{d x n} with \code{d} dimensions in rows

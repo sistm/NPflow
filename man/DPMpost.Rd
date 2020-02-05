@@ -4,10 +4,23 @@
 \alias{DPMpost}
 \title{Posterior estimation for Dirichlet process mixture of multivariate (potentially skew) distributions models}
 \usage{
-DPMpost(data, hyperG0, a = 1e-04, b = 1e-04, N, doPlot = TRUE,
-  nbclust_init = 30, plotevery = floor(N/10), diagVar = TRUE,
-  verbose = TRUE, distrib = c("gaussian", "skewnorm", "skewt"),
-  ncores = 1, type_connec = "SOCK", informPrior = NULL, ...)
+DPMpost(
+  data,
+  hyperG0,
+  a = 1e-04,
+  b = 1e-04,
+  N,
+  doPlot = TRUE,
+  nbclust_init = 30,
+  plotevery = floor(N/10),
+  diagVar = TRUE,
+  verbose = TRUE,
+  distrib = c("gaussian", "skewnorm", "skewt"),
+  ncores = 1,
+  type_connec = "SOCK",
+  informPrior = NULL,
+  ...
+)
 }
 \arguments{
 \item{data}{data matrix \code{d x n} with \code{d} dimensions in rows
@@ -231,7 +244,7 @@ MCMCsample_n <- DPMpost(data=z, hyperG0=hyperG0, N=2000,
  levels(c2plot) <- c("4", "1", "3", "2")
  pp <- (ggplot(data.frame("X"=z[1,], "Y"=z[2,], "Cluster"=as.character(c2plot)))
        + geom_point(aes(x=X, y=Y, colour=Cluster, fill=Cluster))
-       #+ ggtitle("Slightly overlapping skew-normal simulation\\n")
+       #+ ggtitle("Slightly overlapping skew-normal simulation\n")
        + xlab("D1")
        + ylab("D2")
        + theme_bw()

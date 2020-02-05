@@ -5,8 +5,15 @@
 \title{Post-processing Dirichlet Process Mixture Models results to get
 a mixture distribution of the posterior locations}
 \usage{
-postProcess.DPMMclust(x, burnin = 0, thin = 1, gs = NULL,
-  lossFn = "F-measure", K = 10, ...)
+postProcess.DPMMclust(
+  x,
+  burnin = 0,
+  thin = 1,
+  gs = NULL,
+  lossFn = "F-measure",
+  K = 10,
+  ...
+)
 }
 \arguments{
 \item{x}{a \code{DPMMclust} object.}

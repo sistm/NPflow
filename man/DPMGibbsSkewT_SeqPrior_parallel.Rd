@@ -4,10 +4,23 @@
 \alias{DPMGibbsSkewT_SeqPrior_parallel}
 \title{Slice Sampling of Dirichlet Process Mixture of skew Student's t-distributions}
 \usage{
-DPMGibbsSkewT_SeqPrior_parallel(Ncpus, type_connec, z, prior_inform,
-  hyperG0, N, nbclust_init, add.vagueprior = TRUE,
-  weightnoninfo = NULL, doPlot = FALSE, plotevery = N/10,
-  diagVar = TRUE, verbose = TRUE, monitorfile = "", ...)
+DPMGibbsSkewT_SeqPrior_parallel(
+  Ncpus,
+  type_connec,
+  z,
+  prior_inform,
+  hyperG0,
+  N,
+  nbclust_init,
+  add.vagueprior = TRUE,
+  weightnoninfo = NULL,
+  doPlot = FALSE,
+  plotevery = N/10,
+  diagVar = TRUE,
+  verbose = TRUE,
+  monitorfile = "",
+  ...
+)
 }
 \arguments{
 \item{Ncpus}{the number of processors available}
@@ -113,7 +126,7 @@ for(k in 1:n){
  w[k] <- rgamma(1, shape=nu[c[k]]/2, rate=nu[c[k]]/2)
  z[,k] <- xi[, c[k]] + psi[, c[k]]*rtruncnorm(n=1, a=0, b=Inf, mean=0, sd=1/sqrt(w[k])) +
                 (sdev[, , c[k]]/sqrt(w[k]))\%*\%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
- #cat(k, "/", n, " observations simulated\\n", sep="")
+ #cat(k, "/", n, " observations simulated\n", sep="")
 }
 
 # Set parameters of G0
@@ -158,7 +171,7 @@ for(k in 1:n){
  w[k] <- rgamma(1, shape=nu[c[k]]/2, rate=nu[c[k]]/2)
  z[,k] <- xi[, c[k]] + psi[, c[k]]*rtruncnorm(n=1, a=0, b=Inf, mean=0, sd=1/sqrt(w[k])) +
                 (sdev[, , c[k]]/sqrt(w[k]))\%*\%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
- #cat(k, "/", n, " observations simulated\\n", sep="")
+ #cat(k, "/", n, " observations simulated\n", sep="")
 }
 MCMCsample_st2 <- DPMGibbsSkewT_SeqPrior_parallel(Ncpus=2, type_connec="SOCK",
                                                   z, prior_inform=s$param_posterior,

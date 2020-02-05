@@ -47,7 +47,7 @@ microbenchmark(mvtpdf(x=matrix(1.96), mean=0, varcovM=diag(1), df=1, Log=FALSE),
                         df=c(1), Log=FALSE),
                times=10000L)
 }else{
-cat("package 'microbenchmark' not available\\n")
+cat("package 'microbenchmark' not available\n")
 }
 }
 \author{

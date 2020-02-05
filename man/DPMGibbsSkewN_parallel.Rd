@@ -4,10 +4,23 @@
 \alias{DPMGibbsSkewN_parallel}
 \title{Parallel Implementation of Slice Sampling of Dirichlet Process Mixture of skew normal distributions}
 \usage{
-DPMGibbsSkewN_parallel(Ncpus, type_connec, z, hyperG0, a = 1e-04,
-  b = 1e-04, N, doPlot = FALSE, nbclust_init = 30,
-  plotevery = N/10, diagVar = TRUE, use_variance_hyperprior = TRUE,
-  verbose = FALSE, monitorfile = "", ...)
+DPMGibbsSkewN_parallel(
+  Ncpus,
+  type_connec,
+  z,
+  hyperG0,
+  a = 1e-04,
+  b = 1e-04,
+  N,
+  doPlot = FALSE,
+  nbclust_init = 30,
+  plotevery = N/10,
+  diagVar = TRUE,
+  use_variance_hyperprior = TRUE,
+  verbose = FALSE,
+  monitorfile = "",
+  ...
+)
 }
 \arguments{
 \item{Ncpus}{the number of processors available}
@@ -111,7 +124,7 @@ for(k in 1:n){
  c[k] = which(rmultinom(n=1, size=1, prob=p)!=0)
  z[,k] <- xi[, c[k]] + psi[, c[k]]*abs(rnorm(1)) + sdev[, , c[k]]\%*\%matrix(rnorm(d, mean = 0,
                                                                         sd = 1), nrow=d, ncol=1)
- #cat(k, "/", n, " observations simulated\\n", sep="")
+ #cat(k, "/", n, " observations simulated\n", sep="")
 }
 
 # Set parameters of G0
@@ -156,7 +169,7 @@ library(ggplot2)
                         colour="black", fill="white")
        + geom_density(alpha=.2, fill="red")
        + ggtitle(paste("Prior distribution on alpha: Gamma(", a,
-                 ",", b, ")\\n", sep=""))
+                 ",", b, ")\n", sep=""))
       )
  p
 

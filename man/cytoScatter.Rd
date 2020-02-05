@@ -4,9 +4,15 @@
 \alias{cytoScatter}
 \title{Scatterplot of flow cytometry data}
 \usage{
-cytoScatter(cytomatrix, dims2plot = c(1, 2), gating = NULL,
-  scale_log = FALSE, xlim = NULL, ylim = NULL,
-  gg.add = list(theme()))
+cytoScatter(
+  cytomatrix,
+  dims2plot = c(1, 2),
+  gating = NULL,
+  scale_log = FALSE,
+  xlim = NULL,
+  ylim = NULL,
+  gg.add = list(theme())
+)
 }
 \arguments{
 \item{cytomatrix}{a \code{p x n} data matrix, of \code{n} cell observations measured over \code{p}
@@ -58,7 +64,7 @@ z <- matrix(0, nrow=2, ncol=n)
 for(k in 1:n){
  c[k] = which(rmultinom(n=1, size=1, prob=p)!=0)
  z[,k] <- m[, c[k]] + sdev[, , c[k]]\%*\%matrix(rnorm(2, mean = 0, sd = 1), nrow=2, ncol=1)
- #cat(k, "/", n, " observations simulated\\n", sep="")
+ #cat(k, "/", n, " observations simulated\n", sep="")
 }
 
 cytoScatter(z)

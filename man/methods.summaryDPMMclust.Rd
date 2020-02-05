@@ -8,9 +8,15 @@
 \usage{
 \method{print}{summaryDPMMclust}(x, ...)
 
-\method{plot}{summaryDPMMclust}(x, hm = FALSE, nbsim_densities = 5000,
-  hm_subsample = NULL, hm_order_by_clust = TRUE,
-  gg.add = list(theme_bw()), ...)
+\method{plot}{summaryDPMMclust}(
+  x,
+  hm = FALSE,
+  nbsim_densities = 5000,
+  hm_subsample = NULL,
+  hm_order_by_clust = TRUE,
+  gg.add = list(theme_bw()),
+  ...
+)
 }
 \arguments{
 \item{x}{a \code{summaryDPMMclust} object.}

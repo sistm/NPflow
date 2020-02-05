@@ -4,8 +4,7 @@
 \alias{mmsNiWpdfC}
 \title{C++ implementation of multivariate structured Normal inverse Wishart probability density function for multiple inputs}
 \usage{
-mmsNiWpdfC(xi, psi, Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_df0,
-  Log = TRUE)
+mmsNiWpdfC(xi, psi, Sigma, U_xi0, U_psi0, U_B0, U_Sigma0, U_df0, Log = TRUE)
 }
 \arguments{
 \item{xi}{data matrix of dimensions \code{p x n} where columns contain the observed

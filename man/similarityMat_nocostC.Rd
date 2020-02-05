@@ -27,6 +27,6 @@ if(require(microbenchmark)){
 library(microbenchmark)
 microbenchmark(similarityMat(c3), similarityMat_nocostC(c3), times=2L)
 }else{
-cat("package 'microbenchmark' not available\\n")
+cat("package 'microbenchmark' not available\n")
 }
 }

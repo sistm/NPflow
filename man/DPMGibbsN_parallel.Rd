@@ -5,10 +5,23 @@
 \title{Slice Sampling of the Dirichlet Process Mixture Model
 with a prior on alpha}
 \usage{
-DPMGibbsN_parallel(Ncpus, type_connec, z, hyperG0, a = 1e-04,
-  b = 1e-04, N, doPlot = TRUE, nbclust_init = 30, plotevery = N/10,
-  diagVar = TRUE, use_variance_hyperprior = TRUE, verbose = TRUE,
-  monitorfile = "", ...)
+DPMGibbsN_parallel(
+  Ncpus,
+  type_connec,
+  z,
+  hyperG0,
+  a = 1e-04,
+  b = 1e-04,
+  N,
+  doPlot = TRUE,
+  nbclust_init = 30,
+  plotevery = N/10,
+  diagVar = TRUE,
+  use_variance_hyperprior = TRUE,
+  verbose = TRUE,
+  monitorfile = "",
+  ...
+)
 }
 \arguments{
 \item{Ncpus}{the number of processors available}
@@ -118,7 +131,7 @@ z <- matrix(0, nrow=d, ncol=n)
 for(k in 1:n){
     c[k] = which(rmultinom(n=1, size=1, prob=p)!=0)
     z[,k] <- m[, c[k]] + sdev[, , c[k]]\%*\%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
-    #cat(k, "/", n, " observations simulated\\n", sep="")
+    #cat(k, "/", n, " observations simulated\n", sep="")
 }
 
 # hyperprior on the Scale parameter of DPM

@@ -4,8 +4,15 @@
 \alias{summary.DPMMclust}
 \title{Summarizing Dirichlet Process Mixture Models}
 \usage{
-\method{summary}{DPMMclust}(object, burnin = 0, thin = 1, gs = NULL,
-  lossFn = "F-measure", posterior_approx = FALSE, ...)
+\method{summary}{DPMMclust}(
+  object,
+  burnin = 0,
+  thin = 1,
+  gs = NULL,
+  lossFn = "F-measure",
+  posterior_approx = FALSE,
+  ...
+)
 }
 \arguments{
 \item{object}{a \code{DPMMclust} object.}

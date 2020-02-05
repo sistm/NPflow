@@ -4,9 +4,20 @@
 \alias{DPMGibbsN}
 \title{Slice Sampling of the Dirichlet Process Mixture Model with a prior on alpha}
 \usage{
-DPMGibbsN(z, hyperG0, a = 1e-04, b = 1e-04, N, doPlot = TRUE,
-  nbclust_init = 30, plotevery = N/10, diagVar = TRUE,
-  use_variance_hyperprior = TRUE, verbose = TRUE, ...)
+DPMGibbsN(
+  z,
+  hyperG0,
+  a = 1e-04,
+  b = 1e-04,
+  N,
+  doPlot = TRUE,
+  nbclust_init = 30,
+  plotevery = N/10,
+  diagVar = TRUE,
+  use_variance_hyperprior = TRUE,
+  verbose = TRUE,
+  ...
+)
 }
 \arguments{
 \item{z}{data matrix \code{d x n} with \code{d} dimensions in rows and \code{n} observations in
@@ -95,7 +106,7 @@ z <- matrix(0, nrow=2, ncol=n)
 for(k in 1:n){
  c[k] = which(rmultinom(n=1, size=1, prob=p)!=0)
  z[,k] <- m[, c[k]] + sdev[, , c[k]]\%*\%matrix(rnorm(2, mean = 0, sd = 1), nrow=2, ncol=1)
- #cat(k, "/", n, " observations simulated\\n", sep="")
+ #cat(k, "/", n, " observations simulated\n", sep="")
 }
 
  d<-2
@@ -138,7 +149,7 @@ for(k in 1:n){
                         colour="black", fill="white", bins=30)
        + geom_density(alpha=.6, fill="red", color=NA)
        + ggtitle(paste("Prior distribution on alpha: Gamma(", a,
-                 ",", b, ")\\n", sep=""))
+                 ",", b, ")\n", sep=""))
        + theme_bw()
       )
  p
@@ -167,7 +178,7 @@ if(interactive()){
        + geom_histogram(aes(y=..density..), binwidth=.1,
                         colour="black", fill="white")
        + geom_density(alpha=.2, fill="blue")
-       + ggtitle("Posterior distribution of alpha\\n")
+       + ggtitle("Posterior distribution of alpha\n")
        # Ignore NA values for mean
        # Overlay with transparent density plot
        + geom_vline(aes(xintercept=mean(alpha, na.rm=TRUE)),
@@ -182,7 +193,7 @@ if(interactive()){
        #+ geom_density(aes(x=alpha, fill=distribution),
        #               color=NA, alpha=.6,
        #               data=postalpha)
-       + ggtitle("Prior and posterior distributions of alpha\\n")
+       + ggtitle("Prior and posterior distributions of alpha\n")
        + scale_fill_discrete(drop=FALSE)
        + theme_bw()
        +xlim(0,10)
@@ -210,7 +221,7 @@ if(interactive()){
        + geom_point(aes(x=X, y=Y, fill=Cluster, order=Cluster),
                     data=dataCenters, shape=22, size=5)
        + scale_colour_discrete(name="Cluster")
-       + ggtitle("K-means with K=4 clusters\\n"))
+       + ggtitle("K-means with K=4 clusters\n"))
  p
 
 

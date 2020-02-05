@@ -4,8 +4,7 @@
 \alias{cluster_est_Mbinder_norm}
 \title{Point estimate of the partition using a modified Binder loss function}
 \usage{
-cluster_est_Mbinder_norm(c, Mu, Sigma, lambda = 0, a = 1, b = a,
-  logposterior)
+cluster_est_Mbinder_norm(c, Mu, Sigma, lambda = 0, a = 1, b = a, logposterior)
 }
 \arguments{
 \item{c}{a list of vector of length \code{n}. \code{c[[j]][i]} is
