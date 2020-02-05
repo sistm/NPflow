@@ -1,5 +1,8 @@
 # News about the `NPflow` R package
 
+### Main changes in Version 0.13.3 (2020-02-06) --- *this is only a minor release*:
+* bug fixed in documentation and compiling standards
+
 ### Main changes in Version 0.13.1 (2017-08-02) --- *this is only a minor release*:
 * updated documentation and compiling standards
 
