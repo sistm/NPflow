@@ -35,8 +35,8 @@ r_packages:
 - covr
 
 r_github_packages:
-- hadley/scales
-- hadley/ggplot2
+- r-lib/scales
+- tidyverse/ggplot2
 
 after_success:
   - Rscript -e 'covr::codecov(type ="all")'
