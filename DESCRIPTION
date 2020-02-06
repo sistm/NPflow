@@ -21,7 +21,6 @@ Imports:
     grDevices,
     ellipse,
     fastcluster,
-    gplots,
     ggplot2,
     pheatmap,
     reshape2
