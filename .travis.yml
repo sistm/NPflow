@@ -1,7 +1,7 @@
 language: R
 cache: packages
 warnings_are_errors: true
-sudo: false
+sudo: required
 
 matrix:
   include:
@@ -11,7 +11,6 @@ matrix:
     - os: linux
       r: devel
       
-  allow_failures:
     - os: osx
       r: release
 
