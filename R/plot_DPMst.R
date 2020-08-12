@@ -112,20 +112,26 @@ plot_DPMst <- function(z, c, i="", alpha="?", U_SS,
         UDplotfull, UDplottemp)
     }
     
-    p <- (ggplot(zDplotfull)
+    p <- (ggplot(zDplotfull) + theme_bw()
           + facet_grid(dimensionY~dimensionX, scales="free")
           + geom_point(aes_string(x="X", y="Y", colour="Cluster"),
-                       data=zDplotfull, alpha=1, size=2/(0.3*log(n)))
+                       data=zDplotfull, alpha=0.15, size=2/(0.4*log(n)))
           #               + geom_polygon(aes_string(x="X", y="Y", fill="Cluster", colour="Cluster"),
           #                              data=ellipse95, size=0.5, linetype=2, colour="black", alpha=.3)
-          + geom_point(aes_string(x="X", y="Y", colour="Cluster"),
-                       data=UDplotfull, shape=22, size=5/(0.3*log(n)))
+          + geom_point(aes_string(x="X", y="Y", fill="Cluster"),
+                       data=UDplotfull, alpha = 0.5, shape=22, size=5/(0.3*log(n)))
           + ggtitle(paste(n, " obs.",
                           "\niteration ", i, " : ",
                           length(fullCl)," clusters",
                           "\nexpected number of clusters: ", expK,
                           " (alpha = ", alpha2print, ")",
                           sep=""))
+          + scale_fill_viridis_d(guide=FALSE) #, option = "magma")
+          #+ scale_color_viridis_d(option = "magma")
+          + guides(colour=guide_legend(override.aes = list(linetype=0, size=6, alpha=1)))#, shape=15)))
+          + xlab("") + ylab("")
+          + theme(axis.text.x = element_text(angle = 60, hjust = 1))
+            
     )
   }else{
     z2plot <- cbind.data.frame("D1"=z[1,],"D2"=z[2,],"Cluster"=zClusters)
@@ -145,7 +151,7 @@ plot_DPMst <- function(z, c, i="", alpha="?", U_SS,
     xi2plot$Center="xi param"
     
     if(!nice){
-      p <- (ggplot(z2plot)
+      p <- (ggplot(z2plot) + theme_bw()
             + geom_point(aes_string(x="D1", y="D2", colour="Cluster", fill="Cluster"), alpha=0.7,
                          data=z2plot, size=2/(0.3*log(n)))
             + scale_alpha_continuous(guide=FALSE)
@@ -166,7 +172,7 @@ plot_DPMst <- function(z, c, i="", alpha="?", U_SS,
       zmean2plot$Center="observed mean"
       
     }else{
-      p <- (ggplot(z2plot)
+      p <- (ggplot(z2plot) + theme_bw()
             + geom_point(aes_string(x="D1", y="D2", colour="Cluster", shape="Cluster", fill="Cluster"), alpha=min(0.9, max(0.9*6/n^0.3, 0.3)),
                          data=z2plot, size=2)
             + scale_alpha_continuous(guide=FALSE)
@@ -233,6 +239,5 @@ plot_DPMst <- function(z, c, i="", alpha="?", U_SS,
   for (a in gg.add) {
     p <- p + a
   }
-  
   print(p)
 }

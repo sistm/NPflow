@@ -141,19 +141,19 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
     p <- (ggplot(zDplotfull)
           + facet_grid(dimensionY~dimensionX, scales="free")
           + geom_point(aes_string(x="X", y="Y", colour="Cluster"),
-                       data=zDplotfull, alpha=1, size=2/(0.3*log(n)))
+                       data=zDplotfull, alpha=0.2, size=2/(0.3*log(n)))
           #               + geom_polygon(aes(x=x, y=y, fill=Cluster, colour=Cluster),
           #                              data=ellipse95, size=0.5, linetype=2, colour="black", alpha=.3)
           + geom_point(aes_string(x="X", y="Y", fill="Cluster"),
-                       data=UDplotfull, shape=22, size=5/(0.3*log(n)))
+                       data=UDplotfull, alpha=0.5, shape=22, size=5/(0.3*log(n)))
           + ggtitle(paste(n, " obs.",
                           "\niteration ", i, " : ",
                           length(fullCl)," clusters",
                           "\nexpected number of clusters: ", expK,
                           " (alpha = ", alpha2print, ")",
                           sep=""))
-          + scale_fill_discrete(guide=FALSE)
-          + guides(colour = guide_legend(override.aes = list(size = 6)))
+          + scale_fill_viridis_d(guide=FALSE)
+          + guides(colour = guide_legend(override.aes = list(size = 6, alpha=1)))
     )
   }else{
     z2plot <- cbind.data.frame("D1"=z[1,],"D2"=z[2,],"Cluster"=zClusters)
