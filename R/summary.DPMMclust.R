@@ -101,7 +101,7 @@ summary.DPMMclust <- function(object, burnin=0, thin=1, gs=NULL, lossFn="F-measu
   K<-length(unique(point_estim$c_est))
   if(posterior_approx){
     if(K>1){
-      param_post <- postProcess.DPMMclust(x_invar, plot=FALSE, K=K, ...)
+      param_post <- postProcess.DPMMclust(x_invar, K=K, ...)
     }else{
       param_post <- postProcess.DPMMclust(x_invar, K=1, ...)
     }
