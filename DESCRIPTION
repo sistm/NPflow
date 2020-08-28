@@ -23,7 +23,8 @@ Imports:
     fastcluster,
     ggplot2,
     pheatmap,
-    reshape2
+    reshape2,
+    GGally
 Suggests:
     foreach,
     parallel,
@@ -36,4 +37,4 @@ Description: Dirichlet process mixture of multivariate normal, skew normal or sk
 License: LGPL-3 | file LICENSE
 BugReports: https://github.com/borishejblum/NPflow/issues
 Encoding: UTF-8
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1

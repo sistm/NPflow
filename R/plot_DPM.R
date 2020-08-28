@@ -40,6 +40,7 @@
 #'@import ellipse
 #'@import reshape2
 #'@importFrom stats cov2cor cov
+#'@importFrom GGally ggpairs
 #'
 #'@export
 
@@ -47,19 +48,19 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
                      dims2plot=1:nrow(z),
                      ellipses=ifelse(length(dims2plot)<3,TRUE,FALSE),
                      gg.add=list(theme())){
-
-
+  
+  
   z <- z[dims2plot,]
-
-
+  
+  
   n <- ncol(z)
   p <- nrow(z)
-
+  
   m <- numeric(n) # number of observations in each cluster
   m[unique(c)] <- table(c)[as.character(unique(c))]
-
+  
   fullCl <- which(m!=0)
-
+  
   if(is.null(U_mu)){
     U_mu2plot <- sapply(U_SS, "[[", "mu")
     U_Sigma2plot <- lapply(U_SS, "[[", "S")
@@ -81,17 +82,17 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
   }
   U_SS2plot <- U_SS
   zClusters <- factor(c, levels=as.character(fullCl), ordered=TRUE)
-
+  
   if(is.null(names(U_SS2plot))){
     if(length(U_SS2plot)>length(fullCl)){
       U_SS2plot <- U_SS2plot[fullCl]
     }
     names(U_SS2plot) <- levels(zClusters)
   }
-
+  
   expK <- ifelse(is.numeric(alpha), round(alpha*(digamma(alpha+n)-digamma(alpha))), NA)
   alpha2print <- ifelse(is.numeric(alpha), formatC(alpha, digits=2), alpha)
-
+  
   if(p>2){
     zDplot <- reshape2::melt(cbind.data.frame("ID"=as.character(1:n),
                                               t(z),
@@ -104,7 +105,7 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
     zDplotfull <- zDplot
     zDplotfull$Y <- zDplot$X
     zDplotfull$dimensionY <- zDplot$dimensionX
-
+    
     lev <- as.character(1:length(levels(zDplot$dimensionX)))
     for(l in 2:length(lev)){
       move <- which(as.numeric(zDplot$dimensionX)<l)
@@ -114,7 +115,7 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
       zDplotfull <- rbind.data.frame(
         zDplotfull, zDplottemp)
     }
-
+    
     UDplot <- reshape2::melt(cbind.data.frame(t(U_mu2plot),
                                               "Cluster"=factor(as.character(fullCl),
                                                                levels=as.character(fullCl),
@@ -127,7 +128,7 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
     UDplotfull <- UDplot
     UDplotfull$Y <- UDplotfull$X
     UDplotfull$dimensionY <- UDplotfull$dimensionX
-
+    
     lev <- levels(UDplotfull$dimensionX)
     for(l in 2:length(lev)){
       move <- which(as.numeric(UDplotfull$dimensionX)<l)
@@ -137,24 +138,49 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
       UDplotfull <- rbind.data.frame(
         UDplotfull, UDplottemp)
     }
-
-    p <- (ggplot(zDplotfull)
-          + facet_grid(dimensionY~dimensionX, scales="free")
-          + geom_point(aes_string(x="X", y="Y", colour="Cluster"),
-                       data=zDplotfull, alpha=0.2, size=2/(0.3*log(n)))
-          #               + geom_polygon(aes(x=x, y=y, fill=Cluster, colour=Cluster),
-          #                              data=ellipse95, size=0.5, linetype=2, colour="black", alpha=.3)
-          + geom_point(aes_string(x="X", y="Y", fill="Cluster"),
-                       data=UDplotfull, alpha=0.5, shape=22, size=5/(0.3*log(n)))
-          + ggtitle(paste(n, " obs.",
-                          "\niteration ", i, " : ",
-                          length(fullCl)," clusters",
-                          "\nexpected number of clusters: ", expK,
-                          " (alpha = ", alpha2print, ")",
-                          sep=""))
-          + scale_fill_viridis_d(guide=FALSE)
-          + guides(colour = guide_legend(override.aes = list(size = 6, alpha=1)))
-    )
+    
+    # p <- (ggplot(zDplotfull)
+    #       + facet_grid(dimensionY~dimensionX, scales="free")
+    #       + geom_point(aes_string(x="X", y="Y", colour="Cluster"),
+    #                    data=zDplotfull, alpha=0.2, size=2/(0.3*log(n)))
+    #       #               + geom_polygon(aes(x=x, y=y, fill=Cluster, colour=Cluster),
+    #       #                              data=ellipse95, size=0.5, linetype=2, colour="black", alpha=.3)
+    #       + geom_point(aes_string(x="X", y="Y", fill="Cluster"),
+    #                    data=UDplotfull, alpha=0.5, shape=22, size=5/(0.3*log(n)))
+    #       + ggtitle(paste(n, " obs.",
+    #                       "\niteration ", i, " : ",
+    #                       length(fullCl)," clusters",
+    #                       "\nexpected number of clusters: ", expK,
+    #                       " (alpha = ", alpha2print, ")",
+    #                       sep=""))
+    #       + scale_fill_viridis_d(guide=FALSE)
+    #       + guides(colour = guide_legend(override.aes = list(size = 6, alpha=1)))
+    # )
+    
+    rpairplotdata <- cbind.data.frame(t(z), "Cluster"=zClusters)
+    if(min(table(rpairplotdata$Cluster))>1){
+      upper_type <- GGally::wrap("density", alpha=0.5, size=0.3)
+    }else{
+      message("unable to display 2D densities because 1 cluster has only 1 observation")
+      upper_type <- GGally::wrap("points", alpha=0.1, size=0.2)
+    }
+    p <- GGally::ggpairs(data = rpairplotdata, mapping = aes(color=Cluster),
+                         title = paste(n, " obs.",
+                                       "\niteration ", i, ": ",
+                                       length(fullCl)," clusters",
+                                       "\nexpected number of clusters: ", expK,
+                                       " (alpha = ", alpha2print, ")",
+                                       sep=""),
+                         columns = seq_len(ncol(rpairplotdata)-1),
+                         upper = list(continuous = upper_type),
+                         diag = list(continuous = GGally::wrap("densityDiag", alpha=0.2, size=0.2)),
+                         lower = list(continuous = GGally::wrap("points", alpha=0.1, size=0.2)),
+                         legend=c(1,1)
+    ) + theme_bw() + 
+      theme(axis.text.x = element_text(angle=60, hjust=1),
+            legend.title = element_text(face = "bold"))
+    p[1,1] <- p[1,1] + guides(fill=guide_legend(override.aes = list(alpha=1, color="white")))
+    
   }else{
     z2plot <- cbind.data.frame("D1"=z[1,],"D2"=z[2,],"Cluster"=zClusters)
     if(is.null(dim(U_mu2plot))){
@@ -164,7 +190,7 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
                                                   levels=as.character(fullCl),
                                                   ordered=TRUE)
       )
-
+      
     } else {
       U2plot <- cbind.data.frame("D1"=U_mu2plot[1,],
                                  "D2"=U_mu2plot[2,],
@@ -173,9 +199,9 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
                                                   ordered=TRUE)
       )
     }
-
-    p <- (ggplot(z2plot)
-
+    
+    p <- (ggplot(z2plot) + theme_bw()
+          
           + geom_point(aes_string(x="D1", y="D2", colour="Cluster"),
                        data=z2plot)
           + geom_point(aes_string(x="D1", y="D2", fill="Cluster"),
@@ -218,16 +244,16 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
                                      Cluster=as.character(glabel)
                                ))
       }
-
+      
       ellipse95_obs <- data.frame()
       for(g in 1:length(fullCl)){
         glabel <- levels(zClusters)[g]
-
+        
         #empirical covariance
         if(length(which(z2plot$Cluster==glabel))>1){
           U_Sigma2plot_obs <- stats::cov(z2plot[which(z2plot$Cluster==glabel), c(1,2)])
           U_corr2plot_g <- stats::cov2cor(U_Sigma2plot_obs)
-
+          
           ellipse95_obs <- rbind(ellipse95_obs,
                                  cbind(as.data.frame(ellipse(U_corr2plot_g,
                                                              scale=sqrt(diag(U_Sigma2plot_obs)),
@@ -238,11 +264,11 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
         }
       }
       colnames(ellipse95_obs)[1:2] <- c("x", "y")
-
+      
       ellipses95_data <- rbind.data.frame(cbind.data.frame(ellipse95_obs, "type"="observed"),
-                               cbind.data.frame(ellipse95, "type"="sampled"),
-                               cbind.data.frame(ellipse95_esp, "type"="expected"))
-
+                                          cbind.data.frame(ellipse95, "type"="sampled"),
+                                          cbind.data.frame(ellipse95_esp, "type"="expected"))
+      
       p <- (p
             + geom_polygon(aes_string(x="x", y="y", fill="Cluster", colour="Cluster", linetype="type"),
                            data=ellipses95_data, alpha=.15)
@@ -265,9 +291,9 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
     #                                    labels=c("observed", "sampled"),
     #                                    name="Mean", limits=c(24,22))
     #         )
-  }
-  for (a in gg.add) {
-    p <- p + theme_bw() + a
+    for (a in gg.add) {
+      p <- p + a
+    }
   }
   print(p)
 }
