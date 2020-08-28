@@ -40,9 +40,9 @@
 #'@seealso \code{\link{similarityMat}} \code{\link{summary.DPMMclust}}
 #'
 postProcess.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measure", K=10, ...){
-
+  
   x_invar <- burn.DPMMclust(x, burnin = burnin, thin=thin)
-
+  
   EM_init_nb_max <- 10
   elem <- which(lapply(x_invar$U_SS_list,FUN=length)==K)
   len <- length(elem)
@@ -62,24 +62,24 @@ postProcess.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measur
       cpt <- cpt+1
     }
   }
-
-
+  
+  
   if(x$clust_distrib=="skewt"){
-
+    
     xi_list <- list()
     psi_list <- list()
     S_list <- list()
     w_list <- list()
-
+    
     #m_final <- list()
     #S_final <- list()
-
+    
     for(i in 1:length(x_invar$U_SS_list)){
       xi_list <- c(xi_list, sapply(x_invar$U_SS_list[[i]], "[", "xi"))
       psi_list <- c(psi_list, sapply(x_invar$U_SS_list[[i]], "[", "psi"))
-
+      
       S_list <- c(S_list, sapply(x_invar$U_SS_list[[i]], "[", "S"))
-
+      
       if(is.null(x_invar$U_SS_list[[1]][["weights"]])){
         #for compatibility with older DPMclust objects
         w_list <- c(w_list, x_invar$weights_list[[i]][unique(x_invar$mcmc_partitions[[i]])])
@@ -87,26 +87,27 @@ postProcess.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measur
         w_list <- c(w_list,sapply(x_invar$U_SS_list[[i]], "[", "weights"))
       }
     }
-
+    
     mle_g <- MLE_gamma(x_invar$alpha)
-
+    
     if(K>1){
-
+      
       MAPprior <- x_invar$hyperG0
       #MAPprior$lambda <-10*MAPprior$lambda
       param_post_list <- list()
-
+      
       chr_str <- paste(paste("/", as.character(EM_init_nb),sep=""), "computed",sep=" ")
       for (j in 1:EM_init_nb){
         param_post_list[[j]] <- MAP_sNiW_mmEM(xi_list, psi_list, S_list,
-                                               hyperG0 = MAPprior, K=K,
-                                               init=EM_init[[j]],verbose=FALSE,...)
-
+                                              hyperG0 = MAPprior, K=K,
+                                              init=EM_init[[j]], verbose=FALSE,
+                                              ...)
+        
         cat("EM ", j,chr_str, "\n", sep="")
       }
       param_post <- param_post_list[[which.max(sapply(lapply(param_post_list, "[[", "loglik"), FUN=max))]]
-
-
+      
+      
       parameters <- list()
       for (i in 1:length(param_post$U_xi)){
         parameters[[i]] <- list("b_xi" = param_post[["U_xi"]][[i]],
@@ -128,21 +129,21 @@ postProcess.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measur
       )
       param_post$weights <- 1
     }
-
-
+    
+    
   }else if (x$clust_distrib=="gaussian"){
-
+    
     mle_g <- MLE_gamma(x_invar$alpha)
-
+    
     mu_list <- list()
     S_list <- list()
     w_list <- list()
-
-
+    
+    
     for(i in 1:length(x_invar$U_SS_list)){
       mu_list <- c(mu_list, sapply(x_invar$U_SS_list[[i]], "[", "mu"))
       S_list <- c(S_list, sapply(x_invar$U_SS_list[[i]], "[", "S"))
-
+      
       if(is.null(x_invar$U_SS_list[[1]][["weights"]])){
         #for compatibility with older DPMclust objects
         w_list <- c(w_list, x_invar$weights_list[[i]][unique(x_invar$mcmc_partitions[[i]])])
@@ -150,16 +151,23 @@ postProcess.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measur
         w_list <- c(w_list,sapply(x_invar$U_SS_list[[i]], "[", "weights"))
       }
     }
-
+    
     param_post_list <- list()
     for (j in 1:EM_init_nb){
 
-      param_post_list[[j]] <- MLE_NiW_mmEM(mu_list, S_list, x_invar$hyperG0, K, maxit=100, tol=1E-1, doPlot=TRUE)
+      param_post_list[[j]] <- tryCatch(MLE_NiW_mmEM(mu_list, S_list, x_invar$hyperG0, K, maxit=100, tol=1E-1, doPlot=TRUE),
+                                       error = function(e){list("loglik" = -Inf,
+                                                                "r" = NA,
+                                                                "U_kappa" = NA,
+                                                                "U_lambda" = NA, 
+                                                                "U_mu" = NA,
+                                                                "U_nu" = NA,
+                                                                "weights" = NA)})
       cat("EM ", j, "/10 computed", "\n", sep="")
     }
-    param_post <- param_post_list[[which.max(sapply(lapply(param_post_list, "[[", "loglik"), FUN=max))]]
-
-
+    param_post <- param_post_list[[which.max(sapply(lapply(param_post_list, "[[", "loglik"), FUN=max, na.rm=TRUE))]]
+    
+    
     parameters <- list()
     for (i in 1:length(param_post$U_mu)){
       parameters[[i]] <- list("mu" = as.vector(param_post[["U_mu"]][[i]]),
@@ -168,13 +176,13 @@ postProcess.DPMMclust <- function(x, burnin=0, thin=1, gs=NULL, lossFn="F-measur
                               "nu" = param_post[["U_nu"]][[i]]
       )
     }
-
+    
   }
   else {stop("clust_distrib is neither 'skewt' nor 'gaussian'\n other distributions are not implemented yet")}
-
+  
   return(list("parameters"=parameters, "weights"=param_post$weights,
               "alpha_param"=mle_g))
-
+  
 }
 
 
