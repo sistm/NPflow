@@ -9,7 +9,7 @@
   burnin = 0,
   thin = 1,
   gs = NULL,
-  lossFn = "F-measure",
+  lossFn = "Binder",
   posterior_approx = FALSE,
   ...
 )
@@ -26,7 +26,7 @@ Default is \code{1}, i.e. no thining.}
 partition of the \code{n} observations to compare to the point estimate}
 
 \item{lossFn}{character string specifying the loss function to be used.
-Either "F-measure" or "Binder" (see Details). Default is "F-measure".}
+Either "F-measure" or "Binder" (see Details). Default is "Binder".}
 
 \item{posterior_approx}{logical flag whether a parametric approximation of the posterior should be
 computed. Default is \code{FALSE}}

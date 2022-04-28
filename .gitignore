@@ -12,3 +12,4 @@ Rprof.out
 defaultmonitor.txt
 cran-comment
 revdep
+*.DS_Store

@@ -10,7 +10,7 @@
 #'Default is \code{1}, i.e. no thining.
 #'
 #'@param lossFn character string specifying the loss function to be used.
-#'Either "F-measure" or "Binder" (see Details). Default is "F-measure".
+#'Either "F-measure" or "Binder" (see Details). Default is "Binder".
 #'
 #'@param gs optional vector of length \code{n} containing the gold standard
 #'partition of the \code{n} observations to compare to the point estimate
@@ -64,7 +64,7 @@
 #'@seealso \code{\link{similarityMat}} \code{\link{similarityMatC}}
 #'
 
-summary.DPMMclust <- function(object, burnin=0, thin=1, gs=NULL, lossFn="F-measure",
+summary.DPMMclust <- function(object, burnin=0, thin=1, gs=NULL, lossFn="Binder",
                               posterior_approx=FALSE, ...){
   
   x_invar <- burn.DPMMclust(object, burnin = burnin, thin=thin)

@@ -1,13 +1,15 @@
 # This is an update of the NPflow package  
 
 ## Test environments  
-* local macOS 10.15.2 install, R 3.6.2
-* macOS 10.13.6 (on travis-ci), R devel and release
-* ubuntu 16.04.11 (on travis-ci), R devel and release
-* Windows Visual Studio 2015 (on appveyor), R devel and release
+ * local R installation, R 4.1.2 on macOS 12.2.1
+ * Linux (Ubuntu 20.04), macOS (11.6) and Windows (Server 2019 10.0), R devel and release (through GitHub Actions)
 
 ## R CMD check results  
 0 errors | 0 warnings | 0 note
+
+On some architectures, the large volume of compiled file may trigger a note.
+These compiled functions are necessary to ensure reasonnable computation time
+for NPflow.
 
 ## Reverse dependencies  
 There are no reverse dependencies.
