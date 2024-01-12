@@ -1,5 +1,8 @@
 # News about the `NPflow` R package
 
+### Main changes in Version 0.13.4 (2023-02-12) --- *this is only a minor release*:
+* bug fixed in try-catch syntax
+
 ### Main changes in Version 0.13.3 (2020-02-06) --- *this is only a minor release*:
 * bug fixed in documentation and compiling standards
 

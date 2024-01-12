@@ -47,7 +47,7 @@ update_SSst <- function(z, S, ltn, scale, df, hyperprior=NULL){
   
   X <- matrix(c(sc_sr, sc_sr*ltn), ncol=2, byrow=FALSE)
   B <- try(solve(crossprod(X) + B0inv))
-  if(class(B)=="try-error"){
+  if(inherits(B, "try-error")){
     #   browser()
     stop("error in inverting B")
   }

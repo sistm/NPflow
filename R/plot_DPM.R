@@ -164,7 +164,7 @@ plot_DPM <- function(z, U_mu=NULL, U_Sigma=NULL, m, c, i, alpha="?", U_SS=NULL,
       message("unable to display 2D densities because 1 cluster has only 1 observation")
       upper_type <- GGally::wrap("points", alpha=0.1, size=0.2)
     }
-    p <- GGally::ggpairs(data = rpairplotdata, mapping = aes(color=Cluster),
+    p <- GGally::ggpairs(data = rpairplotdata, mapping = aes_string(color="Cluster"),
                          title = paste(n, " obs.",
                                        "\niteration ", i, ": ",
                                        length(fullCl)," clusters",
