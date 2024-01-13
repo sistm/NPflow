@@ -11,8 +11,9 @@ On some architectures, the large volume of compiled file may trigger a note.
 These compiled functions are necessary to ensure reasonable computation time
 for NPflow.
 
-## Reverse dependencies  
-There are no reverse dependencies.
+## Reverse dependencies 
+This update does not introduce new notes, warnings or errors in the reverse 
+dependent package bqror
 
 
 Thanks, Boris Hejblum
