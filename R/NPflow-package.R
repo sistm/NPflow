@@ -7,8 +7,8 @@
 #'\tabular{ll}{
 #'Package: \tab NPflow\cr
 #'Type: \tab Package\cr
-#'Version: \tab 0.13.4\cr
-#'Date: \tab 2023-01-12\cr
+#'Version: \tab 0.13.5\cr
+#'Date: \tab 2024-01-13\cr
 #'License:\tab \href{http://www.gnu.org/licenses/lgpl.txt}{LGPL-3}\cr
 #'}
 #'The main function in this package is \code{\link{DPMpost}}.
@@ -20,7 +20,7 @@
 #'Sequential Dirichlet Process Mixtures of Multivariate Skew t-distributions for 
 #'Model-based Clustering of Flow Cytometry Data. The Annals of Applied Statistics, 
 #'13(1): 638-660. <doi: 10.1214/18-AOAS1209> <arXiv: 1702.04407> 
-#'\url{https://arxiv.org/abs/1702.04407} \url{https://doi.org/10.1214/18-AOAS1209}
+#'\url{https://arxiv.org/abs/1702.04407} \doi{10.1214/18-AOAS1209}
 #'
 #'@name NPflow-package
 #'@aliases NPflow

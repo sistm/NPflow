@@ -4,15 +4,14 @@
 # `NPflow`
 
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/NPflow)](https://cran.r-project.org/package=NPflow)
-[![R-CMD-check](https://github.com/borishejblum/NPflow/workflows/R-CMD-check/badge.svg)](https://github.com/borishejblum/NPflow/actions)
+[![R-CMD-check](https://github.com/sistm/NPflow/workflows/R-CMD-check/badge.svg)](https://github.com/sistm/NPflow/actions)
 [![Downloads](https://cranlogs.r-pkg.org/badges/NPflow?color=blue)](https://www.r-pkg.org/pkg/NPflow)
 
 ## Overview
 
 `NPflow` is a package for performing **Bayesian estimation of Dirichlet
-process mixtures of multivariate skew
-![t](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;t "t")-distributions**.
-It is especially oriented towards flow-cytometry data preprocessing
+process mixtures of multivariate skew $t$-distributions**. It is
+especially oriented towards flow-cytometry data preprocessing
 applications, but can be useful for numerous other applications.
 
 The main function of the package is `DPMpost()`.
@@ -37,11 +36,11 @@ install.packages("NPflow")
 ```
 
 Or to get the development version from
-[GitHub](https://github.com/borishejblum/NPflow):
+[GitHub](https://github.com/sistm/NPflow):
 
 ``` r
 #install.packages("devtools")
-devtools::install_github("borishejblum/NPflow", ref="CRANrelease")
+devtools::install_github("sistm/NPflow", ref="CRANrelease")
 ```
 
 – Boris Hejblum

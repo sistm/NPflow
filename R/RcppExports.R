@@ -127,7 +127,7 @@ traceEpsC <- function(eps, sigma) {
 #'Sequential Dirichlet Process Mixtures of Multivariate Skew t-distributions for 
 #'Model-based Clustering of Flow Cytometry Data. The Annals of Applied Statistics, 
 #'13(1): 638-660. <doi: 10.1214/18-AOAS1209>. <arXiv: 1702.04407>. 
-#'\url{https://arxiv.org/abs/1702.04407} \url{https://doi.org/10.1214/18-AOAS1209}
+#'\url{https://arxiv.org/abs/1702.04407} \doi{10.1214/18-AOAS1209}
 #'
 #'@export
 #'
@@ -160,7 +160,7 @@ mmNiWpdfC <- function(Mu, Sigma, U_Mu0, U_Kappa0, U_Nu0, U_Sigma0, Log = TRUE) {
 #'Sequential Dirichlet Process Mixtures of Multivariate Skew t-distributions for 
 #'Model-based Clustering of Flow Cytometry Data. The Annals of Applied Statistics, 
 #'13(1): 638-660. <doi: 10.1214/18-AOAS1209>. <arXiv: 1702.04407>. 
-#'\url{https://arxiv.org/abs/1702.04407} \url{https://doi.org/10.1214/18-AOAS1209}
+#'\url{https://arxiv.org/abs/1702.04407} \doi{10.1214/18-AOAS1209}
 #'
 #'@export
 #'
@@ -395,14 +395,14 @@ mvnlikC <- function(x, c, clustval, mu, sigma, loglik = TRUE) {
 #' multiple inputs
 #'
 #'Based on the implementation from Nino Hardt and Dicko Ahmadou
-#'\url{http://gallery.rcpp.org/articles/dmvnorm_arma/}
+#'\url{https://gallery.rcpp.org/articles/dmvnorm_arma/}
 #'(accessed in August 2014)
 #'
 #'@param x data matrix
 #'@param mean mean vector
 #'@param varcovM variance covariance matrix
 #'@param Log logical flag for returning the log of the probability density
-#'function. Defaults is \code{TRUE}
+#'function. Default is \code{TRUE}
 #'@return vector of densities
 #'
 #'@author Boris P. Hejblum

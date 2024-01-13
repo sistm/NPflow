@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 # `NPflow`
 
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/NPflow)](https://cran.r-project.org/package=NPflow)
-[![R-CMD-check](https://github.com/borishejblum/NPflow/workflows/R-CMD-check/badge.svg)](https://github.com/borishejblum/NPflow/actions)
+[![R-CMD-check](https://github.com/sistm/NPflow/workflows/R-CMD-check/badge.svg)](https://github.com/sistm/NPflow/actions)
 [![Downloads](https://cranlogs.r-pkg.org/badges/NPflow?color=blue)](https://www.r-pkg.org/pkg/NPflow)
 
 
@@ -44,10 +44,10 @@ The easiest way to get `NPflow` is to install it from [CRAN](https://cran.r-proj
 install.packages("NPflow")
 ```
 
-Or to get the development version from [GitHub](https://github.com/borishejblum/NPflow):
+Or to get the development version from [GitHub](https://github.com/sistm/NPflow):
 ```{r GitHub-install, eval=FALSE}
 #install.packages("devtools")
-devtools::install_github("borishejblum/NPflow", ref="CRANrelease")
+devtools::install_github("sistm/NPflow", ref="CRANrelease")
 ```
 
  -- Boris Hejblum

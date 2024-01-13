@@ -31,7 +31,7 @@ using namespace arma;
 //'Sequential Dirichlet Process Mixtures of Multivariate Skew t-distributions for 
 //'Model-based Clustering of Flow Cytometry Data. The Annals of Applied Statistics, 
 //'13(1): 638-660. <doi: 10.1214/18-AOAS1209>. <arXiv: 1702.04407>. 
-//'\url{https://arxiv.org/abs/1702.04407} \url{https://doi.org/10.1214/18-AOAS1209}
+//'\url{https://arxiv.org/abs/1702.04407} \doi{10.1214/18-AOAS1209}
 //'
 //'@export
 //'

@@ -15,14 +15,14 @@ mvnpdfC(x, mean, varcovM, Log = TRUE)
 \item{varcovM}{variance covariance matrix}
 
 \item{Log}{logical flag for returning the log of the probability density
-function. Defaults is \code{TRUE}}
+function. Default is \code{TRUE}}
 }
 \value{
 vector of densities
 }
 \description{
 Based on the implementation from Nino Hardt and Dicko Ahmadou
-\url{http://gallery.rcpp.org/articles/dmvnorm_arma/}
+\url{https://gallery.rcpp.org/articles/dmvnorm_arma/}
 (accessed in August 2014)
 }
 \examples{
