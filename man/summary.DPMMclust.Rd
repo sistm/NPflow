@@ -35,13 +35,14 @@ computed. Default is \code{FALSE}}
 }
 \value{
 a \code{list} containing the following elements:
+\describe{
 \item{\code{nb_mcmcit}:}{ an integer giving the value of \code{m}, the number of retained 
 sampled partitions, i.e. \code{(N - burnin)/thin}}
 \item{\code{burnin}:}{ an integer passing along the \code{burnin} argument}
 \item{\code{thin}:}{ an integer passing along the \code{thin} argument}
 \item{\code{lossFn}:}{ a character string passing along the \code{lossFn} argument}
 \item{\code{clust_distrib}:}{ a character string passing along the \code{clust_distrib} argument }
-\item{\code{point_estim}:}{ a \code{list} containing: \itemize{
+\item{\code{point_estim}:}{ a \code{list} containing: \describe{
    \item{\code{c_est}:}{ a vector of length \code{n}containing the point estimated clustering for each observations}
    \item{\code{cost}:}{ a vector of length \code{m} containing the cost of each sampled partition}
    \item{\code{Fmeas}:}{ if \code{lossFn} is \code{'F-measure'}, the \code{m x m} matrix of total F-measures for each pair of sampled partitions}
@@ -58,6 +59,7 @@ suitable to be plugged in as prior for a new MCMC algorithm run}
 \item{\code{U_SS_list}:}{ a list of length \code{m} containing the containing the lists of sufficient statistics for all the mixture components,
 for each sampled partition}
 \item{\code{data}:}{ a \code{d x n} matrix containing the clustered data}
+}
 }
 \description{
 Summary methods for \code{DPMMclust} objects.
