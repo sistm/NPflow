@@ -16,7 +16,6 @@ partition from \code{c} used to break ties when minimizing the cost function}
 }
 \value{
 a \code{list}:
- \itemize{
      \item{\code{c_est}:}{ a vector of length \code{n}. Point estimate of the partition}
      \item{\code{cost}:}{ a vector of length \code{N}. \code{cost[j]} is the cost
      associated to partition \code{c[[j]]}}
@@ -24,7 +23,6 @@ a \code{list}:
      (see \code{\link{similarityMat}})}
      \item{\code{opt_ind}:}{ the index of the optimal partition
      among the MCMC iterations.}
- }
 }
 \description{
 Get a point estimate of the partition using the F-measure as the cost function.

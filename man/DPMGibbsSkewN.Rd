@@ -58,7 +58,6 @@ Only used if \code{doPlot} is \code{TRUE}.}
 }
 \value{
 a object of class \code{DPMclust} with the following attributes:
- \itemize{
      \item{\code{mcmc_partitions}:}{a list of length \code{N}. Each
       element \code{mcmc_partitions[n]} is a vector of length
       \code{n} giving the partition of the \code{n} observations.}
@@ -74,7 +73,6 @@ and \code{n} observations in columns}
      \item{\code{nb_mcmcit}:}{the number of MCMC iterations}
      \item{\code{clust_distrib}:}{the parametric distribution of the mixture component - \code{"skewnorm"}}
      \item{\code{hyperG0}:}{the prior on the cluster location}
- }
 }
 \description{
 Slice Sampling of Dirichlet Process Mixture of skew normal distributions

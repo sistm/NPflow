@@ -21,7 +21,6 @@
 #'@param ... further arguments passed to or from other methods
 #'
 #'@return a \code{list} containing the following elements:
-#'  \itemize{
 #'      \item{\code{nb_mcmcit}:}{ an integer giving the value of \code{m}, the number of retained 
 #'      sampled partitions, i.e. \code{(N - burnin)/thin}}
 #'      \item{\code{burnin}:}{ an integer passing along the \code{burnin} argument}
@@ -45,7 +44,6 @@
 #'      \item{\code{U_SS_list}:}{ a list of length \code{m} containing the containing the lists of sufficient statistics for all the mixture components,
 #'      for each sampled partition}
 #'      \item{\code{data}: a \code{d x n} matrix containing the clustered data}
-#'  }
 #'  
 #'
 #'@details The cost of a point estimate partition is calculated using either a pairwise

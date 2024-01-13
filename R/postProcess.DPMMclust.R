@@ -19,14 +19,12 @@
 #'@param ... further arguments passed to or from other methods
 #'
 #'@return a \code{list}:
-#'  \itemize{
 #'      \item{\code{burnin}:}{an integer passing along the \code{burnin} argument}
 #'      \item{\code{thin}:}{an integer passing along the \code{thin} argument}
 #'      \item{\code{lossFn}:}{a character string passing along the \code{lossFn} argument}
 #'      \item{\code{point_estim}:}{}
 #'      \item{\code{loss}:}{}
 #'      \item{\code{index_estim}:}{}
-#'  }
 #'
 #'@details The cost of a point estimate partition is calculated using either a pairwise
 #' coincidence loss function (Binder), or 1-Fmeasure (F-measure).

@@ -35,7 +35,6 @@ computed. Default is \code{FALSE}}
 }
 \value{
 a \code{list} containing the following elements:
- \itemize{
      \item{\code{nb_mcmcit}:}{ an integer giving the value of \code{m}, the number of retained 
      sampled partitions, i.e. \code{(N - burnin)/thin}}
      \item{\code{burnin}:}{ an integer passing along the \code{burnin} argument}
@@ -59,7 +58,6 @@ a \code{list} containing the following elements:
      \item{\code{U_SS_list}:}{ a list of length \code{m} containing the containing the lists of sufficient statistics for all the mixture components,
      for each sampled partition}
      \item{\code{data}: a \code{d x n} matrix containing the clustered data}
- }
 }
 \description{
 Summary methods for \code{DPMMclust} objects.

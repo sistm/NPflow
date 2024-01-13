@@ -49,9 +49,8 @@ FmeasureC_no0 <- function(pred, ref) {
 #'@param c a matrix where each column is one MCMC partition
 #'
 #'@return a list with the following elements:
-#'\itemize{
 #'  \item{\code{Fmeas:}}{ TODO}
-#'}
+#'  \item{\code{cost:}}{ TODO}
 #'@export
 #'
 #'@examples
@@ -382,11 +381,9 @@ mmvtpdfC <- function(x, mean, varcovM, df, Log = TRUE) {
 #'@param loglik logical flag or returning the log-likelihood instead of the likelihood.
 #'Default is \code{TRUE}.
 #'@return a list:
-#'\itemize{
 #'\item{\code{"indiv"}:}{ vector of likelihood of length n;}
 #'\item{\code{"clust"}:}{ vector of likelihood of length K;}
 #'\item{\code{"total"}:}{ total (log)-likelihood;}
-#'}
 #'
 #'@author Boris Hejblum
 #'
@@ -447,11 +444,9 @@ mvnpdfC <- function(x, mean, varcovM, Log = TRUE) {
 #'@param loglik logical flag or returning the log-likelihood instead of the likelihood.
 #'Default is \code{TRUE}.
 #'@return a list:
-#'\itemize{
 #'\item{\code{"indiv"}:}{ vector of likelihood of length n;}
 #'\item{\code{"clust"}:}{ vector of likelihood of length K;}
 #'\item{\code{"total"}:}{ total (log)-likelihood;}
-#'}
 #'
 #'@author Boris Hejblum
 #'
@@ -475,11 +470,9 @@ mvsnlikC <- function(x, c, clustval, xi, psi, sigma, loglik = TRUE) {
 #'@param loglik logical flag or returning the log-likelihood instead of the likelihood.
 #'Default is \code{TRUE}.
 #'@return a list:
-#'\itemize{
 #'\item{\code{"indiv"}:}{ vector of likelihood of length n;}
 #'\item{\code{"clust"}:}{ vector of likelihood of length K;}
 #'\item{\code{"total"}:}{ total (log)-likelihood;}
-#'}
 #'
 #'@author Boris Hejblum
 #'

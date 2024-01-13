@@ -30,11 +30,9 @@ Default is \code{TRUE}.}
 }
 \value{
 a list:
-\itemize{
 \item{\code{"indiv"}:}{ vector of likelihood of length n;}
 \item{\code{"clust"}:}{ vector of likelihood of length K;}
 \item{\code{"total"}:}{ total (log)-likelihood;}
-}
 }
 \description{
 C++ implementation of multivariate skew t likelihood function for multiple inputs

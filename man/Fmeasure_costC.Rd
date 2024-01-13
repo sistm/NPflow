@@ -11,9 +11,8 @@ Fmeasure_costC(c)
 }
 \value{
 a list with the following elements:
-\itemize{
  \item{\code{Fmeas:}}{ TODO}
-}
+ \item{\code{cost:}}{ TODO}
 }
 \description{
 C++ implementation of multiple cost computations with the F-measure as the loss

@@ -2,7 +2,7 @@
 
 ## Test environments  
  * local R installation, R 4.3.2 on macOS 13.5.2
- * Linux (Ubuntu 20.04), macOS (11.6) and Windows (Server 2019 10.0), R devel and release (through GitHub Actions)
+ * Linux (Ubuntu 22.04), macOS (12.7) and Windows (Server 2022 10.0), R devel and release (through GitHub Actions)
 
 ## R CMD check results  
 0 errors | 0 warnings | 0 note

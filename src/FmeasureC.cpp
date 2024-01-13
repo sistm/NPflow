@@ -143,9 +143,8 @@ double FmeasureC_no0(const NumericVector & pred, const NumericVector & ref){
 //'@param c a matrix where each column is one MCMC partition
 //'
 //'@return a list with the following elements:
-//'\itemize{
 //'  \item{\code{Fmeas:}}{ TODO}
-//'}
+//'  \item{\code{cost:}}{ TODO}
 //'@export
 //'
 //'@examples

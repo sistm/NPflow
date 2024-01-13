@@ -35,14 +35,12 @@ Either "F-measure" or "Binder" (see Details). Default is "F-measure".}
 }
 \value{
 a \code{list}:
- \itemize{
      \item{\code{burnin}:}{an integer passing along the \code{burnin} argument}
      \item{\code{thin}:}{an integer passing along the \code{thin} argument}
      \item{\code{lossFn}:}{a character string passing along the \code{lossFn} argument}
      \item{\code{point_estim}:}{}
      \item{\code{loss}:}{}
      \item{\code{index_estim}:}{}
- }
 }
 \description{
 Post-processing Dirichlet Process Mixture Models results to get

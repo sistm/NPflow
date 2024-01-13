@@ -19,11 +19,9 @@ const double log2pi2 = log(2.0 * M_PI)/2.0;
 //'@param loglik logical flag or returning the log-likelihood instead of the likelihood.
 //'Default is \code{TRUE}.
 //'@return a list:
-//'\itemize{
 //'\item{\code{"indiv"}:}{ vector of likelihood of length n;}
 //'\item{\code{"clust"}:}{ vector of likelihood of length K;}
 //'\item{\code{"total"}:}{ total (log)-likelihood;}
-//'}
 //'
 //'@author Boris Hejblum
 //'

@@ -14,7 +14,6 @@ the cluster allocation of observation \code{i=1...n} at iteration
 }
 \value{
 a \code{list}:
- \itemize{
      \item{\code{c_est}:}{ a vector of length \code{n}. Point estimate of the partition}
      \item{\code{pear}:}{ a vector of length \code{N}. \code{pear[j]} is the
      posterior expected adjusted Rand index associated to partition \code{c[[j]]}}
@@ -22,7 +21,6 @@ a \code{list}:
      (see \code{\link{similarityMat}})}
      \item{\code{opt_ind}:}{ the index of the optimal partition
      among the MCMC iterations.}
- }
 }
 \description{
 Gets a point estimate of the partition using posterior expected adjusted
