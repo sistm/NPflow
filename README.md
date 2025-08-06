@@ -3,9 +3,11 @@
 
 # `NPflow`
 
+<!-- badges: start -->
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/NPflow)](https://cran.r-project.org/package=NPflow)
 [![R-CMD-check](https://github.com/sistm/NPflow/workflows/R-CMD-check/badge.svg)](https://github.com/sistm/NPflow/actions)
 [![Downloads](https://cranlogs.r-pkg.org/badges/NPflow?color=blue)](https://www.r-pkg.org/pkg/NPflow)
+<!-- badges: end -->
 
 ## Overview
 
