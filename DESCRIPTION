@@ -35,6 +35,7 @@ Description: Dirichlet process mixture of multivariate normal, skew normal or sk
              modeling oriented towards flow-cytometry data preprocessing applications. Method is 
              detailed in: Hejblum, Alkhassimn, Gottardo, Caron & Thiebaut (2019) <doi: 10.1214/18-AOAS1209>.
 License: LGPL-3 | file LICENSE
-BugReports:  https://github.com/sistm/NPflow/issues
+BugReports: https://github.com/sistm/NPflow/issues
 Encoding: UTF-8
 RoxygenNote: 7.3.0
+URL: http://sistm.github.io/NPflow/

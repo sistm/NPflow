@@ -1,0 +1,10 @@
+url: http://sistm.github.io/NPflow/
+template:
+  bootstrap: 5
+  bslib:
+    bootswatch: united
+    pkgdown-nav-height: 100px
+authors:
+  Boris P Hejblum:
+    href: https://borishejblum.science
+
