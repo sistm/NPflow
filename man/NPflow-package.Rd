@@ -29,6 +29,7 @@ Model-based Clustering of Flow Cytometry Data. The Annals of Applied Statistics,
 \seealso{
 Useful links:
 \itemize{
+  \item \url{http://sistm.github.io/NPflow/}
   \item Report bugs at \url{https://github.com/sistm/NPflow/issues}
 }
 
