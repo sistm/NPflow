@@ -1,5 +1,9 @@
 # News about the `NPflow` R package
 
+### Main changes in Version 0.13.6 (2025-08-20) --- *this is only a minor release*:
+* added a pkgdown website
+* added `MASS` in Suggest as it is no longer imported by `ggplot2`
+
 ### Main changes in Version 0.13.5 (2024-01-13) --- *this is only a minor release*:
 * bug fixed in try-catch syntax
 
