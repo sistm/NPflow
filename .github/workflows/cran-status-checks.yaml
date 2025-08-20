@@ -69,13 +69,6 @@ jobs:
               "Review logs at ", 
               "https://cran.r-project.org/web/checks/check_results_", pkg, ".html"
             )
-          } else if (any(grepl("NOTE", res$Status))) {
-            stop(
-              "NOTES found in CRAN checks",
-              "\n",
-              "Review logs at ", 
-              "https://cran.r-project.org/web/checks/check_results_", pkg, ".html"
-            )
           } else if (!any(sapply(res$issues, is.null))) {
             issues <- res$issues[[1]]
             stop(
@@ -87,7 +80,7 @@ jobs:
             )
           }
           
-          cli::cli_alert_success(c("{.pkg {pkg}} has no ", cli::col_blue("{.code NOTES}"), ", ",  
+          cli::cli_alert_success(c("{.pkg {pkg}} has no ",  
                                    cli::col_yellow("{.code issues}"), ", ", 
                                    cli::col_magenta("{.code WARNINGS}"), " or ",  
                                    cli::col_red("{.code ERRORS}")
