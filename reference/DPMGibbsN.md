@@ -1,0 +1,303 @@
+# Slice Sampling of the Dirichlet Process Mixture Model with a prior on alpha
+
+Slice Sampling of the Dirichlet Process Mixture Model with a prior on
+alpha
+
+## Usage
+
+``` r
+DPMGibbsN(
+  z,
+  hyperG0,
+  a = 1e-04,
+  b = 1e-04,
+  N,
+  doPlot = TRUE,
+  nbclust_init = 30,
+  plotevery = N/10,
+  diagVar = TRUE,
+  use_variance_hyperprior = TRUE,
+  verbose = TRUE,
+  ...
+)
+```
+
+## Arguments
+
+- z:
+
+  data matrix `d x n` with `d` dimensions in rows and `n` observations
+  in columns.
+
+- hyperG0:
+
+  prior mixing distribution.
+
+- a:
+
+  shape hyperparameter of the Gamma prior on the concentration parameter
+  of the Dirichlet Process. Default is `0.0001`.
+
+- b:
+
+  scale hyperparameter of the Gamma prior on the concentration parameter
+  of the Dirichlet Process. Default is `0.0001`. If `0`, then the
+  concentration is fixed set to `a`.
+
+- N:
+
+  number of MCMC iterations.
+
+- doPlot:
+
+  logical flag indicating whether to plot MCMC iteration or not. Default
+  to `TRUE`.
+
+- nbclust_init:
+
+  number of clusters at initialization. Default to 30 (or less if there
+  are less than 30 observations).
+
+- plotevery:
+
+  an integer indicating the interval between plotted iterations when
+  `doPlot` is `TRUE`.
+
+- diagVar:
+
+  logical flag indicating whether the variance of each cluster is
+  estimated as a diagonal matrix, or as a full matrix. Default is `TRUE`
+  (diagonal variance).
+
+- use_variance_hyperprior:
+
+  logical flag indicating whether a hyperprior is added for the variance
+  parameter. Default is `TRUE` which decrease the impact of the variance
+  prior on the posterior. `FALSE` is useful for using an informative
+  prior.
+
+- verbose:
+
+  logical flag indicating whether partition info is written in the
+  console at each MCMC iteration.
+
+- ...:
+
+  additional arguments to be passed to
+  [`plot_DPM`](http://sistm.github.io/NPflow/reference/plot_DPM.md).
+  Only used if `doPlot` is `TRUE`.
+
+## Value
+
+a object of class `DPMclust` with the following attributes:
+
+- `mcmc_partitions`::
+
+  a list of length `N`. Each element `mcmc_partitions[n]` is a vector of
+  length `n` giving the partition of the `n` observations.
+
+- `alpha`::
+
+  a vector of length `N`. `cost[j]` is the cost associated to partition
+  `c[[j]]`
+
+- `listU_mu`::
+
+  a list of length `N` containing the matrices of mean vectors for all
+  the mixture components at each MCMC iteration
+
+- `listU_Sigma`::
+
+  a list of length `N` containing the arrays of covariances matrices for
+  all the mixture components at each MCMC iteration
+
+- `U_SS_list`::
+
+  a list of length `N` containing the lists of sufficient statistics for
+  all the mixture components at each MCMC iteration
+
+- `weights_list`::
+
+  a list of length `N` containing the logposterior values at each MCMC
+  iterations
+
+- `logposterior_list`::
+
+  a list of length `N` containing the logposterior values at each MCMC
+  iterations
+
+- `data`::
+
+  the data matrix `d x n` with `d` dimensions in rows and `n`
+  observations in columns.
+
+- `nb_mcmcit`::
+
+  the number of MCMC iterations
+
+- `clust_distrib`::
+
+  the parametric distribution of the mixture component - `"gaussian"`
+
+- `hyperG0`::
+
+  the prior on the cluster location
+
+## Author
+
+Boris Hejblum
+
+## Examples
+
+``` r
+rm(list=ls())
+#Number of data
+n <- 500
+d <- 4
+#n <- 2000
+set.seed(1234)
+#set.seed(123)
+#set.seed(4321)
+
+# Sample data
+m <- matrix(nrow=d, ncol=4, c(-1, 1, 1.5, 2, 2, -2, -1.5, -2))
+p <- c(0.2, 0.1, 0.4, 0.3) # frequence des clusters
+
+sdev <- array(dim=c(d,d,4))
+sdev[, ,1] <- 0.3*diag(d)
+sdev[, ,2] <- c(0.1, 0.3)*diag(d)
+sdev[, ,3] <- matrix(nrow=d, ncol=d, 0.15)
+diag(sdev[, ,3]) <- 0.3
+sdev[, ,4] <- 0.3*diag(d)
+c <- rep(0,n)
+z <- matrix(0, nrow=d, ncol=n)
+for(k in 1:n){
+ c[k] = which(rmultinom(n=1, size=1, prob=p)!=0)
+ z[,k] <- m[, c[k]] + sdev[, , c[k]]%*%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
+ #cat(k, "/", n, " observations simulated\n", sep="")
+}
+
+ # Set parameters of G0
+ hyperG0 <- list()
+ hyperG0[["mu"]] <- rep(0,d)
+ hyperG0[["kappa"]] <- 0.001
+ hyperG0[["nu"]] <- d+2
+ hyperG0[["lambda"]] <- diag(d)/10
+
+ # hyperprior on the Scale parameter of DPM
+ a <- 0.0001
+ b <- 0.0001
+
+ # Number of iterations
+ N <- 30
+
+ # do some plots
+ doPlot <- TRUE
+ nbclust_init <- 30
+
+
+
+ ## Data
+ ########
+ library(ggplot2)
+ p <- (ggplot(data.frame("X"=z[1,], "Y"=z[2,]), aes(x=X, y=Y))
+       + geom_point()
+       + ggtitle("Toy example Data"))
+ p
+
+
+
+ ## alpha priors plots
+ #####################
+ prioralpha <- data.frame("alpha"=rgamma(n=5000, shape=a, scale=1/b),
+                         "distribution" =factor(rep("prior",5000),
+                         levels=c("prior", "posterior")))
+ p <- (ggplot(prioralpha, aes(x=alpha))
+       + geom_histogram(aes(y=..density..),
+                        colour="black", fill="white", bins=30)
+       + geom_density(alpha=.6, fill="red", color=NA)
+       + ggtitle(paste("Prior distribution on alpha: Gamma(", a,
+                 ",", b, ")\n", sep=""))
+       + theme_bw()
+      )
+ p
+#> Warning: The dot-dot notation (`..density..`) was deprecated in ggplot2 3.4.0.
+#> ℹ Please use `after_stat(density)` instead.
+
+
+
+if(interactive()){
+ # Gibbs sampler for Dirichlet Process Mixtures
+ ##############################################
+
+ MCMCsample <- DPMGibbsN(z, hyperG0, a, b, N=500, doPlot, nbclust_init, plotevery=100,
+                         gg.add=list(theme_bw(),
+                                 guides(shape=guide_legend(override.aes = list(fill="grey45")))),
+                         diagVar=FALSE)
+
+ plot_ConvDPM(MCMCsample, from=2)
+
+ s <- summary(MCMCsample, burnin = 200, thin=2, posterior_approx=FALSE,
+ lossFn = "MBinderN")
+
+ F <- FmeasureC(pred=s$point_estim$c_est, ref=c)
+
+ postalpha <- data.frame("alpha"=MCMCsample$alpha[50:500],
+                         "distribution" = factor(rep("posterior",500-49),
+                         levels=c("prior", "posterior")))
+ p <- (ggplot(postalpha, aes(x=alpha))
+       + geom_histogram(aes(y=..density..), binwidth=.1,
+                        colour="black", fill="white")
+       + geom_density(alpha=.2, fill="blue")
+       + ggtitle("Posterior distribution of alpha\n")
+       # Ignore NA values for mean
+       # Overlay with transparent density plot
+       + geom_vline(aes(xintercept=mean(alpha, na.rm=TRUE)),
+                    color="red", linetype="dashed", size=1)
+     )
+ p
+
+ p <- (ggplot(drop=FALSE, alpha=.6)
+       + geom_density(aes(x=alpha, fill=distribution),
+                      color=NA, alpha=.6,
+                      data=prioralpha)
+       #+ geom_density(aes(x=alpha, fill=distribution),
+       #               color=NA, alpha=.6,
+       #               data=postalpha)
+       + ggtitle("Prior and posterior distributions of alpha\n")
+       + scale_fill_discrete(drop=FALSE)
+       + theme_bw()
+       +xlim(0,10)
+       +ylim(0, 1.3)
+     )
+ p
+
+}
+
+# k-means comparison
+####################
+
+ plot(x=z[1,], y=z[2,], col=kmeans(t(z), centers=4)$cluster,
+      xlab = "d = 1", ylab= "d = 2", main="k-means with K=4 clusters")
+
+
+ KM <- kmeans(t(z), centers=4)
+ dataKM <- data.frame("X"=z[1,], "Y"=z[2,],
+                    "Cluster"=as.character(KM$cluster))
+ dataCenters <- data.frame("X"=KM$centers[,1],
+                           "Y"=KM$centers[,2],
+                           "Cluster"=rownames(KM$centers))
+
+ p <- (ggplot(dataKM)
+       + geom_point(aes(x=X, y=Y, col=Cluster))
+       + geom_point(aes(x=X, y=Y, fill=Cluster, order=Cluster),
+                    data=dataCenters, shape=22, size=5)
+       + scale_colour_discrete(name="Cluster")
+       + ggtitle("K-means with K=4 clusters\n"))
+#> Warning: Ignoring unknown aesthetics: order
+ p
+
+
+
+
+```

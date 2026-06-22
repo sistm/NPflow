@@ -1,0 +1,262 @@
+# Slice Sampling of Dirichlet Process Mixture of skew Student's t-distributions
+
+Slice Sampling of Dirichlet Process Mixture of skew Student's
+t-distributions
+
+## Usage
+
+``` r
+DPMGibbsSkewT_SeqPrior_parallel(
+  Ncpus,
+  type_connec,
+  z,
+  prior_inform,
+  hyperG0,
+  N,
+  nbclust_init,
+  add.vagueprior = TRUE,
+  weightnoninfo = NULL,
+  doPlot = FALSE,
+  plotevery = N/10,
+  diagVar = TRUE,
+  verbose = TRUE,
+  monitorfile = "",
+  ...
+)
+```
+
+## Arguments
+
+- Ncpus:
+
+  the number of processors available
+
+- type_connec:
+
+  The type of connection between the processors. Supported cluster types
+  are `"SOCK"`, `"FORK"`, `"MPI"`, and `"NWS"`. See also
+  [`makeCluster`](https://rdrr.io/r/parallel/makeCluster.html).
+
+- z:
+
+  data matrix `d x n` with `d` dimensions in rows and `n` observations
+  in columns.
+
+- prior_inform:
+
+  an informative prior such as the approximation computed by
+  `summary.DPMMclust`.
+
+- hyperG0:
+
+  prior mixing distribution.
+
+- N:
+
+  number of MCMC iterations.
+
+- nbclust_init:
+
+  number of clusters at initialization. Default to 30 (or less if there
+  are less than 30 observations).
+
+- add.vagueprior:
+
+  logical flag indicating whether a non informative component should be
+  added to the informative prior. Default is `TRUE`.
+
+- weightnoninfo:
+
+  a real between 0 and 1 giving the weights of the non informative
+  component in the prior.
+
+- doPlot:
+
+  logical flag indicating whether to plot MCMC iteration or not. Default
+  to `TRUE`.
+
+- plotevery:
+
+  an integer indicating the interval between plotted iterations when
+  `doPlot` is `TRUE`.
+
+- diagVar:
+
+  logical flag indicating whether the variance of each cluster is
+  estimated as a diagonal matrix, or as a full matrix. Default is `TRUE`
+  (diagonal variance).
+
+- verbose:
+
+  logical flag indicating whether partition info is written in the
+  console at each MCMC iteration.
+
+- monitorfile:
+
+  a writable [connections](https://rdrr.io/r/base/connections.html) or a
+  character string naming a file to write into, to monitor the progress
+  of the analysis. Default is `""` which is no monitoring. See Details.
+
+- ...:
+
+  additional arguments to be passed to
+  [`plot_DPM`](http://sistm.github.io/NPflow/reference/plot_DPM.md).
+  Only used if `doPlot` is `TRUE`.
+
+## Value
+
+a object of class `DPMclust` with the following attributes:
+
+- `mcmc_partitions`::
+
+  a list of length `N`. Each element `mcmc_partitions[n]` is a vector of
+  length `n` giving the partition of the `n` observations.
+
+- `alpha`::
+
+  a vector of length `N`. `cost[j]` is the cost associated to partition
+  `c[[j]]`
+
+- `U_SS_list`::
+
+  a list of length `N` containing the lists of sufficient statistics for
+  all the mixture components at each MCMC iteration
+
+- `weights_list`::
+
+  a list of length `N` containing the logposterior values at each MCMC
+  iterations
+
+- `logposterior_list`::
+
+  a list of length `N` containing the logposterior values at each MCMC
+  iterations
+
+- `data`::
+
+  the data matrix `d x n` with `d` dimensions in rows and `n`
+  observations in columns
+
+- `nb_mcmcit`::
+
+  the number of MCMC iterations
+
+- `clust_distrib`::
+
+  the parametric distribution of the mixture component - `"skewt"`
+
+- `hyperG0`::
+
+  the prior on the cluster location
+
+## References
+
+Hejblum BP, Alkhassim C, Gottardo R, Caron F and Thiebaut R (2019)
+Sequential Dirichlet Process Mixtures of Multivariate Skew
+t-distributions for Model-based Clustering of Flow Cytometry Data. The
+Annals of Applied Statistics, 13(1): 638-660. \<doi:
+10.1214/18-AOAS1209\> \<arXiv: 1702.04407\>
+<https://arxiv.org/abs/1702.04407>
+[doi:10.1214/18-AOAS1209](https://doi.org/10.1214/18-AOAS1209)
+
+## Author
+
+Boris Hejblum
+
+## Examples
+
+``` r
+rm(list=ls())
+
+#Number of data
+n <- 2000
+set.seed(123)
+
+
+d <- 2
+ncl <- 4
+
+# Sample data
+
+sdev <- array(dim=c(d,d,ncl))
+
+#xi <- matrix(nrow=d, ncol=ncl, c(-1.5, 1.5, 1.5, 1.5, 2, -2.5, -2.5, -3))
+#psi <- matrix(nrow=d, ncol=4, c(0.4, -0.6, 0.8, 0, 0.3, -0.7, -0.3, -0.8))
+xi <- matrix(nrow=d, ncol=ncl, c(-0.2, 0.5, 2.4, 0.4, 0.6, -1.3, -0.9, -2.7))
+psi <- matrix(nrow=d, ncol=4, c(0.3, -0.7, -0.8, 0, 0.3, -0.7, 0.2, 0.9))
+nu <- c(100,15,8,5)
+p <- c(0.15, 0.05, 0.5, 0.3) # frequence des clusters
+sdev[, ,1] <- matrix(nrow=d, ncol=d, c(0.3, 0, 0, 0.3))
+sdev[, ,2] <- matrix(nrow=d, ncol=d, c(0.1, 0, 0, 0.3))
+sdev[, ,3] <- matrix(nrow=d, ncol=d, c(0.3, 0.15, 0.15, 0.3))
+sdev[, ,4] <- .3*diag(2)
+
+
+c <- rep(0,n)
+w <- rep(1,n)
+z <- matrix(0, nrow=d, ncol=n)
+for(k in 1:n){
+ c[k] = which(rmultinom(n=1, size=1, prob=p)!=0)
+ w[k] <- rgamma(1, shape=nu[c[k]]/2, rate=nu[c[k]]/2)
+ z[,k] <- xi[, c[k]] + psi[, c[k]]*rtruncnorm(n=1, a=0, b=Inf, mean=0, sd=1/sqrt(w[k])) +
+                (sdev[, , c[k]]/sqrt(w[k]))%*%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
+ #cat(k, "/", n, " observations simulated\n", sep="")
+}
+
+# Set parameters of G0
+hyperG0 <- list()
+hyperG0[["b_xi"]] <- rowMeans(z)
+hyperG0[["b_psi"]] <- rep(0,d)
+hyperG0[["kappa"]] <- 0.001
+hyperG0[["D_xi"]] <- 100
+hyperG0[["D_psi"]] <- 100
+hyperG0[["nu"]] <- d+1
+hyperG0[["lambda"]] <- diag(apply(z,MARGIN=1, FUN=var))/3
+
+ # hyperprior on the Scale parameter of DPM
+ a <- 0.0001
+ b <- 0.0001
+
+ # do some plots
+ nbclust_init <- 30
+
+ ## Plot Data
+ library(ggplot2)
+ q <- (ggplot(data.frame("X"=z[1,], "Y"=z[2,]), aes(x=X, y=Y))
+       + geom_point()
+       + ggtitle("Simple example in 2d data")
+       +xlab("D1")
+       +ylab("D2")
+       +theme_bw())
+ q
+
+
+if(interactive()){
+ MCMCsample_st <- DPMGibbsSkewT(z, hyperG0, a, b, N=2000,
+                                doPlot=TRUE, plotevery=250,
+                                nbclust_init,
+                                gg.add=list(theme_bw(),
+                                 guides(shape=guide_legend(override.aes = list(fill="grey45")))),
+                                diagVar=FALSE)
+ s <- summary(MCMCsample_st, burnin = 1500, thin=5, posterior_approx=TRUE)
+ F <- FmeasureC(pred=s$point_estim$c_est, ref=c)
+
+for(k in 1:n){
+ c[k] = which(rmultinom(n=1, size=1, prob=p)!=0)
+ w[k] <- rgamma(1, shape=nu[c[k]]/2, rate=nu[c[k]]/2)
+ z[,k] <- xi[, c[k]] + psi[, c[k]]*rtruncnorm(n=1, a=0, b=Inf, mean=0, sd=1/sqrt(w[k])) +
+                (sdev[, , c[k]]/sqrt(w[k]))%*%matrix(rnorm(d, mean = 0, sd = 1), nrow=d, ncol=1)
+ #cat(k, "/", n, " observations simulated\n", sep="")
+}
+MCMCsample_st2 <- DPMGibbsSkewT_SeqPrior_parallel(Ncpus=2, type_connec="SOCK",
+                                                  z, prior_inform=s$param_posterior,
+                                                  hyperG0, N=3000,
+                                                  doPlot=TRUE, plotevery=100,
+                                                  nbclust_init, diagVar=FALSE, verbose=FALSE,
+                                                  gg.add=list(theme_bw(),
+                                 guides(shape=guide_legend(override.aes = list(fill="grey45")))))
+s2 <- summary(MCMCsample_st2, burnin = 2000, thin=5)
+F2 <- FmeasureC(pred=s2$point_estim$c_est, ref=c)
+}
+
+```

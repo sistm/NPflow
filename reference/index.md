@@ -1,0 +1,215 @@
+# Package index
+
+## All functions
+
+- [`DPMGibbsN()`](http://sistm.github.io/NPflow/reference/DPMGibbsN.md)
+  : Slice Sampling of the Dirichlet Process Mixture Model with a prior
+  on alpha
+
+- [`DPMGibbsN_SeqPrior()`](http://sistm.github.io/NPflow/reference/DPMGibbsN_SeqPrior.md)
+  : Slice Sampling of Dirichlet Process Mixture of Gaussian
+  distributions
+
+- [`DPMGibbsN_parallel()`](http://sistm.github.io/NPflow/reference/DPMGibbsN_parallel.md)
+  : Slice Sampling of the Dirichlet Process Mixture Model with a prior
+  on alpha
+
+- [`DPMGibbsSkewN()`](http://sistm.github.io/NPflow/reference/DPMGibbsSkewN.md)
+  : Slice Sampling of Dirichlet Process Mixture of skew normal
+  distributions
+
+- [`DPMGibbsSkewN_parallel()`](http://sistm.github.io/NPflow/reference/DPMGibbsSkewN_parallel.md)
+  : Parallel Implementation of Slice Sampling of Dirichlet Process
+  Mixture of skew normal distributions
+
+- [`DPMGibbsSkewT()`](http://sistm.github.io/NPflow/reference/DPMGibbsSkewT.md)
+  : Slice Sampling of Dirichlet Process Mixture of skew Student's
+  t-distributions
+
+- [`DPMGibbsSkewT_SeqPrior()`](http://sistm.github.io/NPflow/reference/DPMGibbsSkewT_SeqPrior.md)
+  : Slice Sampling of Dirichlet Process Mixture of skew Student's
+  t-distributions
+
+- [`DPMGibbsSkewT_SeqPrior_parallel()`](http://sistm.github.io/NPflow/reference/DPMGibbsSkewT_SeqPrior_parallel.md)
+  : Slice Sampling of Dirichlet Process Mixture of skew Student's
+  t-distributions
+
+- [`DPMGibbsSkewT_parallel()`](http://sistm.github.io/NPflow/reference/DPMGibbsSkewT_parallel.md)
+  : Slice Sampling of Dirichlet Process Mixture of skew Student's
+  t-distributions
+
+- [`DPMpost()`](http://sistm.github.io/NPflow/reference/DPMpost.md) :
+  Posterior estimation for Dirichlet process mixture of multivariate
+  (potentially skew) distributions models
+
+- [`Flimited()`](http://sistm.github.io/NPflow/reference/Flimited.md) :
+  Compute a limited F-measure
+
+- [`FmeasureC()`](http://sistm.github.io/NPflow/reference/FmeasureC.md)
+  : C++ implementation of the F-measure computation
+
+- [`FmeasureC_no0()`](http://sistm.github.io/NPflow/reference/FmeasureC_no0.md)
+  : C++ implementation of the F-measure computation without the
+  reference class 0
+
+- [`Fmeasure_costC()`](http://sistm.github.io/NPflow/reference/Fmeasure_costC.md)
+  : Multiple cost computations with the F-measure as the loss function
+
+- [`MAP_sNiW_mmEM()`](http://sistm.github.io/NPflow/reference/MAP_sNiW_mmEM.md)
+  [`MAP_sNiW_mmEM_weighted()`](http://sistm.github.io/NPflow/reference/MAP_sNiW_mmEM.md)
+  [`MAP_sNiW_mmEM_vague()`](http://sistm.github.io/NPflow/reference/MAP_sNiW_mmEM.md)
+  : EM MAP for mixture of sNiW
+
+- [`MLE_NiW_mmEM()`](http://sistm.github.io/NPflow/reference/MLE_NiW_mmEM.md)
+  : EM MLE for mixture of NiW
+
+- [`MLE_gamma()`](http://sistm.github.io/NPflow/reference/MLE_gamma.md)
+  : MLE for Gamma distribution
+
+- [`MLE_sNiW()`](http://sistm.github.io/NPflow/reference/MLE_sNiW.md) :
+  MLE for sNiW distributed observations
+
+- [`MLE_sNiW_mmEM()`](http://sistm.github.io/NPflow/reference/MLE_sNiW_mmEM.md)
+  : EM MLE for mixture of sNiW
+
+- [`NPflow-package`](http://sistm.github.io/NPflow/reference/NPflow-package.md)
+  [`NPflow`](http://sistm.github.io/NPflow/reference/NPflow-package.md)
+  : Bayesian Nonparametrics for Automatic Gating of Flow Cytometry data
+
+- [`NuMatParC()`](http://sistm.github.io/NPflow/reference/NuMatParC.md)
+  : C++ implementation of similarity matrix computation using
+  pre-computed distances
+
+- [`burn.DPMMclust()`](http://sistm.github.io/NPflow/reference/burn.DPMMclust.md)
+  : Burning MCMC iterations from a Dirichlet Process Mixture Model.
+
+- [`cluster_est_Fmeasure()`](http://sistm.github.io/NPflow/reference/cluster_est_Fmeasure.md)
+  : Point estimate of the partition using the F-measure as the cost
+  function.
+
+- [`cluster_est_Mbinder_norm()`](http://sistm.github.io/NPflow/reference/cluster_est_Mbinder_norm.md)
+  : Point estimate of the partition using a modified Binder loss
+  function
+
+- [`cluster_est_binder()`](http://sistm.github.io/NPflow/reference/cluster_est_binder.md)
+  : Point estimate of the partition for the Binder loss function
+
+- [`cluster_est_pear()`](http://sistm.github.io/NPflow/reference/cluster_est_pear.md)
+  : Gets a point estimate of the partition using posterior expected
+  adjusted Rand index (PEAR)
+
+- [`cytoScatter()`](http://sistm.github.io/NPflow/reference/cytoScatter.md)
+  : Scatterplot of flow cytometry data
+
+- [`evalClustLoss()`](http://sistm.github.io/NPflow/reference/evalClustLoss.md)
+  : ELoss of a partition point estimate compared to a gold standard
+
+- [`lgamma_mv()`](http://sistm.github.io/NPflow/reference/lgamma_mv.md)
+  : Multivariate log gamma function
+
+- [`print(`*`<summaryDPMMclust>`*`)`](http://sistm.github.io/NPflow/reference/methods.summaryDPMMclust.md)
+  [`plot(`*`<summaryDPMMclust>`*`)`](http://sistm.github.io/NPflow/reference/methods.summaryDPMMclust.md)
+  :
+
+  Methods for a summary of a `DPMMclust` object
+
+- [`mmNiWpdf()`](http://sistm.github.io/NPflow/reference/mmNiWpdf.md) :
+  multivariate Normal inverse Wishart probability density function for
+  multiple inputs
+
+- [`mmNiWpdfC()`](http://sistm.github.io/NPflow/reference/mmNiWpdfC.md)
+  : C++ implementation of multivariate Normal inverse Wishart
+  probability density function for multiple inputs
+
+- [`mmsNiWlogpdf()`](http://sistm.github.io/NPflow/reference/mmsNiWlogpdf.md)
+  : Probability density function of multiple structured Normal inverse
+  Wishart
+
+- [`mmsNiWpdfC()`](http://sistm.github.io/NPflow/reference/mmsNiWpdfC.md)
+  : C++ implementation of multivariate structured Normal inverse Wishart
+  probability density function for multiple inputs
+
+- [`mmvnpdfC()`](http://sistm.github.io/NPflow/reference/mmvnpdfC.md) :
+  C++ implementation of multivariate Normal probability density function
+  for multiple inputs
+
+- [`mmvsnpdfC()`](http://sistm.github.io/NPflow/reference/mmvsnpdfC.md)
+  : C++ implementation of multivariate skew Normal probability density
+  function for multiple inputs
+
+- [`mmvstpdfC()`](http://sistm.github.io/NPflow/reference/mmvstpdfC.md)
+  : C++ implementation of multivariate Normal probability density
+  function for multiple inputs
+
+- [`mmvtpdfC()`](http://sistm.github.io/NPflow/reference/mmvtpdfC.md) :
+  C++ implementation of multivariate Normal probability density function
+  for multiple inputs
+
+- [`mvnlikC()`](http://sistm.github.io/NPflow/reference/mvnlikC.md) :
+  C++ implementation of multivariate Normal probability density function
+  for multiple inputs
+
+- [`mvnpdf()`](http://sistm.github.io/NPflow/reference/mvnpdf.md) :
+  multivariate-Normal probability density function
+
+- [`mvnpdfC()`](http://sistm.github.io/NPflow/reference/mvnpdfC.md) :
+  C++ implementation of multivariate normal probability density function
+  for multiple inputs
+
+- [`mvsnlikC()`](http://sistm.github.io/NPflow/reference/mvsnlikC.md) :
+  C++ implementation of multivariate skew normal likelihood function for
+  multiple inputs
+
+- [`mvsnpdf()`](http://sistm.github.io/NPflow/reference/mvsnpdf.md) :
+  multivariate Skew-Normal probability density function
+
+- [`mvstlikC()`](http://sistm.github.io/NPflow/reference/mvstlikC.md) :
+  C++ implementation of multivariate skew t likelihood function for
+  multiple inputs
+
+- [`mvstpdf()`](http://sistm.github.io/NPflow/reference/mvstpdf.md) :
+  multivariate skew-t probability density function
+
+- [`mvtpdf()`](http://sistm.github.io/NPflow/reference/mvtpdf.md) :
+  multivariate Student's t-distribution probability density function
+
+- [`plot_ConvDPM()`](http://sistm.github.io/NPflow/reference/plot_ConvDPM.md)
+  : Convergence diagnostic plots
+
+- [`plot_DPM()`](http://sistm.github.io/NPflow/reference/plot_DPM.md) :
+  Plot of a Dirichlet process mixture of gaussian distribution partition
+
+- [`plot_DPMsn()`](http://sistm.github.io/NPflow/reference/plot_DPMsn.md)
+  : Plot of a Dirichlet process mixture of skew normal distribution
+  partition
+
+- [`plot_DPMst()`](http://sistm.github.io/NPflow/reference/plot_DPMst.md)
+  : Plot of a Dirichlet process mixture of skew t-distribution partition
+
+- [`postProcess.DPMMclust()`](http://sistm.github.io/NPflow/reference/postProcess.DPMMclust.md)
+  : Post-processing Dirichlet Process Mixture Models results to get a
+  mixture distribution of the posterior locations
+
+- [`priormix()`](http://sistm.github.io/NPflow/reference/priormix.md) :
+  Construction of an Empirical based prior
+
+- [`rCRP()`](http://sistm.github.io/NPflow/reference/rCRP.md) :
+  Generating cluster data from the Chinese Restaurant Process
+
+- [`sample_alpha()`](http://sistm.github.io/NPflow/reference/sample_alpha.md)
+  : Sampler for the concentration parameter of a Dirichlet process
+
+- [`similarityMat()`](http://sistm.github.io/NPflow/reference/similarityMat.md)
+  : Computes the co-clustering (or similarity) matrix
+
+- [`similarityMatC()`](http://sistm.github.io/NPflow/reference/similarityMatC.md)
+  : C++ implementation
+
+- [`similarityMat_nocostC()`](http://sistm.github.io/NPflow/reference/similarityMat_nocostC.md)
+  : C++ implementation
+
+- [`summary(`*`<DPMMclust>`*`)`](http://sistm.github.io/NPflow/reference/summary.DPMMclust.md)
+  : Summarizing Dirichlet Process Mixture Models
+
+- [`vclust2mcoclustC()`](http://sistm.github.io/NPflow/reference/vclust2mcoclustC.md)
+  : C++ implementation
