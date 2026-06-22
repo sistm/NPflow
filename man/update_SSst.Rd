@@ -14,8 +14,6 @@ update_SSst(z, S, ltn, scale, df, hyperprior = NULL)
 
 \item{ltn}{random effects}
 
-\item{scale}{}
-
 \item{df}{skew t degrees of freedom}
 
 \item{hyperprior}{Default is \code{NULL}}
